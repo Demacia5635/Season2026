@@ -5,7 +5,8 @@
 package frc.demacia.vision.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -148,8 +149,12 @@ public class VisionConstants {
         public static final double PREDICT_OMEGA = 0.2;
 
 
-        public static final double OFFSET_QUEST_X = 0.35;//TODO: need to find the right offset
-        public static final double OFFSET_QUEST_Y = 0;//TODO: need to find the right offset
-        public static final Rotation2d OFFSET_QUEST_ANGLE = Rotation2d.fromDegrees(90);
-        public static final Transform2d OFFSET_ROBOT_TO_QUEST = new Transform2d(OFFSET_QUEST_X,OFFSET_QUEST_Y,OFFSET_QUEST_ANGLE);
+        //TODO:find the right offsets
+        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(180));
+        public static final double X_OFFSET_QUEST = 0.1;
+        public static final double Y_OFFSET_QUEST = 0.3;
+        public static final double Z_OFFSET_QUEST = 0.38;
+        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(X_OFFSET_QUEST,Y_OFFSET_QUEST,Z_OFFSET_QUEST,YAW_OFFSET_QUEST);
+
+
 }

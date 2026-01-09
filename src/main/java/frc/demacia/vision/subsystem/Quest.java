@@ -1,57 +1,91 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.demacia.vision.subsystem;
 
-
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
-
-import static frc.demacia.vision.utils.VisionConstants.OFFSET_ROBOT_TO_QUEST;
-
+import static frc.demacia.vision.utils.VisionConstants.*;
 
 public class Quest extends SubsystemBase {
-  QuestNav questNav;
-  /** Creates a new Quest. */
-  @SuppressWarnings("unchecked")
+  private Field2d field;
+  private QuestNav questNav;
+  private Pose3d currentQuestPose;
+  private boolean isCalibrated;
+  private double timestamp;
+
   public Quest() {
+    isCalibrated = false;
+    timestamp = 0;
     questNav = new QuestNav();
-    LogManager.addEntry("q values x", () -> questPose2d().getX())
-      .withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
-      
-    LogManager.addEntry("q values y", () -> questPose2d().getY())
-    .withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    field = new Field2d();
+    currentQuestPose = new Pose3d(); // Initialize to origin - IMPORTANT!
+    
+    SmartDashboard.putData("Quest Field", field);
   }
-  public Pose2d questPose2d(){
-    Pose2d questPose = new Pose2d();
-    PoseFrame[] poseFrames = questNav.getAllUnreadPoseFrames();
-    if (poseFrames.length > 0) {
-      // Get the most recent Quest pose
-      questPose = poseFrames[poseFrames.length - 1].questPose().plus(OFFSET_ROBOT_TO_QUEST);
+  public boolean isCalibrated(){
+    return isCalibrated;
   }
-    return questPose;
+  
+  // Set robot pose (transforms to Quest frame and sends to QuestNav)
+  public void setQuestPose(Pose3d currentBotpose){
+    currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
+    questNav.setPose(currentQuestPose);
+    isCalibrated = true;// i know it is inefficent
   }
+
+  // Get robot pose (transforms from Quest frame to robot frame)
+  public Pose2d getRobotPose() { 
+    return currentQuestPose.transformBy(ROBOT_TO_QUEST.inverse()).toPose2d();
+  }
+  
+  // Check if Quest is connected
+  public boolean isConnected() {
+    return questNav.isConnected();
+  }
+  
+  // Check if Quest is tracking
+  public boolean isTracking() {
+    return questNav.isTracking();
+  }
+  
 
   @Override
   public void periodic() {
-    questNav.commandPeriodic();//Cleans up QuestNav responses after processing on the headset
-    // and if we don't have data or for some reason the response we got isn't for the command we sent, skip for this loop
+    questNav.commandPeriodic();
 
-    // This method will be called once per scheduler run
+    PoseFrame[] poseFrames = questNav.getAllUnreadPoseFrames();
+    
+    if(poseFrames.length > 0 && poseFrames[poseFrames.length - 1].isTracking()){
+      currentQuestPose = poseFrames[poseFrames.length - 1].questPose3d();
+      timestamp = poseFrames[poseFrames.length - 1].dataTimestamp();
+      // Display Quest pose
+      SmartDashboard.putNumber("Quest X", currentQuestPose.getX());
+      SmartDashboard.putNumber("Quest Y", currentQuestPose.getY());
+      SmartDashboard.putNumber("Quest Rotation", currentQuestPose.getRotation().getZ());
 
-
+      field.setRobotPose(currentQuestPose.toPose2d());
+    }
+    
+    // Diagnostics - helpful for debugging!
+    SmartDashboard.putBoolean("Quest Connected", questNav.isConnected());
+    SmartDashboard.putBoolean("Quest Tracking", questNav.isTracking());
+    SmartDashboard.putNumber("Quest Latency (ms)", questNav.getLatency());
+    
+    // Battery monitoring
+    questNav.getBatteryPercent().ifPresent(
+      battery -> SmartDashboard.putNumber("Quest Battery %", battery)
+    );
   }
-  @Override
-  public void initSendable(SendableBuilder builder){
-    super.initSendable(builder);
-    builder.addDoubleProperty("dvirs values of Quest x",() -> questPose2d().getX(), null);
-    builder.addDoubleProperty("dvirs values of Quest y",() -> questPose2d().getY(), null);
+  // gives me the timestamp of the newst frame
+  public double getTimestamp(){
+    return timestamp;
+  }
+  
+  public void questReset() {
+    questNav.setPose(new Pose3d(new Pose2d(0, 0, Rotation2d.kZero)));
   }
 }
-

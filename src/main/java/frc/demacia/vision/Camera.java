@@ -10,18 +10,14 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 public class Camera {
 
-    public enum CameraType {
-        REEF, BARGE, FEEDER
-    }
-
     private String name;
     private Translation3d robotToCamPosition;
     private double pitch;
     private double yaw;
     private String tableName;
-    private CameraType cameraType;
+    private Enum<?> cameraType;
 
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, CameraType cameraType) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, Enum<?> cameraType) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
@@ -53,6 +49,5 @@ public class Camera {
     public String getTableName() {
         return this.tableName;
     }
-    public CameraType getCameraType(){return this.cameraType;}
-
+    public Enum<?> getCameraType(){return this.cameraType;}
 }

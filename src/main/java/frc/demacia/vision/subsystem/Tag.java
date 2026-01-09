@@ -11,7 +11,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.Camera.CameraType;
 
 import static frc.demacia.vision.utils.VisionConstants.*;
 
@@ -67,9 +66,8 @@ public class Tag extends SubsystemBase {
 
   /**
    * Creates a new Tag subsystem
-   * 
-   * @param getRobotAngle Pigeon2 gyroscope for determining robot
-   *                              orientation
+   * * @param getRobotAngle Pigeon2 gyroscope for determining robot
+   * orientation
    */
   public Tag(Supplier<Rotation2d> getRobotAngle, Supplier<ChassisSpeeds> speeds, Camera camera) {
     this.getRobotAngle = getRobotAngle;
@@ -129,11 +127,10 @@ public class Tag extends SubsystemBase {
   /**
    * Calculates straight-line distance from camera to AprilTag
    * Uses trigonometry with known tag height and camera angle
-   * 
-   * @return Distance in meters
+   * * @return Distance in meters
    */
   public double GetDistFromCamera() {
-    if (camera.getCameraType() == CameraType.REEF) {
+    if (camera.getCameraType().name().equals("REEF")) {
       alpha = camToTagPitch + camera.getPitch();
       dist = (Math.abs(height - camera.getHeight())) * (Math.tan(Math.toRadians(alpha)));
       dist = dist/Math.cos(Math.toRadians(camToTagYaw));
@@ -149,8 +146,7 @@ public class Tag extends SubsystemBase {
   /**
    * Calculates vector from robot center to detected AprilTag
    * Accounts for camera offset from robot center
-   * 
-   * @return Translation2d representing vector to tag
+   * * @return Translation2d representing vector to tag
    */
   public Translation2d getRobotToTagRR() {
     // Convert camera measurements to vector
@@ -173,8 +169,7 @@ public class Tag extends SubsystemBase {
   /**
    * Calculates robot position relative to field origin
    * Uses known AprilTag position and measured vector to tag
-   * 
-   * @return Translation2d representing robot position on field
+   * * @return Translation2d representing robot position on field
    */
   public Translation2d getOriginToRobot() {
 
@@ -281,5 +276,9 @@ private void crop() {
 
   public double getAngle() {
     return Yaw3d = Table.getEntry("botpose").getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 })[5];
+  }
+
+  public Camera getCamera() {
+    return camera;
   }
 }

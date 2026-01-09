@@ -13,15 +13,10 @@ import frc.demacia.vision.subsystem.Tag;
 /** Add your docs here. */
 public class VisionFuse {
 
-    private Tag[] tags = new Tag[4];
+    private Tag[] tags;
 
-    public VisionFuse(Tag right, Tag feeder, Tag barge, Tag left) {
-
-        this.tags[0] = right;
-        this.tags[1] = feeder;
-        this.tags[2] = barge;
-        this.tags[3] = left;
-
+    public VisionFuse(Tag... tags) {
+        this.tags = tags;
     }
 
     private double getColectedConfidence() {
@@ -53,7 +48,8 @@ public class VisionFuse {
     }
 
     public Rotation2d getRotationEstimation() {
-        return Rotation2d.fromDegrees(tags[2].getAngle());
+        Integer bestCam = getBestCamera();
+        return bestCam != null ? Rotation2d.fromDegrees(tags[bestCam].getAngle()) : null;
     }
 
     public double getVisionTimestamp() {
@@ -113,6 +109,4 @@ public class VisionFuse {
         Integer bestCamera = getBestCamera();
         return bestCamera != null ? tags[bestCamera].getAngle() : 0;
     }
-    
-    
 }
