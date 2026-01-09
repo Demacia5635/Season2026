@@ -1,9 +1,12 @@
 package frc.demacia.utils.mechanisms;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.motors.MotorInterface;
 import frc.demacia.utils.sensors.SensorInterface;
@@ -45,9 +48,11 @@ public class StateBaseMechanism extends BaseMechanism {
         @Override 
         public double[] getValues() { 
             double[] idleValues = new double[motors != null ? motors.size() : 0];
-            if (isPosMechanism){
+            if (isPosMotors != null){
                 for (int i = 0; i < idleValues.length; i++){
-                    idleValues[i] = motorsArray[i].getCurrentPosition();
+                    if (isPosMotors[i]){
+                        idleValues[i] = motorArray[i].getCurrentPosition();
+                    }
                 }
             }
             return idleValues; 
@@ -73,10 +78,25 @@ public class StateBaseMechanism extends BaseMechanism {
         }
     };
 
+    /**
+     * Special TESTING state.
+     * Uses values from a specific 'Test Values' array that can be edited on the Dashboard.
+     */
+    private final MechanismState LOOKUPTABLE_STATE = new MechanismState() {
+        @Override 
+        public double[] getValues() { 
+            return getLookUpTableValues(); 
+        }
+        @Override
+        public String name() {
+            return "LOOKUPTABLE";
+        }
+    };
+
     /** Stores the values used when in TESTING state */
     protected double[] testValues;
 
-    private boolean isPosMechanism;
+    private boolean[] isPosMotors;
 
     /**
      * Constructs a new StateBaseMechanism.
@@ -98,9 +118,9 @@ public class StateBaseMechanism extends BaseMechanism {
      */
     @SuppressWarnings("unchecked")
     private void addNT(Class<? extends MechanismState> enumClass) {
-        stateChooser.addOption("TESTING", TESTING_STATE);
-        stateChooser.addOption("IDLE", IDLE_STATE);
-        stateChooser.addOption("IDLE2", IDLE_STATE); 
+        stateChooser.addOption(TESTING_STATE.name(), TESTING_STATE);
+        stateChooser.addOption(IDLE_STATE.name(), IDLE_STATE);
+        stateChooser.addOption(IDLE_STATE.name() + "2", IDLE_STATE); 
         
         for (MechanismState state : enumClass.getEnumConstants()) {
             stateChooser.addOption(state.name(), state);
@@ -133,11 +153,41 @@ public class StateBaseMechanism extends BaseMechanism {
     }
 
     /**
-     * Sets the default option selected in the dashboard chooser on startup.
-     * @param state The state to be default
+     * Configures all motors in the mechanism as position-controlled motors.
+     * In IDLE state, these motors will hold their current position.
      */
     public void setPositionMechanism(){
-        isPosMechanism = true;
+        isPosMotors = new boolean[motorArray.length];
+        for (int i = 0; i < isPosMotors.length; i++) {
+            isPosMotors[i] = true;
+        }
+    }
+
+    /**
+     * Configures specific motors in the mechanism as position-controlled motors.
+     * @param indexes The indexes of the motors that should maintain their position during IDLE.
+     */
+    public void setPositionMechanism(int... indexes){
+        if (isPosMotors == null) {
+            isPosMotors = new boolean[motorArray.length];
+        }
+        for (int index : indexes) {
+            if (isValidMotor(index)) {
+                isPosMotors[index] = true;
+            }
+        }
+    }
+
+    /**
+     * Attaches a lookup table and a distance source to the mechanism.
+     * @param lookUpTable The table for interpolation.
+     * @param distance A supplier for the input value (e.g., limelight distance).
+     */
+    @Override
+    public void withLookUpTable(LookUpTable lookUpTable, DoubleSupplier distance){
+        super.lookUpTable = lookUpTable;
+        super.distance = distance;
+        stateChooser.addOption(LOOKUPTABLE_STATE.name(), LOOKUPTABLE_STATE);
     }
 
     /**
@@ -173,7 +223,8 @@ public class StateBaseMechanism extends BaseMechanism {
     }
 
     /**
-     * @return The current state value in the index
+     * @return The current target value for a specific motor index from the active state.
+     * @param index The index of the motor in the motorArray.
      */
     public double getValue(int index) {
         double value = getState().getValues()[index];
