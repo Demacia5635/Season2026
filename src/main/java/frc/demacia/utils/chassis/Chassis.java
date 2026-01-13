@@ -67,14 +67,9 @@ import static frc.demacia.vision.utils.VisionConstants.*;
  * <p><b>Example Usage:</b></p>
  * <pre>
  * ChassisConfig config = new ChassisConfig(
- *     "MainChassis", 
- *     frontLeftConfig, frontRightConfig, 
- *     backLeftConfig, backRightConfig,
- *     pigeonConfig,
- *     new Translation2d(0.3, 0.3),   // FL position
- *     new Translation2d(0.3, -0.3),  // FR position
- *     new Translation2d(-0.3, 0.3),  // BL position
- *     new Translation2d(-0.3, -0.3)  // BR position
+ *         "MainChassis",
+ *         swerveModueles[] swerveModulesConfig,
+ *         pigeonConfig,
  * );
  * 
  * Chassis chassis = new Chassis(config);
@@ -105,21 +100,17 @@ public class Chassis extends SubsystemBase {
 
     public Chassis(ChassisConfig chassisConfig) {
         this.chassisConfig = chassisConfig;
-        modules = new SwerveModule[] {
-        new SwerveModule(chassisConfig.frontLeftModuleConfig),
-        new SwerveModule(chassisConfig.frontRightModuleConfig),
-        new SwerveModule(chassisConfig.backLeftModuleConfig),
-        new SwerveModule(chassisConfig.backRightModuleConfig),
-        };
+
+        modules = new SwerveModule[4];
+        Translation2d[] modulePositions = new Translation2d[4];
+        for (int i = 0; i < 4; i++) {
+            modules[i] = new SwerveModule(chassisConfig.swerveModuleConfig[i]);
+            modulePositions[i] = chassisConfig.swerveModuleConfig[i].position;
+        }
+
         quest = new Quest();
         gyro = new Pigeon(chassisConfig.pigeonConfig);
         addStatus();
-        Translation2d[] modulePositions = new Translation2d[] {
-            chassisConfig.frontLeftPosition,
-            chassisConfig.frontRightPosition,
-            chassisConfig.backLeftPosition,
-            chassisConfig.backRightPosition
-        };
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
         demaciaPoseEstimator = new DemaciaPoseEstimator(

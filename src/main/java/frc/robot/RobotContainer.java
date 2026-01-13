@@ -16,7 +16,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.chassis.ChassisConstants;
+import frc.robot.chassis.MK5nChassisConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,7 +43,7 @@ public class RobotContainer implements Sendable{
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
 
     driverController = new CommandController(0, ControllerType.kPS5);
-    this.chassis = new Chassis(ChassisConstants.CHASSIS_CONFIG);
+    this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     
     // Configure the trigger bindings
     configureBindings();

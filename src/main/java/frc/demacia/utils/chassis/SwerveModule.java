@@ -132,7 +132,7 @@ public class SwerveModule {
         }
 
         setSteerPosition(steerMotor.getCurrentPosition() + diff);
-        setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.SteerVelToDriveVel);
+        setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);
     }
 
     /**
