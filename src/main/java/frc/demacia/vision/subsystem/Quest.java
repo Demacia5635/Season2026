@@ -3,6 +3,7 @@ package frc.demacia.vision.subsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,11 +15,9 @@ public class Quest extends SubsystemBase {
   private Field2d field;
   private QuestNav questNav;
   private Pose3d currentQuestPose;
-  private boolean isCalibrated;
   private double timestamp;
 
   public Quest() {
-    isCalibrated = false;
     timestamp = 0;
     questNav = new QuestNav();
     field = new Field2d();
@@ -26,20 +25,18 @@ public class Quest extends SubsystemBase {
     
     SmartDashboard.putData("Quest Field", field);
   }
-  public boolean isCalibrated(){
-    return isCalibrated;
-  }
   
   // Set robot pose (transforms to Quest frame and sends to QuestNav)
-  public void setQuestPose(Pose3d currentBotpose){
-    currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
-    questNav.setPose(currentQuestPose);
-    isCalibrated = true;// i know it is inefficent
-  }
+  // public void setQuestPose(Pose3d currentBotpose){
+  //   currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
+  //   questNav.setPose(currentQuestPose);
+
+  // }
 
   // Get robot pose (transforms from Quest frame to robot frame)
-  public Pose2d getRobotPose() { 
-    return currentQuestPose.transformBy(ROBOT_TO_QUEST.inverse()).toPose2d();
+  public Twist2d getRobotDisplacement() { 
+    Pose2d p = currentQuestPose.transformBy(ROBOT_TO_QUEST.inverse()).toPose2d();
+    return new Twist2d(p.getX(), p.getY(), p.getRotation().getRadians());
   }
   
   // Check if Quest is connected

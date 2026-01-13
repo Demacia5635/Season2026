@@ -10,6 +10,8 @@ import frc.demacia.utils.sensors.PigeonConfig;
 import frc.demacia.vision.subsystem.Tag;
 
 public class MK5nChassisConstants {
+
+  
   public static final String NAME = "MK5n Chassis";
 
   public static final int PIGEON_ID = 14;
@@ -19,18 +21,18 @@ public class MK5nChassisConstants {
   public static final double DRIVE_GEAR_RATIO = 6.03;
   public static final double WHEEL_DIAMETER = 4 * 0.0254;
 
-  public static final double STEER_KP = 4.1;
-  public static final double STEER_KI = 0;
+  public static final double STEER_KP = 6.43;
+  public static final double STEER_KI = 0.07;
   public static final double STEER_KD = 0;
-  public static final double STEER_KS = 0.19817640545050964;
-  public static final double STEER_KV = 0.3866402641515461;
-  public static final double STEER_KA = 0.05;
+  public static final double STEER_KS = 0;
+  public static final double STEER_KV = 0;
+  public static final double STEER_KA = 0;
 
   public static final double DRIVE_KP = 19;
   public static final double DRIVE_KI = 0;
   public static final double DRIVE_KD = 0;
-  public static final double DRIVE_KS = 0.14677232883614777;
-  public static final double DRIVE_KV = 2.947;
+  public static final double DRIVE_KS = 0.15839;
+  public static final double DRIVE_KV = 2.25994;
   public static final double DRIVE_KA = 0.08058;
 
   public static final double MOTION_MAGIC_VEL = 15 * 2 * Math.PI;
@@ -68,6 +70,7 @@ public class MK5nChassisConstants {
               .withPID(STEER_KP, STEER_KI, STEER_KD, STEER_KS, STEER_KV, STEER_KA, 0)
               .withMotionParam(MOTION_MAGIC_VEL, MOTION_MAGIC_ACCEL, MOTION_MAGIC_JERK)
               .withBrake(true)
+              .withInvert(true)
               .withRadiansMotor(STEER_GEAR_RATIO)
               .withRampTime(RAMP_TIME_STEER),
           new TalonFXConfig(i * 3 + 1, CAN_BUS, name + " Drive")
@@ -85,13 +88,13 @@ public class MK5nChassisConstants {
 
   public static final SwerveModuleConfig[] modules = swerveModules(
       new double[] {
-        /* Front Left Offset: */ 0.456299 * 2 * Math.PI,
-        /* Front Right Offset: */  -0.4714 * 2 * Math.PI,
-        /* Back Left Offset: */  -0.246 * 2 * Math.PI,
-        /* Back Right Offset: */  0.2348 * 2 * Math.PI
+        /* Front Left Offset: */ 0.455322 * 2 * Math.PI,
+        /* Front Right Offset: */  -0.471436 * 2 * Math.PI,
+        /* Back Left Offset: */  -0.24585 * 2 * Math.PI,
+        /* Back Right Offset: */  0.234131 * 2 * Math.PI
       });
 
-  public static final PigeonConfig PIGEON_CONFIG = new PigeonConfig(PIGEON_ID, PIGEON_CAN_BUS, NAME + " pigeon");
+  public static final PigeonConfig PIGEON_CONFIG = new PigeonConfig(PIGEON_ID, PIGEON_CAN_BUS, NAME + "/pigeon");
 
   public static final ChassisConfig CHASSIS_CONFIG = new ChassisConfig(
       NAME,
