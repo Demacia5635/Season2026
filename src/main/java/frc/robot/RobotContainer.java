@@ -8,10 +8,15 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.motors.TalonFXMotor;
+import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.ShooterCommand;
+import frc.robot.Shooter.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -25,16 +30,20 @@ public class RobotContainer implements Sendable{
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
 
+
   // The robot's subsystems and commands are defined here...
-
-
+  Shooter shooter;
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
+    this.shooter = new Shooter();
+    shooter.setDefaultCommand(new ShooterCommand());
     
+
+
     // Configure the trigger bindings
     configureBindings();
   }
