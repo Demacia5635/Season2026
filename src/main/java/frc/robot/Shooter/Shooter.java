@@ -11,19 +11,30 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   TalonFXMotor shooterMotor;
-
+  TalonFXMotor indexerMotor;
   public Shooter() {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
+    indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
     
   }
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
   }
+  public double getShooterVelocity(){
+    return shooterMotor.getVelocity().getValueAsDouble();
+  }
   public void setPower(double power){
     shooterMotor.set(power);
   }
 
+  public void setIndexerPower(double pow){
+    indexerMotor.set(pow);
+  }
+
+  public boolean isShooterReady(){
+    return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
+  }
   
   public void stop(){
     shooterMotor.stopMotor();

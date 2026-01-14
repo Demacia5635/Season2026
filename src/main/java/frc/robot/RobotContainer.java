@@ -8,10 +8,13 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
+import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.Shooter;
@@ -30,6 +33,7 @@ public class RobotContainer implements Sendable{
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
 
+  CommandController controller;
 
   // The robot's subsystems and commands are defined here...
   Shooter shooter;
@@ -39,9 +43,10 @@ public class RobotContainer implements Sendable{
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
+    controller = new CommandController(0, ControllerType.kPS5);
     this.shooter = new Shooter();
     shooter.setDefaultCommand(new ShooterCommand(shooter));
-    
+    controller.downButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(-0.8)));
 
 
     // Configure the trigger bindings

@@ -16,10 +16,18 @@ public class ShooterConstans {
     public static final String shooterMotorName = "Shooter Motor";
 
     public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus, shooterMotorName)
-    .withFeedForward(0.005, 0)
-    .withInvert(false)
+    .withFeedForward(0.0045, 0)
+    .withInvert(true)
     .withRampTime(0.5)
     .withBrake(false)
-    .withPID(2.3, 0, 0, 0.21073, 0.245, 0.05, 0)
+    .withPID(2.2, 0, 0, 0.21073, 0.245, 0.05, 0)
     .withMeterMotor(1, 4 * 0.0254);
+
+    public static final int INDEXER_ID = 60;
+    public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
+    public static final String INDEXER_NAME = "Indexer Motor";
+
+
+    public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR, INDEXER_NAME)
+    .withInvert(true);
 }
