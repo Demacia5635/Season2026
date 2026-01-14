@@ -14,12 +14,11 @@ import frc.demacia.utils.controller.CommandController.ControllerType;
 public class ShooterCommand extends Command {
   /** Creates a new shooterCommand. */
 
-  CommandController controller = new CommandController(0,ControllerType.kPS5);
   Shooter shooter;
   double vel =0;
 
-  public ShooterCommand() {
-    shooter = new Shooter();
+  public ShooterCommand(Shooter shooter) {
+    this.shooter = shooter;
     addRequirements(shooter);
     SmartDashboard.putData(this);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -39,6 +38,7 @@ public class ShooterCommand extends Command {
   @Override
   public void execute() {
     shooter.setSpeed(vel);
+    // shooter.setPower(vel);
   }
 
   // Called once the command ends or is interrupted.

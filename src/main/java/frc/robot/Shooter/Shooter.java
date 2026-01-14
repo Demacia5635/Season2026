@@ -14,10 +14,14 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
+    
   }
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
+  }
+  public void setPower(double power){
+    shooterMotor.set(power);
   }
 
   

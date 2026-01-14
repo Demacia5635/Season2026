@@ -11,12 +11,15 @@ import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 
 public class ShooterConstans {
 
-    public static final int shooterMotorID = 12;
+    public static final int shooterMotorID = 21;
     public static final Canbus shooterMotorCanbus = Canbus.Rio;
     public static final String shooterMotorName = "Shooter Motor";
 
     public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus, shooterMotorName)
-    .withFeedForward(0, 0)
-    .withPID(0, 0, 0, 0, 0, 0, 0)
-    .withMeterMotor(0, 0);
+    .withFeedForward(0.005, 0)
+    .withInvert(false)
+    .withRampTime(0.5)
+    .withBrake(false)
+    .withPID(2.3, 0, 0, 0.21073, 0.245, 0.05, 0)
+    .withMeterMotor(1, 4 * 0.0254);
 }
