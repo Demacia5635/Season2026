@@ -12,11 +12,14 @@ public class Shooter extends SubsystemBase {
 
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
+   
+  
   public Shooter() {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
     
   }
+
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
@@ -26,6 +29,10 @@ public class Shooter extends SubsystemBase {
   }
   public void setPower(double power){
     shooterMotor.set(power);
+  }
+
+  public void setVelocitiesAndAngle(double[] VelocityAndAngle){
+    setSpeed(VelocityAndAngle[0]);
   }
 
   public void setIndexerPower(double pow){
