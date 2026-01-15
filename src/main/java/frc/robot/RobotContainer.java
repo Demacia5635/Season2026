@@ -17,9 +17,8 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
-import frc.robot.Shooter.Shooter;
-import frc.robot.Shooter.ShooterCommand;
-import frc.robot.Shooter.Shooter;
+import frc.robot.Shooter.commands.ShooterCommand;
+import frc.robot.Shooter.subsystem.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
