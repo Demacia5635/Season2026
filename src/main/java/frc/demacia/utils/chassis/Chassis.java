@@ -39,16 +39,14 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.Utilities;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
-import frc.demacia.vision.subsystem.ObjectPose;
 import frc.demacia.vision.utils.VisionFuse;
+import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
@@ -101,7 +99,7 @@ public class Chassis extends SubsystemBase {
 
     public Tag[] tags;
     public Quest quest;
-    // public VisionFuse visionFuse;
+    public VisionFuse visionFuse;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
@@ -134,7 +132,7 @@ public class Chassis extends SubsystemBase {
         field = new Field2d();
 
         tags = chassisConfig.tags;
-        // visionFuse = new VisionFuse(tags);
+        visionFuse = new VisionFuse(tags);
         if (chassisConfig.objectCamera != null) {
             objectPose = new ObjectPose(
                     chassisConfig.objectCamera,
@@ -169,7 +167,6 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("Chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
 
-        LogManager.addEntry("Chassis/UpRotation", this::getUpRotation);
     }
 
     public double getUpRotation() {
@@ -329,9 +326,8 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateQuest(Twist2d questDisplacement) {
-
         Pose2d poseWithQuest = getPose().exp(questDisplacement);
-        VisionMeasurment visionMeasurment = new VisionMeasurment(Timer.getTimestamp(), poseWithQuest.getTranslation(), poseWithQuest.getRotation());
+        VisionMeasurment visionMeasurment = new VisionMeasurment(Timer.getTimestamp(), poseWithQuest.getTranslation(), Optional.of(poseWithQuest.getRotation()));
         demaciaPoseEstimator.updateVisionSTD(getSTDQuest());
         demaciaPoseEstimator.addVisionMeasurement(visionMeasurment);
     }
@@ -386,13 +382,13 @@ public class Chassis extends SubsystemBase {
 
     Pose2d questPoseEstimation;
   
-    // Pose2d visionFusePoseEstimation;
+    Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
+    
 
     @Override
     public void periodic() {
-        // visionFusePoseEstimation = visionFuse.getPoseEstemation();
-        Twist2d questTwist = quest.getRobotDisplacement();
+        visionFusePoseEstimation = visionFuse.getPoseEstemation();
         gyroAngle = getGyroAngle();
 
         OdometryObservation observation = new OdometryObservation(
@@ -403,12 +399,12 @@ public class Chassis extends SubsystemBase {
         
         demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
         
-        // if (visionFusePoseEstimation != null) {
-        //     updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-        // } else if (quest.isCalibrated() && questPoseEstimation != null) {
-        //     updateQuest(questPoseEstimation);
-        // } else if (visionFusePoseEstimation != null) {
-        //     quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        if (visionFusePoseEstimation != null) {
+            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+            quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        } 
+        //  else if (visionFusePoseEstimation != null) {
+
         // }
 
         field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
@@ -578,13 +574,6 @@ public class Chassis extends SubsystemBase {
         super.initSendable(builder);
     }
 
-    public Trajectory vector(Translation2d start, Translation2d end) {
-        return TrajectoryGenerator.generateTrajectory(
-                List.of(
-                        new Pose2d(start, end.getAngle().minus(start.getAngle())),
-                        new Pose2d(end, end.getAngle().minus(start.getAngle()))),
-                new TrajectoryConfig(4.0, 4.0));
-    }
 
     /**
      * Finds a tag by the camera name associated with it.

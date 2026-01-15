@@ -27,11 +27,11 @@ public class Quest extends SubsystemBase {
   }
   
   // Set robot pose (transforms to Quest frame and sends to QuestNav)
-  // public void setQuestPose(Pose3d currentBotpose){
-  //   currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
-  //   questNav.setPose(currentQuestPose);
+  public void setQuestPose(Pose3d currentBotpose){
+    currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
+    questNav.setPose(currentQuestPose);
 
-  // }
+  }
 
   // Get robot pose (transforms from Quest frame to robot frame)
   public Twist2d getRobotDisplacement() { 
