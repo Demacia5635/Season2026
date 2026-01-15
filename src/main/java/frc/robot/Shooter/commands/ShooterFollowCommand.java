@@ -5,9 +5,7 @@
 package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.robot.Shooter.ShooterConstans;
@@ -20,15 +18,13 @@ public class ShooterFollowCommand extends Command {
 
   Shooter shooter;
   Chassis chassis;
-  shooterUtilse shooterUtilse;
   Pose2d target;
   Translation3d robotVelosety;
   public static double VelocityInFucer;
 
-  public ShooterFollowCommand(Shooter shooter, Chassis chassis, shooterUtilse shooterUtilse) {
+  public ShooterFollowCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
     this.shooter = shooter;
-    this.shooterUtilse = shooterUtilse;
     this.target = Pose2d.kZero;
   }
 

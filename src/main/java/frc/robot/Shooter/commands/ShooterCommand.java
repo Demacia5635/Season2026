@@ -7,8 +7,6 @@ package frc.robot.Shooter.commands;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.Shooter.subsystem.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
