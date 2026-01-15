@@ -28,6 +28,7 @@ public class Shooter extends SubsystemBase {
   public double getShooterVelocity(){
     return shooterMotor.getVelocity().getValueAsDouble();
   }
+  
   public void setPower(double power){
     shooterMotor.set(power);
   }
@@ -36,6 +37,12 @@ public class Shooter extends SubsystemBase {
   public void setVelocitiesAndAngle(double[] VelocityAndAngle){
     setSpeed(VelocityAndAngle[0]);
   }
+
+  public void setShppterAngle(){
+
+  }
+
+  
 
   public void setIndexerPower(double pow){
     indexerMotor.set(pow);

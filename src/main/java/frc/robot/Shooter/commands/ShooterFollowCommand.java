@@ -6,10 +6,13 @@ package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
+import frc.robot.Shooter.utils.shooterUtilse;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShooterFollowCommand extends Command {
@@ -17,12 +20,15 @@ public class ShooterFollowCommand extends Command {
 
   Shooter shooter;
   Chassis chassis;
+  shooterUtilse shooterUtilse;
   Pose2d target;
-  Transform3d robotVelosety;
+  Translation3d robotVelosety;
+  public static double VelocityInFucer;
 
-  public ShooterFollowCommand(Shooter shooter, Chassis chassis) {
+  public ShooterFollowCommand(Shooter shooter, Chassis chassis, shooterUtilse shooterUtilse) {
     this.chassis = chassis;
     this.shooter = shooter;
+    this.shooterUtilse = shooterUtilse;
     this.target = Pose2d.kZero;
   }
 
@@ -36,7 +42,9 @@ public class ShooterFollowCommand extends Command {
   public void execute() {
     Pose2d futurePose = chassis.computeFuturePosition(0.02);
     double distanceFromTarget = target.getTranslation().getDistance(futurePose.getTranslation());
-    shooter.setVelocitiesAndAngle(ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget));
+    VelocityInFucer = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0];
+    //shooter.setVelocitiesAndAngle(ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0]);
+    shooter.setSpeed(shooterUtilse.getFucerShooterVelInVector().minus(robotVelosety).getNorm());
 
   }
 
