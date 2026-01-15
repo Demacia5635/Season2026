@@ -30,7 +30,7 @@ public class shooterUtilse extends SubsystemBase {
 
 
   public shooterUtilse() {
-    this.shooterVelInFucer = ShooterFollowCommand.VelocityInFucer;
+    this.shooterVelInFucer = shooter.getVelocityInFucer();
     this.ShooterVelocity = shooter.getShooterVelocity();
   }
 

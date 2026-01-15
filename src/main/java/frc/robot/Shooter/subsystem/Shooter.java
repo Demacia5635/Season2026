@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
 
+
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
-   
+  public double VelocityInFucer;
   
   public Shooter() {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
@@ -42,6 +43,13 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  public void setVelocityInTheFucer(double vel){
+    VelocityInFucer = vel;
+  }
+
+  public double getVelocityInFucer(){
+    return VelocityInFucer;
+  }
   
 
   public void setIndexerPower(double pow){

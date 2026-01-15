@@ -43,6 +43,7 @@ public class ShooterFollowCommand extends Command {
     Pose2d futurePose = chassis.computeFuturePosition(0.02);
     double distanceFromTarget = target.getTranslation().getDistance(futurePose.getTranslation());
     VelocityInFucer = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0];
+    shooter.setVelocityInTheFucer(VelocityInFucer);
     //shooter.setVelocitiesAndAngle(ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0]);
     shooter.setSpeed(shooterUtilse.getFucerShooterVelInVector().minus(robotVelosety).getNorm());
 
