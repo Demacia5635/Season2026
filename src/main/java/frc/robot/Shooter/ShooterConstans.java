@@ -46,6 +46,6 @@ public class ShooterConstans {
 
     public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,
             INDEXER_NAME)
-            .withInvert(true);
+            .withInvert(false);
 
 }
