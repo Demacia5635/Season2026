@@ -28,8 +28,8 @@ public class ShooterUtils {
         this.kinematics = kinematics;
     }
 
-    public Translation3d fucerValRobot(ChassisSpeeds wantedVelocity){
-        ChassisSpgeeds currentRobotVel = chassis.getRobotRelVelocities();
+    public Translation3d fucerValRobotAsVector(ChassisSpeeds wantedVelocity){
+        ChassisSpeeds currentRobotVel = chassis.getRobotRelVelocities();
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(currentRobotVel);
         ChassisSpeeds fucerRobotVel = kinematics.toChassisSpeeds(moduleStates,chassis.getGyroAngle().getDegrees());
         return new Translation3d(fucerRobotVel.vxMetersPerSecond, fucerRobotVel.vyMetersPerSecond, 0.0);
