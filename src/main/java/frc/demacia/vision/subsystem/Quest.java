@@ -3,12 +3,14 @@ package frc.demacia.vision.subsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
+
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 public class Quest extends SubsystemBase {
@@ -20,6 +22,8 @@ public class Quest extends SubsystemBase {
   public Quest() {
     timestamp = 0;
     questNav = new QuestNav();
+    questNav.commandPeriodic();
+
     field = new Field2d();
     currentQuestPose = new Pose3d(); // Initialize to origin - IMPORTANT!
     
@@ -28,16 +32,19 @@ public class Quest extends SubsystemBase {
   
   // Set robot pose (transforms to Quest frame and sends to QuestNav)
   public void setQuestPose(Pose3d currentBotpose){
-    currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
-    questNav.setPose(currentQuestPose);
+    // currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
+
+    questNav.setPose(currentQuestPose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y
 
   }
 
-  // Get robot pose (transforms from Quest frame to robot frame)
-  public Twist2d getRobotDisplacement() { 
-    Pose2d p = currentQuestPose.transformBy(ROBOT_TO_QUEST.inverse()).toPose2d();
-    return new Twist2d(p.getX(), p.getY(), p.getRotation().getRadians());
+ /**
+  * * @return  the center of the robot form quest
+  */
+  public Pose2d getRobotPose2d() { 
+    return currentQuestPose.toPose2d().transformBy(ROBOT_TO_QUEST2D);// the transformBy is to switch x & y
   }
+
   
   // Check if Quest is connected
   public boolean isConnected() {
@@ -60,8 +67,10 @@ public class Quest extends SubsystemBase {
       currentQuestPose = poseFrames[poseFrames.length - 1].questPose3d();
       timestamp = poseFrames[poseFrames.length - 1].dataTimestamp();
       // Display Quest pose
-      SmartDashboard.putNumber("Quest X", currentQuestPose.getX());
-      SmartDashboard.putNumber("Quest Y", currentQuestPose.getY());
+
+      // the quest x & y are oppeset so i am switching (if it were more than +-90 than i will had to transformBy)
+      SmartDashboard.putNumber("Quest X", currentQuestPose.getY());
+      SmartDashboard.putNumber("Quest Y", currentQuestPose.getX());
       SmartDashboard.putNumber("Quest Rotation", currentQuestPose.getRotation().getZ());
 
       field.setRobotPose(currentQuestPose.toPose2d());
@@ -71,6 +80,7 @@ public class Quest extends SubsystemBase {
     SmartDashboard.putBoolean("Quest Connected", questNav.isConnected());
     SmartDashboard.putBoolean("Quest Tracking", questNav.isTracking());
     SmartDashboard.putNumber("Quest Latency (ms)", questNav.getLatency());
+    SmartDashboard.putString("QuestNav Version", questNav.getLibVersion());
     
     // Battery monitoring
     questNav.getBatteryPercent().ifPresent(

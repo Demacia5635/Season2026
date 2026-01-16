@@ -6,6 +6,7 @@ package frc.demacia.vision.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -38,7 +39,7 @@ public class VisionConstants {
         public static Translation2d[] O_TO_TAG = { null, // 0
                         new Translation2d(inchToMeter(657.37), inchToMeter(25.80)), // 1
                         new Translation2d(inchToMeter(657.37), inchToMeter(291.20)), // 2
-                        new Translation2d(inchToMeter(455.15), inchToMeter(317.15)), // 3
+                        new Translation2d(inchToMeter(0), inchToMeter(0)), // 3
                         new Translation2d(inchToMeter(365.20), inchToMeter(241.64)), // 4
                         new Translation2d(inchToMeter(365.20), inchToMeter(75.39)), // 5
                         new Translation2d(inchToMeter(530.49), inchToMeter(130.17)), // 6
@@ -63,7 +64,7 @@ public class VisionConstants {
         public static Rotation2d[] TAG_ANGLE = { null, // 0
                         Rotation2d.fromDegrees(126), // 1
                         Rotation2d.fromDegrees(234), // 2
-                        Rotation2d.fromDegrees(270), // 3
+                        Rotation2d.fromDegrees(0), // 3
                         Rotation2d.fromDegrees(0), // 4
                         Rotation2d.fromDegrees(0), // 5
                         Rotation2d.fromDegrees(300), // 6
@@ -93,7 +94,7 @@ public class VisionConstants {
         public static double[] TAG_HEIGHT = { 0, // 0
                         STATION_TAG_HIGHT, // 1
                         STATION_TAG_HIGHT, // 2
-                        SIDE_TAG_HIGHT, // 3
+                        inchToMeter(44.25), // 3
                         BARGE_TAG_HIGHT, // 4
                         BARGE_TAG_HIGHT, // 5
                         REEF_TAG_HIGHT, // 6
@@ -150,11 +151,18 @@ public class VisionConstants {
 
 
         //TODO:find the right offsets
-        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(180));
-        public static final double X_OFFSET_QUEST = 0.1;
-        public static final double Y_OFFSET_QUEST = 0.3;
-        public static final double Z_OFFSET_QUEST = 0.38;
-        public static final Transform3d ROBOT_TO_QUEST = new Transform3d(X_OFFSET_QUEST,Y_OFFSET_QUEST,Z_OFFSET_QUEST,YAW_OFFSET_QUEST);
+        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(90));
+        // public static final double X_OFFSET_QUEST = 0.245;
+        // public static final double Y_OFFSET_QUEST = -0.06;
+        // public static final double Z_OFFSET_QUEST = 0.52;
+        public static final double X_OFFSET_QUEST = 0.0;
+        public static final double Y_OFFSET_QUEST = 0.0;
+        public static final double Z_OFFSET_QUEST = 0.0;
+        /**
+         * * @return from the center of the robot to quest!!
+         */
+        public static final Transform3d ROBOT_TO_QUEST3D = new Transform3d(X_OFFSET_QUEST,Y_OFFSET_QUEST,Z_OFFSET_QUEST,YAW_OFFSET_QUEST);
+        public static final Transform2d ROBOT_TO_QUEST2D = new Transform2d(X_OFFSET_QUEST,Y_OFFSET_QUEST,YAW_OFFSET_QUEST.toRotation2d());
 
 
 }
