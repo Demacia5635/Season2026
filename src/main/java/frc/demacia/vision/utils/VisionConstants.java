@@ -157,7 +157,7 @@ public class VisionConstants {
         // public static final double Z_OFFSET_QUEST = 0.52;
         public static final double X_OFFSET_QUEST = 0.0;
         public static final double Y_OFFSET_QUEST = 0.0;
-        public static final double Z_OFFSET_QUEST = 0.0;
+        public static final double Z_OFFSET_QUEST = 0.52;
         /**
          * * @return from the center of the robot to quest!!
          */
