@@ -33,7 +33,7 @@ public class Quest extends SubsystemBase {
   public void setQuestPose(Pose3d currentBotpose){
     // currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
 
-    questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y
+    questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y and gives back the hight of the quest
 
   }
 
