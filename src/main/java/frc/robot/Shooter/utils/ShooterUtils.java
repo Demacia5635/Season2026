@@ -4,6 +4,7 @@
 
 package frc.robot.Shooter.utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -36,17 +37,8 @@ public class ShooterUtils {
         return new Translation3d(fucerRobotVel.vxMetersPerSecond, fucerRobotVel.vyMetersPerSecond, 0.0);
     }
 
-    public static double getVelFromLookUpTable(double destins){
-        double angle =ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[0];
-        return angle;
-    }
 
-    public static double getAnglFromLookUpTable(double destins){
-        double velocity = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[1];
-        return velocity;
-    }
-
-    public static void getRobotFucerPose(double dtSpeed){
+    public static Pose2d getRobotFucerPose(double dtSpeed ,Chassis chassis){ //TODO: finade ander solosen fot the Chassis chassis
         return chassis.computeFuturePosition(dtSpeed);
     }
 }

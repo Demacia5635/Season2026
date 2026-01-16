@@ -44,6 +44,16 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(power);
   }
 
+  public static double getVelFromLookUpTable(double destins){
+    double angle =ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[0];
+    return angle;
+  }
+
+  public static double getAnglFromLookUpTable(double destins){
+      double velocity = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[1];
+      return velocity;
+  }
+
   
   public void setVelocitiesAndAngle(double[] VelocityAndAngle){
     setSpeed(VelocityAndAngle[0]);
