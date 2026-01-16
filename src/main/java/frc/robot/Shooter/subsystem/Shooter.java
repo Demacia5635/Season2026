@@ -4,6 +4,8 @@
 
 package frc.robot.Shooter.subsystem;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
@@ -21,6 +23,15 @@ public class Shooter extends SubsystemBase {
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
   }
 
+  public double getAngle(){
+    //TODO: cange to the angle
+    return 0;
+  }
+
+  public double getTurretAngle(){
+    //TODO:CANGE TO THE TURRET ANGLE
+    return 0;
+  }
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
@@ -38,9 +49,13 @@ public class Shooter extends SubsystemBase {
     setSpeed(VelocityAndAngle[0]);
   }
 
-  public void setShppterAngle(){
 
+  public Translation3d getShooterFucerMoveng() {
+  return new  Translation3d(VelocityInFucer, 
+      new Rotation3d(0, getAngle(), getTurretAngle())
+    );
   }
+
 
   public void setVelocityInTheFucer(double vel){
     VelocityInFucer = vel;
