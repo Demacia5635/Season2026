@@ -12,18 +12,27 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
 
+
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
+  //motors
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
+
+  //variables
   public double VelocityInFucer;
+
+  //abicted i use
   Chassis chassis;
+
+  //cunstroctor 
   public Shooter(Chassis chassis) {
     this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
   }
+
 
   public double getAngle(){
     //TODO: cange to the angle
@@ -32,12 +41,14 @@ public class Shooter extends SubsystemBase {
 
   public double getTurretAngle(){
     //TODO:CANGE TO THE TURRET ANGLE
-    return chassis.getGyroAngle().getDegrees();
+    return chassis.getGyroAngle().getDegrees(); // for the tsting the tow angle is the chassis angle
   }
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
   }
+
+
   public double getShooterVelocity(){
     return shooterMotor.getVelocity().getValueAsDouble();
   }
