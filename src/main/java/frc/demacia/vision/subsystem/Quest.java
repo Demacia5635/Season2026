@@ -3,14 +3,13 @@ package frc.demacia.vision.subsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
-import static edu.wpi.first.units.Units.Fahrenheit;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 public class Quest extends SubsystemBase {
@@ -34,7 +33,7 @@ public class Quest extends SubsystemBase {
   public void setQuestPose(Pose3d currentBotpose){
     // currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
 
-    questNav.setPose(currentQuestPose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y
+    questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y
 
   }
 
