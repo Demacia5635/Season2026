@@ -8,9 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
-import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
-//import frc.robot.Shooter.utils.shooterUtilse;
 import frc.robot.Shooter.utils.ShooterUtils;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */

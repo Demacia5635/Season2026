@@ -5,20 +5,11 @@
 package frc.robot.Shooter.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.geometry.Rotation2d;
-import frc.demacia.utils.geometry.Translation2d;
-import frc.robot.Shooter.ShooterConstans;
-import frc.robot.Shooter.commands.ShooterFollowCommand;
-import frc.robot.Shooter.subsystem.Shooter;
 
 public class ShooterUtils {
 
