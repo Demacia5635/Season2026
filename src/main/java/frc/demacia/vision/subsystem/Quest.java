@@ -69,8 +69,10 @@ public class Quest extends SubsystemBase {
       // Display Quest pose
 
       // the quest x & y are oppeset so i am switching (if it were more than +-90 than i will had to transformBy)
-      SmartDashboard.putNumber("Quest X", currentQuestPose.getY());
-      SmartDashboard.putNumber("Quest Y", currentQuestPose.getX());
+      //never mind i will use transformby
+      Pose2d qPose2d = currentQuestPose.toPose2d().transformBy(ROBOT_TO_QUEST2D);
+      SmartDashboard.putNumber("Quest X", qPose2d.getX());
+      SmartDashboard.putNumber("Quest Y", qPose2d.getY());
       SmartDashboard.putNumber("Quest Rotation", currentQuestPose.getRotation().getZ());
 
       field.setRobotPose(currentQuestPose.toPose2d());
