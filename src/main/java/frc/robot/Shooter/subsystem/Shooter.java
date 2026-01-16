@@ -4,6 +4,7 @@
 
 package frc.robot.Shooter.subsystem;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,12 +46,12 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(power);
   }
 
-  public static double getVelFromLookUpTable(double destins){
+  public double getVelFromLookUpTable(double destins){
     double angle =ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[0];
     return angle;
   }
 
-  public static double getAnglFromLookUpTable(double destins){
+  public double getAnglFromLookUpTable(double destins){
       double velocity = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[1];
       return velocity;
   }
@@ -86,6 +87,11 @@ public class Shooter extends SubsystemBase {
   
   public void stop(){
     shooterMotor.stopMotor();
+  }
+
+  public Pose2d targetPose(){
+    //TODEO: FINALE THE DISTINS TO THE TARGET
+    return new Pose2d();
   }
 
   @Override

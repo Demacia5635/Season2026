@@ -11,6 +11,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 //import frc.robot.Shooter.utils.shooterUtilse;
+import frc.robot.Shooter.utils.ShooterUtils;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShooterFollowCommand extends Command {
@@ -21,8 +22,10 @@ public class ShooterFollowCommand extends Command {
   Pose2d target;
   Translation3d robotVelosety;
   public static double VelocityInFucer;
+  ShooterUtils shooterUtilse;
 
-  public ShooterFollowCommand(Shooter shooter, Chassis chassis) {
+  public ShooterFollowCommand(Shooter shooter, Chassis chassis, ShooterUtils shooterUtilse) {
+    this.shooterUtilse = shooterUtilse;
     this.chassis = chassis;
     this.shooter = shooter;
     this.target = Pose2d.kZero;
@@ -36,13 +39,8 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d futurePose = chassis.computeFuturePosition(0.02);
-    double distanceFromTarget = target.getTranslation().getDistance(futurePose.getTranslation());
-    VelocityInFucer = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0];
-    shooter.setVelocityInTheFucer(VelocityInFucer);
-    //shooter.setVelocitiesAndAngle(ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0]);
-    //shooter.setSpeed(shooterUtilse.getFucerShooterVelInVector().minus(robotVelosety).getNorm());
-
+    double DistensFromTarget = ShooterUtils.getRobotFucerPose(0, chassis).minus(shooter.targetPose()).getTranslation().getNorm();
+    shooter.setSpeed(shooter.getVelFromLookUpTable(DistensFromTarget));
   }
 
   // Called once the command ends or is interrupted.
