@@ -15,6 +15,7 @@ import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.geometry.Rotation2d;
 import frc.demacia.utils.geometry.Translation2d;
+import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.commands.ShooterFollowCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 
@@ -35,7 +36,17 @@ public class ShooterUtils {
         return new Translation3d(fucerRobotVel.vxMetersPerSecond, fucerRobotVel.vyMetersPerSecond, 0.0);
     }
 
-    public void getRobotFucerPose(double dtSpeed){
-        chassis.computeFuturePosition(dtSpeed);
+    public static double getVelFromLookUpTable(double destins){
+        double angle =ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[0];
+        return angle;
+    }
+
+    public static double getAnglFromLookUpTable(double destins){
+        double velocity = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[1];
+        return velocity;
+    }
+
+    public static void getRobotFucerPose(double dtSpeed){
+        return chassis.computeFuturePosition(dtSpeed);
     }
 }
