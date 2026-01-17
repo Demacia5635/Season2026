@@ -5,7 +5,9 @@
 package frc.robot.Shooter.subsystem;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
@@ -113,7 +115,6 @@ public class Shooter extends SubsystemBase {
 
   //shooter pose on the robot
   public Pose2d ShooterPoseOnRobot(){
-    //TODEO: FINALE THE SHOOTER POSE ON THE ROBOT
     return new Pose2d();
   }
 
@@ -132,6 +133,7 @@ public class Shooter extends SubsystemBase {
       );
     return shooterToTarget.getNorm();
   }
+
 
   @Override
   public void periodic() {

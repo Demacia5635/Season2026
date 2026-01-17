@@ -5,6 +5,9 @@
 package frc.robot.Shooter.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -40,5 +43,14 @@ public class ShooterUtils {
 
     public static Pose2d getRobotFucerPose(double dtSpeed, Chassis chassis){ //TODO: finade ander solosen fot the Chassis chassis
         return chassis.computeFuturePosition(dtSpeed);
+    }
+
+    public static Pose2d calculatePoseWithTransform(Pose2d poseA, double distance, Rotation2d angleFromA, Rotation2d pointBAngle) {
+        // Create a transform representing the offset from A to B
+        Translation2d translation = new Translation2d(distance, angleFromA);
+        Transform2d transform = new Transform2d(translation, orientationB.minus(poseA.getRotation()));
+
+        // Apply the transform to pose A
+        return poseA.plus(transform);
     }
 }
