@@ -37,8 +37,7 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double DistensFromTarget = ShooterUtils.getRobotFucerPose(0, chassis).minus(shooter.targetPose()).getTranslation().getNorm();
-    shooter.setSpeed(shooter.getVelFromLookUpTable(DistensFromTarget));
+    shooter.setSpeed(shooter.getVelFromLookUpTable(shooter.getDistToTargetShoter()));
   }
 
   // Called once the command ends or is interrupted.
