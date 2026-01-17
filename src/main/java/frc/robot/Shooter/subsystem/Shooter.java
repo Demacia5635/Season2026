@@ -4,8 +4,13 @@
 
 package frc.robot.Shooter.subsystem;
 
+import java.util.Optional;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -18,6 +23,8 @@ import frc.robot.Shooter.utils.ShooterUtils;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
+
+  AprilTagFieldLayout  apriTagfFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026Reefscape.m_resourceFile);
 
   //motors
   TalonFXMotor shooterMotor;
@@ -109,8 +116,12 @@ public class Shooter extends SubsystemBase {
 
   //target pose
   public Pose2d targetPose(){
-    //TODO: fined the target pose
-    return new Pose2d();
+    Optional<Pose3d> getTagPose3d = apriTagfFieldLayout.getTagPose(2);
+    Pose2d getTagPose2d = getTagPose3d.get().toPose2d();
+    double hubMideldestinseFromeTag;
+    Rotation2d hubAngleFromeTag;
+    Pose2d calclateHubPose = ShooterUtils.calculatePoseWithTransform(getTagPose2d, hubMideldestinseFromeTag, hubAngleFromeTag, new Rotation2d());
+    return calclateHubPose;
   }
 
   //shooter pose on the robot

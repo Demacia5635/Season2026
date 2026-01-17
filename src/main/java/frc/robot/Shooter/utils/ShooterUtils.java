@@ -46,11 +46,8 @@ public class ShooterUtils {
     }
 
     public static Pose2d calculatePoseWithTransform(Pose2d poseA, double distance, Rotation2d angleFromA, Rotation2d pointBAngle) {
-        // Create a transform representing the offset from A to B
         Translation2d translation = new Translation2d(distance, angleFromA);
-        Transform2d transform = new Transform2d(translation, orientationB.minus(poseA.getRotation()));
-
-        // Apply the transform to pose A
+        Transform2d transform = new Transform2d(translation, pointBAngle.minus(poseA.getRotation()));
         return poseA.plus(transform);
     }
 }
