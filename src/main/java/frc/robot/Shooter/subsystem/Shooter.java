@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
 
   //target pose
   public Pose2d targetPose(){
-    //TODEO: FINALE THE DISTINS TO THE TARGET
+    //TODO: fined the target pose
     return new Pose2d();
   }
 
