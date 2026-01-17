@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.utils.ShooterUtils;
 
 
 public class Shooter extends SubsystemBase {
@@ -103,6 +104,26 @@ public class Shooter extends SubsystemBase {
   public Pose2d targetPose(){
     //TODEO: FINALE THE DISTINS TO THE TARGET
     return new Pose2d();
+  }
+
+  public Pose2d ShooterPoseOnRobot(){
+    //TODEO: FINALE THE SHOOTER POSE ON THE ROBOT
+    return new Pose2d();
+  }
+
+  public double getDistToTargetShoter(){
+    Translation3d robotToTarget = new Translation3d(
+      ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), targetPose())
+      , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), targetPose()), 0);
+
+      Translation3d shooterToTarget = robotToTarget.minus(
+        new Translation3d(
+          ShooterPoseOnRobot().getX(),
+          ShooterPoseOnRobot().getY(),
+          0
+        )
+      );
+    return shooterToTarget.getNorm();
   }
 
   @Override

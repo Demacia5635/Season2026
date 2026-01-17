@@ -44,8 +44,6 @@ public class RobotContainer implements Sendable{
     //this.shooter = new Shooter();
     shooter.setDefaultCommand(new ShooterCommand(shooter));
     SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
-
-
     // Configure the trigger bindings
     configureBindings();
   }

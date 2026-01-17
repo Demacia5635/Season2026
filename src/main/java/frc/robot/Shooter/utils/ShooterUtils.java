@@ -28,6 +28,15 @@ public class ShooterUtils {
         return new Translation3d(fucerRobotVel.vxMetersPerSecond, fucerRobotVel.vyMetersPerSecond, 0.0);
     }
 
+    public static double distensFromToPose2dPoint(Pose2d from, Pose2d to){
+        return from.minus(to).getTranslation().getNorm();
+    }
+
+    public static double angle_betuenTowPose2d(Pose2d from, Pose2d to){
+        double dx = to.getX() - from.getX();
+        double dy = to.getY() - from.getY();
+        return Math.toDegrees(Math.atan2(dy, dx));
+    }
 
     public static Pose2d getRobotFucerPose(double dtSpeed ,Chassis chassis){ //TODO: finade ander solosen fot the Chassis chassis
         return chassis.computeFuturePosition(dtSpeed);
