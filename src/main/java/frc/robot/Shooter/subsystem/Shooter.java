@@ -34,14 +34,14 @@ public class Shooter extends SubsystemBase {
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
   }
 
-
+  //get the pitch angle
   public double getAngle(){
     //TODO: cange to the angle
     return 0;
   }
 
+  //get the yow angle
   public double getTurretAngle(){
-    //TODO:CANGE TO THE TURRET ANGLE
     return chassis.getGyroAngle().getDegrees(); // for the tsting the tow angle is the chassis angle
   }
 
