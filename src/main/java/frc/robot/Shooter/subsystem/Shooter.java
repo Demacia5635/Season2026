@@ -24,7 +24,7 @@ import frc.robot.Shooter.utils.ShooterUtils;
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
-
+  //april tag field layout
   AprilTagFieldLayout apriTagfFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026ChargedUp.m_resourceFile).get();
 
   //motors
@@ -115,8 +115,8 @@ public class Shooter extends SubsystemBase {
     shooterMotor.stopMotor();
   }
 
-  //target pose
-  public Pose2d targetPose(){
+  //hub pose (i finde it with april tag)
+  public Pose2d hubPose(){
     Optional<Pose3d> getTagPose3d = apriTagfFieldLayout.getTagPose(2);
     Pose2d getTagPose2d = getTagPose3d.get().toPose2d();
     double hubMideldestinseFromeTag;
@@ -133,8 +133,8 @@ public class Shooter extends SubsystemBase {
   //get the distins from the shooter to the target
   public double getDistToTargetShoter(){
     Translation3d robotToTarget = new Translation3d(
-     ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), targetPose())
-      , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), targetPose()), 0);
+     ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), hubPose())
+      , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), hubPose()), 0);
 
       Translation3d shooterToTarget = robotToTarget.minus(
         new Translation3d(
