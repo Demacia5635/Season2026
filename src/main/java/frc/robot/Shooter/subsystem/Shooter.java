@@ -24,7 +24,8 @@ import frc.robot.Shooter.utils.ShooterUtils;
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
-  AprilTagFieldLayout  apriTagfFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026Reefscape.m_resourceFile);
+
+  AprilTagFieldLayout apriTagfFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026ChargedUp.m_resourceFile).get();
 
   //motors
   TalonFXMotor shooterMotor;
