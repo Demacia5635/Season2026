@@ -189,7 +189,7 @@ public class VisionConstants {
     public static final double Z_OFFSET_QUEST = 0.52;
     
     /**
-     * Transform from the center of the robot to Quest headset position
+     * Transform from the center of the robot to Quest headset position in 3d
      */
     public static final Transform3d ROBOT_TO_QUEST3D = new Transform3d(
         X_OFFSET_QUEST, 
@@ -198,6 +198,9 @@ public class VisionConstants {
         YAW_OFFSET_QUEST
     );
     
+        /**
+     * Transform from the center of the robot to Quest headset position in 2d
+     */
     public static final Transform2d ROBOT_TO_QUEST2D = new Transform2d(
         X_OFFSET_QUEST, 
         Y_OFFSET_QUEST, 
