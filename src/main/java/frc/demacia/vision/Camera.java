@@ -23,6 +23,7 @@ public class Camera {
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
+        this.ishigher = ishigher;
 
         this.tableName = "limelight-"+name;
     }
