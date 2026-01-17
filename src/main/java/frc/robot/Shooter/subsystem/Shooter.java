@@ -68,11 +68,6 @@ public class Shooter extends SubsystemBase {
       return velocity;
   }
 
-  
-  public void setVelocitiesAndAngle(double[] VelocityAndAngle){
-    setSpeed(VelocityAndAngle[0]);
-  }
-
   public Translation3d getShooterFucerMoveng() {
   return new  Translation3d(VelocityInFucer, 
       new Rotation3d(0, getAngle(), getTurretAngle())
