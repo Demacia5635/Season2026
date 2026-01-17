@@ -46,69 +46,81 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setSpeed(double speed){
-    shooterMotor.setVelocity(speed);
+    shooterMotor.setVelocity(speed); //set the shooter motor speed in RPS
   }
 
 
+  //get the shooter velocity in RPS
   public double getShooterVelocity(){
     return shooterMotor.getVelocity().getValueAsDouble();
   }
   
+  //set the shooter motor power from 0 to 1
   public void setPower(double power){
     shooterMotor.set(power);
   }
 
+  //get witch velocity to set from witch distance from the look up table
   public double getVelFromLookUpTable(double destins){
     double angle =ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[0];
     return angle;
   }
 
+  //get witch angle to set from witch distance from the look up table
   public double getAnglFromLookUpTable(double destins){
       double velocity = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(destins)[1];
       return velocity;
   }
 
+
+  //get vector of the shooter while moveng in the fucer 
   public Translation3d getShooterFucerMoveng() {
   return new  Translation3d(VelocityInFucer, 
       new Rotation3d(0, getAngle(), getTurretAngle())
     );
   }
 
-
+  //set the value of the velocity in the fucer so you can get it from other classes
   public void setVelocityInTheFucer(double vel){
     VelocityInFucer = vel;
   }
 
+ // get the value of the velocity in the fucer so you can get it from other classes 
   public double getVelocityInFucer(){
     return VelocityInFucer;
   }
   
-
+  //set the indexer motor power from 0 to 1
   public void setIndexerPower(double pow){
     indexerMotor.set(pow);
   }
 
+  //check if the shooter is ready to shoot
   public boolean isShooterReady(){
     return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
   }
   
+  //stop the shooter motor
   public void stop(){
     shooterMotor.stopMotor();
   }
 
+  //target pose
   public Pose2d targetPose(){
     //TODEO: FINALE THE DISTINS TO THE TARGET
     return new Pose2d();
   }
 
+  //shooter pose on the robot
   public Pose2d ShooterPoseOnRobot(){
     //TODEO: FINALE THE SHOOTER POSE ON THE ROBOT
     return new Pose2d();
   }
 
+  //get the distins from the shooter to the target
   public double getDistToTargetShoter(){
     Translation3d robotToTarget = new Translation3d(
-      ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), targetPose())
+     ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), targetPose())
       , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), targetPose()), 0);
 
       Translation3d shooterToTarget = robotToTarget.minus(
