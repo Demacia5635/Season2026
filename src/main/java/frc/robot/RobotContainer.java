@@ -15,8 +15,6 @@ import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.Shooter.commands.ShooterCommand;
-import frc.robot.Shooter.subsystem.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,8 +30,6 @@ public class RobotContainer implements Sendable{
 
   CommandController controller;
 
-  // The robot's subsystems and commands are defined here...
-  Shooter shooter;
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -42,8 +38,6 @@ public class RobotContainer implements Sendable{
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     controller = new CommandController(0, ControllerType.kPS5);
     //this.shooter = new Shooter();
-    shooter.setDefaultCommand(new ShooterCommand(shooter));
-    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
 
 
     // Configure the trigger bindings
