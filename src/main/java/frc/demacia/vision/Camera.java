@@ -15,7 +15,7 @@ public class Camera {
     private double pitch;
     private double yaw;
     private String tableName;
-    private boolean ishigher;
+    private boolean ishigher;// is higher than a tag 
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean ishigher) {
