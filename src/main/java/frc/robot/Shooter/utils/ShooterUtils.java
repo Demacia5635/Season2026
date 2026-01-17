@@ -38,7 +38,7 @@ public class ShooterUtils {
         return Math.toDegrees(Math.atan2(dy, dx));
     }
 
-    public static Pose2d getRobotFucerPose(double dtSpeed ,Chassis chassis){ //TODO: finade ander solosen fot the Chassis chassis
+    public static Pose2d getRobotFucerPose(double dtSpeed, Chassis chassis){ //TODO: finade ander solosen fot the Chassis chassis
         return chassis.computeFuturePosition(dtSpeed);
     }
 }

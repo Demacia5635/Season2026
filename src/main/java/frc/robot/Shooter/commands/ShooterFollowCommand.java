@@ -37,6 +37,7 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(shooter.isShooterReady())shooter.setIndexerPower(0.5);
     shooter.setSpeed(shooter.getVelFromLookUpTable(shooter.getDistToTargetShoter()));
   }
 

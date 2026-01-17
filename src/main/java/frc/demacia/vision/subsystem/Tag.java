@@ -148,7 +148,6 @@ public class Tag extends SubsystemBase {
    * Accounts for camera offset from robot center
    * * @return Translation2d representing vector to tag
    */
-  //TODO: read this
   public Translation2d getRobotToTagRR() {
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(GetDistFromCamera(),
