@@ -14,12 +14,12 @@ public class ShooterUtils extends SubsystemBase {
 
     public ShooterUtils() {}
 
-    public static double distensFromToPose2dPoint(Pose2d from, Pose3d to){
-        return 0;
+    public static double distensFromToPose2dPoint(Pose2d from, Pose2d to){
+        return from.getTranslation().getDistance(to.getTranslation());
     }
 
-    public static double angle_betuenTowPose2d(Pose2d from, Pose3d to){
-        return 0;
+    public static double angle_betuenTowPose2d(Pose2d from, Pose2d to){
+        return to.getTranslation().minus(from.getTranslation()).getAngle().getRadians();
     }
 
 @Override

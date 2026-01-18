@@ -72,29 +72,21 @@ public class Shooter extends SubsystemBase {
   }
 
   //hub pose (i finde it with april tag)
-  public Pose3d hubPose(){
-    return new Pose3d(449.5/100, 370.84000000000003/100, 142.24/2, new Rotation3d());
+  public Translation3d hubPose(){
+    return new Translation3d(449.5/100, 370.84000000000003/100, 142.24/2);
   }
 
   //shooter pose on the robot
-  public Pose2d ShooterPoseOnRobot(){
-    return new Pose2d();
+  public Translation3d ShooterPoseOnRobot(){
+    return new Translation3d();
+  }
+  public Translation3d getShooterPosOnField(){
+    return new Translation3d();
   }
 
   //get the distins from the shooter to the target
   public Translation3d getVectorToTargetShoter(){
-    Translation3d robotToTarget = new Translation3d(
-     ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), hubPose())
-      , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), hubPose()), 0);
-
-      Translation3d shooterToTarget = robotToTarget.minus(
-        new Translation3d(
-          ShooterPoseOnRobot().getX(),
-          ShooterPoseOnRobot().getY(),
-          0
-        )
-      );
-    return shooterToTarget;
+    return hubPose().minus(getShooterPosOnField());
   }
 
 
