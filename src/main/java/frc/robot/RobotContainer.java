@@ -45,7 +45,8 @@ public class RobotContainer implements Sendable{
     controller = new CommandController(0, ControllerType.kPS5);
     this.shooter = new Shooter();
     shooter.setDefaultCommand(new ShooterCommand(shooter));
-    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
+    new InstantCommand(()->shooter.setIndexerPower(0)).schedule();
+    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(1)));
 
 
     // Configure the trigger bindings

@@ -38,7 +38,6 @@ public class ShooterCommand extends Command {
   public void execute() {
     
     shooter.setSpeed(vel);
-    shooter.setIndexerPower(0.5);
   }
 
   // Called once the command ends or is interrupted.
