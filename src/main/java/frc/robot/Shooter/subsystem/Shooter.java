@@ -155,7 +155,7 @@ public class Shooter extends SubsystemBase {
     Translation2d tagToRobot = tag.getRobotToTagRR();
     Optional<Pose3d> TagPoseOptionalPose3d = apriTagfFieldLayout.getTagPose(2);
     Pose2d TagPosePose2d = TagPoseOptionalPose3d.get().toPose2d();
-    Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPosePose2d, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPose, hubPose()));
+    Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPosePose2d, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPosePose2d, hubPose()));
     Translation2d ShooterToHub = getVectorToTargetShoter().toTranslation2d();
     Translation2d shooterToMidelOFHub = TagTohub.plus(ShooterToHub);
     return shooterToMidelOFHub.getAngle().getDegrees();
