@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
+import frc.demacia.vision.subsystem.Tag;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.utils.ShooterUtils;
 
@@ -36,10 +37,12 @@ public class Shooter extends SubsystemBase {
 
   //abicted i use
   Chassis chassis;
+  Tag tag;
 
   //cunstroctor 
-  public Shooter(Chassis chassis) {
+  public Shooter(Chassis chassis, Tag tag) {
     this.chassis = chassis;
+    this.tag = tag;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
   }
@@ -131,7 +134,7 @@ public class Shooter extends SubsystemBase {
   }
 
   //get the distins from the shooter to the target
-  public double getDistToTargetShoter(){
+  public Translation3d getVectorToTargetShoter(){
     Translation3d robotToTarget = new Translation3d(
      ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), hubPose())
       , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), hubPose()), 0);
@@ -143,9 +146,20 @@ public class Shooter extends SubsystemBase {
           0
         )
       );
-    return shooterToTarget.getNorm();
+    return shooterToTarget;
   }
 
+
+
+  public double getTheAngleToTheHubFromTurret(){
+    Translation2d tagToRobot = tag.getRobotToTagRR();
+    Pose2d TagPose = apriTagfFieldLayout.getTagPose(2);
+    Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPose, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPose, hubPose()));
+    Translation2d ShooterToHub = getVectorToTargetShoter().toTranslation2d();
+    Translation2d shooterToMidelOFHub = TagTohub.plus(ShooterToHub);
+    return shooterToMidelOFHub.getAngle().getDegrees();
+
+  }
 
   @Override
   public void periodic() {

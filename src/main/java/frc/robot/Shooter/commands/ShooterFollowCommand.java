@@ -38,7 +38,7 @@ public class ShooterFollowCommand extends Command {
   @Override
   public void execute() {
     if(shooter.isShooterReady())shooter.setIndexerPower(0.5);
-    shooter.setSpeed(shooter.getVelFromLookUpTable(shooter.getDistToTargetShoter()));
+    shooter.setSpeed(shooter.getVelFromLookUpTable(shooter.getVectorToTargetShoter().getNorm()));
   }
 
   // Called once the command ends or is interrupted.
