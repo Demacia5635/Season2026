@@ -4,9 +4,17 @@
 
 package frc.robot.Shooter.subsystem;
 
+import java.util.Optional;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.utils.ShooterUtils;
 
 
 public class Shooter extends SubsystemBase {
@@ -15,8 +23,10 @@ public class Shooter extends SubsystemBase {
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
   public double VelocityInFucer;
-  
-  public Shooter() {
+  Chassis chassis;
+
+  public Shooter(Chassis chassis) {
+    this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
   }
@@ -63,16 +73,9 @@ public class Shooter extends SubsystemBase {
     shooterMotor.stopMotor();
   }
 
-<<<<<<< HEAD
-=======
   //hub pose (i finde it with april tag)
-  public Pose2d hubPose(){
-    Optional<Pose3d> getTagPose3d = apriTagfFieldLayout.getTagPose(2);
-    Pose2d getTagPose2d = getTagPose3d.get().toPose2d();
-    double hubMideldestinseFromeTag;
-    Rotation2d hubAngleFromeTag;
-    Pose2d calclateHubPose = ShooterUtils.calculatePoseWithTransform(getTagPose2d, hubMideldestinseFromeTag, hubAngleFromeTag, new Rotation2d());
-    return calclateHubPose;
+  public Pose3d hubPose(){
+    return new Pose3d(449.5/100, 370.84000000000003/100, 142.24/2, new Rotation3d());
   }
 
   //shooter pose on the robot
@@ -98,18 +101,6 @@ public class Shooter extends SubsystemBase {
 
 
 
-  public double getAngleFromeShottrToHub(){
-    Translation2d tagToRobot = tag.getRobotToTagRR();
-    Optional<Pose3d> TagPoseOptionalPose3d = apriTagfFieldLayout.getTagPose(2);
-    Pose2d TagPosePose2d = TagPoseOptionalPose3d.get().toPose2d();
-    Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPosePose2d, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPosePose2d, hubPose()));
-    Translation2d ShooterToHub = getVectorToTargetShoter().toTranslation2d();
-    Translation2d shooterToMidelOFHub = TagTohub.plus(ShooterToHub);
-    return shooterToMidelOFHub.getAngle().getDegrees();
-
-  }
-
->>>>>>> parent of 916f506 (shit)
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
