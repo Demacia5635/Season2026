@@ -6,6 +6,7 @@ package frc.robot.Shooter.subsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
@@ -26,6 +27,12 @@ public class Shooter extends SubsystemBase {
     this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
+    builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
   }
 
 
