@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   //april tag field layout
-  
+  AprilTagFieldLayout aprilTagFieldLayout;
 
   //motors
   TalonFXMotor shooterMotor;
@@ -120,7 +120,7 @@ public class Shooter extends SubsystemBase {
 
   //hub pose (i finde it with april tag)
   public Pose2d hubPose(){
-    Optional<Pose3d> getTagPose3d = apriTagfFieldLayout.getTagPose(2);
+    Optional<Pose3d> getTagPose3d = aprilTagFieldLayout.getTagPose(2);
     Pose2d getTagPose2d = getTagPose3d.get().toPose2d();
     double hubMideldestinseFromeTag;
     Rotation2d hubAngleFromeTag;
@@ -153,7 +153,7 @@ public class Shooter extends SubsystemBase {
 
   public double getTheAngleToTheHubFromTurret(){
     Translation2d tagToRobot = tag.getRobotToTagRR();
-    Optional<Pose3d> TagPoseOptionalPose3d = AprilTagFieldLayout.getTagPose(2).get();
+    Optional<Pose3d> TagPoseOptionalPose3d = aprilTagFieldLayout.getTagPose(2).get();
     Pose2d TagPoseOptionalPose2d = TagPoseOptionalPose3d.get();
     Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPose, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPose, hubPose()));
     Translation2d ShooterToHub = getVectorToTargetShoter().toTranslation2d();
