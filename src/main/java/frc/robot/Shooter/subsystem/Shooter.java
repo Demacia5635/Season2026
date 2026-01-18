@@ -151,7 +151,7 @@ public class Shooter extends SubsystemBase {
 
 
 
-  public double getTheAngleToTheHubFromTurret(){
+  public double getAngleFromeShottrToHub(){
     Translation2d tagToRobot = tag.getRobotToTagRR();
     Optional<Pose3d> TagPoseOptionalPose3d = apriTagfFieldLayout.getTagPose(2);
     Pose2d TagPosePose2d = TagPoseOptionalPose3d.get().toPose2d();
