@@ -63,6 +63,53 @@ public class Shooter extends SubsystemBase {
     shooterMotor.stopMotor();
   }
 
+<<<<<<< HEAD
+=======
+  //hub pose (i finde it with april tag)
+  public Pose2d hubPose(){
+    Optional<Pose3d> getTagPose3d = apriTagfFieldLayout.getTagPose(2);
+    Pose2d getTagPose2d = getTagPose3d.get().toPose2d();
+    double hubMideldestinseFromeTag;
+    Rotation2d hubAngleFromeTag;
+    Pose2d calclateHubPose = ShooterUtils.calculatePoseWithTransform(getTagPose2d, hubMideldestinseFromeTag, hubAngleFromeTag, new Rotation2d());
+    return calclateHubPose;
+  }
+
+  //shooter pose on the robot
+  public Pose2d ShooterPoseOnRobot(){
+    return new Pose2d();
+  }
+
+  //get the distins from the shooter to the target
+  public Translation3d getVectorToTargetShoter(){
+    Translation3d robotToTarget = new Translation3d(
+     ShooterUtils.distensFromToPose2dPoint(chassis.getPose(), hubPose())
+      , ShooterUtils.angle_betuenTowPose2d(chassis.getPose(), hubPose()), 0);
+
+      Translation3d shooterToTarget = robotToTarget.minus(
+        new Translation3d(
+          ShooterPoseOnRobot().getX(),
+          ShooterPoseOnRobot().getY(),
+          0
+        )
+      );
+    return shooterToTarget;
+  }
+
+
+
+  public double getAngleFromeShottrToHub(){
+    Translation2d tagToRobot = tag.getRobotToTagRR();
+    Optional<Pose3d> TagPoseOptionalPose3d = apriTagfFieldLayout.getTagPose(2);
+    Pose2d TagPosePose2d = TagPoseOptionalPose3d.get().toPose2d();
+    Translation2d TagTohub = new Translation2d(ShooterUtils.distensFromToPose2dPoint(TagPosePose2d, hubPose()), ShooterUtils.angle_betuenTowPose2d(TagPosePose2d, hubPose()));
+    Translation2d ShooterToHub = getVectorToTargetShoter().toTranslation2d();
+    Translation2d shooterToMidelOFHub = TagTohub.plus(ShooterToHub);
+    return shooterToMidelOFHub.getAngle().getDegrees();
+
+  }
+
+>>>>>>> parent of 916f506 (shit)
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
