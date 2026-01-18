@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,7 +31,6 @@ public class RobotContainer implements Sendable{
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
-  Field2d field2d;Field2d questField2d;
 
   // The robot's subsystems and commands are defined here...
   
@@ -49,11 +47,10 @@ public class RobotContainer implements Sendable{
     driverController = new CommandController(0, ControllerType.kPS5);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     // chassis.setDefaultCommand(new TestModulePID(chassis));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     // Configure the trigger bindings
-    configureBindings();
-
+    // configureBindings();
   }
-
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the

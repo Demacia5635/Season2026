@@ -14,7 +14,6 @@ import frc.demacia.vision.subsystem.Tag;
 public class VisionFuse {
 
     private Tag[] tags;
-    
 
     public VisionFuse(Tag... tags) {
         this.tags = tags;
