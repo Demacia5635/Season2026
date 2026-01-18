@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   //april tag field layout
-  AprilTagFieldLayout apeilTagMap = AprilTagFieldLayout.load
+  
 
   //motors
   TalonFXMotor shooterMotor;
