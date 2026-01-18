@@ -127,7 +127,7 @@ public class Shooter extends SubsystemBase {
     Pose2d calclateHubPose = ShooterUtils.calculatePoseWithTransform(getTagPose2d, hubMideldestinseFromeTag, hubAngleFromeTag, new Rotation2d());
     return calclateHubPose;
   }
-
+//delete
   //shooter pose on the robot
   public Pose2d ShooterPoseOnRobot(){
     return new Pose2d();
