@@ -3,19 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter.subsystem;
-
-import java.security.PublicKey;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.Shooter.ShooterConstans;
-import frc.robot.Shooter.utils.ShooterUtils;
 
 
 public class Shooter extends SubsystemBase {

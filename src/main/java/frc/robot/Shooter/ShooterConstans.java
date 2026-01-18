@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter;
-
-import java.security.PublicKey;
-
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.motors.TalonFXConfig;
