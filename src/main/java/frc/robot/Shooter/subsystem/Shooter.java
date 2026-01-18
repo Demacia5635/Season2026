@@ -66,10 +66,23 @@ public class Shooter extends SubsystemBase {
     VelocityInFucer = vel;
   }
 
+  public double getLookUpTableVel(double distance){
+    return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[0];
+  }
+
+  public double getLookUpTableAngle(double distance){
+    return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[1];
+  }
+
+  
+
   public double getVelocityInFucer(){
     return VelocityInFucer;
   }
   
+  public Translation3d getVelInVector(double vel){
+    return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getDegrees(), getAngleHood(), 0));
+  }
 
   public void setIndexerPower(double pow){
     indexerMotor.set(pow);
