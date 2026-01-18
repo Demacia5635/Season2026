@@ -36,13 +36,7 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d futurePose = chassis.computeFuturePosition(0.02);
-    double distanceFromTarget = target.getTranslation().getDistance(futurePose.getTranslation());
-    VelocityInFucer = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0];
-    shooter.setVelocityInTheFucer(VelocityInFucer);
-    //shooter.setVelocitiesAndAngle(ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distanceFromTarget)[0]);
-//    shooter.setSpeed(shooterUtilse.getFucerShooterVelInVector().minus(robotVelosety).getNorm());
-
+    chassis.
   }
 
   // Called once the command ends or is interrupted.

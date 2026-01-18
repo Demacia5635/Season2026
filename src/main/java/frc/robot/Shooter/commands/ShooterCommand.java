@@ -15,6 +15,7 @@ public class ShooterCommand extends Command {
 
   Shooter shooter;
   double vel =0;
+  double hoodAngle= 0;
 
   public ShooterCommand(Shooter shooter) {
     this.shooter = shooter;
@@ -26,6 +27,7 @@ public class ShooterCommand extends Command {
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("vel", () -> vel, (x) -> vel = x);
+      builder.addDoubleProperty("hood_angle", () -> hoodAngle, (x) -> hoodAngle = x);
   }
   
 
@@ -36,8 +38,7 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-    shooter.setSpeed(vel);
+    shooter.setVelocitiesAndAngle(vel, hoodAngle);
     shooter.setIndexerPower(0.5);
   }
 

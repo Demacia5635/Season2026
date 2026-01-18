@@ -4,6 +4,9 @@
 
 package frc.robot.Shooter;
 
+import java.security.PublicKey;
+
+import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
@@ -48,4 +51,26 @@ public class ShooterConstans {
             INDEXER_NAME)
             .withInvert(false);
 
+    public static final int HOOD_ID = 0;
+    public static final String HOOD_NAME = "HOOD MOTOR";
+    
+    public static final int HOOD_KP = -1;
+    public static final int HOOD_KI = -1;
+    public static final int HOOD_KD = -1;
+    public static final int HOOD_KS = -1;
+    public static final int HOOD_KV = -1;
+    public static final int HOOD_KA = -1;
+    public static final int HOOD_KG = -1;
+    public static final int GEAR_RATIO = -1;
+
+    public static final TalonFXConfig HOOD = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
+    .withBrake(true)
+    .withRadiansMotor(GEAR_RATIO)
+    .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG);
+
+    public static final int MAX_ANGLE_HOOD = 0;
+    public static final int MIN_ANGLE_HOOD = 0;
+
+
+    public static final Translation3d hubPose = new Translation3d(449.5/100, 370.84000000000003/100, 142.24/2);
 }

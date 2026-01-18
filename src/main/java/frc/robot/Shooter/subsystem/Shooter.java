@@ -4,6 +4,9 @@
 
 package frc.robot.Shooter.subsystem;
 
+import java.security.PublicKey;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -20,10 +23,12 @@ public class Shooter extends SubsystemBase {
 
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
+  TalonFXMotor hoodMotor;
   public double VelocityInFucer;
   Chassis chassis;
 
   public Shooter(Chassis chassis) {
+    hoodMotor = new TalonFXMotor(ShooterConstans.HOOD);
     this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
@@ -41,14 +46,21 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(power);
   }
 
+
+  public void setAngleHood(double angle){
+    MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
+    hoodMotor.setPositionVoltage(angle);
+  }
+
+  public double getAngleHood(){
+    return hoodMotor.getCurrentAngle();
+  }
   
-  public void setVelocitiesAndAngle(double[] VelocityAndAngle){
-    setSpeed(VelocityAndAngle[0]);
+  public void setVelocitiesAndAngle(double vel, double angle){
+    setSpeed(vel);
+    setAngleHood(angle);
   }
 
-  public void setShppterAngle(){
-
-  }
 
   public void setVelocityInTheFucer(double vel){
     VelocityInFucer = vel;
@@ -85,8 +97,8 @@ public class Shooter extends SubsystemBase {
   }
 
   //get the distins from the shooter to the target
-  public Translation3d getVectorToTargetShoter(){
-    return hubPose().minus(getShooterPosOnField());
+  public Translation3d getVectorToHubShoter(){
+    return ShooterConstans.hubPose.minus(getShooterPosOnField());
   }
 
 

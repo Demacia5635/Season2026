@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
@@ -32,15 +33,16 @@ public class RobotContainer implements Sendable{
 
   CommandController controller;
 
-  // The robot's subsystems and commands are defined here...
-  Shooter shooter;
+  // The robot's subsystems and commands are defined here.
+  Chassis chassis;
+  Shooter shooter = new Shooter(chassis);
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    //shooter = new Shooter();
+    
     controller = new CommandController(0, ControllerType.kPS5);
     shooter.setDefaultCommand(new ShooterCommand(shooter));
     SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
