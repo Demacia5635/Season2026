@@ -44,7 +44,8 @@ public class ShooterConstans {
     public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
     public static final String INDEXER_NAME = "Indexer Motor";
 
-    public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,INDEXER_NAME)
+    public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,
+            INDEXER_NAME)
             .withInvert(false);
 
 }
