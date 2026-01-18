@@ -244,11 +244,11 @@ public class Chassis extends SubsystemBase {
      */
     public void setVelocities(ChassisSpeeds speeds) {
         
-        // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
-        SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
-                speeds,
-                getChassisSpeedsFieldRel(),
-                getGyroAngle());
+        SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
+        // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
+        //         speeds,
+        //         getChassisSpeedsFieldRel(),
+        //         getGyroAngle());
         setModuleStates(states);
     }
 
@@ -415,7 +415,7 @@ public class Chassis extends SubsystemBase {
                 getModulePositions());
 
         
-        demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
+        demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
         
         if (visionFusePoseEstimation != null) {
             if (!hasVisionUpdated) {

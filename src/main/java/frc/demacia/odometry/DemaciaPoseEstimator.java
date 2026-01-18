@@ -69,7 +69,7 @@ public class DemaciaPoseEstimator {
         updateVisionSTD(visionSTD);
     }
 
-    public void addOdometryCalculation(OdometryObservation odometryCalculation, Translation2d currentVelocity) {
+    public void addOdomteryCalculation(OdometryObservation odometryCalculation, Translation2d currentVelocity) {
         var odometryEstimation = odometry.update(odometryCalculation.gyroAngle(), odometryCalculation.swerveModules());
         odometryBuffer.addSample(odometryCalculation.timeStamp(), odometryPose);
 
