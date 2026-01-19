@@ -44,7 +44,7 @@ public class RobotContainer implements Sendable{
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     
     controller = new CommandController(0, ControllerType.kPS5);
-    shooter.setDefaultCommand(new ShooterCommand(shooter));
+    shooter.setDefaultCommand(new ShooterCommand(shooter, controller));
     SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
 
 

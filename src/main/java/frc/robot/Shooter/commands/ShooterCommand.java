@@ -7,6 +7,7 @@ package frc.robot.Shooter.commands;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.demacia.utils.controller.CommandController;
 import frc.robot.Shooter.subsystem.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -14,11 +15,13 @@ public class ShooterCommand extends Command {
   /** Creates a new shooterCommand. */
 
   Shooter shooter;
-  double vel =0;
-  double hoodAngle= 0;
+  double vel = 0;
+  double hoodAngle = 0;
+  CommandController controller;
 
-  public ShooterCommand(Shooter shooter) {
+  public ShooterCommand(Shooter shooter, CommandController controller) {
     this.shooter = shooter;
+    this.controller = controller;
     addRequirements(shooter);
     SmartDashboard.putData(this);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,25 +29,26 @@ public class ShooterCommand extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("vel", () -> vel, (x) -> vel = x);
-      builder.addDoubleProperty("hood_angle", () -> hoodAngle, (x) -> hoodAngle = x);
+    builder.addDoubleProperty("vel", () -> vel, (x) -> vel = x);
+    builder.addDoubleProperty("hood_angle", () -> hoodAngle, (x) -> hoodAngle = x);
   }
-  
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setVelocitiesAndAngle(vel, hoodAngle);
-    shooter.setIndexerPower(0.5);
+  shooter.setSpeed(vel);
+    shooter.setHoodPower(controller.getLeftY() * 0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

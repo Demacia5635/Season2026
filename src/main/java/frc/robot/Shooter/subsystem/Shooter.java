@@ -47,6 +47,9 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(power);
   }
 
+  public void setHoodPower(double power){
+    hoodMotor.set(power);
+  }
 
   public void setAngleHood(double angle){
     MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
