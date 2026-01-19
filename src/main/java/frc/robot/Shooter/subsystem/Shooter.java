@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
   Chassis chassis;
 
   public Shooter(Chassis chassis) {
-    hoodMotor = new TalonFXMotor(ShooterConstans.HOOD);
+    hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);

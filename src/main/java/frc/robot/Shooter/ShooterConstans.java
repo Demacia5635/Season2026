@@ -48,7 +48,7 @@ public class ShooterConstans {
             INDEXER_NAME)
             .withInvert(false);
 
-    public static final int HOOD_ID = 0;
+    public static final int HOOD_ID = 11;
     public static final String HOOD_NAME = "HOOD MOTOR";
     
     public static final int HOOD_KP = -1;
@@ -60,9 +60,10 @@ public class ShooterConstans {
     public static final int HOOD_KG = -1;
     public static final int GEAR_RATIO = -1;
 
-    public static final TalonFXConfig HOOD = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
+    public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
     .withBrake(true)
     .withRadiansMotor(GEAR_RATIO)
+    .withInvert(true)
     .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG);
 
     public static final int MAX_ANGLE_HOOD = 0;
