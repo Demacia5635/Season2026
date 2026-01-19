@@ -7,9 +7,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
+import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.Shooter.ShooterConstans;
 
 
@@ -19,22 +21,31 @@ public class Shooter extends SubsystemBase {
   TalonFXMotor shooterMotor;
   TalonFXMotor indexerMotor;
   TalonFXMotor hoodMotor;
-  public double VelocityInFucer;
+  
+  private LimitSwitch limitSwitch;
   Chassis chassis;
 
-  public Shooter(Chassis chassis) {
+  public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
-    this.chassis = chassis;
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
+
+    this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
+    SmartDashboard.putData("Shooter", this);
+    SmartDashboard.putNumber("hood angle", getAngleHood());
+    
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
+    builder.addBooleanProperty("Is At Limit", ()->isAtLimit(), null);
   }
 
+  public boolean isAtLimit(){
+    return !limitSwitch.get();
+  }
 
   public void setSpeed(double speed){
     shooterMotor.setVelocity(speed);
@@ -66,9 +77,6 @@ public class Shooter extends SubsystemBase {
   }
 
 
-  public void setVelocityInTheFucer(double vel){
-    VelocityInFucer = vel;
-  }
 
   public double getLookUpTableVel(double distance){
     return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[0];
@@ -80,9 +88,6 @@ public class Shooter extends SubsystemBase {
 
   
 
-  public double getVelocityInFucer(){
-    return VelocityInFucer;
-  }
   
   public Translation3d getVelInVector(double vel){
     return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getDegrees(), getAngleHood(), 0));

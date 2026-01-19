@@ -35,7 +35,7 @@ public class RobotContainer implements Sendable{
 
   // The robot's subsystems and commands are defined here.
   Chassis chassis;
-  Shooter shooter = new Shooter(chassis);
+  Shooter shooter = new Shooter();
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -43,7 +43,7 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     
-    controller = new CommandController(0, ControllerType.kPS5);
+    controller = new CommandController(0, ControllerType.kXbox);
     shooter.setDefaultCommand(new ShooterCommand(shooter, controller));
     SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
 

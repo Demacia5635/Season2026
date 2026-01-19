@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
+import frc.demacia.utils.sensors.LimitSwitchConfig;
 
 /** Add your docs here. */
 
@@ -66,8 +67,9 @@ public class ShooterConstans {
             .withInvert(true)
             .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG);
 
-    public static final int MAX_ANGLE_HOOD = 0;
-    public static final int MIN_ANGLE_HOOD = 0;
+    public static final double MAX_ANGLE_HOOD = 0;
+    public static final double MIN_ANGLE_HOOD = 0;
 
+    public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(9, "Limit Switch");
     public static final Translation3d hubPose = new Translation3d(449.5 / 100, 370.84000000000003 / 100, 142.24 / 2);
 }
