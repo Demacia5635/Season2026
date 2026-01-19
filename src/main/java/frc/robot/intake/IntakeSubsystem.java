@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void start() {
-    motor.setDuty(0.3);
+    motor.setDuty(IntakeConstants.MAX_POWER);
   }
 
   public void stop(){
