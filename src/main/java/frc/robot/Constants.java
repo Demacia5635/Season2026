@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
+import frc.demacia.utils.motors.TalonFXConfig;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,5 +18,9 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+  public static class IntakeConstants{
+    public static final int ID = 0;
+    public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(ID, Canbus.Rio, "intake motor");
   }
 }

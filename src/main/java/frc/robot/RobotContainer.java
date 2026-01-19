@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.IntakeCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -24,7 +26,7 @@ public class RobotContainer implements Sendable{
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
-
+  private IntakeSubsystem intake;
   // The robot's subsystems and commands are defined here...
 
 
@@ -34,7 +36,8 @@ public class RobotContainer implements Sendable{
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    
+    intake = new IntakeSubsystem();
+    intake.setDefaultCommand(new IntakeCommand(intake));
     // Configure the trigger bindings
     configureBindings();
   }
@@ -49,7 +52,7 @@ public class RobotContainer implements Sendable{
    * joysticks}.
    */
   private void configureBindings() {
-    
+
   }
 
   public static boolean getIsRed() {
