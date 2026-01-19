@@ -17,6 +17,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.chassis.MK5nChassisConstants;
 import frc.robot.chassis.TestModulePID;
 import frc.robot.chassis.commands.DrivePower;
@@ -38,6 +39,7 @@ public class RobotContainer implements Sendable{
   
   public static CommandController driverController;
   Chassis chassis;
+  TalonFXMotor motor;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -46,8 +48,9 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
 
-    driverController = new CommandController(0, ControllerType.kPS5);
+    driverController = new CommandController(0, ControllerType.kXbox);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
+    
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     // Configure the trigger bindings
     configureBindings();

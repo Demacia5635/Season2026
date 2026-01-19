@@ -109,6 +109,8 @@ public class Chassis extends SubsystemBase {
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
 
+    private Matrix<N3, N1> questSTD;
+
     public Chassis(ChassisConfig chassisConfig) {
 
         this.chassisConfig = chassisConfig;
@@ -181,6 +183,12 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("Chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
 
+        questSTD = new Matrix<>(
+            new SimpleMatrix(
+                new double[]
+                {0.05, 0.05, 0.035}
+            )
+        );
     }
 
     public double getUpRotation() {
@@ -341,21 +349,13 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateQuest(Pose2d questPose) {
-         demaciaPoseEstimator.updateVisionSTD(getSTDQuest());
+         demaciaPoseEstimator.updateVisionSTD(questSTD);
 
         VisionMeasurment measurement = new VisionMeasurment(
                 Timer.getFPGATimestamp(),
                 questPose.getTranslation(),
                 Optional.of(questPose.getRotation()));
         demaciaPoseEstimator.addVisionMeasurement(measurement);
-    }
-
-    private Matrix<N3, N1> getSTDQuest() {
-        double x = 0.005;
-        double y = 0.005;
-        double theta = 0.035;
-
-        return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
     }
 
     private Matrix<N3, N1> getSTD() {
