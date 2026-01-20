@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Shooter.commands.HoodCalibrationCommand;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 
@@ -35,7 +37,7 @@ public class RobotContainer implements Sendable{
 
   // The robot's subsystems and commands are defined here.
   Chassis chassis;
-  Shooter shooter = new Shooter();
+  Shooter shooter;
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -43,9 +45,14 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     
-    controller = new CommandController(0, ControllerType.kXbox);
+    controller = new CommandController(0, ControllerType.kPS5);
+    shooter = new Shooter();
+    chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
+    chassis.setDefaultCommand(new DriveCommand(chassis, controller));
     shooter.setDefaultCommand(new ShooterCommand(shooter, controller));
-    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(-0.8)));
+    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(1)));
+    SmartDashboard.putData("Stop Index", new InstantCommand(()->shooter.setIndexerPower(0)));
+    SmartDashboard.putData("Hood Calibration", new HoodCalibrationCommand(shooter));
 
 
     // Configure the trigger bindings
