@@ -9,6 +9,7 @@ public class TurretCommand extends Command{
     double wantedAngle = 0;
     public TurretCommand(){
         this.turret = Turret.getInstance();
+        addRequirements(turret);
     }
     @Override
     public void initSendable(SendableBuilder builder) {

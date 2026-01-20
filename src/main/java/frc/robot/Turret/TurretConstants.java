@@ -30,7 +30,7 @@ public class TurretConstants {
     .withPID(kP, kI, kD, kS, kV, kA, 0)
     .withMotionParam(MAX_VELOCITY, MAX_ACCEL, MAX_JERK);
 
-    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(-1, "Min Limit Switch"); 
-    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(-2, "Max Limit Switch"); 
+    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(9, "Min Limit Switch"); 
+    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(8, "Max Limit Switch"); 
 
 }
