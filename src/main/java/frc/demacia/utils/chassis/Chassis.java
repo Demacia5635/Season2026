@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.Utilities;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
@@ -143,7 +144,7 @@ public class Chassis extends SubsystemBase {
         // tags = chassisConfig.tags;
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("limelight4", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
+                new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
 
         tags = new Tag[]{limelight4};
 
