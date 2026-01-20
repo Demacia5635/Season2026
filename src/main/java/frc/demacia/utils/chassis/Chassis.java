@@ -148,6 +148,7 @@ public class Chassis extends SubsystemBase {
 
         tags = new Tag[]{limelight4};
 
+
         visionFuse = new VisionFuse(tags);
         if (chassisConfig.objectCamera != null) {
             objectPose = new ObjectPose(

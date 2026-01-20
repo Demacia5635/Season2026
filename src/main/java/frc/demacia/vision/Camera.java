@@ -4,6 +4,10 @@
 
 package frc.demacia.vision;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 /** Add your docs here. */
@@ -16,6 +20,8 @@ public class Camera {
     private double yaw;
     private String tableName;
     private boolean ishigher;// is higher than a tag 
+    private boolean isOnTurret;
+    private Supplier<Rotation2d> turretAngle;
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean ishigher) {
@@ -24,12 +30,29 @@ public class Camera {
         this.pitch = pitch;
         this.yaw = yaw;
         this.ishigher = ishigher;
-
+        this.isOnTurret = false;
         this.tableName = "limelight-"+name;
+    }
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean ishigher,Supplier<Rotation2d> turretAngle) {
+        this.name = name;
+        this.robotToCamPosition = robotToCamPosition;
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.ishigher = ishigher;
+        this.isOnTurret = true;
+        this.turretAngle = turretAngle;
+        this.tableName = "limelight-"+name;
+    }
+    public boolean getIsOnTurret(){
+        return isOnTurret;
+    }
+    public Supplier<Rotation2d> getTurrentAngle(){
+
+        return turretAngle;
     }
 
     public Translation3d getRobotToCamPosition() {
-        return robotToCamPosition;
+        return !isOnTurret ? robotToCamPosition : robotToCamPosition.rotateBy(new Rotation3d(turretAngle.get().unaryMinus()));
     }
 
     public double getHeight() {
