@@ -419,7 +419,7 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
 
         if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated) {
+            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
                 hasVisionUpdated = true;
                 quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
             }
@@ -428,7 +428,7 @@ public class Chassis extends SubsystemBase {
             updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
 
         } 
-        if (hasVisionUpdated) {
+        if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
             updateQuest(quest.getRobotPose2d());
         }
 
