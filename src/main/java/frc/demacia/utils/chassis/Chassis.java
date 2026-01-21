@@ -13,6 +13,7 @@ import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -47,6 +48,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
+import frc.demacia.vision.utils.LimelightHelpers;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -101,7 +103,7 @@ public class Chassis extends SubsystemBase {
     private Field2d field2;
 
     public Tag limelight4;
-        public Quest quest;
+    public Quest quest;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
@@ -128,7 +130,7 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator = new DemaciaPoseEstimator(
                 modulePositions,
                 getSTD(),
-                getSTD());
+                new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.1, 0.1, 0.1 })));
         poseEstimator = new SwerveDrivePoseEstimator(wpilibKinematics, getGyroAngle(), getModulePositions(),
                 new Pose2d());
 
@@ -142,7 +144,6 @@ public class Chassis extends SubsystemBase {
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
                 new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
-
 
         if (chassisConfig.objectCamera != null) {
             objectPose = new ObjectPose(
@@ -180,11 +181,8 @@ public class Chassis extends SubsystemBase {
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
 
         questSTD = new Matrix<>(
-            new SimpleMatrix(
-                new double[]
-                {0.05, 0.05, 0.035}
-            )
-        );
+                new SimpleMatrix(
+                        new double[] { 0.05, 0.05, 0.035 }));
     }
 
     public double getUpRotation() {
@@ -233,7 +231,7 @@ public class Chassis extends SubsystemBase {
      * @return Current pose (position and rotation) using odometry fusion
      */
     public Pose2d getPose() {
-        return demaciaPoseEstimator.getEstimatedPose();
+        return poseEstimator.getEstimatedPosition();
     }
 
     /**
@@ -335,7 +333,8 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateVision(Pose2d pose) {
-        if(pose == null) return;
+        if (pose == null)
+            return;
         demaciaPoseEstimator.updateVisionSTD(getSTD());
 
         VisionMeasurment measurement = new VisionMeasurment(
@@ -346,7 +345,7 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateQuest(Pose2d questPose) {
-         demaciaPoseEstimator.updateVisionSTD(questSTD);
+        demaciaPoseEstimator.updateVisionSTD(questSTD);
 
         VisionMeasurment measurement = new VisionMeasurment(
                 Timer.getFPGATimestamp(),
@@ -409,11 +408,17 @@ public class Chassis extends SubsystemBase {
                 Timer.getFPGATimestamp(),
                 gyroAngle,
                 getModulePositions());
-
-        demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
-
-        updateVision(limelight4.getPose());
-        field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
+        poseEstimator.update(getGyroAngle(), getModulePositions());
+        LimelightHelpers.PoseEstimate limelightPoseEstiamte = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
+        if(limelightPoseEstiamte != null && limelightPoseEstiamte.tagCount > 0){
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+            poseEstimator.addVisionMeasurement(limelightPoseEstiamte.pose, limelightPoseEstiamte.timestampSeconds);
+        }
+        // if(limelight4.getPose() != null) poseEstimator.addVisionMeasurement(limelight4.getPose(), Timer.getFPGATimestamp() - 0.05);
+        // demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
+        
+        // updateVision(limelight4.getPose());
+        field.setRobotPose(getPose());
     }
 
     /**

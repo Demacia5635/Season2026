@@ -17,15 +17,19 @@ public class ShooterConstans {
     public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
     static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
              // angle (Radians)
-        SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(2.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(3, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(3.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(4, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(4.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
+
+         SHOOTER_LOOKUP_TABLE.add(1.41, 12.4, Math.toRadians(85));   
+         SHOOTER_LOOKUP_TABLE.add(3.56, 16.5, Math.toRadians(62));
+         SHOOTER_LOOKUP_TABLE.add(4.79, 19.5, Math.toRadians(57)); 
+        // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(2.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(3, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(3.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(4, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(4.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
     }
 
     public static final int shooterMotorID = 21;
@@ -71,5 +75,5 @@ public class ShooterConstans {
     public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
     public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(0, "Limit Switch");
-    public static final Translation3d hubPose = new Translation3d(449.5 / 100, 370.84000000000003 / 100, 142.24 / 2);
+    public static final Translation3d HUB_POSE = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
 }

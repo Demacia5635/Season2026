@@ -137,7 +137,7 @@ public class Shooter extends SubsystemBase {
 
   // get the distins from the shooter to the target
   public Translation3d getVectorToHubShoter() {
-    return ShooterConstans.hubPose.minus(getShooterPosOnField());
+    return ShooterConstans.HUB_POSE.minus(getShooterPosOnField());
   }
 
   @Override

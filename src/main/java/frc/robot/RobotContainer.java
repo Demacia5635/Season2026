@@ -49,9 +49,11 @@ public class RobotContainer implements Sendable{
     shooter = new Shooter();
     chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     chassis.setDefaultCommand(new DriveCommand(chassis, controller));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, controller));
-    SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(1)));
-    SmartDashboard.putData("Stop Index", new InstantCommand(()->shooter.setIndexerPower(0)));
+    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis, controller));
+    controller.downButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(1)));
+    controller.upButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(0)));
+    // SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(1)));
+    // SmartDashboard.putData("Stop Index", new InstantCommand(()->shooter.setIndexerPower(0)));
     SmartDashboard.putData("Hood Calibration", new HoodCalibrationCommand(shooter));
 
 
