@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -47,7 +46,6 @@ import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
 import frc.demacia.vision.utils.VisionFuse;
-import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
@@ -98,10 +96,8 @@ public class Chassis extends SubsystemBase {
     private DemaciaPoseEstimator demaciaPoseEstimator;
     private SwerveDrivePoseEstimator poseEstimator;
     private Field2d field;
-    private Field2d field2;
 
     public Tag[] tags;
-    public Tag limelight4;
     public Quest quest;
     public VisionFuse visionFuse;
     public ObjectPose objectPose;
@@ -110,7 +106,6 @@ public class Chassis extends SubsystemBase {
     private Rotation2d lastGyroYaw;
 
     public Chassis(ChassisConfig chassisConfig) {
-
         this.chassisConfig = chassisConfig;
 
         modules = new SwerveModule[4];
@@ -135,16 +130,8 @@ public class Chassis extends SubsystemBase {
         SimpleMatrix std = new SimpleMatrix(new double[] { 0.02, 0.02, 0 });
         poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(std));
         field = new Field2d();
-        field2 = new Field2d();
 
-        // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
-        // tags = chassisConfig.tags;
-
-        limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("limelight4", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
-
-        tags = new Tag[]{limelight4};
-
+        tags = chassisConfig.tags;
         visionFuse = new VisionFuse(tags);
         if (chassisConfig.objectCamera != null) {
             objectPose = new ObjectPose(
@@ -157,25 +144,24 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("reset gyro 180",
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
         // SmartDashboard.putData("set gyro to 3D tag", new InstantCommand(() -> setYaw(
-        // Rotation2d.fromDegrees(visionFuse.get3DAngle()))).ignoringDisable(true));
+        //         Rotation2d.fromDegrees(visionFuse.get3DAngle()))).ignoringDisable(true));
         // SmartDashboard.putData("change camera dimension", new Command() {
-        // private static boolean is3d = false;
+        //     private static boolean is3d = false;
 
-        // public void initialize() {
-        // visionFuse.set3D(!is3d);
-        // is3d = !is3d;
-        // };
+        //     public void initialize() {
+        //         visionFuse.set3D(!is3d);
+        //         is3d = !is3d;
+        //     };
 
-        // public boolean isFinished() {
-        // return true;
-        // }
+        //     public boolean isFinished() {
+        //         return true;
+        //     }
 
-        // public boolean runsWhenDisabled() {
-        // return true;
-        // };
+        //     public boolean runsWhenDisabled() {
+        //         return true;
+        //     };
         // });
         SmartDashboard.putData("field", field);
-        SmartDashboard.putData("field2", field2);
         SmartDashboard.putData("Chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("Chassis/set brake",
@@ -339,14 +325,11 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addVisionMeasurement(measurement);
     }
 
-    private void updateQuest(Pose2d questPose) {
-         demaciaPoseEstimator.updateVisionSTD(getSTDQuest());
-
-        VisionMeasurment measurement = new VisionMeasurment(
-                Timer.getFPGATimestamp(),
-                questPose.getTranslation(),
-                Optional.of(questPose.getRotation()));
-        demaciaPoseEstimator.addVisionMeasurement(measurement);
+    private void updateQuest(Twist2d questDisplacement) {
+        Pose2d poseWithQuest = getPose().exp(questDisplacement);
+        VisionMeasurment visionMeasurment = new VisionMeasurment(Timer.getTimestamp(), poseWithQuest.getTranslation(), Optional.of(poseWithQuest.getRotation()));
+        demaciaPoseEstimator.updateVisionSTD(getSTDQuest());
+        demaciaPoseEstimator.addVisionMeasurement(visionMeasurment);
     }
 
     private Matrix<N3, N1> getSTDQuest() {
@@ -367,8 +350,8 @@ public class Chassis extends SubsystemBase {
 
         // Vision confidence adjustment
         // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
-        // x += 0.3;
-        // y += 0.3;
+        //     x += 0.3;
+        //     y += 0.3;
         // }
 
         // Speed-based confidence calculation
@@ -398,11 +381,10 @@ public class Chassis extends SubsystemBase {
     }
 
     Pose2d questPoseEstimation;
-
+  
     Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
-
-    private boolean hasVisionUpdated = false;
+    
 
     @Override
     public void periodic() {
@@ -418,21 +400,14 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         
         if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated) {
-                hasVisionUpdated = true;
-                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-            }
-
-
             updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-
+            quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
         } 
-        if (hasVisionUpdated) {
-            updateQuest(quest.getRobotPose2d());
-        }
+        //  else if (visionFusePoseEstimation != null) {
+
+        // }
 
         field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
-        field2.setRobotPose(quest.getRobotPose2d());
     }
 
     /**
@@ -456,7 +431,7 @@ public class Chassis extends SubsystemBase {
                 getGyroAngle());
     }
 
-    public Translation2d getChassisSpeedsVector() {
+    public Translation2d getChassisSpeedsVector(){
         ChassisSpeeds s = getChassisSpeedsFieldRel();
         return new Translation2d(s.vxMetersPerSecond, s.vyMetersPerSecond);
     }
@@ -598,6 +573,7 @@ public class Chassis extends SubsystemBase {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
     }
+
 
     /**
      * Finds a tag by the camera name associated with it.

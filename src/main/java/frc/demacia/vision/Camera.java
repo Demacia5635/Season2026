@@ -15,16 +15,14 @@ public class Camera {
     private double pitch;
     private double yaw;
     private String tableName;
-    private boolean ishigher;// is higher than a tag 
+    private Enum<?> cameraType;
 
-
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean ishigher) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, Enum<?> cameraType) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
-        this.ishigher = ishigher;
-
+        this.cameraType = cameraType;
         this.tableName = "limelight-"+name;
     }
 
@@ -51,5 +49,5 @@ public class Camera {
     public String getTableName() {
         return this.tableName;
     }
-    public boolean getIsHigher(){return this.ishigher;}
+    public Enum<?> getCameraType(){return this.cameraType;}
 }
