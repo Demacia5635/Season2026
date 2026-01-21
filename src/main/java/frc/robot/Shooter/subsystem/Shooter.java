@@ -28,6 +28,8 @@ public class Shooter extends SubsystemBase {
   private LimitSwitch limitSwitch;
   Chassis chassis;
 
+  public double angle;
+
   public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
@@ -71,6 +73,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHoodAngle(double angle) {
+    this.angle = angle;
     if (!hasCalibrated) {
       hoodMotor.set(0);
       return;
@@ -85,6 +88,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
+    this.angle = angle;
     setSpeed(vel);
     setHoodAngle(angle);
   }

@@ -20,6 +20,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Shooter.subsystem.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,8 +33,11 @@ public class RobotContainer implements Sendable{
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
-  Field2d field2d;Field2d questField2d;
-
+  Field2d field2d;
+  Field2d questField2d;
+  Chassis chassis;
+  CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  Shooter shooter;
   // The robot's subsystems and commands are defined here...
 
 
@@ -87,7 +91,7 @@ public class RobotContainer implements Sendable{
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
     builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
-    builder.addDoubleProperty("Angle", () -> angle, (newAngle) -> angle = newAngle);
+    builder.addDoubleProperty("Angle", () -> shooter.angle, (newAngle) -> shooter.angle = newAngle);
   }
 
   /**
