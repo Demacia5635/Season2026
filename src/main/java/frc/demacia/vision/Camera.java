@@ -32,15 +32,15 @@ public class Camera {
         this.tableName = "limelight-"+name;
     }
     public boolean getIsOnTurret(){
-        return isOnTurret;
+        return false;
     }
     public Supplier<Rotation2d> getTurrentAngle(){
 
-        return turretAngle;
+        return () -> Rotation2d.kZero;
     }
 
     public Translation3d getRobotToCamPosition() {
-        return !isOnTurret ? robotToCamPosition : robotToCamPosition.rotateBy(new Rotation3d(turretAngle.get().unaryMinus()));
+        return !false ? robotToCamPosition : robotToCamPosition.rotateBy(Rotation3d.kZero);
     }
 
     public double getHeight() {

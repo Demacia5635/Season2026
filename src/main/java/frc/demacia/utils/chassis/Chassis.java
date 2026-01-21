@@ -49,6 +49,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
+import frc.demacia.vision.utils.LimelightHelpers;
 import frc.demacia.vision.utils.VisionFuse;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
@@ -246,6 +247,7 @@ public class Chassis extends SubsystemBase {
      * 
      * @param speeds Desired chassis speeds (field-relative)
      */
+    
     public void setVelocities(ChassisSpeeds speeds) {
         
         // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
@@ -410,35 +412,49 @@ public class Chassis extends SubsystemBase {
 
     private boolean hasVisionUpdated = false;
 
+    private Matrix<N3, N1> visionSTD = VecBuilder.fill(0.7, 0.7, Double.MAX_VALUE);
+
     @Override
     public void periodic() {
-        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        // visionFusePoseEstimation = visionFuse.getPoseEstemation();
         gyroAngle = getGyroAngle();
 
-        OdometryObservation observation = new OdometryObservation(
-                Timer.getFPGATimestamp(),
-                gyroAngle,
-                getModulePositions());
-
+        poseEstimator.update(getGyroAngle(), getModulePositions());
         
-        demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
-        
-        if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated) {
-                hasVisionUpdated = true;
-                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-            }
+        LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
 
-
-            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-
-        } 
-        if (hasVisionUpdated) {
-            updateQuest(quest.getRobotPose2d());
+        if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
+            poseEstimator.setVisionMeasurementStdDevs(visionSTD);
+            poseEstimator.addVisionMeasurement(limelightEstimate.pose, limelightEstimate.timestampSeconds);
         }
 
-        field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
-        field2.setRobotPose(quest.getRobotPose2d());
+        field.setRobotPose(getPose());
+
+        
+        // OdometryObservation observation = new OdometryObservation(
+        //         Timer.getFPGATimestamp(),
+        //         gyroAngle,
+        //         getModulePositions());
+
+        
+        // demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
+        
+        // if (visionFusePoseEstimation != null) {
+        //     if (!hasVisionUpdated) {
+        //         hasVisionUpdated = true;
+        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        //     }
+
+
+        //     updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+
+        // } 
+        // if (hasVisionUpdated) {
+        //     updateQuest(quest.getRobotPose2d());
+        // }
+
+        // field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
+        // field2.setRobotPose(quest.getRobotPose2d());
     }
 
     /**
@@ -587,9 +603,9 @@ public class Chassis extends SubsystemBase {
         return chassisConfig.maxRotationalVelocity;
     }
 
-    public Pose2d computeFuturePosition(double sec) {
-        return CalculatePositionAndAngle.computeFuturePosition(getChassisSpeedsFieldRel(), getPose(), sec);
-    }
+    // public Pose2d computeFuturePosition(double sec) {
+    //     return CalculatePositionAndAngle.computeFuturePosition(getChassisSpeedsFieldRel(), getPose(), sec);
+    // }
 
     /**
      * Stops all swerve modules immediately.

@@ -25,10 +25,9 @@ public class ShooterCommand extends Command {
   double hoodAngle = 0;
   CommandController controller;
 
-  public ShooterCommand(Shooter shooter, Chassis chassis, CommandController controller) {
+  public ShooterCommand(Shooter shooter, Chassis chassis) {
     this.shooter = shooter;
     this.chassis = chassis;
-    this.controller = controller;
     addRequirements(shooter);
     SmartDashboard.putData(this);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,7 +35,7 @@ public class ShooterCommand extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Fylwheel velx`", () -> vel, (x) -> vel = x);
+    builder.addDoubleProperty("Flywheel vel", () -> vel, (x) -> vel = x);
     builder.addDoubleProperty("Hood Angle", () -> hoodAngle, (x) -> hoodAngle = x);
   }
 
@@ -52,7 +51,11 @@ public class ShooterCommand extends Command {
     double[] shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     shooter.setHoodAngle(shooterValues[1]);
-    shooter.setSpeed(shooterValues[0]);
+    shooter.setFlywheelVel(shooterValues[0]);
+
+    // shooter.setHoodAngle(Math.toRadians(hoodAngle));
+    // shooter.setFlywheelVel(vel);
+
     // shooter.setHoodPower(controller.getLeftY() * 0.5);
   }
 

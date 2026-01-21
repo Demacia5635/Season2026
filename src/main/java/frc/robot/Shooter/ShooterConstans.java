@@ -17,10 +17,12 @@ public class ShooterConstans {
     public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
     static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
              // angle (Radians)
+        
+         SHOOTER_LOOKUP_TABLE.add(0.613, 12.8, Math.toRadians(85));   
 
-         SHOOTER_LOOKUP_TABLE.add(1.41, 12.4, Math.toRadians(85));   
-         SHOOTER_LOOKUP_TABLE.add(3.56, 16.5, Math.toRadians(62));
-         SHOOTER_LOOKUP_TABLE.add(4.79, 19.5, Math.toRadians(57)); 
+         SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));   
+         SHOOTER_LOOKUP_TABLE.add(3.56, 15.5, Math.toRadians(72));
+         SHOOTER_LOOKUP_TABLE.add(4.79, 19, Math.toRadians(62)); 
         // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
         // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
         // SHOOTER_LOOKUP_TABLE.add(2, 0, 0);

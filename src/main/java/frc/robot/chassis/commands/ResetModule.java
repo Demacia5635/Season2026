@@ -18,7 +18,7 @@ public class ResetModule extends Command {
 
     @Override
     public void initialize() {
-        chassis.modules[id].steerMotor.setAngle(angle);
+        chassis.modules[id].steerMotor.setEncoderPosition(angle);
     }
 
     @Override

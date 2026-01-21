@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setEncoderPosition(position);
   }
 
-  public void setSpeed(double speed) {
+  public void setFlywheelVel(double speed) {
     shooterMotor.setVelocity(speed);
   }
 
@@ -73,7 +73,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHoodAngle(double angle) {
-    this.angle = angle;
+    // this.angle = angle;
     if (!hasCalibrated) {
       hoodMotor.set(0);
       return;
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocitiesAndAngle(double vel, double angle) {
     this.angle = angle;
-    setSpeed(vel);
+    setFlywheelVel(vel);
     setHoodAngle(angle);
   }
 

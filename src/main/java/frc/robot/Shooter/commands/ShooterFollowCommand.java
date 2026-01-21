@@ -38,7 +38,7 @@ public class ShooterFollowCommand extends Command {
   public void execute() {
     Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(shooter.getVectorToHubShoter().getNorm()));
     Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
-    shooter.setSpeed(shooterFinalVel.getNorm());
+    shooter.setFlywheelVel(shooterFinalVel.getNorm());
   }
 
   // Called once the command ends or is interrupted.
