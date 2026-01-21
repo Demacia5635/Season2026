@@ -90,7 +90,7 @@ import static frc.demacia.vision.utils.VisionConstants.*;
 public class Chassis extends SubsystemBase {
 
     ChassisConfig chassisConfig;
-    private SwerveModule[] modules;
+    public SwerveModule[] modules;
     private Pigeon gyro;
 
     private DemaciaKinematics demaciaKinematics;
