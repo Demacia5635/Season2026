@@ -6,6 +6,7 @@ package frc.demacia.vision.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -182,7 +183,7 @@ public class VisionConstants {
 
     // Quest VR headset mounting configuration
     // TODO: Find the right offsets for your robot's Quest mounting position
-    public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.kCCW_90deg);
+    public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(90));
     public static final double X_OFFSET_QUEST = 0.0;
     public static final double Y_OFFSET_QUEST = 0.0;
     public static final double Z_OFFSET_QUEST = 0.52;
@@ -195,5 +196,14 @@ public class VisionConstants {
         Y_OFFSET_QUEST, 
         Z_OFFSET_QUEST, 
         YAW_OFFSET_QUEST
+    );
+    
+        /**
+     * Transform from the center of the robot to Quest headset position in 2d
+     */
+    public static final Transform2d ROBOT_TO_QUEST2D = new Transform2d(
+        X_OFFSET_QUEST, 
+        Y_OFFSET_QUEST, 
+        YAW_OFFSET_QUEST.toRotation2d()
     );
 }

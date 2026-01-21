@@ -27,9 +27,9 @@ import frc.demacia.utils.sensors.Cancoder;
  */
 public class SwerveModule {
     private SwerveModuleConfig config;
-    private MotorInterface steerMotor;
-    private MotorInterface driveMotor;
-    private Cancoder cancoder;
+    public MotorInterface steerMotor;
+    public MotorInterface driveMotor;
+    public Cancoder cancoder;
     public String name;
 
     public SwerveModule(SwerveModuleConfig config) {

@@ -67,4 +67,9 @@ public class SwerveModuleConfig {
         this.steerVelToDriveVel = drivePowerToSteerPower;
         return this;
     }
+
+    public SwerveModuleConfig withDrivePowerToSteerPower(double drivePowerToSteerPower){
+        this.steerVelToDriveVel = drivePowerToSteerPower;
+        return this;
+    }
 }

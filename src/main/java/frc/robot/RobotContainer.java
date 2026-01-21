@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Radian;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
@@ -17,9 +20,6 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.Shooter.commands.HoodCalibrationCommand;
-import frc.robot.Shooter.commands.ShooterCommand;
-import frc.robot.Shooter.subsystem.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,12 +32,11 @@ public class RobotContainer implements Sendable{
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
+  Field2d field2d;Field2d questField2d;
 
-  CommandController controller;
+  // The robot's subsystems and commands are defined here...
 
-  // The robot's subsystems and commands are defined here.
-  Chassis chassis;
-  Shooter shooter;
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -45,21 +44,11 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     
-    controller = new CommandController(0, ControllerType.kPS5);
-    shooter = new Shooter();
-    chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
-    chassis.setDefaultCommand(new DriveCommand(chassis, controller));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis, controller));
-    controller.downButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(1)));
-    controller.upButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(0)));
-    // SmartDashboard.putData("Start Index",new InstantCommand(()->shooter.setIndexerPower(1)));
-    // SmartDashboard.putData("Stop Index", new InstantCommand(()->shooter.setIndexerPower(0)));
-    SmartDashboard.putData("Hood Calibration", new HoodCalibrationCommand(shooter));
-
-
     // Configure the trigger bindings
     configureBindings();
+
   }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -71,7 +60,7 @@ public class RobotContainer implements Sendable{
    * joysticks}.
    */
   private void configureBindings() {
-    
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
   }
 
   public static boolean getIsRed() {
@@ -98,6 +87,7 @@ public class RobotContainer implements Sendable{
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
     builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
+    builder.addDoubleProperty("Angle", () -> angle, (newAngle) -> angle = newAngle);
   }
 
   /**

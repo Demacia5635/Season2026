@@ -29,34 +29,26 @@ public class Quest extends SubsystemBase {
 
     field = new Field2d();
     currentQuestPose = new Pose3d(); // Initialize to origin - IMPORTANT!
-
-    addLog();
+    
+    SmartDashboard.putData("Quest Field", field);
   }
   
-  private void addLog() {
-    LogManager.addEntry("Quest/Latency", questNav::getLatency).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
-    LogManager.addEntry("Quest/Battery", questNav::getBatteryPercent).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
-    LogManager.addEntry("Quest/LibVersion", questNav::getLibVersion).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
-
-    SmartDashboard.putData("Quest/Field", field);
-  }
-
   // Set robot pose (transforms to Quest frame and sends to QuestNav)
-  public void setQuestPose(Pose3d currentBotpose) {
+  public void setQuestPose(Pose3d currentBotpose){
     // currentQuestPose = currentBotpose.transformBy(ROBOT_TO_QUEST);
 
-    questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y and gives back
-                                                                   // the hight of the quest
+    questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y and gives back the hight of the quest
 
   }
 
-  /**
-   * * @return the center of the robot form quest
-   */
-  public Pose2d getRobotPose2d() {
-    return currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse()).toPose2d();// the transformBy is to switch x & y
+ /**
+  * * @return  the center of the robot form quest
+  */
+  public Pose2d getRobotPose2d() { 
+    return currentQuestPose.toPose2d().transformBy(ROBOT_TO_QUEST2D);// the transformBy is to switch x & y
   }
 
+  
   // Check if Quest is connected
   public boolean isConnected() {
     return questNav.isConnected();
@@ -78,17 +70,22 @@ public class Quest extends SubsystemBase {
       timestamp = poseFrames[poseFrames.length - 1].dataTimestamp();
       // Display Quest pose
 
-      // the quest x & y are oppeset so i am switching (if it were more than +-90 than
-      // i will had to transformBy)
-      // never mind i will use transformby
-      qPose3d = currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse());
-      SmartDashboard.putNumber("Quest/X", qPose3d.getX());
-      SmartDashboard.putNumber("Quest/Y", qPose3d.getY());
+      // the quest x & y are oppeset so i am switching (if it were more than +-90 than i will had to transformBy)
+      //never mind i will use transformby
+      Pose2d qPose2d = currentQuestPose.toPose2d().transformBy(ROBOT_TO_QUEST2D);
+      SmartDashboard.putNumber("Quest X", qPose2d.getX());
+      SmartDashboard.putNumber("Quest Y", qPose2d.getY());
+      SmartDashboard.putNumber("Quest Rotation", currentQuestPose.getRotation().getZ());
 
       field.setRobotPose(currentQuestPose.toPose2d());
     }
-
-
+    
+    // Diagnostics - helpful for debugging!
+    SmartDashboard.putBoolean("Quest Connected", questNav.isConnected());
+    SmartDashboard.putBoolean("Quest Tracking", questNav.isTracking());
+    SmartDashboard.putNumber("Quest Latency (ms)", questNav.getLatency());
+    SmartDashboard.putString("QuestNav Version", questNav.getLibVersion());
+    
     // Battery monitoring
     questNav.getBatteryPercent().ifPresent(
         battery -> SmartDashboard.putNumber("Quest Battery %", battery));

@@ -38,6 +38,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,7 +49,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
-import frc.demacia.vision.utils.LimelightHelpers;
+import frc.demacia.vision.utils.VisionFuse;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -92,7 +93,7 @@ import static frc.demacia.vision.utils.VisionConstants.*;
 public class Chassis extends SubsystemBase {
 
     ChassisConfig chassisConfig;
-    private SwerveModule[] modules;
+    public SwerveModule[] modules;
     private Pigeon gyro;
 
     private DemaciaKinematics demaciaKinematics;
@@ -102,6 +103,7 @@ public class Chassis extends SubsystemBase {
     private Field2d field;
     private Field2d field2;
 
+    public Tag[] tags;
     public Tag limelight4;
     public Quest quest;
     public ObjectPose objectPose;
@@ -130,7 +132,7 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator = new DemaciaPoseEstimator(
                 modulePositions,
                 getSTD(),
-                new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.1, 0.1, 0.1 })));
+                getSTD());
         poseEstimator = new SwerveDrivePoseEstimator(wpilibKinematics, getGyroAngle(), getModulePositions(),
                 new Pose2d());
 
@@ -143,8 +145,11 @@ public class Chassis extends SubsystemBase {
         // tags = chassisConfig.tags;
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
+                new Camera("limelight4", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
 
+        tags = new Tag[]{limelight4};
+
+        VisionFuse visionFuse = new VisionFuse(tags);
         if (chassisConfig.objectCamera != null) {
             objectPose = new ObjectPose(
                     chassisConfig.objectCamera,
@@ -180,9 +185,6 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("Chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
 
-        questSTD = new Matrix<>(
-                new SimpleMatrix(
-                        new double[] { 0.05, 0.05, 0.035 }));
     }
 
     public double getUpRotation() {
@@ -245,13 +247,12 @@ public class Chassis extends SubsystemBase {
      * @param speeds Desired chassis speeds (field-relative)
      */
     public void setVelocities(ChassisSpeeds speeds) {
-
-        SwerveModuleState[] states = wpilibKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
-        // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
-        // speeds,
-        // getChassisSpeedsFieldRel(),
-        // getGyroAngle());
+        
+        // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
+        SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
+                speeds,
+                getChassisSpeedsFieldRel(),
+                getGyroAngle());
         setModuleStates(states);
     }
 
@@ -345,13 +346,21 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateQuest(Pose2d questPose) {
-        demaciaPoseEstimator.updateVisionSTD(questSTD);
+         demaciaPoseEstimator.updateVisionSTD(getSTDQuest());
 
         VisionMeasurment measurement = new VisionMeasurment(
                 Timer.getFPGATimestamp(),
                 questPose.getTranslation(),
                 Optional.of(questPose.getRotation()));
         demaciaPoseEstimator.addVisionMeasurement(measurement);
+    }
+
+    private Matrix<N3, N1> getSTDQuest() {
+        double x = 0.005;
+        double y = 0.005;
+        double theta = 0.035;
+
+        return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
     }
 
     private Matrix<N3, N1> getSTD() {
@@ -396,29 +405,40 @@ public class Chassis extends SubsystemBase {
 
     Pose2d questPoseEstimation;
 
+    Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
 
     private boolean hasVisionUpdated = false;
 
     @Override
     public void periodic() {
+        visionFusePoseEstimation = visionFuse.getPoseEstemation();
         gyroAngle = getGyroAngle();
 
         OdometryObservation observation = new OdometryObservation(
                 Timer.getFPGATimestamp(),
                 gyroAngle,
                 getModulePositions());
-        poseEstimator.update(getGyroAngle(), getModulePositions());
-        LimelightHelpers.PoseEstimate limelightPoseEstiamte = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
-        if(limelightPoseEstiamte != null && limelightPoseEstiamte.tagCount > 0){
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-            poseEstimator.addVisionMeasurement(limelightPoseEstiamte.pose, limelightPoseEstiamte.timestampSeconds);
-        }
-        // if(limelight4.getPose() != null) poseEstimator.addVisionMeasurement(limelight4.getPose(), Timer.getFPGATimestamp() - 0.05);
-        // demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
+
         
-        // updateVision(limelight4.getPose());
-        field.setRobotPose(getPose());
+        demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
+        
+        if (visionFusePoseEstimation != null) {
+            if (!hasVisionUpdated) {
+                hasVisionUpdated = true;
+                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+            }
+
+
+            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+
+        } 
+        if (hasVisionUpdated) {
+            updateQuest(quest.getRobotPose2d());
+        }
+
+        field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
+        field2.setRobotPose(quest.getRobotPose2d());
     }
 
     /**
@@ -567,6 +587,10 @@ public class Chassis extends SubsystemBase {
         return chassisConfig.maxRotationalVelocity;
     }
 
+    public Pose2d computeFuturePosition(double sec) {
+        return CalculatePositionAndAngle.computeFuturePosition(getChassisSpeedsFieldRel(), getPose(), sec);
+    }
+
     /**
      * Stops all swerve modules immediately.
      */
@@ -576,4 +600,47 @@ public class Chassis extends SubsystemBase {
         }
     }
 
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+    }
+
+    /**
+     * Finds a tag by the camera name associated with it.
+     * 
+     * @param cameraName The name of the camera (e.g., "right", "barge")
+     * @return The Tag object or null if not found
+     */
+    public Tag getTag(String cameraName) {
+        for (Tag tag : tags) {
+            if (tag.getCamera().getName().equals(cameraName)) {
+                return tag;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a specific camera sees any tag.
+     * 
+     * @param cameraName The name of the camera to check
+     */
+    public boolean isSeeTag(String cameraName) {
+        Tag t = getTag(cameraName);
+        if (t != null) {
+            return t.isSeeTag();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a specific camera sees a specific AprilTag ID within a distance.
+     */
+    public boolean isSeeTag(int id, String cameraName, double distance) {
+        Tag t = getTag(cameraName);
+        if (t != null) {
+            return t.isSeeTag(id, distance);
+        }
+        return false;
+    }
 }
