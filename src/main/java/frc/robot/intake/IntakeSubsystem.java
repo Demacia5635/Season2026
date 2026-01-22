@@ -16,9 +16,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
   TalonSRXMotor motorShinoa;
 
+  TalonSRXMotor motorShit;
+
   public IntakeSubsystem() {
     motor = new TalonFXMotor(IntakeConstants.INTAKE_CONFIG);
     motorShinoa = new TalonSRXMotor(IntakeConstants.SHINA_CONFIG);
+    motorShit = new TalonSRXMotor(IntakeConstants.SHIT_CONFIG);
   }
 
   public void start() {
@@ -27,6 +30,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setDute(double pow){
     motorShinoa.setDuty(pow);
+  }
+
+  public void setDuteShit(double pow){
+    motorShit.setDuty(pow);
   }
 
   public void stop(){

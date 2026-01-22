@@ -21,13 +21,15 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class IntakeConstants{
-    public static final int ID = 0;
+    public static final int ID = 20;
     public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(ID, Canbus.Rio, "intake motor");
 
     public static final double MAX_POWER = 0.8;
 
-    public static final int SHINA_ID = 1;
+    public static final int SHINA_ID = 34;
 
     public static final TalonSRXConfig SHINA_CONFIG = new TalonSRXConfig(SHINA_ID, "rooler");
+
+    public static final TalonSRXConfig SHIT_CONFIG = new TalonSRXConfig(13, "shit");
   }
 }
