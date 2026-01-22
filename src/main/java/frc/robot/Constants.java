@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
-import frc.demacia.utils.motors.TalonFXConfig;
-import frc.demacia.utils.motors.TalonSRXConfig;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -20,7 +18,5 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
-  public static class IntakeConstants{
-    
-  }
+
 }
