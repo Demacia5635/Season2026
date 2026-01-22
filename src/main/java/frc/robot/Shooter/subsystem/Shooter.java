@@ -35,6 +35,7 @@ public class Shooter extends SubsystemBase {
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
     SmartDashboard.putNumber("hood angle", getAngleHood());
+    SmartDashboard.putNumber("hood angle in degrrs", Math.toDegrees(getAngleHood()));
 
   }
 
@@ -116,11 +117,7 @@ public class Shooter extends SubsystemBase {
 
   public boolean isShooterReady() {
     return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
-  }
-
-  
-  
-  
+  }  
 
   public void stop() {
     shooterMotor.stopMotor();
