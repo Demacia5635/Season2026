@@ -434,7 +434,7 @@ public class Chassis extends SubsystemBase {
         }
 
         field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
-        field2.setRobotPose(quest.getRobotPose2d());
+        field2.setRobotPose(visionFusePoseEstimation != null ? visionFuse.getPoseEstemation() : Pose2d.kZero);
     }
 
     /**

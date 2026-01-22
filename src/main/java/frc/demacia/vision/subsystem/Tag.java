@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -54,7 +55,7 @@ public class Tag extends SubsystemBase {
 
   private Translation2d robotToTagFC;
 
-  private double tagID = 0;
+  private int tagID = 0;
 
   private double Yaw3d;
   private Rotation2d yaw3dRotation2d;
@@ -95,11 +96,10 @@ public class Tag extends SubsystemBase {
     latency = Table.getEntry("tl").getDouble(0.0) + Table.getEntry("cl").getDouble(0.0);
 
     if (Table.getEntry("tv").getDouble(0.0) != 0) {
-      crop();
+      cropStop();
       // Only process valid tag IDs
       if (id > 0 && id < TAG_HEIGHT.length) {
-        pose = new Pose2d(getOriginToRobot(), getRobotAngle.get());
-        field.setRobotPose(pose);
+        pose = new Pose2d(DanielVision.getRobotPosition(camToTagPitch + camera.getPitch(), camToTagYaw, camera.getRobotToCamPosition(), new Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(), TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
         confidence = getConfidence();
         wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
       }
@@ -228,7 +228,7 @@ public class Tag extends SubsystemBase {
     Table.getEntry("pipeline").setNumber(1);
     try {
       Yaw3d = Table.getEntry("camerapose_targetspace").getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 })[4];
-      tagID = Table.getEntry("tid").getDouble(0.0);
+      tagID = (int)Table.getEntry("tid").getDouble(0.0);
       Table.getEntry("pipeline").setNumber(0);
       yaw3dRotation2d = Rotation2d.fromDegrees(Yaw3d).rotateBy(Rotation2d.fromDegrees(camera.getYaw()))
           .rotateBy(TAG_ANGLE[(int) tagID]).rotateBy(Rotation2d.fromDegrees(180));
