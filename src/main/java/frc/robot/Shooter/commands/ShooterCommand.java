@@ -6,6 +6,7 @@ package frc.robot.Shooter.commands;
 
 import java.util.logging.LogManager;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,7 +48,9 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d hubToChassis = ShooterConstans.HUB_POSE.toTranslation2d().minus(chassis.getPose().getTranslation());
+    // Pose2d predictedPose = chassis.getPoseWithVelocity(0.02);
+    Pose2d predictedPose = chassis.getPose();
+    Translation2d hubToChassis = ShooterConstans.HUB_POSE.toTranslation2d().minus(predictedPose.getTranslation());
     double[] shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     shooter.setHoodAngle(shooterValues[1]);

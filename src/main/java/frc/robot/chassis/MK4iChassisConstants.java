@@ -21,7 +21,7 @@ public class MK4iChassisConstants {
     public static final double WHEEL_DIAMETER = 4 * 0.0254;
 
     public static final double STEER_KP = 6.43;
-    public static final double STEER_KI = 0.07;
+    public static final double STEER_KI = 0;
     public static final double STEER_KD = 0;
     public static final double STEER_KS = 0;
     public static final double STEER_KV = 0;

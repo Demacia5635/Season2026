@@ -146,7 +146,7 @@ public class Chassis extends SubsystemBase {
         // tags = chassisConfig.tags;
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("limelight4", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
+                new Camera("hub", new Translation3d(0.127, -0.2445, 0.244), 33, 0, true));
 
         tags = new Tag[]{limelight4};
 
@@ -236,6 +236,15 @@ public class Chassis extends SubsystemBase {
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
+
+     
+    public Pose2d getPoseWithVelocity(double dt){
+        Pose2d currentPose = getPose();
+        ChassisSpeeds currentSpeeds = getChassisSpeedsFieldRel();
+        return new Pose2d(currentPose.getX() + (currentSpeeds.vxMetersPerSecond * dt),
+        currentPose.getY() + (currentSpeeds.vyMetersPerSecond * dt), currentPose.getRotation().plus(new Rotation2d(currentSpeeds.omegaRadiansPerSecond * dt)));
+    }
+
 
     /**
      * Sets chassis velocities without acceleration limiting.
@@ -421,14 +430,18 @@ public class Chassis extends SubsystemBase {
 
         poseEstimator.update(getGyroAngle(), getModulePositions());
         
-        LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
+        // LimelightHelpers.PoseEstimate limelightEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
 
-        if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
-            poseEstimator.setVisionMeasurementStdDevs(visionSTD);
-            poseEstimator.addVisionMeasurement(limelightEstimate.pose, limelightEstimate.timestampSeconds);
+        // if (limelightEstimate != null && limelightEstimate.tagCount > 0) {
+        //     poseEstimator.setVisionMeasurementStdDevs(visionSTD);
+        //     poseEstimator.addVisionMeasurement(new Pose2d(limelightEstimate.pose.getTranslation(), getGyroAngle()), limelightEstimate.timestampSeconds);
+        // }
+
+        if (limelight4.pose != null) {
+            poseEstimator.addVisionMeasurement(limelight4.pose, Timer.getFPGATimestamp()-0.05);
         }
-
         field.setRobotPose(getPose());
+        field2.setRobotPose(limelight4.pose != null ? limelight4.pose : Pose2d.kZero);
 
         
         // OdometryObservation observation = new OdometryObservation(

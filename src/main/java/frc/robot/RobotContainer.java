@@ -75,9 +75,11 @@ public class RobotContainer implements Sendable{
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    chassis.setDefaultCommand(driveCommand);
     
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    driverController.upButton().onTrue(new InstantCommand(()->driveCommand.setActiveToHub()));
     driverController.downButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(1)));
     driverController.leftBumper().onTrue(new InstantCommand(()->shooter.setIndexerPower(0)));
   }

@@ -95,7 +95,7 @@ public class Tag extends SubsystemBase {
     latency = Table.getEntry("tl").getDouble(0.0) + Table.getEntry("cl").getDouble(0.0);
 
     if (Table.getEntry("tv").getDouble(0.0) != 0) {
-      crop();
+      cropStop();
       // Only process valid tag IDs
       if (id > 0 && id < TAG_HEIGHT.length) {
         pose = new Pose2d(getOriginToRobot(), getRobotAngle.get());
