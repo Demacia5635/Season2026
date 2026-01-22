@@ -13,7 +13,7 @@ import frc.demacia.vision.Camera;
 public class DanielVision {
 
     public static Translation2d getRobotPosition(double deltaPitch, double deltaYaw, Translation3d cameraPositionOnRobot, Translation3d tagPosition, Rotation2d gyroAngle){
-        Translation2d cameraToTag = cameraToTag(deltaPitch, deltaYaw, Math.abs(tagPosition.getZ() - cameraPositionOnRobot.getZ()));
+        Translation2d cameraToTag = cameraToTag(deltaPitch, deltaYaw, Math.abs(tagPosition.getZ() - cameraPositionOnRobot.getZ())).rotateBy(gyroAngle);
         Translation2d robotToTag = robotToTag(cameraPositionOnRobot.toTranslation2d(), cameraToTag, gyroAngle);
         Translation2d tagToRobot = robotToTag.rotateBy(Rotation2d.k180deg);
         return tagPosition.toTranslation2d().plus(tagToRobot);
