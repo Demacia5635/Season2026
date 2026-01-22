@@ -99,7 +99,7 @@ public class Tag extends SubsystemBase {
       cropStop();
       // Only process valid tag IDs
       if (id > 0 && id < TAG_HEIGHT.length) {
-        pose = new Pose2d(DanielVision.getRobotPosition(camToTagPitch + camera.getPitch(), camToTagYaw, camera.getRobotToCamPosition(), new Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(), TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
+        pose = new Pose2d(DanielVision.getRobotPosition(Math.toRadians(camToTagPitch + camera.getPitch()), Math.toRadians(camToTagYaw), camera.getRobotToCamPosition(), new Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(), TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
         confidence = getConfidence();
         wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
       }
