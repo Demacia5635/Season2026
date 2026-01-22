@@ -12,31 +12,40 @@ import frc.robot.intake.intakeConstans;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new intake. */
-  TalonFXMotor motor;
+  TalonFXMotor motorIntake;
 
-  TalonSRXMotor motorShinoa;
+  TalonSRXMotor motorRoller;
 
-  TalonSRXMotor motorShit;
+  TalonSRXMotor motorToShooter;
 
   public IntakeSubsystem() {
-    motor = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
-    motorShinoa = new TalonSRXMotor(intakeConstans.SHINA_CONFIG);
-    motorShit = new TalonSRXMotor(intakeConstans.SHIT_CONFIG);
+    motorIntake = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
+    motorRoller = new TalonSRXMotor(intakeConstans.ROLLER_CONFIG);
+    motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
 
-  public void start() {
-    motor.setDuty(intakeConstans.MAX_POWER);
+
+  public void setDuteIntake(double pow){
+    motorIntake.setDuty(pow);
   }
 
-  public void setDute(double pow){
-    motorShinoa.setDuty(pow);
+  public void setduteRoller(double pow){
+    motorRoller.setDuty(pow);
   }
 
-  public void setDuteShit(double pow){
-    motorShit.setDuty(pow);
+  public void setDuteToShooter(double pow){
+    motorToShooter.setDuty(pow);
   }
 
-  public void stop(){
-    motor.setDuty(0);
+  public void stopIntake(){
+    motorIntake.stop();
+  }
+
+  public void stopRoller(double pow){
+    motorRoller.stop();
+  }
+
+  public void stopToShooter(){
+    motorToShooter.stop();
   }
 }

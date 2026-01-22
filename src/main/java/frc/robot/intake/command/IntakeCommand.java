@@ -24,9 +24,9 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.start();
-    //intake.setDute(0.5);
-    //intake.setDuteShit(0.5);
+   intake.setDuteIntake(0.8);
+   intake.setduteRoller(0.8);
+   intake.setDuteToShooter(0.8); 
   }
 
   // Called once the command ends or is interrupted.
