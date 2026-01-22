@@ -137,7 +137,7 @@ public class Chassis extends SubsystemBase {
         poseEstimator = new SwerveDrivePoseEstimator(wpilibKinematics, getGyroAngle(), getModulePositions(),
                 new Pose2d());
 
-        SimpleMatrix std = new SimpleMatrix(new double[] { 0.02, 0.02, 0 });
+        SimpleMatrix std = new SimpleMatrix(new double[] { 0.02, 0.02, 99999999 });
         poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(std));
         field = new Field2d();
         field2 = new Field2d();
@@ -146,7 +146,7 @@ public class Chassis extends SubsystemBase {
         // tags = chassisConfig.tags;
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("hub", new Translation3d(0.127, -0.2445, 0.244), 33, 0, true));
+                new Camera("hub", new Translation3d(0.09, -0.095, 0.535), 33, 0, true));
 
         tags = new Tag[]{limelight4};
 

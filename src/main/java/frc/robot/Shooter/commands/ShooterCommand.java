@@ -53,6 +53,8 @@ public class ShooterCommand extends Command {
     shooter.setHoodAngle(shooterValues[1]);
     shooter.setFlywheelVel(shooterValues[0]);
 
+
+
     // shooter.setHoodAngle(Math.toRadians(hoodAngle));
     // shooter.setFlywheelVel(vel);
 

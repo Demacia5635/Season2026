@@ -47,8 +47,7 @@ public class ShooterConstans {
             .withRampTime(0.3)
             .withBrake(false)
             .withPID(2.2, 0, 0, 0.25073, 0.27, 0, 0)
-            .withMeterMotor(1, 4 * 0.0254)
-            .withRadiansMotor(4*0.0254);
+            .withMeterMotor(1, 4 * 0.0254);
 
     public static final int INDEXER_ID = 60;
     public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;

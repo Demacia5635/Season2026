@@ -18,7 +18,6 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.subsystem.Tag;
 import frc.robot.Shooter.commands.HoodCalibrationCommand;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -41,7 +40,7 @@ public class RobotContainer implements Sendable{
   Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
   Shooter shooter;
-  Tag tag;
+  
   // The robot's subsystems and commands are defined here...
 
 
@@ -52,8 +51,7 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
-    tag = new Tag(null, null, null);
-    shooter = new Shooter(chassis,tag);
+    shooter = new Shooter(chassis);
 
     SmartDashboard.putData("Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     SmartDashboard.putData("Hood calibration", new HoodCalibrationCommand(shooter));

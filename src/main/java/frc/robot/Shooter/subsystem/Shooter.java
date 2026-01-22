@@ -29,12 +29,9 @@ public class Shooter extends SubsystemBase {
   private LimitSwitch limitSwitch;
 
   Chassis chassis;
-  Tag tag;
-
   public double angle;
 
-  public Shooter(Chassis chassis, Tag tag) {
-    this.tag = tag;
+  public Shooter(Chassis chassis) {
     this.chassis = chassis;
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
@@ -128,21 +125,6 @@ public class Shooter extends SubsystemBase {
     return ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsFieldRel(), chassis.getPose(), 0.02);
   }
 
-  public Translation2d tagTochassis(){
-    return tag.getPose().getTranslation().minus(RobotFucerPose().getTranslation());
-  }
-
-  public Pose2d tagPose2d(){
-    return tag.getPose();
-  }
-
-  public Translation2d tagToHub(){
-    return tagPose2d().getTranslation().minus(hubPose().toTranslation2d());
-  }
-
-  public Translation2d chassisTohub(){
-    return tagTochassis().plus(tagToHub());
-  }
 
   public boolean isShooterReady() {
     return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
