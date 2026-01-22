@@ -16,6 +16,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.vision.subsystem.Tag;
 import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.utils.ShooterUtils;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
@@ -124,11 +125,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Pose2d RobotFucerPose(){
-    return chassis.computeFuturePosition(); 
+    return ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsFieldRel(), chassis.getPose(), 0.02);
   }
 
   public Translation2d tagTochassis(){
-    return tag.getRobotToTagRR();
+    return tag.getPose().getTranslation().minus(RobotFucerPose().getTranslation());
   }
 
   public Pose2d tagPose2d(){
