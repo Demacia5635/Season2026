@@ -38,14 +38,15 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d fucerPose = ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsRobotRel(),chassis.getPose(),0.02);
-    Pose3d fucerPose3d = new Pose3d(fucerPose);
-    Translation3d fucePoseTranslation2d = fucerPose3d.getTranslation();
-    double DistanceHubToChassis =  ShooterConstans.HUB_POSE_Translation3d.getDistance(fucePoseTranslation2d);
-    Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(DistanceHubToChassis));
+    // Pose2d fucerPose = ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsRobotRel(),chassis.getPose(),0.02);
+    // Pose3d fucerPose3d = new Pose3d(fucerPose);
+    // Translation3d fucePoseTranslation2d = fucerPose3d.getTranslation();
+    // double DistanceHubToChassis =  ShooterConstans.HUB_POSE_Translation3d.getDistance();
+    Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(shooter.chassisTohub().getNurm()));
     Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
     shooter.setFlywheelVel(shooterFinalVel.getNorm());
-    shooter.getLookUpTableAngle(DistanceHubToChassis);
+    double hoodAngle = shooter.getLookUpTableAngle(DistanceHubToChassis);
+    shooter.setHoodAngle(hoodAngle)
   }
 
   // Called once the command ends or is interrupted.
