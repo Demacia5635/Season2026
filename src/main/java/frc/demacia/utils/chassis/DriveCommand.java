@@ -68,7 +68,7 @@ public class DriveCommand extends Command {
         
         speeds = new ChassisSpeeds(velX, velY,-velRot);
         if(isActiveToHub){
-          chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
+          chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
         }
         chassis.setVelocities(speeds);
   }

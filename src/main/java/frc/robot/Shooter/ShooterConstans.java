@@ -4,12 +4,16 @@
 
 package frc.robot.Shooter;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.LimitSwitchConfig;
-
+import edu.wpi.first.math.geometry.Pose2d;
 /** Add your docs here. */
 
 public class ShooterConstans {
@@ -79,5 +83,8 @@ public class ShooterConstans {
     public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
     public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(0, "Limit Switch");
-    public static final Translation3d HUB_POSE = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
+
+    public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
+    public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
+    public static final Pose2d hubPose2d = new Pose2d(HUB_POSE_Translation2d, new Rotation2d());
 }

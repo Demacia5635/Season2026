@@ -50,7 +50,7 @@ public class ShooterCommand extends Command {
   public void execute() {
     // Pose2d predictedPose = chassis.getPoseWithVelocity(0.02);
     Pose2d predictedPose = chassis.getPose();
-    Translation2d hubToChassis = ShooterConstans.HUB_POSE.toTranslation2d().minus(predictedPose.getTranslation());
+    Translation2d hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(predictedPose.getTranslation());
     double[] shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     shooter.setHoodAngle(shooterValues[1]);
