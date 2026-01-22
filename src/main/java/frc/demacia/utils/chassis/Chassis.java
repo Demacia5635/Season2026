@@ -93,7 +93,7 @@ import static frc.demacia.vision.utils.VisionConstants.*;
 public class Chassis extends SubsystemBase {
 
     ChassisConfig chassisConfig;
-    private SwerveModule[] modules;
+    public SwerveModule[] modules;
     private Pigeon gyro;
 
     private DemaciaKinematics demaciaKinematics;
@@ -255,13 +255,12 @@ public class Chassis extends SubsystemBase {
      * @param speeds Desired chassis speeds (field-relative)
      */
     public void setVelocities(ChassisSpeeds speeds) {
-
-        SwerveModuleState[] states = wpilibKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
-        // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
-        // speeds,
-        // getChassisSpeedsFieldRel(),
-        // getGyroAngle());
+        
+        // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
+        SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
+                speeds,
+                getChassisSpeedsFieldRel(),
+                getGyroAngle());
         setModuleStates(states);
     }
 
