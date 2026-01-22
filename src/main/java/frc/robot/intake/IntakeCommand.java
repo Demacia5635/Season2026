@@ -24,6 +24,7 @@ public class IntakeCommand extends Command {
   @Override
   public void execute() {
     intake.start();
+    intake.setDute(0.5);
   }
 
   // Called once the command ends or is interrupted.
