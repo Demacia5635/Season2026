@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter.subsystem;
-
-import java.util.logging.LogManager;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -73,7 +70,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHoodAngle(double angle) {
-    // this.angle = angle;
+    //this.angle = angle;
     if (!hasCalibrated) {
       hoodMotor.set(0);
       return;
