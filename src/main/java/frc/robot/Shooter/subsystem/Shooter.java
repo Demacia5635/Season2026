@@ -4,7 +4,9 @@
 
 package frc.robot.Shooter.subsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
+import frc.demacia.vision.subsystem.Tag;
 import frc.robot.Shooter.ShooterConstans;
 
 public class Shooter extends SubsystemBase {
@@ -23,11 +26,14 @@ public class Shooter extends SubsystemBase {
   private boolean hasCalibrated;
 
   private LimitSwitch limitSwitch;
+
   Chassis chassis;
+  Tag tag;
 
   public double angle;
 
-  public Shooter(Chassis chassis) {
+  public Shooter(Chassis chassis, Tag tag) {
+    this.tag = tag;
     this.chassis = chassis;
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
@@ -115,6 +121,26 @@ public class Shooter extends SubsystemBase {
 
   public void setIndexerPower(double pow) {
     indexerMotor.set(pow);
+  }
+
+  public Pose2d RobotFucerPose(){
+    return chassis.computeFuturePosition(); 
+  }
+
+  public Translation2d tagTochassis(){
+    return tag.getRobotToTagRR();
+  }
+
+  public Pose2d tagPose2d(){
+    return tag.getPose();
+  }
+
+  public Translation2d tagToHub(){
+    return tagPose2d().getTranslation().minus(hubPose().toTranslation2d());
+  }
+
+  public Translation2d chassisTohub(){
+    return tagTochassis().plus(tagToHub());
   }
 
   public boolean isShooterReady() {
