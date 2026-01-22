@@ -10,7 +10,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.vision.Camera;
 
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -76,12 +79,12 @@ public class Tag extends SubsystemBase {
 
     this.camera = camera;
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
-
+    LogManager.addEntry("dist",this::GetDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     field = new Field2d();
     latency = 0;
     is3D = Table.getEntry("pipeline").getInteger(0) == 1;
     // SmartDashboard.putData("Tag" + cameraId, this);
-    // SmartDashboard.putData("field-tag" + camera.getName(), field);
+    SmartDashboard.putData("field-tag" + camera.getName(), field);
   }
 
   @Override
@@ -101,6 +104,7 @@ public class Tag extends SubsystemBase {
       if (id > 0 && id < TAG_HEIGHT.length) {
         // pose = new Pose2d(DanielVision.getRobotPosition(Math.toRadians(camToTagPitch + camera.getPitch()), Math.toRadians(camToTagYaw), camera.getRobotToCamPosition(), new Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(), TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
         pose = new Pose2d(getOriginToRobot(), getRobotAngle.get());
+        field.setRobotPose(pose);
         confidence = getConfidence();
         wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
       }
@@ -132,9 +136,9 @@ public class Tag extends SubsystemBase {
    */
   public double GetDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch) + camera.getPitch();
+    alpha = Math.abs(camToTagPitch + camera.getPitch());
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
-    dist = dist / Math.cos(Math.abs(Math.toRadians(camToTagYaw)));
+    dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
     // LogManager.log(camera.getName() + ":" + dist);
     return dist;
     // }
