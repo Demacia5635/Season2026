@@ -45,7 +45,8 @@ public class ShooterConstans {
             .withRampTime(0.3)
             .withBrake(false)
             .withPID(2.2, 0, 0, 0.25073, 0.27, 0, 0)
-            .withMeterMotor(1, 4 * 0.0254);
+            .withMeterMotor(1, 4 * 0.0254)
+            .withRadiansMotor(4*0.0254);
 
     public static final int INDEXER_ID = 60;
     public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
@@ -71,7 +72,8 @@ public class ShooterConstans {
             .withBrake(true)
             .withRadiansMotor(HOOD_GEAR_RATIO)
             .withInvert(false)
-            .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG);
+            .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG)
+            .withFeedForward(HOOD_KV, HOOD_GEAR_RATIO);
 
     public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
     public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);

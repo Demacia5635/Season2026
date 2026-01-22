@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Translation3d getVelInVector(double vel) {
-    return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getDegrees(), getAngleHood(), 0));
+    return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getRadians(), getAngleHood(), 0));
   }
 
   public void setIndexerPower(double pow) {
@@ -117,6 +117,10 @@ public class Shooter extends SubsystemBase {
   public boolean isShooterReady() {
     return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
   }
+
+  
+  
+  
 
   public void stop() {
     shooterMotor.stopMotor();

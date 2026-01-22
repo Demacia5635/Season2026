@@ -39,6 +39,8 @@ public class ShooterFollowCommand extends Command {
     Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(shooter.getVectorToHubShoter().getNorm()));
     Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
     shooter.setFlywheelVel(shooterFinalVel.getNorm());
+
+    double getfucerangle = chassis.
   }
 
   // Called once the command ends or is interrupted.
