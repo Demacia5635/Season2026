@@ -27,7 +27,8 @@ public class Shooter extends SubsystemBase {
 
   public double angle;
 
-  public Shooter() {
+  public Shooter(Chassis chassis) {
+    this.chassis = chassis;
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
@@ -41,6 +42,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
     builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
@@ -86,7 +88,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
-    this.angle = angle;
+    //this.angle = angle;
     setFlywheelVel(vel);
     setHoodAngle(angle);
   }
@@ -108,7 +110,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Translation3d getVelInVector(double vel) {
-    return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getRadians(), getAngleHood(), 0));
+    return new Translation3d(vel, new Rotation3d(0, getAngleHood(), chassis.getGyroAngle().getRadians()));
   }
 
   public void setIndexerPower(double pow) {

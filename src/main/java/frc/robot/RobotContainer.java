@@ -50,7 +50,7 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
-    shooter = new Shooter();
+    shooter = new Shooter(chassis);
 
     SmartDashboard.putData("Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     SmartDashboard.putData("Hood calibration", new HoodCalibrationCommand(shooter));
