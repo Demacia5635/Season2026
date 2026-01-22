@@ -4,28 +4,24 @@
 
 package frc.robot.Shooter.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.controller.CommandController;
+import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
-//import frc.robot.Shooter.utils.shooterUtilse;
-import frc.robot.Shooter.utils.ShooterUtils;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShooterFollowCommand extends Command {
-  /** Creates a new shotingWithMovmentCommand. */
+public class HoodCalibrationCommand extends Command {
+  /** Creates a new shooterCommand. */
 
   Shooter shooter;
-  Chassis chassis;
-  Pose2d target;
-  Translation3d robotVelosety;
-  public static double VelocityInFucer;
 
-  public ShooterFollowCommand(Shooter shooter, Chassis chassis) {
-    this.chassis = chassis;
+  public HoodCalibrationCommand(Shooter shooter) {
     this.shooter = shooter;
-    this.target = Pose2d.kZero;
+    addRequirements(shooter);
+    SmartDashboard.putData(this);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -36,18 +32,20 @@ public class ShooterFollowCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(shooter.getVectorToHubShoter().getNorm()));
-    Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
-    shooter.setFlywheelVel(shooterFinalVel.getNorm());
+    shooter.setHoodPower(0.1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.setHoodMotorPosition(ShooterConstans.MAX_ANGLE_HOOD);
+    shooter.setHoodPower(0);
+    shooter.setCalibrated();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return shooter.isAtLimit();
   }
 }

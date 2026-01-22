@@ -17,15 +17,21 @@ public class ShooterConstans {
     public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
     static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
              // angle (Radians)
-        SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(2.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(3, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(3.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(4, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(4.5, 0, 0);
-        SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
+        
+         SHOOTER_LOOKUP_TABLE.add(0.613, 12.8, Math.toRadians(85));   
+
+         SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));   
+         SHOOTER_LOOKUP_TABLE.add(3.56, 15.5, Math.toRadians(72));
+         SHOOTER_LOOKUP_TABLE.add(4.79, 19, Math.toRadians(62)); 
+        // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(2.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(3, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(3.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(4, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(4.5, 0, 0);
+        // SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
     }
 
     public static final int shooterMotorID = 21;
@@ -49,27 +55,27 @@ public class ShooterConstans {
             INDEXER_NAME)
             .withInvert(true);
 
-    public static final int HOOD_ID = 11;
+    public static final int HOOD_ID = 34;
     public static final String HOOD_NAME = "HOOD MOTOR";
 
-    public static final int HOOD_KP = -1;
-    public static final int HOOD_KI = -1;
-    public static final int HOOD_KD = -1;
-    public static final int HOOD_KS = -1;
-    public static final int HOOD_KV = -1;
-    public static final int HOOD_KA = -1;
-    public static final int HOOD_KG = -1;
-    public static final double HOOD_GEAR_RATIO = 1 / (4.4 * 64);
+    public static final int HOOD_KP = 22;
+    public static final int HOOD_KI = 0;
+    public static final int HOOD_KD = 0;
+    public static final int HOOD_KS = 0;
+    public static final int HOOD_KV = 0;
+    public static final int HOOD_KA = 0;
+    public static final int HOOD_KG = 0;
+    public static final double HOOD_GEAR_RATIO = ((110/25d)* 32);
 
     public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
             .withBrake(true)
             .withRadiansMotor(HOOD_GEAR_RATIO)
-            .withInvert(true)
+            .withInvert(false)
             .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KV, HOOD_KG);
 
-    public static final double MAX_ANGLE_HOOD = 0;
-    public static final double MIN_ANGLE_HOOD = 0;
+    public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
+    public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
-    public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(9, "Limit Switch");
-    public static final Translation3d hubPose = new Translation3d(449.5 / 100, 370.84000000000003 / 100, 142.24 / 2);
+    public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(0, "Limit Switch");
+    public static final Translation3d HUB_POSE = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
 }

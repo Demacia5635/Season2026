@@ -61,14 +61,16 @@ public class DriveCommand extends Command {
             velRot /= 4;
         }
         
-        speeds = new ChassisSpeeds(velX, velY,velRot);
+        speeds = new ChassisSpeeds(velX, velY,-velRot);
  
         chassis.setVelocities(speeds);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    chassis.stop();
+  }
 
   // Returns true when the command should end.
   @Override

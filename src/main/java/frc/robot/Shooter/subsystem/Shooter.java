@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter.subsystem;
+
+import java.util.logging.LogManager;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -14,116 +17,132 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.Shooter.ShooterConstans;
 
-
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
-  TalonFXMotor shooterMotor;
-  TalonFXMotor indexerMotor;
-  TalonFXMotor hoodMotor;
-  
+  private TalonFXMotor shooterMotor;
+  private TalonFXMotor indexerMotor;
+  private TalonFXMotor hoodMotor;
+  private boolean hasCalibrated;
+
   private LimitSwitch limitSwitch;
   Chassis chassis;
+
+  public double angle;
 
   public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
-
+    this.hasCalibrated = false;
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
     SmartDashboard.putNumber("hood angle", getAngleHood());
-    
+
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
-    builder.addBooleanProperty("Is At Limit", ()->isAtLimit(), null);
+    builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
   }
 
-  public boolean isAtLimit(){
+  public boolean isAtLimit() {
     return !limitSwitch.get();
   }
 
-  public void setSpeed(double speed){
+  public void setHoodMotorPosition(double position) {
+    hoodMotor.setEncoderPosition(position);
+  }
+
+  public void setFlywheelVel(double speed) {
     shooterMotor.setVelocity(speed);
   }
-  public double getShooterVelocity(){
+
+  public double getShooterVelocity() {
     return shooterMotor.getVelocity().getValueAsDouble();
   }
-  
-  public void setPower(double power){
+
+  public void setPower(double power) {
     shooterMotor.set(power);
   }
 
-  public void setHoodPower(double power){
+  public void setHoodPower(double power) {
     hoodMotor.set(power);
   }
 
-  public void setAngleHood(double angle){
-    MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
+  public void setHoodAngle(double angle) {
+    // this.angle = angle;
+    if (!hasCalibrated) {
+      hoodMotor.set(0);
+      return;
+    }
+    
+    angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     hoodMotor.setPositionVoltage(angle);
   }
 
-  public double getAngleHood(){
+  public double getAngleHood() {
     return hoodMotor.getCurrentAngle();
   }
-  
-  public void setVelocitiesAndAngle(double vel, double angle){
-    setSpeed(vel);
-    setAngleHood(angle);
+
+  public void setVelocitiesAndAngle(double vel, double angle) {
+    this.angle = angle;
+    setFlywheelVel(vel);
+    setHoodAngle(angle);
   }
 
+  public boolean hasCalibrated() {
+    return this.hasCalibrated;
+  }
 
+  public void setCalibrated() {
+    this.hasCalibrated = true;
+  }
 
-  public double getLookUpTableVel(double distance){
+  public double getLookUpTableVel(double distance) {
     return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[0];
   }
 
-  public double getLookUpTableAngle(double distance){
+  public double getLookUpTableAngle(double distance) {
     return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[1];
   }
 
-  
-
-  
-  public Translation3d getVelInVector(double vel){
+  public Translation3d getVelInVector(double vel) {
     return new Translation3d(vel, new Rotation3d(chassis.getGyroAngle().getDegrees(), getAngleHood(), 0));
   }
 
-  public void setIndexerPower(double pow){
+  public void setIndexerPower(double pow) {
     indexerMotor.set(pow);
   }
 
-  public boolean isShooterReady(){
+  public boolean isShooterReady() {
     return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
   }
-  
-  public void stop(){
+
+  public void stop() {
     shooterMotor.stopMotor();
   }
 
-  //hub pose (i finde it with april tag)
-  public Translation3d hubPose(){
-    return new Translation3d(449.5/100, 370.84000000000003/100, 142.24/2);
+  // hub pose (i finde it with april tag)
+  public Translation3d hubPose() {
+    return new Translation3d(449.5 / 100, 370.84000000000003 / 100, 142.24 / 2);
   }
 
-  //shooter pose on the robot
-  public Translation3d ShooterPoseOnRobot(){
-    return new Translation3d();
-  }
-  public Translation3d getShooterPosOnField(){
+  // shooter pose on the robot
+  public Translation3d ShooterPoseOnRobot() {
     return new Translation3d();
   }
 
-  //get the distins from the shooter to the target
-  public Translation3d getVectorToHubShoter(){
-    return ShooterConstans.hubPose.minus(getShooterPosOnField());
+  public Translation3d getShooterPosOnField() {
+    return new Translation3d();
   }
 
-
+  // get the distins from the shooter to the target
+  public Translation3d getVectorToHubShoter() {
+    return ShooterConstans.HUB_POSE.minus(getShooterPosOnField());
+  }
 
   @Override
   public void periodic() {
