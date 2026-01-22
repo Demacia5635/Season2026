@@ -41,7 +41,7 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  shooter.setSpeed(vel);
+  //shooter.setSpeed(vel);
     shooter.setHoodPower(controller.getLeftY() * 0.5);
   }
 
