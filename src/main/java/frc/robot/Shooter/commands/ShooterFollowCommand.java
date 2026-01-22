@@ -6,7 +6,6 @@ package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
@@ -42,11 +41,11 @@ public class ShooterFollowCommand extends Command {
     Pose2d fucerPose = ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsRobotRel(),chassis.getPose(),0.02);
     Pose3d fucerPose3d = new Pose3d(fucerPose);
     Translation3d fucePoseTranslation2d = fucerPose3d.getTranslation();
-    double DistanceHubToShooter =  ShooterConstans.HUB_POSE_Translation3d.getDistance(fucePoseTranslation2d);
-    Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(DistanceHubToShooter));
+    double DistanceHubToChassis =  ShooterConstans.HUB_POSE_Translation3d.getDistance(fucePoseTranslation2d);
+    Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(DistanceHubToChassis));
     Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
     shooter.setFlywheelVel(shooterFinalVel.getNorm());
-    shooter.getLookUpTableAngle(DistanceHubToShooter);
+    shooter.getLookUpTableAngle(DistanceHubToChassis);
   }
 
   // Called once the command ends or is interrupted.
