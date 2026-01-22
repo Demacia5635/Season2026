@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.intake.IntakeSubsystem;
-import frc.robot.intake.IntakeCommand;
+import frc.robot.intake.command.IntakeCommand;
+import frc.robot.intake.subsystem.IntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
