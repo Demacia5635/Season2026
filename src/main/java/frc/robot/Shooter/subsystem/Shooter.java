@@ -39,6 +39,7 @@ public class Shooter extends SubsystemBase {
     this.hasCalibrated = false;
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
+    hoodMotor.configPidFf(0);
 
   }
 

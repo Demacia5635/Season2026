@@ -4,6 +4,7 @@
 
 package frc.demacia.utils.chassis;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,54 +33,63 @@ public class DriveCommand extends Command {
   }
 
   public void invertPrecisionMode() {
-      setPrecisionMode(!precisionMode);
+    setPrecisionMode(!precisionMode);
   }
-  
-  public void setActiveToHub(){
+
+  public void setActiveToHub() {
     isActiveToHub = !isActiveToHub;
   }
+
   public void setPrecisionMode(boolean precisionMode) {
-      this.precisionMode = precisionMode;
+    this.precisionMode = precisionMode;
   }
 
   public boolean getPrecisionMode() {
-      return precisionMode;
+    return precisionMode;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     direction = DemaciaUtils.getIsRed() ? 1 : -1;
     double joyX = controller.getLeftY() * direction;
-        double joyY = controller.getLeftX() * direction;
-        
-        // Calculate r]otation from trigger axes
-        double rot = controller.getLeftTrigger() - controller.getRightTrigger();
-        
-        double velX = Math.pow(joyX, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyX);
-        double velY = Math.pow(joyY, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyY);
-        double velRot = Math.pow(rot, 2) * chassis.getMaxRotationalVelocity() * Math.signum(rot);
-        if(precisionMode){
-            velX /= 4;
-            velY /= 4;
-            velRot /= 4;
-        }
-        
-        speeds = new ChassisSpeeds(velX, velY,-velRot);
-        if(isActiveToHub){
-          double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle().getRadians();
-          if (wantedAngle > chassis.getGyroAngle().getRadians()) {
-            speeds.omegaRadiansPerSecond = pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-          } else {
-            speeds.omegaRadiansPerSecond = -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-          }
-          // chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
-        }
-        chassis.setVelocities(speeds);
+    double joyY = controller.getLeftX() * direction;
+
+    // Calculate r]otation from trigger axes
+    double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+
+    double velX = Math.pow(joyX, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyX);
+    double velY = Math.pow(joyY, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyY);
+    double velRot = Math.pow(rot, 2) * chassis.getMaxRotationalVelocity() * Math.signum(rot);
+    if (precisionMode) {
+      velX /= 4;
+      velY /= 4;
+      velRot /= 4;
+    }
+
+    speeds = new ChassisSpeeds(velX, velY, -velRot);
+    if (isActiveToHub) {
+      double chassisAngle = chassis.getPoseWithVelocity().getRotation().getRadians();
+      double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle()
+          .getRadians();
+      // if (wantedAngle > chassis.getGyroAngle().getRadians()) {
+      // if (chassisAngle > wantedAngle) wantedAngle += 2*Math.PI;
+      double diff = MathUtil.angleModulus(wantedAngle - chassisAngle);
+
+      speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(5) ? -diff * 2 : 0;
+      // } else {
+      // speeds.omegaRadiansPerSecond =
+      // -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
+      // }
+      // chassis.setVelocitiesRotateToAngleOld(speeds,
+      // ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
+    }
+    chassis.setVelocities(speeds);
   }
 
   // Called once the command ends or is interrupted.

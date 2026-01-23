@@ -65,20 +65,20 @@ public class MK4iChassisConstants {
 
             ans[i] = new SwerveModuleConfig(
                     name,
-                    new TalonFXConfig(i * 3 + 2, CAN_BUS, name + " Steer")
+                    new TalonFXConfig(i * 3 + 2, CAN_BUS, name + "/Steer")
                             .withPID(STEER_KP, STEER_KI, STEER_KD, STEER_KS, STEER_KV, STEER_KA, 0)
                             .withMotionParam(MOTION_MAGIC_VEL, MOTION_MAGIC_ACCEL, MOTION_MAGIC_JERK)
                             .withBrake(true)
                             .withInvert(false)
                             .withRadiansMotor(STEER_GEAR_RATIO)
                             .withRampTime(RAMP_TIME_STEER),
-                    new TalonFXConfig(i * 3 + 1, CAN_BUS, name + " Drive")
+                    new TalonFXConfig(i * 3 + 1, CAN_BUS, name + "/Drive")
                             .withPID(DRIVE_KP, DRIVE_KI, DRIVE_KD, DRIVE_KS, DRIVE_KV, DRIVE_KA, 0)
                             .withBrake(true)
                             .withMeterMotor(DRIVE_GEAR_RATIO, WHEEL_DIAMETER),
-                    i != 2
-                    ? new CancoderConfig(i * 3 + 3, CAN_BUS, name + " Cancoder")
-                    : new CancoderConfig(6, CAN_BUS, name + "Cancoder")
+                    // i != 2
+                    new CancoderConfig(i * 3 + 3, CAN_BUS, name + "/Cancoder")
+                    // : new CancoderConfig(6, CAN_BUS, name + "Cancoder")
                     ).withPosion(
                             new Translation2d(
                                     i == 0 || i == 1 ? 0.34 : -0.34,
@@ -92,7 +92,7 @@ public class MK4iChassisConstants {
             new double[] {
                     /* Front Left Offset: */ 0.26001 * 2 * Math.PI,
                     /* Front Right Offset: */ 0.437744 * 2 * Math.PI,
-                    /* Back Left Offset: */ 0,
+                    /* Back Left Offset: */ -1.8929352374939940179032811441612,
                     /* Back Right Offset: */ 0.387939 * 2 * Math.PI
             });
 
