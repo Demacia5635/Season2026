@@ -42,7 +42,6 @@ public class RobotContainer implements Sendable{
   public static Camera camera;
   public static CommandController driverController;
   public static ObjectPose objectPose;
-  public static AutonamusIntakeCommand AutonamusIntakeCommand;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -55,7 +54,7 @@ public class RobotContainer implements Sendable{
     camera = new Camera("fuel", new Translation3d(25, new Rotation3d(0, 0, 0)), 25, 0, null);
     objectPose = new ObjectPose(camera,() -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
-    //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     objectPose.setDefaultCommand(new AutonamusIntakeCommand(chassis, objectPose));
     // Configure the trigger bindings
     // configureBindings();
