@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +18,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import frc.robot.chassis.MK5nChassisConstants;
 import frc.robot.chassis.TestModulePID;
@@ -35,10 +38,10 @@ public class RobotContainer implements Sendable{
   public static boolean isRed = false;
 
   // The robot's subsystems and commands are defined here...
-  
+  Chassis chassis;
+  public static Camera camera;
   public static CommandController driverController;
   public static ObjectPose objectPose;
-  Chassis chassis;
   public static AutonamusIntakeCommand AutonamusIntakeCommand;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -47,12 +50,13 @@ public class RobotContainer implements Sendable{
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-
     driverController = new CommandController(0, ControllerType.kPS5);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
+    camera = new Camera("fuel", new Translation3d(25, new Rotation3d(0, 0, 0)), 25, 0, null);
+    objectPose = new ObjectPose(camera,() -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    objectPose.setDefaultCommand(AutonamusIntakeCommand);
+    objectPose.setDefaultCommand(new AutonamusIntakeCommand(chassis, objectPose));
     // Configure the trigger bindings
     // configureBindings();
   }
