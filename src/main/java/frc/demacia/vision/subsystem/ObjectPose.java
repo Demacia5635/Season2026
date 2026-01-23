@@ -107,7 +107,7 @@ public class ObjectPose extends SubsystemBase {
    */
   public Translation2d getRobotToObject(){
     cameraToObject = new Translation2d(getDistcameraToObject(),Rotation2d.fromDegrees(camToObjectYaw));
-    robotToObject = new Translation2d(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
+    robotToObject = camera.getRobotToCamPosition().toTranslation2d().plus(cameraToObject);
     return robotToObject;
   }
 

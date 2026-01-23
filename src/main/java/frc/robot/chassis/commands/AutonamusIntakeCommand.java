@@ -106,7 +106,7 @@ public class AutonamusIntakeCommand extends Command {
     double vy = linearSpeed * targetAngle.getSin();
     
     // Create field-relative chassis speeds
-    ChassisSpeeds fieldSpeeds = new ChassisSpeeds(vx, vy, requiredOmega);
+    ChassisSpeeds fieldSpeeds = new ChassisSpeeds(-vx, -vy, requiredOmega);
     
     // Send velocities to chassis
     chassis.setVelocities(fieldSpeeds);
