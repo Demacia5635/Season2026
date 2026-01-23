@@ -5,13 +5,9 @@
 package frc.robot.climb.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-<<<<<<< HEAD
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ControllerClimb extends Command {
-  /** Creates a new ControllerClimb. */
-  public ControllerClimb() {
-=======
+
+
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.climb.subsystems.Climb;
 
@@ -27,23 +23,11 @@ public class ControllerClimb extends Command {
     this.contoller = controller;
     this.climb = climb;
     addRequirements(climb);
->>>>>>> 26a2108cdc4622c206a120566ef7ef0e6ec5f8f7
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-<<<<<<< HEAD
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-=======
   public void initialize() {
   }
 
@@ -58,7 +42,6 @@ public class ControllerClimb extends Command {
   @Override
   public void end(boolean interrupted) {
   }
->>>>>>> 26a2108cdc4622c206a120566ef7ef0e6ec5f8f7
 
   // Returns true when the command should end.
   @Override
