@@ -82,7 +82,8 @@ public class AutonamusIntakeCommand extends Command {
         MAX_DRIVE_SPEED
       );
 
-      SmartDashboard.putNumber("distens", distance)
+      SmartDashboard.putNumber("distens", distance);
+      SmartDashboard.putNumber("angle", targetAngle.getDegrees());
     }
     
     // Calculate time to reach target (assuming constant velocity)
