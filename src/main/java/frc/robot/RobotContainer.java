@@ -16,8 +16,10 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.vision.subsystem.ObjectPose;
 import frc.robot.chassis.MK5nChassisConstants;
 import frc.robot.chassis.TestModulePID;
+import frc.robot.chassis.commands.AutonamusIntakeCommand;
 import frc.robot.chassis.commands.DrivePower;
 
 /**
@@ -35,7 +37,9 @@ public class RobotContainer implements Sendable{
   // The robot's subsystems and commands are defined here...
   
   public static CommandController driverController;
+  public static ObjectPose objectPose;
   Chassis chassis;
+  public static AutonamusIntakeCommand AutonamusIntakeCommand;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -47,7 +51,8 @@ public class RobotContainer implements Sendable{
     driverController = new CommandController(0, ControllerType.kPS5);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     // chassis.setDefaultCommand(new TestModulePID(chassis));
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    objectPose.setDefaultCommand(AutonamusIntakeCommand);
     // Configure the trigger bindings
     // configureBindings();
   }
@@ -62,7 +67,7 @@ public class RobotContainer implements Sendable{
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
   }
 
   public static boolean getIsRed() {

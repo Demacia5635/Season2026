@@ -5,9 +5,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.vision.subsystem.ObjectPose;
+import frc.demacia.utils.log.LogManager;
 
 /**
  * Autonomous intake command that drives toward a game piece while automatically
@@ -31,6 +33,8 @@ public class AutonamusIntakeCommand extends Command {
     this.chassis = chassis;
     this.objectPose = objectPose;
     addRequirements(chassis);
+
+    
   }
 
   @Override
@@ -77,6 +81,8 @@ public class AutonamusIntakeCommand extends Command {
         MIN_DRIVE_SPEED,
         MAX_DRIVE_SPEED
       );
+
+      SmartDashboard.putNumber("distens", distance)
     }
     
     // Calculate time to reach target (assuming constant velocity)
