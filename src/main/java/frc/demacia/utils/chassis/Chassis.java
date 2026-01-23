@@ -146,7 +146,7 @@ public class Chassis extends SubsystemBase {
         // tags = chassisConfig.tags;
 
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("hub", new Translation3d(0.09, -0.095, 0.535), 33, 0, true));
+                new Camera("hub", new Translation3d(-0.088, -0.126, 0.535), 30, 0, true));
 
         tags = new Tag[]{limelight4};
 

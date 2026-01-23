@@ -4,6 +4,7 @@
 
 package frc.demacia.utils.chassis;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.DemaciaUtils;
@@ -18,6 +19,8 @@ public class DriveCommand extends Command {
   private ChassisSpeeds speeds;
   private boolean precisionMode;
   private boolean isActiveToHub;
+
+  public PIDController pidController = new PIDController(1.5, 0.15, 0);
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
@@ -68,7 +71,13 @@ public class DriveCommand extends Command {
         
         speeds = new ChassisSpeeds(velX, velY,-velRot);
         if(isActiveToHub){
-          chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians() + Math.toRadians(180));
+          double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle().getRadians();
+          if (wantedAngle > chassis.getGyroAngle().getRadians()) {
+            speeds.omegaRadiansPerSecond = pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
+          } else {
+            speeds.omegaRadiansPerSecond = -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
+          }
+          // chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
         }
         chassis.setVelocities(speeds);
   }

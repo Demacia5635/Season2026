@@ -39,8 +39,6 @@ public class Shooter extends SubsystemBase {
     this.hasCalibrated = false;
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
-    SmartDashboard.putNumber("hood angle", getAngleHood());
-    SmartDashboard.putNumber("hood angle in degrrs", Math.toDegrees(getAngleHood()));
 
   }
 
@@ -50,6 +48,7 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
+    builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
   }
 
   public boolean isAtLimit() {
