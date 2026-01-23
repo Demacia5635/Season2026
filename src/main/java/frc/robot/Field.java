@@ -182,6 +182,8 @@ public final class Field {
     }
 
     //Balls Field
-    public static final Translation2d BALLS_FIELD_UPPER_RIGHT = new Translation2d(FIELD_LENGTH - 7.357326, FIELD_WIDTH - 1.724431);
-    public static final Translation2d BALLS_FIELD_LOWER_LEFT = new Translation2d(7.357326, 1.724431);
+    public static final Rectangle2d BALLS_FIELD = new Rectangle2d(
+        new Translation2d(FIELD_LENGTH - 7.357326, FIELD_WIDTH - 1.724431),
+        new Translation2d(7.357326, 1.724431)
+    );
 }
