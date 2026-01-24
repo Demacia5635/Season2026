@@ -245,7 +245,17 @@ public class Chassis extends SubsystemBase {
         return new Pose2d(currentPose.getX() + (currentSpeeds.vxMetersPerSecond * dt),
         currentPose.getY() + (currentSpeeds.vyMetersPerSecond * dt), currentPose.getRotation().plus(new Rotation2d(currentSpeeds.omegaRadiansPerSecond * dt)));
     }
+    
+    private double targetAngle = 0;
 
+
+    private boolean isRotateToHub = false;
+    public void setTargetAngle(double targetAngle){
+        this.targetAngle = targetAngle;
+    }
+    public void setRotateToHub(){
+        this.isRotateToHub = !isRotateToHub;
+    }
 
     /**
      * Sets chassis velocities without acceleration limiting.
@@ -259,7 +269,7 @@ public class Chassis extends SubsystemBase {
      */
     
     public void setVelocities(ChassisSpeeds speeds) {
-        
+        if(isRotateToHub) speeds.omegaRadiansPerSecond = 1.2 * MathUtil.angleModulus(targetAngle - getGyroAngle().getRadians());
         // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
         SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
                 speeds,

@@ -37,7 +37,7 @@ public class DriveCommand extends Command {
   }
 
   public void setActiveToHub() {
-    isActiveToHub = !isActiveToHub;
+    chassis.setRotateToHub();
   }
 
   public void setPrecisionMode(boolean precisionMode) {
@@ -73,22 +73,24 @@ public class DriveCommand extends Command {
     }
 
     speeds = new ChassisSpeeds(velX, velY, -velRot);
-    if (isActiveToHub) {
-      double chassisAngle = chassis.getPoseWithVelocity().getRotation().getRadians();
-      double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle()
-          .getRadians();
-      // if (wantedAngle > chassis.getGyroAngle().getRadians()) {
-      // if (chassisAngle > wantedAngle) wantedAngle += 2*Math.PI;
-      double diff = MathUtil.angleModulus(wantedAngle - chassisAngle);
+    // if (isActiveToHub) {
+    //   double chassisAngle = chassis.getPoseWithVelocity().getRotation().getRadians();
+    //   double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle()
+    //       .getRadians();
+    //   // if (wantedAngle > chassis.getGyroAngle().getRadians()) {
+    //   // if (chassisAngle > wantedAngle) wantedAngle += 2*Math.PI;
+    //   double diff = MathUtil.angleModulus(wantedAngle - chassisAngle);
 
-      speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(5) ? -diff * 2 : 0;
-      // } else {
-      // speeds.omegaRadiansPerSecond =
-      // -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-      // }
-      // chassis.setVelocitiesRotateToAngleOld(speeds,
-      // ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
-    }
+    //   speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(5) ? -diff * 2 : 0;
+    //   // } else {
+    //   // speeds.omegaRadiansPerSecond =
+    //   // -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
+    //   // }
+    //   // chassis.setVelocitiesRotateToAngleOld(speeds,
+    //   // ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
+    // }
+
+
     chassis.setVelocities(speeds);
   }
 
