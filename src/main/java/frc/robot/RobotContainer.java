@@ -26,6 +26,7 @@ import frc.robot.chassis.TestModulePID;
 import frc.robot.chassis.commands.AutoIntake;
 import frc.robot.chassis.commands.AutonamusIntakeCommand;
 import frc.robot.chassis.commands.DrivePower;
+import frc.robot.chassis.commands.IntakeAutonamusVelocities;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -62,7 +63,7 @@ public class RobotContainer implements Sendable {
     objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    driverController.downButton().onTrue(new AutoIntake(chassis, objectPose));
+    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, objectPose));
     //70  270
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
