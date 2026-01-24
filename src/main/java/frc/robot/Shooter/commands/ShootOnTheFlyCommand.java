@@ -18,7 +18,7 @@ import frc.robot.Shooter.utils.ShooterUtils;
 public class ShootOnTheFlyCommand extends Command {
 
   public static final double WHEEL_TO_BALL_VELOCITY_RATIO = 0.45;
-  public static final double HOOD_OFFSET = Math.toRadians(2);
+  public static final double HOOD_OFFSET = Math.toRadians(0);
   public static final double MAGNUS_CORRECTION = 0.2;
   
   Shooter shooter;
@@ -49,11 +49,11 @@ public class ShootOnTheFlyCommand extends Command {
     Rotation2d heading = toHub.getAngle();
     double[] lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
     double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
-    double lutHoodAngle = Math.toRadians(lut[1]) + HOOD_OFFSET; // correct to actual ball pitch
+    double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
     // set the horizontal (xy) velocity and the vertical (z) velocity
-    double xyVel = lutVel * Math.cos(Math.toRadians(lutHoodAngle));
-    double zVel = lutVel * Math.sin(Math.toRadians(lutHoodAngle));
+    double xyVel = lutVel * Math.cos(lutHoodAngle);
+    double zVel = lutVel * Math.sin(lutHoodAngle);
     
     // calculate the x/y velocities correected by robot speeds
     double xVel = xyVel*heading.getCos() - robotSpeeds.vxMetersPerSecond;
