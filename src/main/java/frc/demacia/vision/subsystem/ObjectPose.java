@@ -58,6 +58,8 @@ public class ObjectPose extends SubsystemBase {
      SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
 
   }
+  
+
 
   /**
    * Periodic method called every robot loop (~20ms).
@@ -66,7 +68,7 @@ public class ObjectPose extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    camToObjectPitch = Table.getEntry("ty").getDouble(0.0)+ camera.getPitch();
+    camToObjectPitch = Math.abs(Table.getEntry("ty").getDouble(0.0)+ camera.getPitch());
     camToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
     if(Table.getEntry("tv").getDouble(0.0) != 0){
       objectPose = new Pose2d(getOriginToObject(), getRobotAngle.get());
@@ -95,7 +97,7 @@ public class ObjectPose extends SubsystemBase {
   public double getDistcameraToObject(){
     double alpha = camToObjectPitch;
     alpha = Math.toRadians(alpha);
-    double distX =  camera.getHeight()*(Math.tan(alpha));
+    double distX =  camera.getHeight()/(Math.tan(alpha));
     double distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
     return Math.abs(distFinal);
   }

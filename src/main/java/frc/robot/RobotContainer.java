@@ -27,6 +27,7 @@ import frc.robot.chassis.commands.AutoIntake;
 import frc.robot.chassis.commands.AutonamusIntakeCommand;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.IntakeAutonamusVelocities;
+import frc.robot.intake.subsystem.IntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -57,13 +58,13 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    driverController = new CommandController(0, ControllerType.kPS5);
+    driverController = new CommandController(0, ControllerType.kXbox);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
-    camera = new Camera("fuel", new Translation3d((-0.270)/2,-0.07,0.575), -20, 0, null);
+    camera = new Camera("fuel", new Translation3d(-0.2702,-0.07,0.575), -20, 0, null);
     objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, objectPose));
+    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose));
     //70  270
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
