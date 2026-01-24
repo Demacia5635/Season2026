@@ -40,6 +40,7 @@ import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
 import frc.demacia.vision.utils.VisionFuse;
+import frc.robot.RobotContainer;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -188,6 +189,7 @@ public class Chassis extends SubsystemBase {
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("Chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+        setDefaultCommand(new DriveCommand(this, RobotContainer.intsnace.driverController));
 
     }
 

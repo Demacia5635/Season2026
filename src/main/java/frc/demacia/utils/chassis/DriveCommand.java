@@ -47,7 +47,7 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    direction = RobotContainer.intsnace.isRed ? 1 : -1;
+    direction = RobotContainer.intsnace.isRed() ? 1 : -1;
     double joyX = controller.getLeftY() * direction;
         double joyY = controller.getLeftX() * direction;
         

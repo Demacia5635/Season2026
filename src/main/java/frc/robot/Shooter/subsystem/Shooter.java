@@ -14,6 +14,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.utils.ShooterUtils;
 
 public class Shooter extends SubsystemBase {
@@ -37,6 +38,7 @@ public class Shooter extends SubsystemBase {
     this.hasCalibrated = false;
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
+    setDefaultCommand(new ShooterCommand(this, chassis));
 
   }
 
