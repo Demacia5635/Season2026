@@ -21,4 +21,19 @@ public class intakeConstans {
     public static final TalonSRXConfig ROLLER_CONFIG = new TalonSRXConfig(SHINA_ID, "rooler");
 
     public static final TalonSRXConfig TO_SHOOTER_CONFIG = new TalonSRXConfig(13, "shit");
+    
+    public static enum INTAKE_STATE{
+        IDLE(-1, -1),
+        TAKE(0.8, 0.8),
+        STOP(0.0, 0.0),
+        EJECT(-0.8, -0.8);
+
+        public double powerIntake;
+        public double powerConveyorBelt;
+
+        INTAKE_STATE(double powerIntake, double powerConveyorBelt){
+            this.powerIntake = powerIntake;
+            this.powerConveyorBelt = powerConveyorBelt;
+        }
+    }
 }

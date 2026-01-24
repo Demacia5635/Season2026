@@ -5,18 +5,20 @@
 package frc.robot.intake.subsystem;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.robot.intake.intakeConstans;
+import frc.robot.intake.intakeConstans.INTAKE_STATE;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new intake. */
-  TalonFXMotor motorIntake;
-
-  TalonSRXMotor motorRoller;
-
-  TalonSRXMotor motorToShooter;
+  private TalonFXMotor motorIntake;
+  private TalonSRXMotor motorRoller;
+  private TalonSRXMotor motorToShooter;
+  private INTAKE_STATE currState = INTAKE_STATE.IDLE;
 
   public IntakeSubsystem() {
     motorIntake = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
@@ -24,28 +26,37 @@ public class IntakeSubsystem extends SubsystemBase {
     motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
 
+  public void setDutyConveyorBelt(double pow){
+    setDutyRoller(pow);
+    setDutyToShooter(pow);
+  }
 
-  public void setDuteIntake(double pow){
+  public void setDutyIntake(double pow){
     motorIntake.setDuty(pow);
   }
 
-  public void setduteRoller(double pow){
+  public void setDutyRoller(double pow){
     motorRoller.setDuty(pow);
   }
 
-  public void setDuteToShooter(double pow){
+  public void setDutyToShooter(double pow){
     motorToShooter.setDuty(pow);
   }
 
-  public void stopIntake(){
-    motorIntake.stop();
+  public void setState(INTAKE_STATE state){
+    currState = state;
   }
 
-  public void stopRoller(double pow){
-    motorRoller.stop();
+  public INTAKE_STATE getCurrentState(){
+    return currState;
   }
 
-  public void stopToShooter(){
-    motorToShooter.stop();
+  public void putData() {
+    SendableChooser<INTAKE_STATE> stateChooser = new SendableChooser<>();
+    for(INTAKE_STATE state : INTAKE_STATE.values()) {
+      stateChooser.addOption(state.name(), state);
+    }
+    stateChooser.onChange(STATE -> setState(STATE));
+    SmartDashboard.putData("Intake State", stateChooser);
   }
 }
