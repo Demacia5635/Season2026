@@ -4,6 +4,7 @@
 
 package frc.robot.Shooter.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -13,6 +14,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
+import static frc.robot.Shooter.ShooterConstans.g;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShooterCommand extends Command {
@@ -56,8 +58,15 @@ public class ShooterCommand extends Command {
     // Pose2d predictedPose = chassis.getPose();
     hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d()
         .minus(predictedPose.getTranslation());
-    shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
+    shooterValues[0] = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm())[0];
+    predictedPose = chassis.getPoseWithVelocity2();
+    hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d()
+        .minus(predictedPose.getTranslation());
+    shooterValues[1] = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm())[1];
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
+
+    // shooterValues[0] = MathUtil.interpolate(12, 20, hubToChassis.getNorm() / 4.8);
+    // shooterValues[1] = Math.atan((shooterValues[0]*shooterValues[0] - Math.sqrt(Math.pow(shooterValues[0], 4) - g*g*hubToChassis.getNorm()*hubToChassis.getNorm()-2*g*shooterValues[0]*shooterValues[0])) / g*hubToChassis.getNorm());
     
     shooter.setHoodAngle(shooterValues[1]);
     shooter.setFlywheelVel(shooterValues[0]);

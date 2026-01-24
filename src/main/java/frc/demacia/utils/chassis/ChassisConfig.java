@@ -34,7 +34,7 @@ public class ChassisConfig {
     public double maxDeltaVelocity = maxLinearAccel * cycleDt;
     public double maxVelocityToIgnoreRadius = maxRadius * maxOmegaVelocity;
     public double minVelocity = 1.5;
-    public double maxDriveVelocity = 4;
+    public double maxDriveVelocity = 2;
     public double maxRotationalVelocity = 4;
 
     public ChassisConfig(String name, SwerveModuleConfig[] swerveModuleConfigs, PigeonConfig pigeonConfig, Tag[] tags) {

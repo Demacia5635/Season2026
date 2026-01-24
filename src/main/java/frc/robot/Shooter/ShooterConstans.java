@@ -17,6 +17,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public class ShooterConstans {
 
+        public static final double g = 9.80665;
+
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
                  // angle (Radians)
