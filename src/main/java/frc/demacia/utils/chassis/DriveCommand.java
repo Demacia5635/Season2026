@@ -7,8 +7,8 @@ package frc.demacia.utils.chassis;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
+import frc.robot.RobotContainer;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -47,7 +47,7 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    direction = DemaciaUtils.getIsRed() ? 1 : -1;
+    direction = RobotContainer.intsnace.isRed ? 1 : -1;
     double joyX = controller.getLeftY() * direction;
         double joyY = controller.getLeftX() * direction;
         
