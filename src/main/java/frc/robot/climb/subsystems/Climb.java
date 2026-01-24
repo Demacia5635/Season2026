@@ -1,4 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
+  // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
@@ -6,32 +6,65 @@ package frc.robot.climb.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
-import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.climb.constants.ClimbConstants;
-
-
+import edu.wpi.first.util.sendable.SendableBuilder;
 
 public class Climb extends SubsystemBase {
-  private TalonFXMotor motor1;
-  private LimitSwitch limitSwitch;
+  private TalonFXMotor armsMotor;
+    private TalonFXMotor leverMotor;
+
 
   /** Creates a new Climb. */
   public Climb() {
-    motor1 = new TalonFXMotor(ClimbConstants.MOTOR_CONFIG);
-    limitSwitch = new LimitSwitch(ClimbConstants.lIMIT_Config);
+    armsMotor = new TalonFXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
+    leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
   }
 
-  public void setDuty(double power) {
-    motor1.setDuty(power);
+  public void setArmsDuty(double power) {
+    armsMotor.setDuty(power);
   }
 
-  public void stop() {
-    motor1.stop();
+  public void setLeverDuty(double power) {
+    leverMotor.setDuty(power);
   }
 
-  public boolean getLimit(){
-    return limitSwitch.get();
+  public void stopArms() {
+    armsMotor.stop();
   }
+
+  public double getPositionArms(){
+    return armsMotor.get();
+  }
+
+   public void stopLever(){
+    leverMotor.stop();
+  }
+  public double getPositionLever(){
+    return leverMotor.get();
+  }
+  public void setArmsAngle(double angle){
+    armsMotor.setAngle(angle);
+  }
+  public void setLeverAngle(double angle){
+    leverMotor.setAngle(angle);
+  }
+  public void resetArmsEncoder(){
+    armsMotor.setEncoderPosition(0);
+  }
+  public void resetLeverEncoder(){
+    leverMotor.setEncoderPosition(0);
+  }
+   public double getCurrentAmpersArms() {
+    return armsMotor.getCurrentCurrent();
+  }
+  
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
+    builder.addDoubleProperty("Arms Position", this::getPositionArms, null);
+    builder.addDoubleProperty("Lever Position", this::getPositionLever, null);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

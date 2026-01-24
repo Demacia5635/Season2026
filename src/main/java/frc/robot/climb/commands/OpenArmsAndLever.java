@@ -5,20 +5,14 @@
 package frc.robot.climb.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.demacia.utils.controller.CommandController;
+import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ControllerClimb extends Command {
-  CommandController contoller;
+public class OpenArmsAndLever extends Command {
   Climb climb;
-  private double joyright;
-  private double joyleft;
-
-  /** Creates a new ControllerClimb. */
-  public ControllerClimb(CommandController controller, Climb climb) {
-    this.contoller = controller;
+  /** Creates a new OpenArms. */
+  public OpenArmsAndLever(Climb climb) {
     this.climb = climb;
     addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,17 +20,13 @@ public class ControllerClimb extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    joyright = contoller.getRightY() * 0.4;
-    climb.setArmsDuty(joyright);
-
-    joyleft = contoller.getLeftY() * 0.4;
-    climb.setLeverDuty(joyleft);
+    climb.setArmsAngle(Math.toRadians(ClimbConstants.ANGLE_ARMS_OPEN));
+    climb.setLeverAngle(Math.toRadians(ClimbConstants.ANGLE_LEVER_OPEN));
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +39,6 @@ public class ControllerClimb extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+      return climb.getPositionArms() >= Math.toRadians(ClimbConstants.ANGLE_ARMS_OPEN)-0.1 && climb.getPositionLever() >= Math.toRadians(ClimbConstants.ANGLE_LEVER_OPEN)-0.1;
   }
 }
