@@ -2,13 +2,10 @@ package frc.demacia.vision.subsystem;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
@@ -20,7 +17,6 @@ public class Quest extends SubsystemBase {
   private Pose3d currentQuestPose;
   private double timestamp;
 
-    private Pose3d qPose3d = Pose3d.kZero;
   
   public Quest() {
     timestamp = 0;

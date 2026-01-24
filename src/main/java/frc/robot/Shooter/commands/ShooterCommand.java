@@ -3,14 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter.commands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
-import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -45,24 +42,10 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Pose2d predictedPose = chassis.getPoseWithVelocity(0.02);
-    Pose2d predictedPose = chassis.getPose();
-    Translation2d hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(predictedPose.getTranslation());
-    double[] shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
-    // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
-
-    // shooter.setHoodAngle(shooterValues[1]);
-    // shooter.setFlywheelVel(shooterValues[0]);
-
 
     shooter.setHoodAngle(Math.toRadians(hoodAngle));
     shooter.setFlywheelVel(vel);
 
-
-    // shooter.setHoodAngle(Math.toRadians(hoodAngle));
-    // shooter.setFlywheelVel(vel);p
-
-    // shooter.setHoodPower(controller.getLeftY() * 0.5);
   }
 
   // Called once the command ends or is interrupted.

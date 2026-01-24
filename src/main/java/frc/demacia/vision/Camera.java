@@ -7,7 +7,6 @@ package frc.demacia.vision;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 /** Add your docs here. */
@@ -40,7 +39,8 @@ public class Camera {
     }
 
     public Translation3d getRobotToCamPosition() {
-        return !false ? robotToCamPosition : robotToCamPosition.rotateBy(Rotation3d.kZero);
+        return robotToCamPosition;
+        //return !false ? robotToCamPosition : robotToCamPosition.rotateBy(Rotation3d.kZero);
     }
 
     public double getHeight() {

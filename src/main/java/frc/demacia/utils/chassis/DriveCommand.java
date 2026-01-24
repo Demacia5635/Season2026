@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
-import frc.robot.Shooter.ShooterConstans;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -18,7 +17,6 @@ public class DriveCommand extends Command {
   private double direction;
   private ChassisSpeeds speeds;
   private boolean precisionMode;
-  private boolean isActiveToHub;
 
   public PIDController pidController = new PIDController(1.5, 0.15, 0);
 
@@ -27,7 +25,6 @@ public class DriveCommand extends Command {
     this.chassis = chassis;
     this.controller = controller;
     precisionMode = false;
-    isActiveToHub = false;
     addRequirements(chassis);
   }
 
@@ -35,9 +32,6 @@ public class DriveCommand extends Command {
       setPrecisionMode(!precisionMode);
   }
   
-  public void setActiveToHub(){
-    isActiveToHub = !isActiveToHub;
-  }
   public void setPrecisionMode(boolean precisionMode) {
       this.precisionMode = precisionMode;
   }
@@ -70,15 +64,6 @@ public class DriveCommand extends Command {
         }
         
         speeds = new ChassisSpeeds(velX, velY,-velRot);
-        if(isActiveToHub){
-          double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle().getRadians();
-          if (wantedAngle > chassis.getGyroAngle().getRadians()) {
-            speeds.omegaRadiansPerSecond = pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-          } else {
-            speeds.omegaRadiansPerSecond = -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-          }
-          // chassis.setVelocitiesRotateToAngleOld(speeds, ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
-        }
         chassis.setVelocities(speeds);
   }
 

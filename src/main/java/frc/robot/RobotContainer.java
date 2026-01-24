@@ -5,14 +5,12 @@
 package frc.robot;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
@@ -32,14 +30,14 @@ import frc.robot.chassis.commands.ResetModule;
  */
 public class RobotContainer implements Sendable{
 
-  public static boolean isComp = false;
-  private static boolean hasRemovedFromLog = false;
-  public static boolean isRed = false;
-  Field2d field2d;
-  Field2d questField2d;
-  Chassis chassis;
-  CommandController driverController = new CommandController(0, ControllerType.kPS5);
-  Shooter shooter;
+  public static RobotContainer intsnace;
+
+  public boolean isComp = false;
+  public boolean isRed = false;
+  public Chassis chassis;
+  public CommandController driverController = new CommandController(Constants.OperatorConstants.kDriverControllerPort, ControllerType.kPS5);
+  public Shooter shooter;
+  private boolean hasRemovedFromLog = false;
   
   // The robot's subsystems and commands are defined here...
 
@@ -48,8 +46,8 @@ public class RobotContainer implements Sendable{
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    SmartDashboard.putData("RC", this);
-    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
+    intsnace = this;
+    SmartDashboard.putData("Robot Container", this);
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter(chassis);
 
@@ -72,29 +70,28 @@ public class RobotContainer implements Sendable{
    * joysticks}.
    */
   private void configureBindings() {
-    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    chassis.setDefaultCommand(driveCommand);
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    driverController.upButton().onTrue(new InstantCommand(()->driveCommand.setActiveToHub()));
+    driverController.upButton().onTrue(new InstantCommand(()->chassis.headToTargetToggle()));
     driverController.downButton().onTrue(new InstantCommand(()->shooter.setIndexerPower(1)));
     driverController.leftBumper().onTrue(new InstantCommand(()->shooter.setIndexerPower(0)));
   }
 
-  public static boolean getIsRed() {
+  public boolean getIsRed() {
     return isRed;
   }
 
-  public static void setIsRed(boolean isRed) {
-    RobotContainer.isRed = isRed;
+  public void setIsRed(boolean isRed) {
+    this.isRed = isRed;
   }
 
-  public static boolean getIsComp() {
+  public boolean getIsComp() {
     return isComp;
   }
 
-  public static void setIsComp(boolean isComp) {
-    RobotContainer.isComp = isComp;
+  public void setIsComp(boolean isComp) {
+    this.isComp = isComp;
     if(!hasRemovedFromLog && isComp) {
       hasRemovedFromLog = true;
       LogManager.removeInComp();
@@ -103,8 +100,8 @@ public class RobotContainer implements Sendable{
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
-    builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
+    builder.addBooleanProperty("isRed", this::getIsRed, this::setIsRed);
+    builder.addBooleanProperty("isComp", this::getIsComp, this::setIsComp);
     // builder.addDoubleProperty("Angle", () -> shooter.angle, (newAngle) -> shooter.angle = newAngle);
   }
 

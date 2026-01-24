@@ -4,8 +4,6 @@
 
 package frc.demacia.utils.chassis;
 
-import java.util.List;
-
 import org.ejml.simple.SimpleMatrix;
 
 import com.ctre.phoenix6.StatusCode;
@@ -17,39 +15,30 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
-import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.odometry.DemaciaPoseEstimator.VisionMeasurment;
 import java.util.Optional;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.Utilities;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
-import frc.demacia.vision.utils.LimelightHelpers;
 import frc.demacia.vision.utils.VisionFuse;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
@@ -112,7 +101,21 @@ public class Chassis extends SubsystemBase {
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
 
-    private Matrix<N3, N1> questSTD;
+//    private Matrix<N3, N1> questSTD;
+
+    private Rotation2d targetHeading = null;
+    private boolean headToTargetHeading = false;
+
+    public void headToTargetToggle() {
+        this.headToTargetHeading = !headToTargetHeading;
+    }
+    public boolean headingToTarget() {
+        return headToTargetHeading;
+    }
+
+    public void setTargetHeading(Rotation2d heading) {
+        targetHeading = heading;
+    }
 
     public Chassis(ChassisConfig chassisConfig) {
 
@@ -259,6 +262,9 @@ public class Chassis extends SubsystemBase {
     
     public void setVelocities(ChassisSpeeds speeds) {
         
+        if(headToTargetHeading && targetHeading != null) {
+            speeds.omegaRadiansPerSecond = 2 * MathUtil.angleModulus(targetHeading.minus(getGyroAngle()).getRadians());
+        }
         // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
         SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
                 speeds,

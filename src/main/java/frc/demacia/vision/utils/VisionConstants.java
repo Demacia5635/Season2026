@@ -158,11 +158,6 @@ public class VisionConstants {
         DEPOT_TAG_HEIGHT    // 32 - 21.75" (Depot)
     };
 
-    // Scoring position offsets TODO: Update these based on 2026 Hub/Tower/Outpost positions
-    public static final Translation2d HUB_TAG_TO_RIGHT_SCORING = new Translation2d(-0.55, -0.160);
-    public static final Translation2d HUB_TAG_TO_LEFT_SCORING = new Translation2d(-0.55, 0.160);
-    public static final Translation2d INTAKE_TAG_TO_SCORING = new Translation2d(-0.85, 0.0);
-
     /**
      * Converts a measurement from inches to meters
      * 
@@ -182,7 +177,6 @@ public class VisionConstants {
     public static final double PREDICT_OMEGA = 0.2;
 
     // Quest VR headset mounting configuration
-    // TODO: Find the right offsets for your robot's Quest mounting position
     public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(90));
     public static final double X_OFFSET_QUEST = 0.0;
     public static final double Y_OFFSET_QUEST = 0.0;

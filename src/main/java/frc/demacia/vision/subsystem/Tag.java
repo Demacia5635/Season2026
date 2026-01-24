@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -44,7 +43,6 @@ public class Tag extends SubsystemBase {
   private double dist;
   private Translation2d originToRobot;
   private Translation2d origintoTag;
-  private Translation2d robotToTagRR;
   public Pose2d pose;
 
   private NetworkTableEntry cropEntry;
@@ -55,8 +53,6 @@ public class Tag extends SubsystemBase {
   private Field2d field;
 
   private double latency;
-
-  private Translation2d robotToTagFC;
 
   private int tagID = 0;
 
