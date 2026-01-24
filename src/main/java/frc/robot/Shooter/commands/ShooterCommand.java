@@ -63,7 +63,6 @@ public class ShooterCommand extends Command {
     hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d()
         .minus(predictedPose.getTranslation());
     shooterValues[1] = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm())[1];
-    // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
 
     // shooterValues[0] = MathUtil.interpolate(12, 20, hubToChassis.getNorm() / 4.8);
     // shooterValues[1] = Math.atan((shooterValues[0]*shooterValues[0] - Math.sqrt(Math.pow(shooterValues[0], 4) - g*g*hubToChassis.getNorm()*hubToChassis.getNorm()-2*g*shooterValues[0]*shooterValues[0])) / g*hubToChassis.getNorm());

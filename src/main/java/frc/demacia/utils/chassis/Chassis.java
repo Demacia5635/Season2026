@@ -54,6 +54,8 @@ import frc.demacia.vision.utils.VisionFuse;
 import frc.robot.Shooter.ShooterConstans;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
+
+import static edu.wpi.first.units.Units.Radian;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
@@ -112,6 +114,7 @@ public class Chassis extends SubsystemBase {
 
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
+    private double lastGyroYawRad;
 
     private Matrix<N3, N1> questSTD;
 
@@ -365,6 +368,14 @@ public class Chassis extends SubsystemBase {
             lastGyroYaw = new Rotation2d(gyroYawStatus.getValue());
         }
         return lastGyroYaw;
+    }
+
+    public double getGyroAngleRadians() {
+        gyroYawStatus.refresh();
+        if (gyroYawStatus.getStatus() == StatusCode.OK) {
+            lastGyroYawRad = gyroYawStatus.getValue().in(Radian);
+        }
+        return lastGyroYawRad;
     }
 
     private SwerveModulePosition[] getModulePositions() {

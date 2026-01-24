@@ -41,11 +41,11 @@ public class ShooterFollowCommand extends Command {
     // Pose2d fucerPose = ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsRobotRel(),chassis.getPose(),0.02);
     // Pose3d fucerPose3d = new Pose3d(fucerPose);
     // Translation3d fucePoseTranslation2d = fucerPose3d.getTranslation();
-    // double DistanceHubToChassis =  ShooterConstans.HUB_POSE_Translation3d.getDistance();
+    // double DistanceHubToChassis =  ShooterConstans.HUB_POSE_Translation2d.getDistance(chassis.getPose().getTranslation());
     // Translation3d shooterVelAsVector = shooter.getVelInVector(shooter.getLookUpTableVel(shooter.chassisTohub().getNorm()));
     // Translation3d shooterFinalVel = shooterVelAsVector.minus(ShooterUtils.GetChassisVelAsVector());
     // shooter.setFlywheelVel(shooterFinalVel.getNorm());
-    // // double hoodAngle = shooter.getLookUpTableAngle(shooter.chassisTohub().getNorm());
+    // double hoodAngle = shooter.getLookUpTableAngle(shooter.chassisTohub().getNorm());
     // shooter.setHoodAngle(hoodAngle);
   }
 

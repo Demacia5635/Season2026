@@ -81,7 +81,7 @@ public class DriveCommand extends Command {
       // if (chassisAngle > wantedAngle) wantedAngle += 2*Math.PI;
       double diff = MathUtil.angleModulus(wantedAngle - chassisAngle);
 
-      speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(5) ? pidController.calculate(-diff, 0) : 0;
+      speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(3) ? -diff * 1.8 : 0;
       // } else {
       // speeds.omegaRadiansPerSecond =
       // -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
