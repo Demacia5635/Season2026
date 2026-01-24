@@ -51,12 +51,12 @@ public class IntakeAutonamusVelocities extends Command {
 
   @Override
   public void execute() {
-    intake.setDutyIntake(0.2);
+    intake.setDutyIntake(0.8);
     omega = objectPose.getRobotToObject().getAngle().getRadians();
     if (Math.abs(omega) < 0.06) omega = 0;
     omega *= -2;
-    speeds = new ChassisSpeeds(-0.5, 0, omega);
-    System.out.println("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians());
+    speeds = new ChassisSpeeds(-1, 0, omega);
+    System.out.println("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians() + "/n Distance: " + objectPose.getDistcameraToObject());
     chassis.setRobotRelVelocities(speeds);
   }
 
@@ -69,9 +69,6 @@ public class IntakeAutonamusVelocities extends Command {
 
   @Override
   public boolean isFinished() {
-    if (objectPose.getDistcameraToObject() < 0.3 ) {
-      return true;
-    }
-    return false;
+    return (objectPose.getDistcameraToObject() < 0.3 );
   }
 }
