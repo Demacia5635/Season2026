@@ -32,15 +32,15 @@ public class Climb extends SubsystemBase {
     armsMotor.stop();
   }
 
-  public double getPositionArms(){
-    return armsMotor.get();
+  public double getAngleArms(){
+    return armsMotor.getCurrentAngle();
   }
 
    public void stopLever(){
     leverMotor.stop();
   }
-  public double getPositionLever(){
-    return leverMotor.get();
+  public double getAngleLever(){
+    return leverMotor.getCurrentAngle();
   }
   public void setArmsAngle(double angle){
     armsMotor.setAngle(angle);
@@ -57,12 +57,12 @@ public class Climb extends SubsystemBase {
    public double getCurrentAmpersArms() {
     return armsMotor.getCurrentCurrent();
   }
-  
+
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
     builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
-    builder.addDoubleProperty("Arms Position", this::getPositionArms, null);
-    builder.addDoubleProperty("Lever Position", this::getPositionLever, null);
+    builder.addDoubleProperty("Arms Angle", this::getAngleArms, null);
+    builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
   }
 
   @Override
