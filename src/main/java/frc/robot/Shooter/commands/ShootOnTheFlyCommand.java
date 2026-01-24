@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogManager;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
@@ -22,6 +23,8 @@ public class ShootOnTheFlyCommand extends Command {
   
   Shooter shooter;
   Chassis chassis;
+  boolean shootVelocityWasOK = false;
+  boolean debug = true;
 
   public ShootOnTheFlyCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
@@ -72,7 +75,26 @@ public class ShootOnTheFlyCommand extends Command {
     chassis.setTargetHeading(ballHeading);
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
+
+    // log the data
+    if(debug) {
+      double shooterVel = shooter.getShooterVelocity();
+      if(shooterVel > ballVelocity * 0.95){
+        shootVelocityWasOK = true;
+      } else if(shootVelocityWasOK && shooterVel < ballVelocity * 0.95){
+        shootVelocityWasOK = false;
+        LogManager.log(String.format("=========== Shoot with %3.1f/%3.1f/%3.0f", shooterVel, shooter.getAngleHood(), chassis.getGyroAngle().getDegrees()));      
+      }
+      LogManager.log(String.format("shoot-%3.1f/%3.1f/%3.0f from-%3.1f/%3.1f/%3.0f to %3.1f/%3.0f/%3.1f/%3.0f - robot vel-%3.1f/%3.1f", 
+              ballVelocity, hoodAngle, ballHeading.getDegrees(),
+              nextPose.getTranslation().getX(), nextPose.getTranslation().getY(), nextPose.getRotation().getDegrees(),
+              toHub.getX(), toHub.getY(), distance, heading.getDegrees(),
+              robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond
+              ));
+    }
   }
+
+
 
   // Called once the command ends or is interrupted.
   @Override
