@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.vision.subsystem.ObjectPose;
-import frc.demacia.utils.log.LogManager;
 
 /**
  * Autonomous intake command that drives toward a game piece while automatically

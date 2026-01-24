@@ -4,9 +4,7 @@
 
 package frc.robot.chassis.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,7 +18,6 @@ public class IntakeAutonamusVelocities extends Command {
   private final ObjectPose objectPose;  // Fuel position from vision
 
 
-  private int lostFrames = 0;
   private double distance = 0;
 
   public IntakeAutonamusVelocities(Chassis chassis, ObjectPose objectPose) {
@@ -29,10 +26,9 @@ public class IntakeAutonamusVelocities extends Command {
     addRequirements(chassis);
   }
 
-
   @Override
   public void initialize() {
-    lostFrames = 0;
+   
   }
 
   @Override
@@ -40,18 +36,12 @@ public class IntakeAutonamusVelocities extends Command {
 
     Pose2d targetPose = objectPose.getPose2d();  // Get fuel position
     
-
-
-
     Pose2d robotPose = chassis.getPose();
 
     Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
 
       distance = toTarget.getNorm();
      
-
-   
-   
    ChassisSpeeds speeds = new ChassisSpeeds(toTarget.getX(), toTarget.getY(), toTarget.getAngle().getRadians());
    chassis.setVelocitiesRotateToTarget(speeds,targetPose);
 
