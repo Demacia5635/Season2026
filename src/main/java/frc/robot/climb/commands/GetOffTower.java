@@ -5,25 +5,41 @@
 package frc.robot.climb.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.climb.constants.ClimbConstants;
+import frc.robot.climb.subsystems.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GetOffTower extends Command {
   /** Creates a new GetOffTower. */
-  public GetOffTower() {
+  Climb climb;
+
+  public GetOffTower(Climb climb) {
+    this.climb = climb;
+    addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    climb.setLeverDuty(ClimbConstants.POWER_TO_CLOSE_LEVER);
+    if(climb.getAngleLever() <=ClimbConstants.ANGLE_LEVER_CLOSE){
+     climb.stopLever();
+    climb.setArmsDuty(ClimbConstants.POWER_TO_LOWER_ARMS);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+  }
 
   // Returns true when the command should end.
   @Override

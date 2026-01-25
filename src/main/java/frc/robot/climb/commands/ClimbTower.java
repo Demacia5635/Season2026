@@ -4,7 +4,6 @@
 
 package frc.robot.climb.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
@@ -16,14 +15,11 @@ public class ClimbTower extends Command {
   private static final double CURRENT_THRESHOLD = 10.0; // Amperes
   private final int CLIMB_CYCLE_TO_STOP = 5;
   private boolean IS_AT_BAR;
-  private Timer timer;
 
   /** Creates a new ClimbTower. */
   public ClimbTower(Climb climb) {
     this.climb = climb;
-    this.IS_AT_BAR = false;
-    timer = new Timer();
-
+    addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -32,8 +28,6 @@ public class ClimbTower extends Command {
   public void initialize() {
     currentSpikeCounter = 0;
     IS_AT_BAR = false;
-    timer.reset();
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,12 +35,11 @@ public class ClimbTower extends Command {
   public void execute() {
     lowerArmsToBar();
     if (IS_AT_BAR) {
-      timer.start();
-      climb.setLeverDuty(ClimbConstants.POWER_TO_RAISE_LEVER);
-      if (timer.get() >= ClimbConstants.TIME_TO_CLIMB) {
+      climb.setLeverDuty(ClimbConstants.POWER_TO_OPEN_LEVER);
+    }
+      if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
         climb.setLeverDuty(ClimbConstants.POWER_TO_KEEP_HEIGHT);
       }
-    }
   }
 
   private void lowerArmsToBar() {
@@ -67,8 +60,6 @@ public class ClimbTower extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    timer.stop();
-    timer.reset();
   }
 
   // Returns true when the command should end.
