@@ -30,6 +30,7 @@ public class ObjectPose extends SubsystemBase {
 
   private double camToObjectYaw;
   private double camToObjectPitch;
+  private double distFinal;
 
   
   private Supplier<Rotation2d> getRobotAngle;
@@ -58,6 +59,8 @@ public class ObjectPose extends SubsystemBase {
      SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
 
   }
+  
+
 
   /**
    * Periodic method called every robot loop (~20ms).
@@ -66,7 +69,7 @@ public class ObjectPose extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    camToObjectPitch = Table.getEntry("ty").getDouble(0.0)+ camera.getPitch();
+    camToObjectPitch = Math.abs(Table.getEntry("ty").getDouble(0.0)+ camera.getPitch());
     camToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
     if(Table.getEntry("tv").getDouble(0.0) != 0){
       objectPose = new Pose2d(getOriginToObject(), getRobotAngle.get());
@@ -93,10 +96,13 @@ public class ObjectPose extends SubsystemBase {
    * @return Distance from camera to object in the same units as camera height
    */
   public double getDistcameraToObject(){
+    if(Table.getEntry("tv").getDouble(0.0) == 0){
+      return distFinal;
+    }
     double alpha = camToObjectPitch;
     alpha = Math.toRadians(alpha);
-    double distX =  camera.getHeight()*(Math.tan(alpha));
-    double distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
+    double distX =  camera.getHeight()/(Math.tan(alpha));
+    distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
     return Math.abs(distFinal);
   }
 
@@ -106,8 +112,11 @@ public class ObjectPose extends SubsystemBase {
    * @return Translation2d from robot center to object in robot coordinates
    */
   public Translation2d getRobotToObject(){
+    if(Table.getEntry("tv").getDouble(0.0) == 0){
+      return robotToObject;
+    }
     cameraToObject = new Translation2d(getDistcameraToObject(),Rotation2d.fromDegrees(camToObjectYaw));
-    robotToObject = new Translation2d(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
+    robotToObject = camera.getRobotToCamPosition().toTranslation2d().plus(cameraToObject);
     return robotToObject;
   }
 

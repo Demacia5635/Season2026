@@ -60,7 +60,9 @@ public class DriveCommand extends Command {
             velY /= 4;
             velRot /= 4;
         }
+
         
+
         speeds = new ChassisSpeeds(velX, velY,velRot);
  
         chassis.setVelocities(speeds);

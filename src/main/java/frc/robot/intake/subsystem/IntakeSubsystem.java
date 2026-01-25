@@ -24,17 +24,13 @@ public class IntakeSubsystem extends SubsystemBase {
     motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
 
-
-  public void setDuteIntake(double pow){
-    motorIntake.setDuty(pow);
-  }
-
-  public void setduteRoller(double pow){
+  public void setDutyCoveyorBelt(double pow){
     motorRoller.setDuty(pow);
+    motorToShooter.setDuty(pow);
   }
 
-  public void setDuteToShooter(double pow){
-    motorToShooter.setDuty(pow);
+  public void setDutyIntake(double pow){
+    motorIntake.setDuty(pow);
   }
 
   public void stopIntake(){
