@@ -5,18 +5,20 @@
 package frc.robot.intake.subsystem;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.robot.intake.intakeConstans;
+import frc.robot.intake.intakeConstans.INTAKE_STATE;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new intake. */
-  TalonFXMotor motorIntake;
-
-  TalonSRXMotor motorRoller;
-
-  TalonSRXMotor motorToShooter;
+  private TalonFXMotor motorIntake;
+  private TalonSRXMotor motorRoller;
+  private TalonSRXMotor motorToShooter;
+  private INTAKE_STATE currState = INTAKE_STATE.IDLE;
 
   public IntakeSubsystem() {
     motorIntake = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
@@ -24,7 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
     motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
 
-  public void setDutyCoveyorBelt(double pow){
+  public void setDutyConveyorBelt(double pow){
     motorRoller.setDuty(pow);
     motorToShooter.setDuty(pow);
   }
