@@ -38,7 +38,7 @@ public class GetOffTower extends Command {
   @Override
   public void execute() {
     climb.setLeverDuty(ClimbConstants.POWER_TO_CLOSE_LEVER);
-    if (!IS_LEVER_CLOSED && climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSE) {
+    if (!IS_LEVER_CLOSED && climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE ) {
       climb.stopLever();
       IS_LEVER_CLOSED = true;
       openArmsTimerAfterClimb.start();
@@ -47,7 +47,7 @@ public class GetOffTower extends Command {
     if (IS_LEVER_CLOSED)
       climb.setArmsDuty(ClimbConstants.POWER_TO_RAISE_ARMS);
       if(openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB)){
-        climb.stopArms();
+        climb.stopArms();//need to make a line that closes the arms(sets them to zero)
       }
 
   }
@@ -64,6 +64,6 @@ public class GetOffTower extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return IS_LEVER_CLOSED && openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB);
+    return openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB);
   }
 }
