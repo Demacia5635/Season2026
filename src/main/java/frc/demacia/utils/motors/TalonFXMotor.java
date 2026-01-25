@@ -419,7 +419,6 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
           cfg.kG = config.pid[0].kG();
           break;
       }
-
       getConfigurator().apply(cfg);
     }).ignoringDisable(true);
 
@@ -434,7 +433,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
           builder.addDoubleProperty("KV", ()-> config.pid[0].kV(), (double newValue) -> config.pid[0].setKV(newValue));
           builder.addDoubleProperty("KA", ()-> config.pid[0].kA(), (double newValue) -> config.pid[0].setKA(newValue));
           builder.addDoubleProperty("KG", ()-> config.pid[0].kG(), (double newValue) -> config.pid[0].setKG(newValue));
-        
+          builder.addDoubleProperty("KV2", ()-> config.kv2, (double newValue) -> config.kv2 = newValue);
         builder.addBooleanProperty("Update", ()-> configPidFf.isScheduled(), 
           value -> {
             if (value) {

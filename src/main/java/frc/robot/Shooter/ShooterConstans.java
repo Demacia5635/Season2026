@@ -21,11 +21,16 @@ public class ShooterConstans {
         static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
                  // angle (Radians)
 
-                SHOOTER_LOOKUP_TABLE.add(1.5, 14, Math.toRadians(85));
-                SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));
-                SHOOTER_LOOKUP_TABLE.add(3, 16.7, Math.toRadians(71));
-                SHOOTER_LOOKUP_TABLE.add(4, 18.6, Math.toRadians(68));
-                SHOOTER_LOOKUP_TABLE.add(4.79, 19, Math.toRadians(62));
+                 
+                SHOOTER_LOOKUP_TABLE.add(1.5, 13.7, Math.toRadians(85));
+                SHOOTER_LOOKUP_TABLE.add(1.8, 14, Math.toRadians(83));
+                SHOOTER_LOOKUP_TABLE.add(3, 15.5, Math.toRadians(70));
+                SHOOTER_LOOKUP_TABLE.add(3.4,16.3, Math.toRadians(65));
+                // SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));
+                // SHOOTER_LOOKUP_TABLE.add(3, 16.7, Math.toRadians(71));
+                // SHOOTER_LOOKUP_TABLE.add(4, 18.6, Math.toRadians(68));
+                // SHOOTER_LOOKUP_TABLE.add(4.79, 19, Math.toRadians(62));
+
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
                 // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
                 // SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
@@ -43,11 +48,11 @@ public class ShooterConstans {
 
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus,
                         shooterMotorName)
-                        .withFeedForward(0.004, 0)
+                        .withFeedForward(0.0031, 0)
                         .withInvert(true)
                         .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(2.2, 0, 0, 0.25073, 0.27, 0, 0)
+                        .withPID(3.5, 0, 0.04, 0.25073, 0.29, 0, 0)
                         .withMeterMotor(1, 4 * 0.0254);
 
         public static final int INDEXER_ID = 32;

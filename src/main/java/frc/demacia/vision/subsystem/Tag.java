@@ -85,6 +85,9 @@ public class Tag extends SubsystemBase {
     is3D = Table.getEntry("pipeline").getInteger(0) == 1;
     // SmartDashboard.putData("Tag" + cameraId, this);
     SmartDashboard.putData("field-tag" + camera.getName(), field);
+    LogManager.addEntry("vector",this::getNormfromrobottotag).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.log("robot to tag" + ":" + robotToTag);
+    
   }
 
   @Override
@@ -143,7 +146,7 @@ public class Tag extends SubsystemBase {
     alpha = Math.abs(camToTagPitch + camera.getPitch());
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
-    // LogManager.log(camera.getName() + ":" + dist);
+
     return dist;
     // }
     // //if camera is higher
@@ -170,6 +173,13 @@ public class Tag extends SubsystemBase {
         .plus(cameraToTag)).rotateBy(getRobotAngle.get());
     // LogManager.log("Robot to Tag :" + robotToTag);
     return robotToTag;
+  }
+  public double getNormfromrobottotag(){
+    if(robotToTag == null){
+      return 0.0;
+    }
+    
+    return robotToTag.getNorm();
   }
 
   // public Translation2d getCameraToTag() {

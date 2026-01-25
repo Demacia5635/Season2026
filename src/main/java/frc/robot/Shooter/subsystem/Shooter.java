@@ -40,6 +40,7 @@ public class Shooter extends SubsystemBase {
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
     hoodMotor.configPidFf(0);
+    shooterMotor.configPidFf(0);
 
   }
 
@@ -68,7 +69,7 @@ public class Shooter extends SubsystemBase {
     return shooterMotor.getVelocity().getValueAsDouble();
   }
 
-  public void setPower(double power) {
+  public void setFlywheelPower(double power) {
     shooterMotor.set(power);
   }
 

@@ -59,14 +59,15 @@ public class ShooterCommand extends Command {
     shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     
-    shooter.setHoodAngle(shooterValues[1]);
-    shooter.setFlywheelVel(shooterValues[0]);
+    // shooter.setHoodAngle(shooterValues[1]);
+    // shooter.setFlywheelVel(shooterValues[0]);
+
+    shooter.setHoodAngle(Math.toRadians(hoodAngle));
+   shooter.setFlywheelVel(vel);
 
     // shooter.setHoodAngle(Math.toRadians(hoodAngle));
-    // shooter.setFlywheelVel(vel);
-
-    // shooter.setHoodAngle(Math.toRadians(hoodAngle));
-    // shooter.setFlywheelVel(vel);p
+    // shooter.setFlywheelPower(vel);
+    //0.18863
 
     // shooter.setHoodPower(controller.getLeftY() * 0.5);
   }

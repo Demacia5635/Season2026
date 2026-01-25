@@ -17,8 +17,8 @@ public class ShootOnTheFly extends Command {
     private Shooter shooter;
     private double HOOD_OFFSET = Math.toRadians(0);
     private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.48;
-    private double MAGNUS_CORRECTION = 0.2;
-    private double VELOCITY_CORRECTION = 1;//1.4;
+    private double MAGNUS_CORRECTION = 0.05;
+    private double VELOCITY_CORRECTION = 1;
 
     private boolean shootVelocityWasOK = false;
 
