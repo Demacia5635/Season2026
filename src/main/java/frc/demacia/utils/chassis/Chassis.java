@@ -169,6 +169,15 @@ public class Chassis extends SubsystemBase {
 
     }
 
+    public void followBall(ObjectPose objectPose, ChassisSpeeds speeds) {
+        Rotation2d angle = objectPose.getRobotToObject().getAngle().times(2);
+        Translation2d vel = new Translation2d(
+            Math.min(Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), 3),
+            angle
+        );
+        setRobotRelVelocities(new ChassisSpeeds(vel.getX(), vel.getY(), 0));
+    }
+
     public double getUpRotation() {
         double pitch = gyro.getCurrentPitch();
         double roll = gyro.getCurrentRoll();

@@ -45,11 +45,12 @@ public class IntakeAutonamusVelocities extends Command {
 
   @Override
   public void execute() {
+    // fieldRelativeAngle = angle + chassis.getGyroAngle().getRadians();
     intake.setDutyIntake(0.8);
     omega = objectPose.getRobotToObject().getAngle().getRadians();
     if (Math.abs(omega) < 0.06) omega = 0;
     omega *= 2;
-    speeds = new ChassisSpeeds(-1, 0, omega);
+    speeds = new ChassisSpeeds(-objectPose.getY(), objectPose.getX(), omega);
     System.out.println("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians() + "/n Distance: " + objectPose.getDistcameraToObject());
     chassis.setRobotRelVelocities(speeds);
   }
