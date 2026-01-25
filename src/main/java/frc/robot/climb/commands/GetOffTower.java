@@ -4,6 +4,7 @@
 
 package frc.robot.climb.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
@@ -12,9 +13,14 @@ import frc.robot.climb.subsystems.Climb;
 public class GetOffTower extends Command {
   /** Creates a new GetOffTower. */
   Climb climb;
+  Timer openArmsTimerAfterClimb;
+
+  private boolean IS_LEVER_CLOSED;
 
   public GetOffTower(Climb climb) {
     this.climb = climb;
+    openArmsTimerAfterClimb = new Timer();
+
     addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -22,6 +28,9 @@ public class GetOffTower extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    IS_LEVER_CLOSED = false;
+    openArmsTimerAfterClimb.stop();
+    openArmsTimerAfterClimb.reset();
 
   }
 
@@ -29,21 +38,32 @@ public class GetOffTower extends Command {
   @Override
   public void execute() {
     climb.setLeverDuty(ClimbConstants.POWER_TO_CLOSE_LEVER);
-    if(climb.getAngleLever() <=ClimbConstants.ANGLE_LEVER_CLOSE){
-     climb.stopLever();
-    climb.setArmsDuty(ClimbConstants.POWER_TO_LOWER_ARMS);
+    if (!IS_LEVER_CLOSED && climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSE) {
+      climb.stopLever();
+      IS_LEVER_CLOSED = true;
+      openArmsTimerAfterClimb.start();
+
     }
+    if (IS_LEVER_CLOSED)
+      climb.setArmsDuty(ClimbConstants.POWER_TO_RAISE_ARMS);
+      if(openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB)){
+        climb.stopArms();
+      }
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    climb.stopArms();
+    climb.stopLever();
+    openArmsTimerAfterClimb.stop();
+    openArmsTimerAfterClimb.reset();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return IS_LEVER_CLOSED && openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB);
   }
 }

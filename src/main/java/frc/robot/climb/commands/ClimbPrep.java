@@ -27,6 +27,7 @@ public class ClimbPrep extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    openArmsTimer.stop();
     openArmsTimer.reset();
     openArmsTimer.start();
     isArmsOpen = false;    
@@ -42,7 +43,7 @@ public class ClimbPrep extends Command {
       isArmsOpen =  true;
       climb.stopArms();
     }
-    if(climb.getAngleLever()>= ClimbConstants.ANGLE_LEVER_CLOSE-ClimbConstants.CLOSE_LEVER_TOLERANCE){
+    if(climb.getAngleLever()>= ClimbConstants.ANGLE_LEVER_CLOSE - ClimbConstants.CLOSE_LEVER_TOLERANCE){
       isLeverClosed = true;
       climb.stopLever();
     }

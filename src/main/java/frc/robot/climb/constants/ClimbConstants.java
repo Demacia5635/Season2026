@@ -1,5 +1,6 @@
 package frc.robot.climb.constants;
 
+import edu.wpi.first.units.measure.Time;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;
@@ -15,6 +16,8 @@ public class ClimbConstants {
     public static final double POWER_TO_LOWER_ARMS = 0.2;
     public static final double POWER_TO_RAISE_ARMS = 0.2;
     public static final double TIME_TO_RAISE_ARMS = 0.2;
+    public static final double TIME_TO_RAISE_ARMS_AFTER_CLIMB = 0;
+
 
 
     public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, "arms motor")
