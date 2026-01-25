@@ -30,6 +30,7 @@ public class ObjectPose extends SubsystemBase {
 
   private double camToObjectYaw;
   private double camToObjectPitch;
+  private double distFinal;
 
   
   private Supplier<Rotation2d> getRobotAngle;
@@ -95,10 +96,13 @@ public class ObjectPose extends SubsystemBase {
    * @return Distance from camera to object in the same units as camera height
    */
   public double getDistcameraToObject(){
+    if(Table.getEntry("tv").getDouble(0.0) == 0){
+      return distFinal;
+    }
     double alpha = camToObjectPitch;
     alpha = Math.toRadians(alpha);
     double distX =  camera.getHeight()/(Math.tan(alpha));
-    double distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
+    distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
     return Math.abs(distFinal);
   }
 
@@ -108,6 +112,9 @@ public class ObjectPose extends SubsystemBase {
    * @return Translation2d from robot center to object in robot coordinates
    */
   public Translation2d getRobotToObject(){
+    if(Table.getEntry("tv").getDouble(0.0) == 0){
+      return robotToObject;
+    }
     cameraToObject = new Translation2d(getDistcameraToObject(),Rotation2d.fromDegrees(camToObjectYaw));
     robotToObject = camera.getRobotToCamPosition().toTranslation2d().plus(cameraToObject);
     return robotToObject;

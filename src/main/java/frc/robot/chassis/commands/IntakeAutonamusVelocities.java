@@ -4,9 +4,6 @@
 
 package frc.robot.chassis.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
@@ -19,15 +16,12 @@ public class IntakeAutonamusVelocities extends Command {
   private Chassis chassis;
   private IntakeSubsystem intake;
   private ObjectPose objectPose;
-  private Translation2d toTarget;
   private ChassisSpeeds speeds ;
-  private Pose2d targetPose;
   private double omega;
   
     // Fuel position from vision
 
 
-  private double distance;
 
   public IntakeAutonamusVelocities(Chassis chassis, IntakeSubsystem intake, ObjectPose objectPose) {
     this.chassis = chassis;
@@ -54,7 +48,7 @@ public class IntakeAutonamusVelocities extends Command {
     intake.setDutyIntake(0.8);
     omega = objectPose.getRobotToObject().getAngle().getRadians();
     if (Math.abs(omega) < 0.06) omega = 0;
-    omega *= -2;
+    omega *= 2;
     speeds = new ChassisSpeeds(-1, 0, omega);
     System.out.println("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians() + "/n Distance: " + objectPose.getDistcameraToObject());
     chassis.setRobotRelVelocities(speeds);
