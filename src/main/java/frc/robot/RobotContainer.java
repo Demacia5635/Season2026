@@ -55,8 +55,8 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
 
-    driverController = new CommandController(0, ControllerType.kPS5);
-    this.chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    driverController = new CommandController(0, ControllerType.kXbox);
+    this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
 
     SmartDashboard.putData("Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     SmartDashboard.putData("Set Modules to a specific angle", new RunCommand(() -> chassis.setSteerPositions(Radian.convertFrom(angle, Degree)), chassis));

@@ -141,14 +141,17 @@ public class Chassis extends SubsystemBase {
         poseEstimator.setVisionMeasurementStdDevs(new Matrix<>(std));
         field = new Field2d();
         field2 = new Field2d();
+        //0.027588 -0.267334 0.001953 -0.264648
 
         // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
         // tags = chassisConfig.tags;
 
         // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
         //         new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
+        // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
+        //         new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("fuel", new Translation3d(-0.355, 0.07, 0.570), 27, 194, false));
+                new Camera("fuel", new Translation3d(0.0, 0.0, 0.570), 25, 194, false));
 
         tags = new Tag[]{limelight4};
 
