@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Radian;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
@@ -17,10 +21,12 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.chassis.MK4iChassisConstants;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.robot.chassis.MK5nChassisConstants;
 import frc.robot.chassis.TestModulePID;
 import frc.robot.chassis.commands.DrivePower;
+import frc.robot.chassis.commands.ResetModule;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,7 +45,8 @@ public class RobotContainer implements Sendable{
   
   public static CommandController driverController;
   Chassis chassis;
-  TalonFXMotor motor;
+
+  double angle = 0;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -48,9 +55,11 @@ public class RobotContainer implements Sendable{
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
 
-    driverController = new CommandController(0, ControllerType.kXbox);
-    this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
+    driverController = new CommandController(0, ControllerType.kPS5);
+    this.chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 
+    SmartDashboard.putData("Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
+    SmartDashboard.putData("Set Modules to a specific angle", new RunCommand(() -> chassis.setSteerPositions(Radian.convertFrom(angle, Degree)), chassis));
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     // Configure the trigger bindings
     configureBindings();
@@ -95,6 +104,7 @@ public class RobotContainer implements Sendable{
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
     builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
+    builder.addDoubleProperty("Angle", () -> angle, (newAngle) -> angle = newAngle);
   }
 
   /**

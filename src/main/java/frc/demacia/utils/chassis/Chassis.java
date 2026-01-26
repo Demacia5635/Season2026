@@ -47,7 +47,9 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
+import frc.demacia.vision.utils.LimelightHelpers;
 import frc.demacia.vision.utils.VisionFuse;
+import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -91,7 +93,7 @@ import static frc.demacia.vision.utils.VisionConstants.*;
 public class Chassis extends SubsystemBase {
 
     ChassisConfig chassisConfig;
-    private SwerveModule[] modules;
+    public SwerveModule[] modules;
     private Pigeon gyro;
 
     private DemaciaKinematics demaciaKinematics;
@@ -255,13 +257,12 @@ public class Chassis extends SubsystemBase {
      * @param speeds Desired chassis speeds (field-relative)
      */
     public void setVelocities(ChassisSpeeds speeds) {
-
-        SwerveModuleState[] states = wpilibKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
-        // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
-        // speeds,
-        // getChassisSpeedsFieldRel(),
-        // getGyroAngle());
+        
+        // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
+        SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
+                speeds,
+                getChassisSpeedsFieldRel(),
+                getGyroAngle());
         setModuleStates(states);
     }
 
@@ -411,32 +412,38 @@ public class Chassis extends SubsystemBase {
 
     @Override
     public void periodic() {
-        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        // visionFusePoseEstimation = visionFuse.getPoseEstemation();
         gyroAngle = getGyroAngle();
 
-        OdometryObservation observation = new OdometryObservation(
-                Timer.getFPGATimestamp(),
-                gyroAngle,
-                getModulePositions());
+        // OdometryObservation observation = new OdometryObservation(
+        //         Timer.getFPGATimestamp(),
+        //         gyroAngle,
+        //         getModulePositions());
 
-        demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
+        // demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
+        poseEstimator.update(gyroAngle, getModulePositions());
 
-        if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-                hasVisionUpdated = true;
-                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-            }
+        PoseEstimate limelightHub = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
+        if (limelightHub != null) {
+            poseEstimator.addVisionMeasurement(limelightHub.pose, limelightHub.timestampSeconds);
+        }
+
+        // if (visionFusePoseEstimation != null) {
+        //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        //         hasVisionUpdated = true;
+        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        //     }
 
 
-            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+        //     updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
 
-        } 
+        // } 
         if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
             updateQuest(quest.getRobotPose2d());
         }
 
-        field.setRobotPose(demaciaPoseEstimator.getEstimatedPose());
-        field2.setRobotPose(visionFusePoseEstimation != null ? visionFuse.getPoseEstemation() : Pose2d.kZero);
+        field.setRobotPose(poseEstimator.getEstimatedPosition());
+        field2.setRobotPose(limelightHub != null ? limelightHub.pose : Pose2d.kZero);
     }
 
     /**
