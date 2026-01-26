@@ -91,6 +91,11 @@ public class DemaciaOdometry {
         resetPose(new Pose2d());
     }
 
+    public void resetPosition(Rotation2d gyroAngle, SwerveModulePosition[] wheelPositions, Pose2d pose) {
+        this.pose = pose;
+        this.lastAngle = gyroAngle;
+        this.lastPositions = wheelPositions;
+    }
     public void resetPose(Pose2d pose) {
         this.pose = pose;
         lastAngle = pose.getRotation();
