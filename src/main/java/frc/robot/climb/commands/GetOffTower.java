@@ -48,8 +48,7 @@ public class GetOffTower extends Command {
       climb.setArmsDuty(ClimbConstants.POWER_TO_RAISE_ARMS);
     }
       if(openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB)){
-        climb.stopArms();//need to make a line that closes the arms(sets them to zero)
-
+        climb.stopArms();//need to think how to close the arms after raising them(code review)
       }
 
   }
@@ -66,6 +65,6 @@ public class GetOffTower extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB);
+    return false; 
   }
 }

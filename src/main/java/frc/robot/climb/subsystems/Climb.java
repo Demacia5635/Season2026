@@ -52,6 +52,9 @@ public class Climb extends SubsystemBase {
    public double getCurrentAmpersArms() {
     return armsMotor.getCurrentCurrent();
   }
+  public double getCurrentAmpersLever() {
+    return leverMotor.getCurrentCurrent();
+  }
 
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
