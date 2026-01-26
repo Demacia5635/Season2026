@@ -45,6 +45,32 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  public boolean shooterCloseLoppCanShoote(){
+    if(shooterMotor.getClosedLoopError().getValueAsDouble() < 0.3){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  public boolean HoodCloseLoopError(){
+    if(hoodMotor.getClosedLoopError().getValueAsDouble() < Math.toRadians(0.5)){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  public boolean chassisSpeedCeack(){
+    return RobotContainer.chassis.getVelocityAsVector().getNorm() < 1.7;
+  }
+
+  public boolean isLokingAtTarget(){
+    return RobotContainer.chassis.isPointingAtTarget();
+  }
+
+
+
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
@@ -52,9 +78,10 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
-    // builder.addBooleanProperty("Shooter close loop",shooterMotor.getClosedLoopError() , null);
-
-
+    builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote() , null);
+    builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
+    builder.addBooleanProperty("is looking at target",() -> isLokingAtTarget(), null);
+    builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(), null);
   }
 
   public boolean isAtLimit() {
