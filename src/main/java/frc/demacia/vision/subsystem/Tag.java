@@ -96,7 +96,7 @@ public class Tag extends SubsystemBase {
     cropEntry = Table.getEntry("crop");
     pipeEntry = Table.getEntry("pipeline");
     camToTagPitch = Table.getEntry("ty").getDouble(0.0);
-    camToTagYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    camToTagYaw = (-Table.getEntry("tx").getDouble(0.0));
     id = getTagId();
     latency = Table.getEntry("tl").getDouble(0.0) + Table.getEntry("cl").getDouble(0.0);
 
@@ -145,7 +145,7 @@ public class Tag extends SubsystemBase {
 
     alpha = Math.abs(camToTagPitch + camera.getPitch());
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
-    dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
+    // dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
 
     return dist;
     // }

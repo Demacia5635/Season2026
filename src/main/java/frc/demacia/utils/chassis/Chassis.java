@@ -151,7 +151,7 @@ public class Chassis extends SubsystemBase {
         // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
         //         new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("fuel", new Translation3d(0.0, 0.0, 0.570), 25, 194, false));
+                new Camera("fuel", new Translation3d(0.03, -0.38, 0.570), 19, -74, false));
 
         tags = new Tag[]{limelight4};
 
@@ -427,8 +427,9 @@ public class Chassis extends SubsystemBase {
         poseEstimator.update(gyroAngle, getModulePositions());
 
         PoseEstimate limelightHub = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
-        if (limelightHub != null) {
+        if (limelightHub != null && limelight4.getTagId()!= 0) {
             poseEstimator.addVisionMeasurement(limelightHub.pose, limelightHub.timestampSeconds);
+            hasVisionUpdated = true;
         }
 
         // if (visionFusePoseEstimation != null) {
