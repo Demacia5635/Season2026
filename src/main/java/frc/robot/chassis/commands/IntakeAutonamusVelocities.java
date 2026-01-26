@@ -32,7 +32,7 @@ public class IntakeAutonamusVelocities extends Command {
     this.chassis = chassis;
     this.intake = intake;
     this.objectPose = objectPose;
-    addRequirements(chassis);
+    addRequirements(chassis, intake);
   }
 
   @Override
