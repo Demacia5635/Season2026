@@ -119,6 +119,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public Chassis(ChassisConfig chassisConfig) {
+        setName(getName());
 
         this.chassisConfig = chassisConfig;
 
@@ -162,8 +163,8 @@ public class Chassis extends SubsystemBase {
                     this::getPose);
         }
 
-        SmartDashboard.putData("reset gyro", new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
-        SmartDashboard.putData("reset gyro 180",
+        SmartDashboard.putData("chassis/reset gyro", new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
+        SmartDashboard.putData("chassis/reset gyro 180",
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
         // SmartDashboard.putData("set gyro to 3D tag", new InstantCommand(() -> setYaw(
         // Rotation2d.fromDegrees(visionFuse.get3DAngle()))).ignoringDisable(true));
@@ -183,14 +184,17 @@ public class Chassis extends SubsystemBase {
         // return true;
         // };
         // });
-        SmartDashboard.putData("field", field);
-        SmartDashboard.putData("field2", field2);
-        SmartDashboard.putData("Chassis/set coast",
+        SmartDashboard.putData("chassis/field", field);
+        SmartDashboard.putData("chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
-        SmartDashboard.putData("Chassis/set brake",
+        SmartDashboard.putData("chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+<<<<<<< HEAD
         setDefaultCommand(new DriveCommand(this, RobotContainer.intsnace.driverController));
 
+=======
+        SmartDashboard.putData("chassis", this);
+>>>>>>> origin/Shooter
     }
 
     public double getUpRotation() {
@@ -242,14 +246,25 @@ public class Chassis extends SubsystemBase {
         return poseEstimator.getEstimatedPosition();
     }
 
-     
-    public Pose2d getPoseWithVelocity(double dt){
+    double numOfCycles = 50;
+    public Pose2d getPoseWithVelocity(){
+        double dt = 0.02 * numOfCycles;
         Pose2d currentPose = getPose();
         ChassisSpeeds currentSpeeds = getChassisSpeedsFieldRel();
         return new Pose2d(currentPose.getX() + (currentSpeeds.vxMetersPerSecond * dt),
         currentPose.getY() + (currentSpeeds.vyMetersPerSecond * dt), currentPose.getRotation().plus(new Rotation2d(currentSpeeds.omegaRadiansPerSecond * dt)));
     }
+    
+    private double targetAngle = 0;
 
+
+    private boolean isRotateToHub = false;
+    public void setTargetAngle(double targetAngle){
+        this.targetAngle = targetAngle;
+    }
+    public void setRotateToHub(){
+        this.isRotateToHub = !isRotateToHub;
+    }
 
     /**
      * Sets chassis velocities without acceleration limiting.
@@ -263,10 +278,14 @@ public class Chassis extends SubsystemBase {
      */
     
     public void setVelocities(ChassisSpeeds speeds) {
+<<<<<<< HEAD
         
         if(headToTargetHeading && targetHeading != null) {
             speeds.omegaRadiansPerSecond = 2 * MathUtil.angleModulus(targetHeading.minus(getGyroAngle()).getRadians());
         }
+=======
+        if(isRotateToHub) speeds.omegaRadiansPerSecond = 1.2 * MathUtil.angleModulus(targetAngle - getGyroAngle().getRadians());
+>>>>>>> origin/Shooter
         // SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
         SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
                 speeds,
@@ -449,7 +468,7 @@ public class Chassis extends SubsystemBase {
             poseEstimator.addVisionMeasurement(limelight4.pose, Timer.getFPGATimestamp()-0.05);
         }
         field.setRobotPose(getPose());
-        field2.setRobotPose(limelight4.pose != null ? limelight4.pose : Pose2d.kZero);
+        field.getObject("Prediction").setPose(getPoseWithVelocity());
 
         
         // OdometryObservation observation = new OdometryObservation(
@@ -640,6 +659,7 @@ public class Chassis extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
+        builder.addDoubleProperty("num of cycle time", () -> numOfCycles, (x) -> numOfCycles = x);
     }
 
     /**
