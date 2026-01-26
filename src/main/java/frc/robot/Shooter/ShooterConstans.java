@@ -26,6 +26,7 @@ public class ShooterConstans {
                 SHOOTER_LOOKUP_TABLE.add(1.8, 14, Math.toRadians(83));
                 SHOOTER_LOOKUP_TABLE.add(3, 15.5, Math.toRadians(70));
                 SHOOTER_LOOKUP_TABLE.add(3.4,16.3, Math.toRadians(65));
+                SHOOTER_LOOKUP_TABLE.add(4.2, 18, Math.toRadians(58));
                 // SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));
                 // SHOOTER_LOOKUP_TABLE.add(3, 16.7, Math.toRadians(71));
                 // SHOOTER_LOOKUP_TABLE.add(4, 18.6, Math.toRadians(68));

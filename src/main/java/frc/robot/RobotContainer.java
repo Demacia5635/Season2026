@@ -61,7 +61,6 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter(chassis);
 
     SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
-    SmartDashboard.putData("shooter/Hood calibration", new HoodCalibrationCommand(shooter));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     configureBindings();
@@ -87,9 +86,10 @@ public class RobotContainer implements Sendable {
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
     chassis.setDefaultCommand(driveCommand);
-    //shooter.setDefaultCommand(new ShootOnTheFly(chassis, shooter));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+  shooter.setDefaultCommand(new ShootOnTheFly(chassis, shooter));
+    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     driverController.rightButton().onTrue(new RunCommand(() -> {}, shooter));
+    driverController.povUp().onTrue(new HoodCalibrationCommand(shooter));
     //   RobotContainer.isShooting = !RobotContainer.isShooting;
     //   if (isShooting) {
     //     CommandScheduler.getInstance().schedule(new InstantCommand(() -> new ShooterCommand(shooter, chassis).schedule()));

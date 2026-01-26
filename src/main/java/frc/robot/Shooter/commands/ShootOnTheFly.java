@@ -32,7 +32,7 @@ public class ShootOnTheFly extends Command {
     public void execute() {
 
         ChassisSpeeds robotSpeeds = chassis.getChassisSpeedsFieldRel();
-        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, chassis.getPose(), 0.02);
+        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, chassis.getPose(), 0.04);
         Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(nextPose.getTranslation());
 
         // get the distance, heading and LUT valuse
