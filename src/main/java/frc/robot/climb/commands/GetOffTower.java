@@ -14,9 +14,7 @@ public class GetOffTower extends Command {
   /** Creates a new GetOffTower. */
   Climb climb;
   Timer openArmsTimerAfterClimb;
-
   private boolean IS_LEVER_CLOSED;
-
   public GetOffTower(Climb climb) {
     this.climb = climb;
     openArmsTimerAfterClimb = new Timer();
