@@ -18,6 +18,7 @@ public class HoodCalibrationCommand extends Command {
   public HoodCalibrationCommand(Shooter shooter) {
     this.shooter = shooter;
     addRequirements(shooter);
+    SmartDashboard.putData("hood calebret", this);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

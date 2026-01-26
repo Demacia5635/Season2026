@@ -28,8 +28,11 @@ public class ShootOnTheFly extends Command {
         addRequirements(shooter);
     }
 
+
     @Override
     public void execute() {
+
+
 
         ChassisSpeeds robotSpeeds = chassis.getChassisSpeedsFieldRel();
         Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, chassis.getPose(), 0.04);
@@ -90,22 +93,22 @@ public class ShootOnTheFly extends Command {
             shootVelocityWasOK = true;
         } else if (shootVelocityWasOK && shooterVel < ballVelocity * 0.95) {
             shootVelocityWasOK = false;
-            LogManager.log(String.format("=========== Shoot with %3.1f/%3.1f/%3.0f", shooterVel,
-                    Math.toDegrees(shooter.getAngleHood()), chassis.getGyroAngle().getDegrees()));
+            // LogManager.log(String.format("=========== Shoot with %3.1f/%3.1f/%3.0f", shooterVel,
+            //         Math.toDegrees(shooter.getAngleHood()), chassis.getGyroAngle().getDegrees()));
             //new RunCommand(()->chassis.stop(), chassis).schedule();
 
         }
         if(Math.abs(robotSpeeds.vxMetersPerSecond) > 0.1 || Math.abs(robotSpeeds.vyMetersPerSecond) > 0.1) {
-        LogManager.log(String.format(
-                "shoot-%3.1f/%3.1f/%3.0f %3.1f/%3.1f shooter %3.1f/%3.1f from-%3.1f/%3.1f/%3.0f to %3.1f/%3.0f/%3.1f/%3.0f - robot vel-%3.1f/%3.1f - %3.1f/%3.1f/%3.1f",
-                ballVelocity, Math.toDegrees(hoodAngle), ballHeading.getDegrees(),
-                lut[0], Math.toDegrees(lut[1]),
-                shooter.getShooterVelocity(), Math.toDegrees(shooter.getAngleHood()),
-                nextPose.getTranslation().getX(), nextPose.getTranslation().getY(),
-                nextPose.getRotation().getDegrees(),
-                toHub.getX(), toHub.getY(), distance, heading.getDegrees(),
-                robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond,
-                xVel, yVel, zVel));
+        // LogManager.log(String.format(
+        //         "shoot-%3.1f/%3.1f/%3.0f %3.1f/%3.1f shooter %3.1f/%3.1f from-%3.1f/%3.1f/%3.0f to %3.1f/%3.0f/%3.1f/%3.0f - robot vel-%3.1f/%3.1f - %3.1f/%3.1f/%3.1f",
+        //         ballVelocity, Math.toDegrees(hoodAngle), ballHeading.getDegrees(),
+        //         lut[0], Math.toDegrees(lut[1]),
+        //         shooter.getShooterVelocity(), Math.toDegrees(shooter.getAngleHood()),
+        //         nextPose.getTranslation().getX(), nextPose.getTranslation().getY(),
+        //         nextPose.getRotation().getDegrees(),
+        //         toHub.getX(), toHub.getY(), distance, heading.getDegrees(),
+        //         robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond,
+        //         xVel, yVel, zVel));
         }
 
     }

@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.Shooter.subsystem;
+
+import frc.demacia.utils.log.LogManager;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -15,6 +17,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.vision.subsystem.Tag;
+import frc.robot.RobotContainer;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.utils.ShooterUtils;
 
@@ -28,11 +31,9 @@ public class Shooter extends SubsystemBase {
 
   private LimitSwitch limitSwitch;
 
-  Chassis chassis;
   public double angle;
 
-  public Shooter(Chassis chassis) {
-    this.chassis = chassis;
+  public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
@@ -51,6 +52,9 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
+    // builder.addBooleanProperty("Shooter close loop",shooterMotor.getClosedLoopError() , null);
+
+
   }
 
   public boolean isAtLimit() {
@@ -78,12 +82,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHoodAngle(double angle) {
-    //this.angle = angle;
+    // this.angle = angle;
     if (!hasCalibrated) {
       hoodMotor.set(0);
       return;
     }
-    
+
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     hoodMotor.setPositionVoltage(angle);
   }
@@ -93,7 +97,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
-    //this.angle = angle;
+    // this.angle = angle;
     setFlywheelVel(vel);
     setHoodAngle(angle);
   }
@@ -106,38 +110,32 @@ public class Shooter extends SubsystemBase {
     this.hasCalibrated = true;
   }
 
-  public double getLookUpTableVel(double distance) {
-    return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[0];
-  }
-
-  public double getLookUpTableAngle(double distance) {
-    return ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance)[1];
-  }
-
-  public Translation3d getVelInVector(double vel) {
-    return new Translation3d(vel, new Rotation3d(0, getAngleHood(), chassis.getGyroAngle().getRadians()));
-  }
-
   public void setIndexerPower(double pow) {
     indexerMotor.set(pow);
   }
 
-  public Pose2d RobotFucerPose(){
-    return ShooterUtils.computeFuturePosition(chassis.getChassisSpeedsFieldRel(), chassis.getPose(), 0.02);
+  public boolean canShoot() {
+    double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
+    if (norm > 0.3)
+      
+          LogManager.log("norm: " + norm + " is hood ready: "
+              + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
+              + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
+                  .toRadians(0.5))
+              + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
+    return norm > 1.7 && isShooterReady()
+        && RobotContainer.chassis.isPointingAtTarget();
   }
 
-
   public boolean isShooterReady() {
-    return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.2;
-  }  
+    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.5 &&
+        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(0.5);
+  }
+
+  
 
   public void stop() {
     shooterMotor.stopMotor();
-  }
-
-  // hub pose (i finde it with april tag)
-  public Translation3d hubPose() {
-    return new Translation3d(449.5 / 100, 370.84000000000003 / 100, 142.24 / 2);
   }
 
   // shooter pose on the robot
@@ -145,17 +143,11 @@ public class Shooter extends SubsystemBase {
     return new Translation3d();
   }
 
-  public Translation3d getShooterPosOnField() {
-    return new Translation3d();
-  }
-
-  // get the distins from the shooter to the target
-  public Translation3d getVectorToHubShoter() {
-    return ShooterConstans.HUB_POSE_Translation3d.minus(getShooterPosOnField());
-  }
-
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (canShoot())
+      indexerMotor.set(0.3);
+    else
+      indexerMotor.set(0);
   }
 }

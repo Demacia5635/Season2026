@@ -43,7 +43,7 @@ public class RobotContainer implements Sendable {
   public static boolean isRed = false;
   Field2d field2d;
   Field2d questField2d;
-  Chassis chassis;
+  public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
   Shooter shooter;
 
@@ -58,7 +58,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
-    shooter = new Shooter(chassis);
+    shooter = new Shooter();
 
     SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
@@ -86,21 +86,26 @@ public class RobotContainer implements Sendable {
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
     chassis.setDefaultCommand(driveCommand);
-  shooter.setDefaultCommand(new ShootOnTheFly(chassis, shooter));
+    // shooter.setDefaultCommand(new ShootOnTheFly(chassis, shooter));
+    driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
+   
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    driverController.rightButton().onTrue(new RunCommand(() -> {}, shooter));
+    driverController.rightButton().onTrue(new RunCommand(() -> {
+    }, shooter));
     driverController.povUp().onTrue(new HoodCalibrationCommand(shooter));
-    //   RobotContainer.isShooting = !RobotContainer.isShooting;
-    //   if (isShooting) {
-    //     CommandScheduler.getInstance().schedule(new InstantCommand(() -> new ShooterCommand(shooter, chassis).schedule()));
-    //   }
-    //   else {
-    //     CommandScheduler.getInstance().schedule(new InstantCommand(() -> {}, shooter));
-    //   }
+    // RobotContainer.isShooting = !RobotContainer.isShooting;
+    // if (isShooting) {
+    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> new
+    // ShooterCommand(shooter, chassis).schedule()));
+    // }
+    // else {
+    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> {},
+    // shooter));
+    // }
     // }));
     driverController.upButton().onTrue(new InstantCommand(() -> driveCommand.setActiveToHub()));
-    driverController.downButton().onTrue(new InstantCommand(() -> shooter.setIndexerPower(1)));
-    driverController.leftBumper().onTrue(new InstantCommand(() -> shooter.setIndexerPower(0)));
+    // driverController.downButton().onTrue();
+    // driverController.leftBumper().onTrue();
   }
 
   public static boolean getIsRed() {

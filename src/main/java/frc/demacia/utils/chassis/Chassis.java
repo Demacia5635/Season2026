@@ -275,10 +275,11 @@ public class Chassis extends SubsystemBase {
     
     public void setVelocities(ChassisSpeeds speeds) {
         if (isRotateToHub) {
-            speeds.omegaRadiansPerSecond = -2.2
+            speeds.omegaRadiansPerSecond = -1.5
                     * MathUtil.angleModulus(targetAngle - getPose().getRotation().getRadians());
-           
+
         }
+        
         SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
                 speeds,
                 getChassisSpeedsFieldRel(),
@@ -286,6 +287,13 @@ public class Chassis extends SubsystemBase {
         setModuleStates(states);
     }
 
+    public boolean isPointingAtTarget(){
+        return Math.abs(targetAngle - getPose().getRotation().getRadians()) < Math.toRadians(3);
+    }
+
+    public Translation2d getVelocityAsVector(){
+        return new Translation2d(getChassisSpeedsFieldRel().vxMetersPerSecond, getChassisSpeedsFieldRel().vyMetersPerSecond);
+    }
     /**
      * Sets robot-relative velocities with acceleration limiting.
      * 
