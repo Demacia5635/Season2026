@@ -1,6 +1,5 @@
 package frc.robot.climb.constants;
 
-import edu.wpi.first.units.measure.Time;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;

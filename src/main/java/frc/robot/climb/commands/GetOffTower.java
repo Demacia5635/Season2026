@@ -44,10 +44,12 @@ public class GetOffTower extends Command {
       openArmsTimerAfterClimb.start();
 
     }
-    if (IS_LEVER_CLOSED)
+    if (IS_LEVER_CLOSED){
       climb.setArmsDuty(ClimbConstants.POWER_TO_RAISE_ARMS);
+    }
       if(openArmsTimerAfterClimb.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS_AFTER_CLIMB)){
         climb.stopArms();//need to make a line that closes the arms(sets them to zero)
+
       }
 
   }
