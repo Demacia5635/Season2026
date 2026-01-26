@@ -79,12 +79,15 @@ public class Tag extends SubsystemBase {
 
     this.camera = camera;
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
-    LogManager.addEntry("dist",this::GetDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.addEntry("dist", this::GetDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     field = new Field2d();
     latency = 0;
     is3D = Table.getEntry("pipeline").getInteger(0) == 1;
     // SmartDashboard.putData("Tag" + cameraId, this);
     SmartDashboard.putData("field-tag" + camera.getName(), field);
+    LogManager.addEntry("vector",this::getNormfromrobottotag).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.log("robot to tag" + ":" + robotToTag);
+    
   }
 
   @Override
@@ -95,15 +98,19 @@ public class Tag extends SubsystemBase {
     camToTagPitch = Table.getEntry("ty").getDouble(0.0);
     camToTagYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
     id = getTagId();
-
     latency = Table.getEntry("tl").getDouble(0.0) + Table.getEntry("cl").getDouble(0.0);
 
     if (Table.getEntry("tv").getDouble(0.0) != 0) {
       cropStop();
       // Only process valid tag IDs
       if (id > 0 && id < TAG_HEIGHT.length) {
-        // pose = new Pose2d(DanielVision.getRobotPosition(Math.toRadians(camToTagPitch + camera.getPitch()), Math.toRadians(camToTagYaw), camera.getRobotToCamPosition(), new Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(), TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
+        // pose = new Pose2d(DanielVision.getRobotPosition(Math.toRadians(camToTagPitch
+        // + camera.getPitch()), Math.toRadians(camToTagYaw),
+        // camera.getRobotToCamPosition(), new
+        // Translation3d(O_TO_TAG[(int)id].getX(),O_TO_TAG[(int)id].getY(),
+        // TAG_HEIGHT[(int)id] ), getRobotAngle.get()), getRobotAngle.get());
         pose = new Pose2d(getOriginToRobot(), getRobotAngle.get());
+
         field.setRobotPose(pose);
         confidence = getConfidence();
         wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
@@ -139,7 +146,7 @@ public class Tag extends SubsystemBase {
     alpha = Math.abs(camToTagPitch + camera.getPitch());
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
-    // LogManager.log(camera.getName() + ":" + dist);
+
     return dist;
     // }
     // //if camera is higher
@@ -158,19 +165,26 @@ public class Tag extends SubsystemBase {
   public Translation2d getRobotToTagFieldRel() {
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(GetDistFromCamera(),
-        Rotation2d.fromDegrees(camToTagYaw));
+        Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
     // LogManager.log("cameraToTag :" +cameraToTag);
     // LogManager.log("Camera to Tag Yaw :" + camToTagYaw);
     // Add camera offset to get robot center to tag vector
-    robotToTag = camera.getRobotToCamPosition().toTranslation2d().rotateBy(getRobotAngle.get())
-        .plus(cameraToTag);
+    robotToTag = (camera.getRobotToCamPosition().toTranslation2d()
+        .plus(cameraToTag)).rotateBy(getRobotAngle.get());
     // LogManager.log("Robot to Tag :" + robotToTag);
     return robotToTag;
   }
+  public double getNormfromrobottotag(){
+    if(robotToTag == null){
+      return 0.0;
+    }
+    
+    return robotToTag.getNorm();
+  }
 
   // public Translation2d getCameraToTag() {
-  //   return new Translation2d(GetDistFromCamera(),
-  //       Rotation2d.fromDegrees(camToTagYaw));
+  // return new Translation2d(GetDistFromCamera(),
+  // Rotation2d.fromDegrees(camToTagYaw));
   // }
 
   /**
@@ -233,7 +247,7 @@ public class Tag extends SubsystemBase {
     Table.getEntry("pipeline").setNumber(1);
     try {
       Yaw3d = Table.getEntry("camerapose_targetspace").getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 })[4];
-      tagID = (int)Table.getEntry("tid").getDouble(0.0);
+      tagID = (int) Table.getEntry("tid").getDouble(0.0);
       Table.getEntry("pipeline").setNumber(0);
       yaw3dRotation2d = Rotation2d.fromDegrees(Yaw3d).rotateBy(Rotation2d.fromDegrees(camera.getYaw()))
           .rotateBy(TAG_ANGLE[(int) tagID]).rotateBy(Rotation2d.fromDegrees(180));
