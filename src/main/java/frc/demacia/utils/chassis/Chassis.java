@@ -143,8 +143,10 @@ public class Chassis extends SubsystemBase {
         // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
         // tags = chassisConfig.tags;
 
+        // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
+        //         new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
+                new Camera("fuel", new Translation3d(-0.355, 0.07, 0.570), 27, 194, false));
 
         tags = new Tag[]{limelight4};
 
