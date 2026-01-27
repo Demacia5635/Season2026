@@ -151,13 +151,13 @@ public class Shooter extends SubsystemBase {
               + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
                   .toRadians(0.5))
               + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
-    return norm > 1.7 && isShooterReady()
+    return norm < 2 && isShooterReady()
         && RobotContainer.chassis.isPointingAtTarget();
   }
 
   public boolean isShooterReady() {
-    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.5 &&
-        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(0.5);
+    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 1 &&
+        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(1);
   }
 
   
@@ -174,7 +174,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     if (canShoot())
-      indexerMotor.set(0.3);
+      indexerMotor.set(1);
     else
       indexerMotor.set(0);
   }

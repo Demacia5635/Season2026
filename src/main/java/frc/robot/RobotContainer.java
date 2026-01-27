@@ -85,9 +85,9 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    // chassis.setDefaultCommand(driveCommand);
-    driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
-    // driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
+    chassis.setDefaultCommand(driveCommand);
+    // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
+    driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     driverController.rightButton().onTrue(new RunCommand(() -> {

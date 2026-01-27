@@ -288,7 +288,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public boolean isPointingAtTarget(){
-        return Math.abs(targetAngle - getPose().getRotation().getRadians()) < Math.toRadians(3);
+        return Math.abs(targetAngle - getPose().getRotation().getRadians()) < Math.toRadians(8);
     }
 
     public Translation2d getVelocityAsVector(){
