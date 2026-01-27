@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
+    builder.addDoubleProperty("get angle", () -> Math.toDegrees(getAngleHood()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
@@ -116,7 +116,8 @@ public class Shooter extends SubsystemBase {
     }
 
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    hoodMotor.setPositionVoltage(angle);
+    hoodMotor.setMotion(angle);
+    SmartDashboard.putNumber("Hood Target", angle);
   }
 
   public double getAngleHood() {
