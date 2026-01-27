@@ -53,13 +53,13 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    driverController = new CommandController(0, ControllerType.kXbox);
+    driverController = new CommandController(0, ControllerType.kPS5);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     camera = new Camera("fuel", new Translation3d(-0.2702,-0.07,0.575), -20, 0, null);
     objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose));
+    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
     //70  270
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());

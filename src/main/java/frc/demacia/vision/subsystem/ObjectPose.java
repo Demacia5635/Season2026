@@ -102,8 +102,8 @@ public class ObjectPose extends SubsystemBase {
     double alpha = camToObjectPitch;
     alpha = Math.toRadians(alpha);
     double distX =  camera.getHeight()/(Math.tan(alpha));
-    distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
-    return Math.abs(distFinal);
+    // distFinal = distX /Math.cos(Math.toRadians(camToObjectYaw));
+    return Math.abs(distX);
   }
 
    /**
