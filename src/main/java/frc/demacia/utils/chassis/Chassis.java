@@ -103,7 +103,8 @@ public class Chassis extends SubsystemBase {
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
 
-    public Chassis(ChassisConfig chassisConfig) {
+    private static Chassis instance;
+    private Chassis(ChassisConfig chassisConfig) {
         this.chassisConfig = chassisConfig;
         modules = new SwerveModule[] {
         new SwerveModule(chassisConfig.frontLeftModuleConfig),
@@ -162,7 +163,13 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("Chassis/set coast", new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("Chassis/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
     }
+    public static void create(ChassisConfig config) {
+        if (instance == null) instance = new Chassis(config);
+    }
 
+    public static Chassis getInstance(){
+        return instance;
+    }
     /**
      * Checks all module electronics for faults and logs them.
      */
