@@ -66,23 +66,24 @@ public class ShooterConstans {
         public static final int HOOD_ID = 31;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
-        public static final double HOOD_KP = 1;
+        public static final double HOOD_KP = 1.2;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
-        public static final double HOOD_KS = 0.08375;
-        public static final double HOOD_KV = 2.36368;
-        public static final double HOOD_KA = 0.36853;
+        public static final double HOOD_KS = 0.083;
+        public static final double HOOD_KV = 2.2;
+        public static final double HOOD_KA = 0.26;
         public static final double HOOD_KG = 0;
         public static final double HOOD_MAX_VELOCITY = Math.PI;
-        public static final double HOOD_MAX_ACCEL = 10 * Math.PI;
-        public static final double HOOD_MAX_JERK = 0; //10 * Math.PI;
+        public static final double HOOD_MAX_ACCEL = 2 * Math.PI;
+        public static final double HOOD_MAX_JERK = 10 * Math.PI;
         public static final double HOOD_GEAR_RATIO = ((110 / 25d) * 32);
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
                         .withBrake(true)
                         .withRadiansMotor(HOOD_GEAR_RATIO)
                         .withInvert(false)
-                        .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG);
+                        .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
+                        .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
         public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
