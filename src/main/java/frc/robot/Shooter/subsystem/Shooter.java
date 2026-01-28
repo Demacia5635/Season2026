@@ -144,13 +144,13 @@ public class Shooter extends SubsystemBase {
 
   public boolean canShoot() {
     double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
-    if (norm > 0.3)
+    // if (norm > 0.3)
       
-          LogManager.log("norm: " + norm + " is hood ready: "
-              + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
-              + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
-                  .toRadians(0.5))
-              + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
+    //       LogManager.log("norm: " + norm + " is hood ready: "
+    //           + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
+    //           + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
+    //               .toRadians(0.5))
+    //           + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
     return norm < 2 && isShooterReady()
         && RobotContainer.chassis.isPointingAtTarget();
   }
