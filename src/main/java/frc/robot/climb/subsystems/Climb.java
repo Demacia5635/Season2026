@@ -9,6 +9,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.robot.climb.constants.ClimbConstants;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climb extends SubsystemBase {
   private TalonSRXMotor armsMotor;
@@ -19,6 +20,7 @@ public class Climb extends SubsystemBase {
   public Climb() {
     armsMotor = new TalonSRXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
     leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
+    SmartDashboard.putData("Climb", this);
   }
 
   public void setArmsDuty(double power) {
