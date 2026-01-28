@@ -25,6 +25,7 @@ public class RobotCommon {
     public static boolean isRed = false;
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
+    public static Shifts currentShift = Shifts.Auto;
 
 
 }
