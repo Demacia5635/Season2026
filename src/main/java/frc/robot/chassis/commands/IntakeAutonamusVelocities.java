@@ -29,7 +29,7 @@ public class IntakeAutonamusVelocities extends Command {
     this.controller = controller;
     this.intake = intake;
     this.objectPose = objectPose;
-    chassisToIntakeOffset = new Translation2d(-0.3, 0);
+    chassisToIntakeOffset = new Translation2d(-0.3, 0.05);
     addRequirements(chassis, intake);
   }
 
@@ -41,19 +41,20 @@ public class IntakeAutonamusVelocities extends Command {
   @Override
   public void execute() {
     Translation2d driverVelocityVectorRobotRel = new Translation2d(controller.getLeftY(), controller.getLeftX()).rotateBy(chassis.getGyroAngle().unaryMinus());
-    double wantedVxRobotRel = -(Math.min(Math.abs(driverVelocityVectorRobotRel.getX()), 1));
+    double wantedVxRobotRel = (Math.min(Math.abs(driverVelocityVectorRobotRel.getX()*chassis.getMaxDriveVelocity()), 2.5));
     Translation2d intakeToTarget = objectPose.getRobotToObject().minus(chassisToIntakeOffset);
     double angleToFix = Math.min(Math.abs(intakeToTarget.getAngle().getRadians() * 2), Math.toRadians(90)) * Math.signum(intakeToTarget.getAngle().getRadians());
-    chassis.setRobotRelVelocities(new ChassisSpeeds(wantedVxRobotRel * Math.cos(angleToFix), wantedVxRobotRel * Math.sin(angleToFix), 0));
+    chassis.setRobotRelVelocities(new ChassisSpeeds(-wantedVxRobotRel, -wantedVxRobotRel * Math.tan(angleToFix), 0));
 
   }
 
   @Override
   public void end(boolean interrupted) {
+    intake.stopIntake();
   }
 
   @Override
   public boolean isFinished() {
-    return (objectPose.getDistcameraToObject()-chassisToIntakeOffset.getNorm() < 0.1);
+    return objectPose.getRobotToObject().minus(chassisToIntakeOffset).getNorm() < 0.03;
   }
 }

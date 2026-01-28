@@ -16,20 +16,20 @@ import frc.robot.intake.intakeConstans.INTAKE_STATE;
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new intake. */
   private TalonFXMotor motorIntake;
-  private TalonSRXMotor motorRoller;
-  private TalonSRXMotor motorToShooter;
+  // private TalonSRXMotor motorRoller;
+  // private TalonSRXMotor motorToShooter;
   private INTAKE_STATE currState = INTAKE_STATE.IDLE;
 
   public IntakeSubsystem() {
     motorIntake = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
-    motorRoller = new TalonSRXMotor(intakeConstans.ROLLER_CONFIG);
-    motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
+    // motorRoller = new TalonSRXMotor(intakeConstans.ROLLER_CONFIG);
+    // motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
 
-  public void setDutyConveyorBelt(double pow){
-    motorRoller.setDuty(pow);
-    motorToShooter.setDuty(pow);
-  }
+  // public void setDutyConveyorBelt(double pow){
+  //   motorRoller.setDuty(pow);
+  //   motorToShooter.setDuty(pow);
+  // }
 
   public void setDutyIntake(double pow){
     motorIntake.setDuty(pow);
@@ -39,11 +39,11 @@ public class IntakeSubsystem extends SubsystemBase {
     motorIntake.stop();
   }
 
-  public void stopRoller(double pow){
-    motorRoller.stop();
-  }
+  // public void stopRoller(double pow){
+  //   motorRoller.stop();
+  // }
 
-  public void stopToShooter(){
-    motorToShooter.stop();
-  }
+  // public void stopToShooter(){
+  //   motorToShooter.stop();
+  // }
 }

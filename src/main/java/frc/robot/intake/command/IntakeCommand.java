@@ -26,13 +26,13 @@ public class IntakeCommand extends Command {
   public void execute() {
 
    intake.setDutyIntake(0.8);
-   intake.setDutyConveyorBelt(0.8); 
+  //  intake.setDutyConveyorBelt(0.8); 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setDutyConveyorBelt(0);
+    // intake.setDutyConveyorBelt(0);
     intake.setDutyIntake(0);
   }
 
