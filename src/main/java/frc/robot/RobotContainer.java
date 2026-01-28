@@ -24,8 +24,7 @@ public class RobotContainer implements Sendable{
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
-
-  // The robot's subsystems and commands are defined here...
+  // The robot's\ subsystems and commands are defined here...
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
