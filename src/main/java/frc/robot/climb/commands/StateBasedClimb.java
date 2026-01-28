@@ -5,6 +5,7 @@
 package frc.robot.climb.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.demacia.utils.controller.CommandController;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
@@ -12,9 +13,15 @@ import frc.robot.climb.subsystems.Climb;
 public class StateBasedClimb extends Command {
   /** Creates a new StateBasedClimb. */
   Climb climb;
+  CommandController contoller;
+private double joyright;
+  private double joyleft;
+  private boolean IS_AT_BAR;
+  private boolean IS_AT_GROUND;
 
-  public StateBasedClimb(Climb climb) {
+  public StateBasedClimb(Climb climb, CommandController controller) {
     this.climb = climb;
+    this.contoller = controller;
     addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -22,7 +29,8 @@ public class StateBasedClimb extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    IS_AT_BAR = false;
+    IS_AT_GROUND = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,18 +52,48 @@ public class StateBasedClimb extends Command {
         }
         break;
       case CLIMB:
-        
+        climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
+        if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
+          climb.stopArms();
+          IS_AT_BAR = true;
+        }
+        if (IS_AT_BAR) {
+          climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
+        }
+        if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
+          climb.stopLever();
+        }
         break;
       case GET_OFF_CLIMB:
-
+        climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
+        if(climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSE){
+          climb.stopLever();
+          IS_AT_GROUND = true;
+        }
+        if(IS_AT_GROUND){
+          climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
+        }
+          if(climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_RAISED){
+            climb.stopArms();
+          }
         break;
       case TESTING:
+    joyright = contoller.getRightY() * 0.4;
+    climb.setArmsDuty(joyright);
 
+    joyleft = contoller.getLeftY() * 0.4;
+    climb.setLeverDuty(joyleft);
         break;
       case CLOSE:
-
+        climb.setArmsAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
+        climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
+        if(climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE)
+        climb.stopLever();
+         if(climb.getArmsAngle() >= ClimbConstants.ARMS_ANGLE_CLOSED)
+        climb.stopLever();
         break;
     }
+
   }
 
   // Called once the command ends or is interrupted.

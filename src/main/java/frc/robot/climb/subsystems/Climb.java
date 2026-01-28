@@ -7,6 +7,7 @@ package frc.robot.climb.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
+import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.constants.ClimbConstants.CLIMB_STATE;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Climb extends SubsystemBase {
   private TalonSRXMotor armsMotor;
   private TalonFXMotor leverMotor;
+  private DigitalEncoder digitalEncoder;
 
   private CLIMB_STATE state;
 
@@ -23,6 +25,7 @@ public class Climb extends SubsystemBase {
   public Climb() {
     armsMotor = new TalonSRXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
     leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
+    digitalEncoder = new DigitalEncoder(ClimbConstants.DIGITAL_ENCODER_CONFIG);
     state = CLIMB_STATE.IDLE;
      addNT();
 
@@ -84,6 +87,9 @@ public class Climb extends SubsystemBase {
   public double getCurrentAmpersLever() {
     return leverMotor.getCurrentCurrent();
   }
+  public double getDigitalEncoderAngle() {
+    return digitalEncoder.get();
+  }
 
   public void setState(CLIMB_STATE state) {
     this.state = state;
@@ -97,7 +103,7 @@ public class Climb extends SubsystemBase {
     super.initSendable(builder);
     builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
     builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
-
+    builder.addDoubleProperty("Encoder Angle", this::getDigitalEncoderAngle, null);
   }
 
   @Override
