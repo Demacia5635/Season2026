@@ -14,15 +14,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.log.LogManager;
 import frc.robot.Shooter.commands.HoodCalibrationCommand;
 import frc.robot.Shooter.commands.ShootOnTheFly;
-import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.commands.ResetModule;
@@ -38,9 +35,6 @@ import frc.robot.chassis.commands.ResetModule;
  */
 public class RobotContainer implements Sendable {
 
-  public static boolean isComp = false;
-  private static boolean hasRemovedFromLog = false;
-  public static boolean isRed = false;
   Field2d field2d;
   Field2d questField2d;
   public static Chassis chassis;
@@ -56,7 +50,6 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
 
@@ -108,30 +101,8 @@ public class RobotContainer implements Sendable {
     // driverController.leftBumper().onTrue();
   }
 
-  public static boolean getIsRed() {
-    return isRed;
-  }
-
-  public static void setIsRed(boolean isRed) {
-    RobotContainer.isRed = isRed;
-  }
-
-  public static boolean getIsComp() {
-    return isComp;
-  }
-
-  public static void setIsComp(boolean isComp) {
-    RobotContainer.isComp = isComp;
-    if (!hasRemovedFromLog && isComp) {
-      hasRemovedFromLog = true;
-      LogManager.removeInComp();
-    }
-  }
-
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
-    builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
     // builder.addDoubleProperty("Angle", () -> shooter.angle, (newAngle) ->
     // shooter.angle = newAngle);
   }
