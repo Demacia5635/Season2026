@@ -62,7 +62,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    // addStatesToElasticForTesting();
+    addStatesToElasticForTesting();
     configureBindings();
   }
 
