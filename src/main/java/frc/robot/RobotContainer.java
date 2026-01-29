@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.*;
+
+import java.lang.annotation.Target;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -56,8 +62,24 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    // addStatesToElasticForTesting();
     configureBindings();
+  }
 
+  public void addStatesToElasticForTesting() {
+    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+      robotStateChooser.addOption(state.name(), state);
+    }
+    robotStateChooser.onChange(state -> RobotCommon.currentState = state);
+    SmartDashboard.putData("Robot State Chooser", robotStateChooser);
+    
+    SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
+    for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
+      shiftsChooser.addOption(state.name(), state);
+    }
+    shiftsChooser.onChange(state -> RobotCommon.currentShift = state);
+    SmartDashboard.putData("Shifts Chooser", shiftsChooser);
   }
 
   /**
@@ -103,8 +125,25 @@ public class RobotContainer implements Sendable {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    // builder.addDoubleProperty("Angle", () -> shooter.angle, (newAngle) ->
-    // shooter.angle = newAngle);
+    builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
+    builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+  }
+
+  static public void updateCommon() {
+    Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
+    RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle - RobotCommon.currentRobotPose.getRotation().getRadians();
+
+    Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
+    RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle - RobotCommon.futureRobotPose.getRotation().getRadians();
+
+    
   }
 
   /**

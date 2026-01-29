@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -28,11 +29,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
-import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
+import frc.robot.RobotCommon;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.subsystem.ObjectPose;
 
 /**
  * Main swerve drive chassis controller.
@@ -80,12 +81,10 @@ public class Chassis extends SubsystemBase {
     private SwerveDriveKinematics wpilibKinematics;
     private DemaciaPoseEstimator demaciaPoseEstimator;
     private Field2d field;
-    private Field2d field2;
+    private Field2d limelightField;
 
-    public Tag[] tags;
-    public Tag limelight4;
-    public Quest quest;
-    public ObjectPose objectPose;
+    private Tag[] tags;
+    private Tag limelight4;
 
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
@@ -102,7 +101,6 @@ public class Chassis extends SubsystemBase {
             modulePositions[i] = chassisConfig.swerveModuleConfig[i].position;
         }
 
-        quest = new Quest();
         gyro = new Pigeon(chassisConfig.pigeonConfig);
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
@@ -113,7 +111,7 @@ public class Chassis extends SubsystemBase {
                 new Matrix<>(VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY)));
 
         field = new Field2d();
-        field2 = new Field2d();
+        limelightField = new Field2d();
 
         // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
         // tags = chassisConfig.tags;
@@ -131,7 +129,7 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
         SmartDashboard.putData("chassis", this);
-        SmartDashboard.putData("Limelight field", field2);
+        SmartDashboard.putData("Limelight field", limelightField);
     }
 
     public double getUpRotation() {
@@ -320,7 +318,7 @@ public class Chassis extends SubsystemBase {
     private void addVisionUpdate(Pose2d pose) {
         if(pose == null) return;
         demaciaPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05);
-        field2.setRobotPose(pose);
+        limelightField.setRobotPose(pose);
     }
 
     @Override
@@ -334,6 +332,22 @@ public class Chassis extends SubsystemBase {
         addVisionUpdate(limelight4.getPose());
         field.setRobotPose(getPose());
         
+        updateCommon();
+    }
+
+    public void updateCommon() {
+        RobotCommon.currentRobotPose = getPose();
+        RobotCommon.futureRobotPose = getFuturePose(0.04);
+        RobotCommon.fieldRelativeSpeeds = getChassisSpeedsFieldRel();
+        RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
+    }
+
+    public Pose2d getFuturePose(double dtSeconds){
+        Pose2d poseAtTime = getPose().exp(new Twist2d(
+        (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
+        (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
+        getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
+        return poseAtTime;
     }
 
     /**
