@@ -125,8 +125,9 @@ public class Chassis extends SubsystemBase {
             modulePositions[i] = chassisConfig.swerveModuleConfig[i].position;
         }
 
-        quest = new Quest();
+
         gyro = new Pigeon(chassisConfig.pigeonConfig);
+        quest = new Quest(()-> getGyroAngle());
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
@@ -151,7 +152,7 @@ public class Chassis extends SubsystemBase {
         // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
         //         new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
         limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("fuel", new Translation3d(0.03, -0.38, 0.570), 19, -74, false));
+                new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90, false));
 
         tags = new Tag[]{limelight4};
 
@@ -415,7 +416,7 @@ public class Chassis extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        visionFusePoseEstimation = visionFuse.getPoseEstemation();
         gyroAngle = getGyroAngle();
 
         // OdometryObservation observation = new OdometryObservation(
@@ -426,28 +427,28 @@ public class Chassis extends SubsystemBase {
         // demaciaPoseEstimator.addOdomteryCalculation(observation, getChassisSpeedsVector());
         poseEstimator.update(gyroAngle, getModulePositions());
 
-        PoseEstimate limelightHub = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
-        if (limelightHub != null && limelight4.getTagId()!= 0) {
-            poseEstimator.addVisionMeasurement(limelightHub.pose, limelightHub.timestampSeconds);
-            hasVisionUpdated = true;
-        }
+        // PoseEstimate limelightHub = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-hub");
+        // if (limelightHub != null && limelight4.getTagId()!= 0) {
+        //     poseEstimator.addVisionMeasurement(limelightHub.pose, limelightHub.timestampSeconds);
+        //     hasVisionUpdated = true;
+        // }
 
-        // if (visionFusePoseEstimation != null) {
-        //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-        //         hasVisionUpdated = true;
-        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-        //     }
+        if (visionFusePoseEstimation != null) {
+            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+                hasVisionUpdated = true;
+                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+            }
 
 
-        //     updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-
-        // } 
+            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+            visionFusePoseEstimation = null;
+        } 
         if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
             updateQuest(quest.getRobotPose2d());
         }
 
         field.setRobotPose(poseEstimator.getEstimatedPosition());
-        field2.setRobotPose(limelightHub != null ? limelightHub.pose : Pose2d.kZero);
+        field2.setRobotPose(quest.getRobotPose2d() != null ? quest.getRobotPose2d() : Pose2d.kZero);
     }
 
     /**
