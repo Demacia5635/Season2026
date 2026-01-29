@@ -4,24 +4,16 @@
 
 package frc.demacia.utils.chassis;
 
-import java.util.List;
-
-import org.ejml.simple.SimpleMatrix;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -29,31 +21,18 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
-import frc.demacia.odometry.DemaciaPoseEstimator.VisionMeasurment;
-import java.util.Optional;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.Utilities;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.subsystem.Tag;
-import frc.demacia.vision.utils.LimelightHelpers;
-import frc.demacia.vision.utils.VisionFuse;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
-import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
  * Main swerve drive chassis controller.
@@ -100,7 +79,6 @@ public class Chassis extends SubsystemBase {
     private DemaciaKinematics demaciaKinematics;
     private SwerveDriveKinematics wpilibKinematics;
     private DemaciaPoseEstimator demaciaPoseEstimator;
-    private SwerveDrivePoseEstimator poseEstimator;
     private Field2d field;
     private Field2d field2;
 
@@ -111,8 +89,6 @@ public class Chassis extends SubsystemBase {
 
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
-
-    private Matrix<N3, N1> questSTD;
 
     public Chassis(ChassisConfig chassisConfig) {
         setName(getName());
@@ -149,24 +125,6 @@ public class Chassis extends SubsystemBase {
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
         SmartDashboard.putData("chassis/reset gyro 180",
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
-        // SmartDashboard.putData("set gyro to 3D tag", new InstantCommand(() -> setYaw(
-        // Rotation2d.fromDegrees(visionFuse.get3DAngle()))).ignoringDisable(true));
-        // SmartDashboard.putData("change camera dimension", new Command() {
-        // private static boolean is3d = false;
-
-        // public void initialize() {
-        // visionFuse.set3D(!is3d);
-        // is3d = !is3d;
-        // };
-
-        // public boolean isFinished() {
-        // return true;
-        // }
-
-        // public boolean runsWhenDisabled() {
-        // return true;
-        // };
-        // });
         SmartDashboard.putData("chassis/field", field);
         SmartDashboard.putData("chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
@@ -443,12 +401,6 @@ public class Chassis extends SubsystemBase {
     public double getMaxRotationalVelocity() {
         return chassisConfig.maxRotationalVelocity;
     }
-
-    // public Pose2d computeFuturePosition(double sec) {
-    // return
-    // CalculatePositionAndAngle.computeFuturePosition(getChassisSpeedsFieldRel(),
-    // getPose(), sec);
-    // }
 
     /**
      * Stops all swerve modules immediately.

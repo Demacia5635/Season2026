@@ -4,13 +4,11 @@
 
 package frc.demacia.utils.chassis;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
-import frc.robot.Shooter.ShooterConstans;
+import frc.robot.RobotCommon;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -19,8 +17,6 @@ public class DriveCommand extends Command {
   private double direction;
   private ChassisSpeeds speeds;
   private boolean precisionMode;
-  private boolean isActiveToHub;
-
   public PIDController pidController = new PIDController(1.5, 0.15, 0);
 
   /** Creates a new DriveCommand. */
@@ -28,7 +24,6 @@ public class DriveCommand extends Command {
     this.chassis = chassis;
     this.controller = controller;
     precisionMode = false;
-    isActiveToHub = false;
     addRequirements(chassis);
   }
 
@@ -56,7 +51,7 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    direction = DemaciaUtils.getIsRed() ? 1 : -1;
+    direction = RobotCommon.isRed ? 1 : -1;
     double joyX = controller.getLeftY() * direction;
     double joyY = controller.getLeftX() * direction;
 
@@ -73,23 +68,6 @@ public class DriveCommand extends Command {
     }
 
     speeds = new ChassisSpeeds(velX, velY, -velRot);
-    // if (isActiveToHub) {
-    //   double chassisAngle = chassis.getPoseWithVelocity().getRotation().getRadians();
-    //   double wantedAngle = ShooterConstans.HUB_POSE_Translation2d.minus(chassis.getPose().getTranslation()).getAngle()
-    //       .getRadians();
-    //   // if (wantedAngle > chassis.getGyroAngle().getRadians()) {
-    //   // if (chassisAngle > wantedAngle) wantedAngle += 2*Math.PI;
-    //   double diff = MathUtil.angleModulus(wantedAngle - chassisAngle);
-
-    //   speeds.omegaRadiansPerSecond = Math.abs(diff) >= Math.toRadians(5) ? -diff * 2 : 0;
-    //   // } else {
-    //   // speeds.omegaRadiansPerSecond =
-    //   // -pidController.calculate(chassis.getGyroAngle().getRadians(), wantedAngle);
-    //   // }
-    //   // chassis.setVelocitiesRotateToAngleOld(speeds,
-    //   // ShooterConstans.HUB_POSE_Translation3d.toTranslation2d().minus(chassis.getPose().getTranslation()).getAngle().getRadians());
-    // }
-
 
     chassis.setVelocities(speeds);
   }
