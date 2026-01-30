@@ -14,6 +14,7 @@ import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 
@@ -42,11 +43,11 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     climb = new Climb();
     controller = new CommandController(0, ControllerType.kXbox);
     climbCommand = new StateBasedClimb(climb, controller);
     SmartDashboard.putData("RC", this);
-    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
 
     // Configure the trigger bindings
     configureBindings();
@@ -67,6 +68,7 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
+    climb.setDefaultCommand(new ControllerClimb(controller, climb));
     //controller.downButton().onTrue(new CalibrateLever(climb));
     //controller.leftButton().onTrue(climbCommand);
   }
