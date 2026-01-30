@@ -33,6 +33,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.subsystem.Tag;
 import frc.robot.RobotCommon;
+import frc.robot.Shooter.ShooterConstans;
 import frc.demacia.vision.Camera;
 
 /**
@@ -181,7 +182,7 @@ public class Chassis extends SubsystemBase {
         return demaciaPoseEstimator.getEstimatedPose();
     }
 
-    double numOfCycles = 50;
+    double numOfCycles = 20;
 
     public Pose2d getPoseWithVelocity() {
         double dt = 0.02 * numOfCycles;
@@ -331,6 +332,7 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         addVisionUpdate(limelight4.getPose());
         field.setRobotPose(getPose());
+        field.getObject("WantedDelivery").setPose(new Pose2d(getWantedDeliveryPoint(), Rotation2d.kZero));
         
         updateCommon();
     }
@@ -342,6 +344,15 @@ public class Chassis extends SubsystemBase {
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
     }
 
+    public double getDistanceFromDeliveryPoint(){
+        return getPose().getTranslation().getDistance(getWantedDeliveryPoint());
+    }
+    public Translation2d getChassisToDelivery(){
+        return getWantedDeliveryPoint().minus(getPoseWithVelocity().getTranslation());
+    }
+    public Translation2d getWantedDeliveryPoint(){
+        return getPoseWithVelocity().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT1) < getPose().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT2) ? ShooterConstans.DELIVERY_POINT1 : ShooterConstans.DELIVERY_POINT2;
+    }
     public Pose2d getFuturePose(double dtSeconds){
         Pose2d poseAtTime = getPose().exp(new Twist2d(
         (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),

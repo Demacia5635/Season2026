@@ -93,4 +93,7 @@ public class ShooterConstans {
         public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
         public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
         public static final Pose2d hubPose2d = new Pose2d(HUB_POSE_Translation2d, new Rotation2d());
+
+        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.8619, 1.5023);
+        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.8619, 6.523);
 }

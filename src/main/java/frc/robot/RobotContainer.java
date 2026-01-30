@@ -100,33 +100,27 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    ShootOnTheFly shootCommand = new ShootOnTheFly(chassis, shooter);
+
     chassis.setDefaultCommand(driveCommand);
     // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
-    driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
+    driverController.downButton().onTrue(shootCommand);
+    driverController.leftButton().onTrue(new InstantCommand(()->shootCommand.changeDelivery()));
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     driverController.rightButton().onTrue(new RunCommand(() -> {
     }, shooter));
     driverController.povUp().onTrue(new HoodCalibrationCommand(shooter));
-    // RobotContainer.isShooting = !RobotContainer.isShooting;
-    // if (isShooting) {
-    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> new
-    // ShooterCommand(shooter, chassis).schedule()));
-    // }
-    // else {
-    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> {},
-    // shooter));
-    // }
-    // }));
+   
     driverController.upButton().onTrue(new InstantCommand(() -> driveCommand.setActiveToHub()));
-    // driverController.downButton().onTrue();
-    // driverController.leftBumper().onTrue();
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+
+    
 
     builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
     builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
