@@ -127,7 +127,7 @@ public class Chassis extends SubsystemBase {
 
 
         gyro = new Pigeon(chassisConfig.pigeonConfig);
-        quest = new Quest(()-> getGyroAngle());
+        quest = new Quest();
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
@@ -348,23 +348,22 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateVision(Pose2d pose) {
-        demaciaPoseEstimator.updateVisionSTD(getSTD());
 
         VisionMeasurment measurement = new VisionMeasurment(
                 Timer.getFPGATimestamp() - 0.05,
                 pose.getTranslation(),
                 Optional.of(pose.getRotation()));
-        demaciaPoseEstimator.addVisionMeasurement(measurement);
+        poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05, getSTD());
     }
 
     private void updateQuest(Pose2d questPose) {
-         demaciaPoseEstimator.updateVisionSTD(questSTD);
+        //  demaciaPoseEstimator.updateVisionSTD(questSTD);
 
         VisionMeasurment measurement = new VisionMeasurment(
                 Timer.getFPGATimestamp(),
                 questPose.getTranslation(),
                 Optional.of(questPose.getRotation()));
-        demaciaPoseEstimator.addVisionMeasurement(measurement);
+        poseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp(), questSTD);
     }
 
     private Matrix<N3, N1> getSTD() {
@@ -502,7 +501,10 @@ public class Chassis extends SubsystemBase {
      */
     public void setYaw(Rotation2d angle) {
         if (angle != null) {
+            hasVisionUpdated = false;
+
             gyro.setYaw(angle.getDegrees());
+            quest.questResetfromRobotToQuest(angle);
             poseEstimator
                     .resetPose(new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), gyro.getRotation2d()));
         }
