@@ -59,7 +59,7 @@ public class RobotContainer implements Sendable {
     objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
     // chassis.setDefaultCommand(new TestModulePID(chassis));
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    driverController.downButton().onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
+    new Trigger(()->objectPose.getDistcameraToObject() < 3).onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
     //70  270
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
