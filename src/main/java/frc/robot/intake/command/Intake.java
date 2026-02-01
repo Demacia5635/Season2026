@@ -27,11 +27,10 @@ public class Intake {
     this.controller = controller;
     this.intake = intake;
     this.objectPose = objectPose;
-    chassisToIntakeOffset = new Translation2d(-0.2, 0.05);
+    chassisToIntakeOffset = new Translation2d(0.2, -0.05);
   }
 
   public ChassisSpeeds AutoIntakeSpeeds() {
-    intake.setDutyIntake(0.8);
     Translation2d driverVelocityVectorRobotRel = new Translation2d(controller.getLeftY(), controller.getLeftX())
         .rotateBy(chassis.getGyroAngle().unaryMinus());
     double wantedVxRobotRel = (Math.min(Math.abs(driverVelocityVectorRobotRel.getX() * chassis.getMaxDriveVelocity()),
@@ -43,8 +42,8 @@ public class Intake {
   }
 
   public boolean isSeeFuel() {
-    return objectPose.getRobotToObject().minus(chassisToIntakeOffset).getNorm() < 0.03
-        || objectPose.getDistcameraToObject() <= 0.01;
+    return objectPose.getRobotToObject().minus(chassisToIntakeOffset).getNorm() > 0.03
+        && objectPose.getDistcameraToObject() > 0.01;
   }
 
   public ROBOT_STATE getCurrState() {
@@ -53,5 +52,9 @@ public class Intake {
 
   public void setCurrState(ROBOT_STATE state){
     intake.setCurrState(state);
+  }
+
+  public void setDutyIntake(double pow){
+    intake.setDutyIntake(pow);
   }
 }

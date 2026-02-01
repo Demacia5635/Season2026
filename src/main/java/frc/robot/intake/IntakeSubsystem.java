@@ -4,7 +4,7 @@
 
 package frc.robot.intake;
 
-
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,24 +26,30 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   // public void setDutyConveyorBelt(double pow){
-  //   motorRoller.setDuty(pow);
-  //   motorToShooter.setDuty(pow);
+  // motorRoller.setDuty(pow);
+  // motorToShooter.setDuty(pow);
   // }
 
-  public void setDutyIntake(double pow){
+  public void setDutyIntake(double pow) {
     motorIntake.setDuty(pow);
   }
 
-  public void stopIntake(){
+  public void stopIntake() {
     motorIntake.stop();
   }
 
-  public void setCurrState(ROBOT_STATE state){
+  public void setCurrState(ROBOT_STATE state) {
     currState = state;
   }
 
-  public ROBOT_STATE getCurrState(){
+  public ROBOT_STATE getCurrState() {
     return currState;
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    
+    builder.addStringProperty("Intake State", () -> getCurrState().name(), null);
   }
 
   public void putData() {
@@ -56,10 +62,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   // public void stopRoller(double pow){
-  //   motorRoller.stop();
+  // motorRoller.stop();
   // }
 
   // public void stopToShooter(){
-  //   motorToShooter.stop();
+  // motorToShooter.stop();
   // }
 }

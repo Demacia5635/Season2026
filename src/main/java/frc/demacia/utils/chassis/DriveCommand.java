@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.Constants.ROBOT_STATE;
+import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.command.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -50,12 +51,16 @@ public class DriveCommand extends Command {
   @Override
   public void execute() {
     if (intake.getCurrState() == ROBOT_STATE.AUTO_INTAKE) {
+      intake.setDutyIntake(0.8);
       speeds = intake.AutoIntakeSpeeds();
-      chassis.setVelocities(speeds);
+
+      chassis.setRobotRelVelocities(speeds);
       if (!intake.isSeeFuel()){
         intake.setCurrState(ROBOT_STATE.IDLE);
+        System.out.println("IDLE");
       }
     } else {
+      intake.setDutyIntake(0);
       direction = DemaciaUtils.getIsRed() ? 1 : -1;
       double joyX = controller.getLeftY() * direction;
       double joyY = controller.getLeftX() * direction;
