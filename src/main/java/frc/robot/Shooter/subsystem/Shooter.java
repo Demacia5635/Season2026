@@ -167,8 +167,8 @@ public class Shooter extends SubsystemBase {
   }
 
   // shooter pose on the robot
-  public Translation3d ShooterPoseOnRobot() {
-    return new Translation3d();
+  public Translation2d ShooterPoseOnRobot() {
+    return new Translation2d(ShooterConstans.shooterDistensFromChassis, RobotContainer.chassis.getGyroAngle());
   }
 
   @Override
