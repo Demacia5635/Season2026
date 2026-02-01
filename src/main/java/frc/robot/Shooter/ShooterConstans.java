@@ -74,7 +74,7 @@ public class ShooterConstans {
         public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,INDEXER_NAME)
                         .withPID(INDEXER_KP, INDEXER_KI, INDEXER_KD, INDEXER_KS, INDEXER_KV, INDEXER_KA, INDEXER_KG)
                         .withRadiansMotor(INDEXER_GEAR_RATIO)
-                        .withInvert(true)
+                        .withInvert(true);
 
         public static final int HOOD_ID = 31;
         public static final String HOOD_NAME = "HOOD MOTOR";
