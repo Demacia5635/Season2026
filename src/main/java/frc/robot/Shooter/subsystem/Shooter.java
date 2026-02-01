@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("get angle", () -> getAngleHood(), null);
+    builder.addDoubleProperty("get angle", () -> Math.toDegrees(getAngleHood()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
@@ -116,7 +116,8 @@ public class Shooter extends SubsystemBase {
     }
 
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    hoodMotor.setPositionVoltage(angle);
+    hoodMotor.setMotion(angle);
+    SmartDashboard.putNumber("Hood Target", angle);
   }
 
   public double getAngleHood() {
@@ -143,20 +144,20 @@ public class Shooter extends SubsystemBase {
 
   public boolean canShoot() {
     double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
-    if (norm > 0.3)
+    // if (norm > 0.3)
       
-          LogManager.log("norm: " + norm + " is hood ready: "
-              + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
-              + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
-                  .toRadians(0.5))
-              + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
-    return norm > 1.7 && isShooterReady()
+    //       LogManager.log("norm: " + norm + " is hood ready: "
+    //           + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
+    //           + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
+    //               .toRadians(0.5))
+    //           + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
+    return norm < 2 && isShooterReady()
         && RobotContainer.chassis.isPointingAtTarget();
   }
 
   public boolean isShooterReady() {
-    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.5 &&
-        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(0.5);
+    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 1 &&
+        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(1);
   }
 
   
@@ -166,14 +167,14 @@ public class Shooter extends SubsystemBase {
   }
 
   // shooter pose on the robot
-  public Translation3d ShooterPoseOnRobot() {
-    return new Translation3d();
+  public Translation2d ShooterPoseOnRobot() {
+    return new Translation2d(ShooterConstans.shooterDistensFromChassis, RobotContainer.chassis.getGyroAngle());
   }
 
   @Override
   public void periodic() {
     if (canShoot())
-      indexerMotor.set(0.3);
+      indexerMotor.set(1);
     else
       indexerMotor.set(0);
   }

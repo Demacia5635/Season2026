@@ -6,7 +6,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -52,7 +51,6 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     VoltageOut voltageOut = new VoltageOut(0);
     VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(slot);
     MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0).withSlot(slot);
-    MotionMagicExpoVoltage motionMagicExpoVoltage = new MotionMagicExpoVoltage(0).withSlot(slot);
     PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(slot);
 
     // Data Signals for Logging
@@ -119,8 +117,6 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         cfg.MotionMagic.MotionMagicJerk = config.maxJerk;
         if(apply) {
             getConfigurator().apply(cfg.MotionMagic);
-            LogManager.log(" motion param " + config.maxVelocity + " , " + config.maxAcceleration + " k=" 
-                + cfg.MotionMagic.MotionMagicExpo_kV + ", " + cfg.MotionMagic.MotionMagicExpo_kA);
         }
 
     }
@@ -216,7 +212,6 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         this.slot = slot;
         velocityVoltage.withSlot(slot);
         motionMagicVoltage.withSlot(slot);
-        motionMagicExpoVoltage.withSlot(slot);
         positionVoltage.withSlot(slot);
     }
 
@@ -259,7 +254,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
 
     @Override
     public void setMotion(double position, double feedForward) {
-        setControl(motionMagicExpoVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
+        setControl(motionMagicVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
         controlMode = ControlMode.MOTION;  
     }
 

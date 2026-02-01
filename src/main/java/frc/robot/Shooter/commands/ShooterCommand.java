@@ -25,9 +25,10 @@ public class ShooterCommand extends Command {
   CommandController controller;
   double[] shooterValues = new double[2];
 
-  public ShooterCommand(Shooter shooter, Chassis chassis) {
+  public ShooterCommand(Shooter shooter, Chassis chassis, CommandController controller) {
     this.shooter = shooter;
     this.chassis = chassis;
+    this.controller = controller;
     addRequirements(shooter);
     SmartDashboard.putData(this);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -59,6 +60,12 @@ public class ShooterCommand extends Command {
     shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     
+<<<<<<< HEAD
+=======
+    
+    shooter.setHoodAngle(Math.toRadians(hoodAngle));
+
+>>>>>>> 32bf3b7a41bf8727e2e1e1313b79205a28142d34
     // shooter.setHoodAngle(shooterValues[1]);
     // shooter.setFlywheelVel(shooterValues[0]);
 

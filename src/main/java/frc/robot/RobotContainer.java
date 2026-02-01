@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.*;
+
+import java.lang.annotation.Target;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -14,15 +20,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.DemaciaUtils;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.log.LogManager;
 import frc.robot.Shooter.commands.HoodCalibrationCommand;
 import frc.robot.Shooter.commands.ShootOnTheFly;
-import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.commands.ResetModule;
@@ -38,9 +41,6 @@ import frc.robot.chassis.commands.ResetModule;
  */
 public class RobotContainer implements Sendable {
 
-  public static boolean isComp = false;
-  private static boolean hasRemovedFromLog = false;
-  public static boolean isRed = false;
   Field2d field2d;
   Field2d questField2d;
   public static Chassis chassis;
@@ -56,15 +56,30 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
 
     SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    addStatesToElasticForTesting();
     configureBindings();
+  }
 
+  public void addStatesToElasticForTesting() {
+    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+      robotStateChooser.addOption(state.name(), state);
+    }
+    robotStateChooser.onChange(state -> RobotCommon.currentState = state);
+    SmartDashboard.putData("Robot State Chooser", robotStateChooser);
+    
+    SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
+    for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
+      shiftsChooser.addOption(state.name(), state);
+    }
+    shiftsChooser.onChange(state -> RobotCommon.currentShift = state);
+    SmartDashboard.putData("Shifts Chooser", shiftsChooser);
   }
 
   /**
@@ -85,56 +100,45 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    ShootOnTheFly shootCommand = new ShootOnTheFly(chassis, shooter);
+
     chassis.setDefaultCommand(driveCommand);
-    // shooter.setDefaultCommand(new ShootOnTheFly(chassis, shooter));
-    driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
+    // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
+    driverController.downButton().onTrue(shootCommand);
+    driverController.leftButton().onTrue(new InstantCommand(()->shootCommand.changeDelivery()));
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     driverController.povLeft().onTrue(new RunCommand(()->shooter.setIndexerVel(1)));
     driverController.rightButton().onTrue(new RunCommand(() -> {
     }, shooter));
     driverController.povUp().onTrue(new HoodCalibrationCommand(shooter));
-    // RobotContainer.isShooting = !RobotContainer.isShooting;
-    // if (isShooting) {
-    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> new
-    // ShooterCommand(shooter, chassis).schedule()));
-    // }
-    // else {
-    // CommandScheduler.getInstance().schedule(new InstantCommand(() -> {},
-    // shooter));
-    // }
-    // }));
+   
     driverController.upButton().onTrue(new InstantCommand(() -> driveCommand.setActiveToHub()));
-    // driverController.downButton().onTrue();
-    // driverController.leftBumper().onTrue();
-  }
-
-  public static boolean getIsRed() {
-    return isRed;
-  }
-
-  public static void setIsRed(boolean isRed) {
-    RobotContainer.isRed = isRed;
-  }
-
-  public static boolean getIsComp() {
-    return isComp;
-  }
-
-  public static void setIsComp(boolean isComp) {
-    RobotContainer.isComp = isComp;
-    if (!hasRemovedFromLog && isComp) {
-      hasRemovedFromLog = true;
-      LogManager.removeInComp();
-    }
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
-    builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
-    // builder.addDoubleProperty("Angle", () -> shooter.angle, (newAngle) ->
-    // shooter.angle = newAngle);
+    builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
+    builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+
+    
+
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+  }
+
+  static public void updateCommon() {
+    Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
+    RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle - RobotCommon.currentRobotPose.getRotation().getRadians();
+
+    Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
+    RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle - RobotCommon.futureRobotPose.getRotation().getRadians();
+
+    
   }
 
   /**
