@@ -47,7 +47,7 @@ private double joyright;
         if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
           climb.stopArms();
         }
-        if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE - ClimbConstants.CLOSE_LEVER_TOLERANCE) {
+        if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE) {
           climb.stopLever();
         }
         break;
@@ -78,10 +78,9 @@ private double joyright;
           }
         break;
       case TESTING:
-    joyright = contoller.getRightY() * 0.4;
+    joyright = contoller.getRightY() * 0.2;
     climb.setArmsDuty(joyright);
-
-    joyleft = contoller.getLeftY() * 0.4;
+    joyleft = contoller.getLeftY() * 0.2;
     climb.setLeverDuty(joyleft);
         break;
       case CLOSE:

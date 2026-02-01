@@ -68,7 +68,7 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    climb.setDefaultCommand(new ControllerClimb(controller, climb));
+    climb.setDefaultCommand(climbCommand);
     //controller.downButton().onTrue(new CalibrateLever(climb));
     //controller.leftButton().onTrue(climbCommand);
   }

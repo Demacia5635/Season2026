@@ -43,7 +43,7 @@ public class ClimbPrep extends Command {
       isArmsOpen =  true;
       climb.stopArms();
     }
-    if(climb.getAngleLever()>= ClimbConstants.ANGLE_LEVER_CLOSE - ClimbConstants.CLOSE_LEVER_TOLERANCE){
+    if(climb.getAngleLever()>= ClimbConstants.ANGLE_LEVER_CLOSE){
       isLeverClosed = true;
       climb.stopLever();
     }
