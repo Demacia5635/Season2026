@@ -137,8 +137,8 @@ public class Shooter extends SubsystemBase {
     this.hasCalibrated = true;
   }
 
-  public void setIndexerPower(double pow) {
-    indexerMotor.set(pow);
+  public void setIndexerVel(double vel) {
+    indexerMotor.setVelocity(vel);
   }
 
   public boolean canShoot() {

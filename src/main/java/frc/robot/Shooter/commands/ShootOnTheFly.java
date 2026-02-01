@@ -31,9 +31,6 @@ public class ShootOnTheFly extends Command {
 
     @Override
     public void execute() {
-
-
-
         ChassisSpeeds robotSpeeds = chassis.getChassisSpeedsFieldRel();
         Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, chassis.getPose(), 0.04);
         Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(nextPose.getTranslation());
@@ -87,6 +84,7 @@ public class ShootOnTheFly extends Command {
         chassis.setTargetAngle(ballHeading.getRadians());
         shooter.setFlywheelVel(ballVelocity);
         shooter.setHoodAngle(hoodAngle);
+        shooter.setIndexerVel(ballVelocity);
 
         double shooterVel = shooter.getShooterVelocity();
         if (shooterVel > ballVelocity * 0.95) {

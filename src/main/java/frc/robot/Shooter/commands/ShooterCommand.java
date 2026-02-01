@@ -13,7 +13,6 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
-import frc.demacia.utils.controller.CommandController;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShooterCommand extends Command {
@@ -60,16 +59,11 @@ public class ShooterCommand extends Command {
     shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
     // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
     
-    double getX = controller.getLeftX();
-    shooter.setFlywheelPower(getX);
-
     // shooter.setHoodAngle(shooterValues[1]);
     // shooter.setFlywheelVel(shooterValues[0]);
 
-    //shooter.setHoodAngle(Math.toRadians(hoodAngle));
-    //shooter.setFlywheelVel(vel);
-
-
+    shooter.setHoodAngle(Math.toRadians(hoodAngle));
+    shooter.setFlywheelVel(vel);
 
     // shooter.setHoodAngle(Math.toRadians(hoodAngle));
     // shooter.setFlywheelPower(vel);

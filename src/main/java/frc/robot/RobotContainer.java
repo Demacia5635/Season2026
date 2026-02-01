@@ -90,6 +90,7 @@ public class RobotContainer implements Sendable {
     driverController.downButton().onTrue(new ShootOnTheFly(chassis, shooter));
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    driverController.povLeft().onTrue(new RunCommand(()->shooter.setIndexerVel(1)));
     driverController.rightButton().onTrue(new RunCommand(() -> {
     }, shooter));
     driverController.povUp().onTrue(new HoodCalibrationCommand(shooter));

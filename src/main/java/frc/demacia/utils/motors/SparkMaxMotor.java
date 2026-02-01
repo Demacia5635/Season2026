@@ -200,7 +200,7 @@ public class SparkMaxMotor extends SparkMax implements MotorInterface {
   }
 
   @Override
-  public void setVelocityWithAcceleratoin(double velocity, Supplier<Double> wantedAccelerationSupplier) {
+  public void setVelocityWithAcceleration(double velocity, Supplier<Double> wantedAccelerationSupplier) {
       setVelocity(velocity, wantedAccelerationSupplier.get() * config.pid[closedLoopSlot.value].kA());
   }
 

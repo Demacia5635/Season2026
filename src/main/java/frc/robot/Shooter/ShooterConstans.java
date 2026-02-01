@@ -49,20 +49,33 @@ public class ShooterConstans {
 
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus,
                         shooterMotorName)
-                        .withFeedForward(0.0031, 0)
+                        .withFeedForward(0.0029, 0)
                         .withInvert(true)
                         .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(3.5, 0, 0.04, 0.25073, 0.29, 0, 0)
+                        .withPID(0, 0, 0, 0.45, 0.303, 0, 0)
                         .withMeterMotor(1, 4 * 0.0254);
 
         public static final int INDEXER_ID = 32;
         public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
         public static final String INDEXER_NAME = "Indexer Motor";
 
-        public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,
-                        INDEXER_NAME)
-                        .withInvert(true);
+        public static final double INDEXER_KP = 0;
+        public static final double INDEXER_KI = 0;
+        public static final double INDEXER_KD = 0;
+        public static final double INDEXER_KS = 0;
+        public static final double INDEXER_KV = 0;
+        public static final double INDEXER_KA = 0;
+        public static final double INDEXER_KG = 0;
+        public static final double INDEXER_MAX_VEL = 0;
+        public static final double INDEXER_MAX_ACC = 0;
+        public static final double INDEXER_MAX_JERK = 0;
+        public static final double INDEXER_GEAR_RATIO = 1;
+
+        public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,INDEXER_NAME)
+                        .withPID(INDEXER_KP, INDEXER_KI, INDEXER_KD, INDEXER_KS, INDEXER_KV, INDEXER_KA, INDEXER_KG)
+                        .withRadiansMotor(INDEXER_GEAR_RATIO)
+                        .withInvert(true)
 
         public static final int HOOD_ID = 31;
         public static final String HOOD_NAME = "HOOD MOTOR";
