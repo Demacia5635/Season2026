@@ -21,8 +21,8 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.ObjectPose;
 import frc.robot.chassis.MK5nChassisConstants;
-import frc.robot.chassis.commands.IntakeAutonamusVelocities;
-import frc.robot.intake.subsystem.IntakeSubsystem;
+import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.command.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,6 +44,8 @@ public class RobotContainer implements Sendable {
   public static Camera camera;
   public static CommandController driverController;
   public static ObjectPose objectPose;
+  public static IntakeSubsystem intakeSubsystem;
+  public static Intake intake;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -53,13 +55,15 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    driverController = new CommandController(0, ControllerType.kXbox);
+    driverController = new CommandController(0, ControllerType.kPS5);
     this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
     camera = new Camera("fuel", new Translation3d(-0.2702,-0.07,0.575), -20, 0, null);
     objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
+    intakeSubsystem = new IntakeSubsystem();
+    intake = new Intake(chassis, intakeSubsystem, objectPose, driverController);
     // chassis.setDefaultCommand(new TestModulePID(chassis));
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    new Trigger(()->objectPose.getDistcameraToObject() < 3).onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController, intake));
+    // new Trigger(()->(objectPose.getDistcameraToObject() < 3 && objectPose.getDistcameraToObject() > 0)).onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
     //70  270
 
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());

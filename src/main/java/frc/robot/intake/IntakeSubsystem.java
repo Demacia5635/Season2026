@@ -2,26 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.intake.subsystem;
+package frc.robot.intake;
 
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
-import frc.demacia.utils.motors.TalonSRXMotor;
-import frc.robot.intake.intakeConstans;
-import frc.robot.intake.intakeConstans.INTAKE_STATE;
+import frc.robot.Constants.ROBOT_STATE;;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new intake. */
   private TalonFXMotor motorIntake;
+  private ROBOT_STATE currState = ROBOT_STATE.IDLE;
   // private TalonSRXMotor motorRoller;
   // private TalonSRXMotor motorToShooter;
-  private INTAKE_STATE currState = INTAKE_STATE.IDLE;
 
   public IntakeSubsystem() {
-    motorIntake = new TalonFXMotor(intakeConstans.INTAKE_CONFIG);
+    motorIntake = new TalonFXMotor(intakeConstants.INTAKE_CONFIG);
+    putData();
     // motorRoller = new TalonSRXMotor(intakeConstans.ROLLER_CONFIG);
     // motorToShooter = new TalonSRXMotor(intakeConstans.TO_SHOOTER_CONFIG);
   }
@@ -37,6 +36,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stopIntake(){
     motorIntake.stop();
+  }
+
+  public void setCurrState(ROBOT_STATE state){
+    currState = state;
+  }
+
+  public ROBOT_STATE getCurrState(){
+    return currState;
+  }
+
+  public void putData() {
+    SendableChooser<ROBOT_STATE> chooser = new SendableChooser<>();
+    for (ROBOT_STATE state : ROBOT_STATE.values()) {
+      chooser.addOption(state.name(), state);
+    }
+    chooser.onChange(STATE -> setCurrState(STATE));
+    SmartDashboard.putData("Intake State Chooser", chooser);
   }
 
   // public void stopRoller(double pow){

@@ -19,4 +19,15 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static enum ROBOT_STATE{
+        IDLE(false),
+        INTAKE(true),
+        AUTO_INTAKE(true);
+
+        public boolean isIntakeOn;
+
+        ROBOT_STATE(boolean isIntakeOn){
+            this.isIntakeOn = isIntakeOn;
+        }
+    }
 }

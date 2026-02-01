@@ -97,7 +97,7 @@ public class ObjectPose extends SubsystemBase {
    */
   public double getDistcameraToObject(){
     if(Table.getEntry("tv").getDouble(0.0) == 0){
-      return distFinal;
+      return 0;
     }
     double alpha = camToObjectPitch;
     alpha = Math.toRadians(alpha);
