@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.ShooterConstans;
 
 /**
  * Main swerve drive chassis controller.
@@ -206,10 +205,6 @@ public class Chassis extends SubsystemBase {
         setModuleStates(states);
     }
 
-    public boolean isPointingAtTarget() {
-        return Math.abs(targetAngle - getPose().getRotation().getRadians()) < Math.toRadians(8);
-    }
-
     public Translation2d getVelocityAsVector() {
         return new Translation2d(getChassisSpeedsFieldRel().vxMetersPerSecond,
                 getChassisSpeedsFieldRel().vyMetersPerSecond);
@@ -301,7 +296,6 @@ public class Chassis extends SubsystemBase {
 
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         field.setRobotPose(getPose());
-        // field.getObject("WantedDelivery").setPose(new Pose2d(getWantedDeliveryPoint(), Rotation2d.kZero));
         
         updateCommon();
     }
@@ -313,15 +307,6 @@ public class Chassis extends SubsystemBase {
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
     }
 
-    // public double getDistanceFromDeliveryPoint(){
-    //     return getPose().getTranslation().getDistance(getWantedDeliveryPoint());
-    // }
-    // public Translation2d getChassisToDelivery(){
-    //     return getWantedDeliveryPoint().minus(getPoseWithVelocity(0.02*20).getTranslation());
-    // }
-    // public Translation2d getWantedDeliveryPoint(){
-    //     return getPoseWithVelocity(0.02*20).getTranslation().getDistance(ShooterConstans.DELIVERY_POINT1) < getPose().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT2) ? ShooterConstans.DELIVERY_POINT1 : ShooterConstans.DELIVERY_POINT2;
-    // }
     public Pose2d getFuturePose(double dtSeconds){
         Pose2d poseAtTime = getPose().exp(new Twist2d(
         (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
@@ -387,12 +372,8 @@ public class Chassis extends SubsystemBase {
         }
     }
 
-    public double getMaxDriveVelocity() {
-        return chassisConfig.maxDriveVelocity;
-    }
-
-    public double getMaxRotationalVelocity() {
-        return chassisConfig.maxRotationalVelocity;
+    public ChassisConfig getConfig() {
+        return chassisConfig;
     }
 
     /**
