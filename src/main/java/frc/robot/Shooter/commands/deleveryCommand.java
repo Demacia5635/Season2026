@@ -6,6 +6,7 @@ package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
 import frc.robot.Shooter.subsystem.Shooter;
 
@@ -28,7 +29,7 @@ public class deleveryCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d vectorToDeleveryPoint = RobotContainer.chassis.getChassisToDelivery();
+    Translation2d vectorToDeleveryPoint = RobotCommon.deliveryTarget.minus(RobotContainer.chassis.getPose().getTranslation());
     double angleToDelevertPoint = vectorToDeleveryPoint.getAngle().getRadians();
     double distanceToDeleveryPoint = vectorToDeleveryPoint.getNorm();
     double vel = 2*Math.sqrt(9.81 * distanceToDeleveryPoint);
