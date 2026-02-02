@@ -8,6 +8,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
 import frc.demacia.vision.TagPose;
+import static frc.demacia.vision.utils.VisionConstants.*;
 
 public class MK4iChassisConstants {
 
@@ -102,5 +103,5 @@ public class MK4iChassisConstants {
             NAME,
             modules,
             PIGEON_CONFIG,
-            new TagPose[] {});
+            new TagPose[] {LIMELIGHT4,FUEL});
 }
