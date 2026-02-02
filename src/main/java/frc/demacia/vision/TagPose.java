@@ -62,7 +62,8 @@ public class TagPose {
 
   private double latency;
 
-  public TagPose(Camera camera){
+  @SuppressWarnings("unchecked")
+public TagPose(Camera camera){
     wantedPip = 0;
     confidence = 0;
     this.camera = camera;
@@ -104,7 +105,7 @@ public class TagPose {
       wantedPip = 0;
       pose = null;
     }if(wantedPip != Table.getEntry("getpipe").getDouble(0.0)){
-      //pipeEntry.setDouble(wantedPip);
+      pipeEntry.setDouble(wantedPip);
     }
     return pose;
   }
