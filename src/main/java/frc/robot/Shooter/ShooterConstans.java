@@ -122,7 +122,8 @@ public class ShooterConstans {
         public enum ShooterState {
         IDLE,
         SHOOTING,
-        DELIVERY
+        DELIVERY,
+        TRENCH
         }
 
 }
