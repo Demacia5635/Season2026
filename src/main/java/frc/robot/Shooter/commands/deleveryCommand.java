@@ -29,15 +29,7 @@ public class deleveryCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d vectorToDeleveryPoint = RobotCommon.deliveryTarget.minus(RobotContainer.chassis.getPose().getTranslation());
-    double angleToDelevertPoint = vectorToDeleveryPoint.getAngle().getRadians();
-    double distanceToDeleveryPoint = vectorToDeleveryPoint.getNorm();
-    double vel = 2*Math.sqrt(9.81 * distanceToDeleveryPoint);
-    double vx = vel * Math.cos(angleToDelevertPoint);
-    double vy = vel * Math.sin(angleToDelevertPoint);
-    double angleHood = Math.atan2(vy, vx);
-    shooter.setHoodAngle(angleHood);
-    shooter.setFlywheelVel(vel);
+    
   }
 
   // Called once the command ends or is interrupted.
