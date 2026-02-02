@@ -73,7 +73,6 @@ public class Shooter extends SubsystemBase {
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
     builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote() , null);
     builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
-    builder.addBooleanProperty("is looking at target",() -> RobotContainer.chassis.isPointingAtTarget(), null);
     builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(), null);
   }
 
@@ -144,8 +143,8 @@ public class Shooter extends SubsystemBase {
     //           + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
     //               .toRadians(0.5))
     //           + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
-    return norm < 2 && isShooterReady()
-        && RobotContainer.chassis.isPointingAtTarget();
+    return norm < 2 && isShooterReady();
+        // && RobotContainer.chassis.i
   }
 
   public boolean isShooterReady() {
