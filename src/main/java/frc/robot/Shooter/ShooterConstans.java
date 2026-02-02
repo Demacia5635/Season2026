@@ -118,4 +118,11 @@ public class ShooterConstans {
         public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.8619, 6.523);
 
         public static final double shooterDistensFromChassis = 0; // in meters
+
+        public enum ShooterState {
+        IDLE,
+        SHOOTING,
+        DELIVERY
+        }
+
 }
