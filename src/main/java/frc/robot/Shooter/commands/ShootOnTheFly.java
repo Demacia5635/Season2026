@@ -45,17 +45,9 @@ public class ShootOnTheFly extends Command {
         double distance = toHub.getNorm();
         Rotation2d heading = toHub.getAngle();
 
-        if (isDelivery) {
-            hoodAngle = Math.toRadians(45);
-            vel = 2*Math.sqrt(9.81 * chassis.getDistanceFromDeliveryPoint());
-            heading = chassis.getChassisToDelivery().getAngle();
-        } else {
-
-            double[] lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
-            vel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
-            hoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
-
-        }
+        double[] lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
+        vel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
+        hoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
         // set the horizontal (xy) velocity and the vertical (z) velocity
         double xyVel = vel * Math.cos(hoodAngle);

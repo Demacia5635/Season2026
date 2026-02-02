@@ -13,7 +13,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -23,17 +22,14 @@ import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.sensors.Pigeon;
-import frc.demacia.vision.subsystem.Tag;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.ShooterConstans;
-import frc.demacia.vision.Camera;
 
 /**
  * Main swerve drive chassis controller.
@@ -81,10 +77,6 @@ public class Chassis extends SubsystemBase {
     private SwerveDriveKinematics wpilibKinematics;
     private DemaciaPoseEstimator demaciaPoseEstimator;
     private Field2d field;
-    private Field2d limelightField;
-
-    private Tag[] tags;
-    private Tag limelight4;
 
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
@@ -111,13 +103,9 @@ public class Chassis extends SubsystemBase {
                 new Matrix<>(VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY)));
 
         field = new Field2d();
-        limelightField = new Field2d();
 
         // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
         // tags = chassisConfig.tags;
-
-        limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("hub", new Translation3d(-0.088, -0.126, 0.535), 30, 0, true));
 
         SmartDashboard.putData("chassis/reset gyro",
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
@@ -129,14 +117,11 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
         SmartDashboard.putData("chassis", this);
-        SmartDashboard.putData("Limelight field", limelightField);
     }
 
-    public double getUpRotation() {
-        double pitch = gyro.getCurrentPitch();
-        double roll = gyro.getCurrentRoll();
-
-        return Math.signum(Math.max(Math.abs(pitch), Math.abs(roll))) * Math.hypot(pitch, roll);
+    private void addStatus() {
+        gyroYawStatus = gyro.getYaw();
+        lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
     }
 
     public void setDrivePower(double pow, int id) {
@@ -167,11 +152,6 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.resetPose(pose);
     }
 
-    private void addStatus() {
-        gyroYawStatus = gyro.getYaw();
-        lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
-    }
-
     /**
      * Gets the current estimated robot pose on the field.
      * 
@@ -181,10 +161,7 @@ public class Chassis extends SubsystemBase {
         return demaciaPoseEstimator.getEstimatedPose();
     }
 
-    double numOfCycles = 20;
-
-    public Pose2d getPoseWithVelocity() {
-        double dt = 0.02 * numOfCycles;
+    public Pose2d getPoseWithVelocity(double dt) {
         Pose2d currentPose = getPose();
         ChassisSpeeds currentSpeeds = getChassisSpeedsFieldRel();
         return new Pose2d(currentPose.getX() + (currentSpeeds.vxMetersPerSecond * dt),
@@ -315,12 +292,6 @@ public class Chassis extends SubsystemBase {
         }
     }
 
-    private void addVisionUpdate(Pose2d pose) {
-        if(pose == null) return;
-        demaciaPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05);
-        limelightField.setRobotPose(pose);
-    }
-
     @Override
     public void periodic() {
         OdometryObservation observation = new OdometryObservation(
@@ -329,9 +300,8 @@ public class Chassis extends SubsystemBase {
                 getModulePositions());
 
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
-        addVisionUpdate(limelight4.getPose());
         field.setRobotPose(getPose());
-        field.getObject("WantedDelivery").setPose(new Pose2d(getWantedDeliveryPoint(), Rotation2d.kZero));
+        // field.getObject("WantedDelivery").setPose(new Pose2d(getWantedDeliveryPoint(), Rotation2d.kZero));
         
         updateCommon();
     }
@@ -343,15 +313,15 @@ public class Chassis extends SubsystemBase {
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
     }
 
-    public double getDistanceFromDeliveryPoint(){
-        return getPose().getTranslation().getDistance(getWantedDeliveryPoint());
-    }
-    public Translation2d getChassisToDelivery(){
-        return getWantedDeliveryPoint().minus(getPoseWithVelocity().getTranslation());
-    }
-    public Translation2d getWantedDeliveryPoint(){
-        return getPoseWithVelocity().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT1) < getPose().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT2) ? ShooterConstans.DELIVERY_POINT1 : ShooterConstans.DELIVERY_POINT2;
-    }
+    // public double getDistanceFromDeliveryPoint(){
+    //     return getPose().getTranslation().getDistance(getWantedDeliveryPoint());
+    // }
+    // public Translation2d getChassisToDelivery(){
+    //     return getWantedDeliveryPoint().minus(getPoseWithVelocity(0.02*20).getTranslation());
+    // }
+    // public Translation2d getWantedDeliveryPoint(){
+    //     return getPoseWithVelocity(0.02*20).getTranslation().getDistance(ShooterConstans.DELIVERY_POINT1) < getPose().getTranslation().getDistance(ShooterConstans.DELIVERY_POINT2) ? ShooterConstans.DELIVERY_POINT1 : ShooterConstans.DELIVERY_POINT2;
+    // }
     public Pose2d getFuturePose(double dtSeconds){
         Pose2d poseAtTime = getPose().exp(new Twist2d(
         (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
@@ -415,7 +385,6 @@ public class Chassis extends SubsystemBase {
             demaciaPoseEstimator
                     .resetPose(new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
         }
-
     }
 
     public double getMaxDriveVelocity() {
@@ -433,50 +402,5 @@ public class Chassis extends SubsystemBase {
         for (SwerveModule i : modules) {
             i.stop();
         }
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-        builder.addDoubleProperty("num of cycle time", () -> numOfCycles, (x) -> numOfCycles = x);
-    }
-
-    /**
-     * Finds a tag by the camera name associated with it.
-     * 
-     * @param cameraName The name of the camera (e.g., "right", "barge")
-     * @return The Tag object or null if not found
-     */
-    public Tag getTag(String cameraName) {
-        for (Tag tag : tags) {
-            if (tag.getCamera().getName().equals(cameraName)) {
-                return tag;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if a specific camera sees any tag.
-     * 
-     * @param cameraName The name of the camera to check
-     */
-    public boolean isSeeTag(String cameraName) {
-        Tag t = getTag(cameraName);
-        if (t != null) {
-            return t.isSeeTag();
-        }
-        return false;
-    }
-
-    /**
-     * Checks if a specific camera sees a specific AprilTag ID within a distance.
-     */
-    public boolean isSeeTag(int id, String cameraName, double distance) {
-        Tag t = getTag(cameraName);
-        if (t != null) {
-            return t.isSeeTag(id, distance);
-        }
-        return false;
     }
 }
