@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 
@@ -29,6 +29,7 @@ import frc.robot.climb.subsystems.Climb;
  */
 public class RobotContainer implements Sendable {
   private Climb climb;
+  private Chassis chassis;
   private CommandController controller;
   private StateBasedClimb climbCommand;
   public static boolean isComp = false;
@@ -46,7 +47,7 @@ public class RobotContainer implements Sendable {
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     climb = new Climb();
     controller = new CommandController(0, ControllerType.kXbox);
-    climbCommand = new StateBasedClimb(climb, controller);
+    climbCommand = new StateBasedClimb(climb, controller,chassis);
     SmartDashboard.putData("RC", this);
 
     // Configure the trigger bindings

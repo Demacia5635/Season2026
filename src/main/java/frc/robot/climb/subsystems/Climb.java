@@ -33,7 +33,7 @@ public class Climb extends SubsystemBase {
   }
   public void addNT() {
     SendableChooser<CLIMB_STATE> stateChooser = new SendableChooser<>();
-    stateChooser.addOption("PREP CLIMB", CLIMB_STATE.PREP_CLIMB);
+    stateChooser.addOption("PREP CLI+MB", CLIMB_STATE.PREP_CLIMB);
     stateChooser.addOption("CLIMB", CLIMB_STATE.CLIMB);
     stateChooser.addOption("GETOFF", CLIMB_STATE.GET_OFF_CLIMB);
     stateChooser.addOption("IDLE", CLIMB_STATE.IDLE);
