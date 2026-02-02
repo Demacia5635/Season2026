@@ -51,6 +51,7 @@ import frc.demacia.vision.utils.LimelightHelpers;
 import frc.demacia.vision.utils.VisionFuse;
 import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
 import frc.demacia.vision.Camera;
+import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.ObjectPose;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
@@ -103,8 +104,8 @@ public class Chassis extends SubsystemBase {
     private Field2d field;
     private Field2d field2;
 
-    public Tag[] tags;
-    public Tag limelight4;
+    public TagPose[] tags;
+    public TagPose limelight4;
     public Quest quest;
     public VisionFuse visionFuse;
     public ObjectPose objectPose;
@@ -151,10 +152,9 @@ public class Chassis extends SubsystemBase {
         //         new Camera("hub", new Translation3d(-0.21, 0.225, 0.465), 33, 180, false));
         // limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
         //         new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
-        limelight4 = new Tag(() -> getGyroAngle(), () -> getChassisSpeedsRobotRel(),
-                new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90, false));
+        limelight4 = new TagPose(new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90,false));
 
-        tags = new Tag[]{limelight4};
+        tags = new TagPose[]{limelight4};
 
 
         visionFuse = new VisionFuse(tags);
@@ -623,8 +623,8 @@ public class Chassis extends SubsystemBase {
      * @param cameraName The name of the camera (e.g., "right", "barge")
      * @return The Tag object or null if not found
      */
-    public Tag getTag(String cameraName) {
-        for (Tag tag : tags) {
+    public TagPose getTag(String cameraName) {
+        for (TagPose tag : tags) {
             if (tag.getCamera().getName().equals(cameraName)) {
                 return tag;
             }
@@ -638,7 +638,7 @@ public class Chassis extends SubsystemBase {
      * @param cameraName The name of the camera to check
      */
     public boolean isSeeTag(String cameraName) {
-        Tag t = getTag(cameraName);
+        TagPose t = getTag(cameraName);
         if (t != null) {
             return t.isSeeTag();
         }
@@ -649,7 +649,7 @@ public class Chassis extends SubsystemBase {
      * Checks if a specific camera sees a specific AprilTag ID within a distance.
      */
     public boolean isSeeTag(int id, String cameraName, double distance) {
-        Tag t = getTag(cameraName);
+        TagPose t = getTag(cameraName);
         if (t != null) {
             return t.isSeeTag(id, distance);
         }

@@ -66,7 +66,7 @@ public class Tag extends SubsystemBase {
 
   private double confidence = 0;
 
-  public boolean is3D;
+
 
   /**
    * Creates a new Tag subsystem
@@ -82,7 +82,7 @@ public class Tag extends SubsystemBase {
     LogManager.addEntry("dist", this::GetDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     field = new Field2d();
     latency = 0;
-    is3D = Table.getEntry("pipeline").getInteger(0) == 1;
+    // is3D = Table.getEntry("pipeline").getInteger(0) == 1;
     // SmartDashboard.putData("Tag" + cameraId, this);
     SmartDashboard.putData("field-tag" + camera.getName(), field);
     LogManager.addEntry("vector",this::getNormfromrobottotag).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
@@ -127,10 +127,7 @@ public class Tag extends SubsystemBase {
 
   }
 
-  public void set3D(boolean is3D) {
-    pipeEntry.setDouble(is3D ? 1 : 0);
-    this.is3D = is3D;
-  }
+
 
   public int getTagId() {
     return (int) Table.getEntry("tid").getDouble(0.0);
@@ -269,9 +266,9 @@ public class Tag extends SubsystemBase {
     double currentDist = GetDistFromCamera();
 
     // If we're too far, return 0 confidence
-    if (currentDist > (is3D ? 20 : WORST_RELIABLE_DISTANCE)) {
-      return 0.0;
-    }
+    // if (currentDist > (is3D ? 20 : WORST_RELIABLE_DISTANCE)) {
+    //   return 0.0;
+    // }
 
     // If we're within reliable range, give high confidence
     if (currentDist <= BEST_RELIABLE_DISTANCE) {
@@ -280,7 +277,7 @@ public class Tag extends SubsystemBase {
 
     // Calculate how far we are into the falloff range (0 to 1)
     double normalizedDist = (currentDist - BEST_RELIABLE_DISTANCE)
-        / ((is3D ? 20 : WORST_RELIABLE_DISTANCE) - BEST_RELIABLE_DISTANCE);
+        / ((WORST_RELIABLE_DISTANCE) - BEST_RELIABLE_DISTANCE);
 
     // Apply cubic falloff function
     return Math.pow(1 - normalizedDist, 3);
