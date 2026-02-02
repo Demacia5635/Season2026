@@ -10,6 +10,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
+import frc.demacia.utils.sensors.AnalogEncoder;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.RobotContainer;
 import frc.robot.Shooter.ShooterConstans;
@@ -22,6 +23,8 @@ public class Shooter extends SubsystemBase {
   private TalonFXMotor hoodMotor;
   private boolean hasCalibrated;
 
+  private AnalogEncoder hoodEncoder;
+
   private LimitSwitch limitSwitch;
 
   public double angle;
@@ -30,11 +33,13 @@ public class Shooter extends SubsystemBase {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
+    hoodEncoder = new AnalogEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     this.hasCalibrated = false;
     this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
+    hoodMotor.setEncoderPosition(hoodEncoder.get());
 
   }
 

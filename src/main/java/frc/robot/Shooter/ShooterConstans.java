@@ -12,7 +12,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.LimitSwitchConfig;
 import edu.wpi.first.math.geometry.Pose2d;
-
+import frc.demacia.utils.sensors.AnalogEncoderConfig;
 /** Add your docs here. */
 
 public class ShooterConstans {
@@ -100,6 +100,13 @@ public class ShooterConstans {
 
         public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
+
+        public static final int HOOD_ENCODER_CHANNEL = 0;
+        public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
+        public static final double HOOD_OFFSET = Math.toRadians(0);
+
+        public static final AnalogEncoderConfig HOOD_ENCODER_CONFIG = new AnalogEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
+        .withOffset(HOOD_OFFSET);
 
         public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(0, "Limit Switch");
 
