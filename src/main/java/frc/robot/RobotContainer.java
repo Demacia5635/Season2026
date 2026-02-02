@@ -23,6 +23,7 @@ import frc.demacia.vision.subsystem.ObjectPose;
 import frc.robot.chassis.MK5nChassisConstants;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.command.Intake;
+import frc.robot.intake.command.IntakeCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -62,7 +63,8 @@ public class RobotContainer implements Sendable {
     intakeSubsystem = new IntakeSubsystem();
     intake = new Intake(chassis, intakeSubsystem, objectPose, driverController);
     // chassis.setDefaultCommand(new TestModulePID(chassis));
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController, intake));
+    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController, intake));
+    intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem));
     // new Trigger(()->(objectPose.getDistcameraToObject() < 3 && objectPose.getDistcameraToObject() > 0)).onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
     //70  270
 

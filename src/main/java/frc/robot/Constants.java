@@ -22,7 +22,8 @@ public final class Constants {
   public static enum ROBOT_STATE{
         IDLE(false),
         INTAKE(true),
-        AUTO_INTAKE(true);
+        AUTO_INTAKE(true),
+        EJECT(true);
 
         public boolean isIntakeOn;
 
