@@ -1,4 +1,51 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-public class delivery execute subsystem{
+package frc.robot.Shooter.commands;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
+import frc.robot.Shooter.subsystem.Shooter;
+
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class deleveryCommand extends Command {
+  /** Creates a new deleveryCommand. */
+
+    Shooter shooter;
+
+  public deleveryCommand(Shooter shooter) {
+    this.shooter = shooter;
+    addRequirements(shooter);
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    Translation2d vectorToDeleveryPoint = RobotContainer.chassis.getChassisToDelivery();
+    double angleToDelevertPoint = vectorToDeleveryPoint.getAngle().getRadians();
+    double distanceToDeleveryPoint = vectorToDeleveryPoint.getNorm();
+    double vel = 2*Math.sqrt(9.81 * distanceToDeleveryPoint);
+    double vx = vel * Math.cos(angleToDelevertPoint);
+    double vy = vel * Math.sin(angleToDelevertPoint);
+    double angleHood = Math.atan2(vy, vx);
+    shooter.setHoodAngle(angleHood);
+    shooter.setFlywheelVel(vel);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }
