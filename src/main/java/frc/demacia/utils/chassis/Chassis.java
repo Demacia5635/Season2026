@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.ShooterConstans;
 
 /**
  * Main swerve drive chassis controller.
