@@ -305,6 +305,7 @@ public class Chassis extends SubsystemBase {
         RobotCommon.futureRobotPose = getFuturePose(0.04);
         RobotCommon.fieldRelativeSpeeds = getChassisSpeedsFieldRel();
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
+        RobotCommon.robotAngle = getGyroAngle().getRadians();
     }
 
     public Pose2d getFuturePose(double dtSeconds){
