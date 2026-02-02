@@ -8,6 +8,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.robot.RobotCommon;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
@@ -37,8 +38,8 @@ public class ShootOnTheFly extends Command {
     }
     @Override
     public void execute() {
-        ChassisSpeeds robotSpeeds = chassis.getChassisSpeedsFieldRel();
-        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, chassis.getPose(), 0.04);
+        ChassisSpeeds robotSpeeds = RobotCommon.robotRelativeSpeeds;
+        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, RobotCommon.currentRobotPose, 0.04);
         Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(nextPose.getTranslation());
 
         // get the distance, heading and LUT valuse

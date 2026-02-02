@@ -63,11 +63,6 @@ public class Shooter extends SubsystemBase {
     return RobotContainer.chassis.getVelocityAsVector().getNorm() < 1.7;
   }
 
-  public boolean isLokingAtTarget(){
-    return RobotContainer.chassis.isPointingAtTarget();
-  }
-
-
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -78,7 +73,7 @@ public class Shooter extends SubsystemBase {
     builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
     builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote() , null);
     builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
-    builder.addBooleanProperty("is looking at target",() -> isLokingAtTarget(), null);
+    builder.addBooleanProperty("is looking at target",() -> RobotContainer.chassis.isPointingAtTarget(), null);
     builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(), null);
   }
 
