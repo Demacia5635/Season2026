@@ -9,7 +9,7 @@ import static frc.demacia.vision.utils.VisionConstants.TAG_ANGLE;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.demacia.vision.TagPose;
-import frc.demacia.vision.subsystem.Tag;
+
 
 /** Add your docs here. */
 public class VisionFuse {

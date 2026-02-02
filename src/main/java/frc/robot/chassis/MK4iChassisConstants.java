@@ -7,7 +7,7 @@ import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
-import frc.demacia.vision.subsystem.Tag;
+import frc.demacia.vision.TagPose;
 
 public class MK4iChassisConstants {
 
@@ -102,5 +102,5 @@ public class MK4iChassisConstants {
             NAME,
             modules,
             PIGEON_CONFIG,
-            new Tag[] {});
+            new TagPose[] {});
 }
