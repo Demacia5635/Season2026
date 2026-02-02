@@ -15,7 +15,7 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
 import frc.robot.Shooter.ShooterConstans.ShooterState;
 
-public class ShootOnTheFly extends Command {
+public class ShootCommand extends Command {
     ShooterState currentState;
     private Chassis chassis;
     private Shooter shooter;
@@ -29,7 +29,7 @@ public class ShootOnTheFly extends Command {
 
     private boolean shootVelocityWasOK = false;
 
-    public ShootOnTheFly(Chassis chassis, Shooter shooter) {
+    public ShootCommand(Chassis chassis, Shooter shooter) {
         this.chassis = chassis;
         this.shooter = shooter;
         addRequirements(shooter);
