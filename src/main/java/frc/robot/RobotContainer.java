@@ -47,7 +47,7 @@ public class RobotContainer implements Sendable {
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     climb = new Climb();
     controller = new CommandController(0, ControllerType.kXbox);
-    climbCommand = new StateBasedClimb(climb, controller,chassis);
+    climbCommand = new control
     SmartDashboard.putData("RC", this);
 
     // Configure the trigger bindings
@@ -69,7 +69,7 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    climb.setDefaultCommand(climbCommand);
+    climb.setDefaultCommand(contor);
     //controller.downButton().onTrue(new CalibrateLever(climb));
     //controller.leftButton().onTrue(climbCommand);
   }
