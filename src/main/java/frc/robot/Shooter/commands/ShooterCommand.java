@@ -53,27 +53,8 @@ public class ShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d predictedPose = chassis.getPoseWithVelocity();
-    // Pose2d predictedPose = chassis.getPose();
-    hubToChassis = ShooterConstans.HUB_POSE_Translation3d.toTranslation2d()
-        .minus(predictedPose.getTranslation());
-    shooterValues = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(hubToChassis.getNorm());
-    // frc.demacia.utils.log.LogManager.log("NORM: " + hubToChassis.getNorm());
-    
-    
-    shooter.setHoodAngle(Math.toRadians(hoodAngle));
-
-    // shooter.setHoodAngle(shooterValues[1]);
-    // shooter.setFlywheelVel(shooterValues[0]);
-
     shooter.setHoodAngle(Math.toRadians(hoodAngle));
     shooter.setFlywheelVel(vel);
-
-    // shooter.setHoodAngle(Math.toRadians(hoodAngle));
-    // shooter.setFlywheelPower(vel);
-    //0.18863
-
-    // shooter.setHoodPower(controller.getLeftY() * 0.5);
   }
 
   // Called once the command ends or is interrupted.
