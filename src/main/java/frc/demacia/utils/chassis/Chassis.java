@@ -138,14 +138,18 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis", this);
 
         int c = 0;
-        for (int i = 0; i <= chassisConfig.tags.length; i++) {
+        for (int i = 0; i < chassisConfig.tags.length; i++) {
             if (!chassisConfig.tags[i].getIsObjectCamera()) {
                 c++;
             }
         }
         tags = new TagPose[c];
-        for (int i = 0; i <= chassisConfig.tags.length; i++){
-            tags[i] = chassisConfig.tags[i];
+        int count = 0;
+        for(int i = 0; i < chassisConfig.tags.length; i++){
+            if(!chassisConfig.tags[i].getIsObjectCamera()){
+                tags[count] = chassisConfig.tags[i];
+                count++;
+            }
         }
         visionFuse = new VisionFuse(tags);
     }
