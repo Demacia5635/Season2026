@@ -130,7 +130,7 @@ public class Chassis extends SubsystemBase {
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
         SmartDashboard.putData("chassis/field", field);
         SmartDashboard.putData("chassis/quest field", questField);
-        SmartDashboard.putData("chassis/quest field", tagsField);
+        SmartDashboard.putData("chassis/tags field", tagsField);
         SmartDashboard.putData("chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("chassis/set brake",

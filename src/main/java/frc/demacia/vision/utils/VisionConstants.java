@@ -206,7 +206,7 @@ public class VisionConstants {
     );
     public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false, true));
 
-    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90,false, false));
+    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.088, -0.126, 0.535), 30, 0, false, false));
 
     public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
             new SimpleMatrix(
