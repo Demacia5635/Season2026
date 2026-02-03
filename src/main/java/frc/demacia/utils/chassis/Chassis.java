@@ -139,7 +139,9 @@ public class Chassis extends SubsystemBase {
 
         int c = 0;
         for (int i = 0; i <= chassisConfig.tags.length; i++) {
-            c++;
+            if (!chassisConfig.tags[i].getIsObjectCamera()) {
+                c++;
+            }
         }
         tags = new TagPose[c];
         for (int i = 0; i <= chassisConfig.tags.length; i++){
