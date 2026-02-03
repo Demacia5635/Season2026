@@ -4,8 +4,6 @@
 
 package frc.demacia.utils.chassis;
 
-import java.util.Optional;
-
 import org.ejml.simple.SimpleMatrix;
 
 import com.ctre.phoenix6.StatusCode;
@@ -28,7 +26,6 @@ import edu.wpi.first.math.numbers.N3;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
-import frc.demacia.odometry.DemaciaPoseEstimator.VisionMeasurment;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -90,18 +87,16 @@ public class Chassis extends SubsystemBase {
     private SwerveDriveKinematics wpilibKinematics;
     private DemaciaPoseEstimator demaciaPoseEstimator;
     private Field2d field;
-    private Field2d field2;
 
     public TagPose[] tags;
-    public TagPose limelight4;
+    private Field2d tagsField;
     public Quest quest;
+    private Field2d questField;
     public VisionFuse visionFuse;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
     private Rotation2d lastGyroYaw;
-
-    private Matrix<N3, N1> questSTD;
 
     public Chassis(ChassisConfig chassisConfig) {
         setName(getName());
@@ -126,23 +121,30 @@ public class Chassis extends SubsystemBase {
                 new Matrix<>(VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY)));
 
         field = new Field2d();
-        field2 = new Field2d();
-
-        // tags are not a constant so i cant(dont know) put it in chassisConfig.tags
-        // tags = chassisConfig.tags;
+        questField = new Field2d();
+        tagsField = new Field2d();
 
         SmartDashboard.putData("chassis/reset gyro",
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
         SmartDashboard.putData("chassis/reset gyro 180",
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
         SmartDashboard.putData("chassis/field", field);
+        SmartDashboard.putData("chassis/quest field", questField);
+        SmartDashboard.putData("chassis/quest field", tagsField);
         SmartDashboard.putData("chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
         SmartDashboard.putData("chassis", this);
 
-        tags = new TagPose[]{chassisConfig.tags[0]};
+        int c = 0;
+        for (int i = 0; i <= chassisConfig.tags.length; i++) {
+            c++;
+        }
+        tags = new TagPose[c];
+        for (int i = 0; i <= chassisConfig.tags.length; i++){
+            tags[i] = chassisConfig.tags[i];
+        }
         visionFuse = new VisionFuse(tags);
     }
 
@@ -317,26 +319,15 @@ public class Chassis extends SubsystemBase {
     }
 
     private void updateVision(Pose2d pose) {
-
-        // VisionMeasurment measurement = new VisionMeasurment(
-        //         Timer.getFPGATimestamp() - 0.05,
-        //         pose.getTranslation(),
-        //         Optional.of(pose.getRotation()));
-        // poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05, getSTD());
         demaciaPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05);
         demaciaPoseEstimator.setVisionMeasurementStdDevs(getSTD());
+        tagsField.setRobotPose(pose);
     }
 
     private void updateQuest(Pose2d questPose) {
-        //  demaciaPoseEstimator.updateVisionSTD(questSTD);
-
-        // VisionMeasurment measurement = new VisionMeasurment(
-        //         Timer.getFPGATimestamp(),
-        //         questPose.getTranslation(),
-        //         Optional.of(questPose.getRotation()));
-        // poseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp(), questSTD);
         demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
         demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
+        questField.setRobotPose(questPose);
     }
     
     private Matrix<N3, N1> getSTD() {

@@ -24,9 +24,10 @@ public class Camera {
     private Supplier<Rotation2d> turretAngle;
     private Translation3d turretToCamPosition;
     private boolean isCroping;
+    private boolean isObjectCamera = false;
 
 
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
@@ -34,13 +35,14 @@ public class Camera {
         this.isOnTurret = false;
         this.tableName = "limelight-"+name;
         this.isCroping = isCroping;
+        this.isObjectCamera = isObjectCamera;
     }
 
       /**
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToCamPosition,Translation3d turretToCamPosition, double pitch, double yaw,Supplier<Rotation2d> turretAngle) {
+    public Camera(String name, Translation3d robotToCamPosition,Translation3d turretToCamPosition, double pitch, double yaw,Supplier<Rotation2d> turretAngle, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.turretToCamPosition = turretToCamPosition;
@@ -91,5 +93,9 @@ public class Camera {
 
     public boolean getIsCroping(){
         return isCroping;
+    }
+
+    public boolean getIsObjectCamera() {
+        return isObjectCamera;
     }
 }

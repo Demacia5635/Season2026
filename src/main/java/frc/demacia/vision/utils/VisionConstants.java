@@ -9,7 +9,6 @@ import org.ejml.simple.SimpleMatrix;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -205,9 +204,9 @@ public class VisionConstants {
         Z_OFFSET_QUEST, 
         YAW_OFFSET_QUEST
     );
-    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
+    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false, true));
 
-    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90,false));
+    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90,false, false));
 
     public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
             new SimpleMatrix(

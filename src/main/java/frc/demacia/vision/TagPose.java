@@ -239,4 +239,8 @@ public TagPose(Camera camera){
   public Rotation2d getRobotAngle() {
     return null;
   }
+
+  public boolean getIsObjectCamera() {
+      return camera.getIsObjectCamera();
+  }
 }
