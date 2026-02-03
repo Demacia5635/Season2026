@@ -24,7 +24,7 @@ public class VisionFuse {
     private double getColectedConfidence() {
         double confidence = 0;
         for (TagPose tag : tags) {
-            if (tag.getPose() != null) {
+            if (tag.getRobotPose2d() != null) {
                 confidence += tag.getPoseEstemationConfidence();
             }
         }
@@ -40,11 +40,11 @@ public class VisionFuse {
         double y = 0;
         double angle = 0;
         for (TagPose tag : tags) {
-            if (tag.getPose() == null)
+            if (tag.getRobotPose2d() == null)
                 continue;
-            x += tag.getPose().getX() * normalizeConfidence(tag.getPoseEstemationConfidence());
-            y += tag.getPose().getY() * normalizeConfidence(tag.getPoseEstemationConfidence());
-            angle += tag.getPose().getRotation().getRadians() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            x += tag.getRobotPose2d().getX() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            y += tag.getRobotPose2d().getY() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            angle += tag.getRobotPose2d().getRotation().getRadians() * normalizeConfidence(tag.getPoseEstemationConfidence());
         }
         return (x == 0 && y == 0) ? null : new Pose2d(x, y, (getRotationEstimation() == null) ? new Rotation2d(angle) : getRotationEstimation());
     }
@@ -57,7 +57,7 @@ public class VisionFuse {
     public double getVisionTimestamp() {
         double timestamp = 0;
         for (TagPose tag : tags) {
-            if (tag.getPose() != null) {
+            if (tag.getRobotPose2d() != null) {
                 timestamp += tag.getTimestamp() * normalizeConfidence(tag.getPoseEstemationConfidence());
             }
         }

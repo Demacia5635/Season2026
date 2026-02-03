@@ -223,9 +223,6 @@ public TagPose(Camera camera){
     return camToTagYaw;
   }
 
-  public Pose2d getPose() {
-    return this.pose;
-  }
 
   public double getTimestamp() {
     return latency;

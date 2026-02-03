@@ -4,12 +4,17 @@
 
 package frc.demacia.vision.utils;
 
+import org.ejml.simple.SimpleMatrix;
+
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
@@ -203,4 +208,11 @@ public class VisionConstants {
     public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false));
 
     public static final TagPose LIMELIGHT4 = new TagPose(new Camera("feeder", new Translation3d(-0.145, -0.08, 0.570), 26.69, -90,false));
+
+    public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
+            new SimpleMatrix(
+                new double[]
+                {0.05, 0.05, 0.035}
+            )
+        );
 }

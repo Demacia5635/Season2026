@@ -15,6 +15,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
@@ -41,6 +42,7 @@ import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.VisionFuse;
 import frc.robot.RobotCommon;
+import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
  * Main swerve drive chassis controller.
@@ -334,7 +336,7 @@ public class Chassis extends SubsystemBase {
         //         Optional.of(questPose.getRotation()));
         // poseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp(), questSTD);
         demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
-        demaciaPoseEstimator.setVisionMeasurementStdDevs(getSTD());
+        demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
     }
     
     private Matrix<N3, N1> getSTD() {
@@ -387,6 +389,9 @@ public class Chassis extends SubsystemBase {
 
     @Override
     public void periodic() {
+        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        gyroAngle = getGyroAngle();
+
         OdometryObservation observation = new OdometryObservation(
                 Timer.getFPGATimestamp(),
                 getGyroAngle(),
@@ -395,6 +400,19 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         field.setRobotPose(getPose());
         
+        if (visionFusePoseEstimation != null) {
+            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+                hasVisionUpdated = true;
+                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+            }
+
+
+            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+            visionFusePoseEstimation = null;
+        }
+        if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+            updateQuest(quest.getRobotPose2d());
+        }
         updateCommon();
     }
 
