@@ -42,6 +42,7 @@ public class Camera {
         return this.yaw;
     }
 
+
     public String getName() {
         return this.name;
     }

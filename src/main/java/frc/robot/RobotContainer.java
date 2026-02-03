@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.DemaciaUtils;
+import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.climb.commands.ControllerClimb;
+import frc.robot.climb.subsystems.Climb;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,7 +24,9 @@ import frc.demacia.utils.log.LogManager;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer implements Sendable{
-
+  ControllerClimb command;
+    Climb climb;
+  CommandController controller;
   public static boolean isComp = false;
   private static boolean hasRemovedFromLog = false;
   public static boolean isRed = false;
@@ -33,6 +39,10 @@ public class RobotContainer implements Sendable{
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
+    controller = new CommandController(0, ControllerType.kPS5);
+    climb = new Climb();
+    command= new ControllerClimb(controller, climb);
+    climb.setDefaultCommand(command);
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     
     // Configure the trigger bindings

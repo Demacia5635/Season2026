@@ -6,7 +6,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;
 
 public class ClimbConstants {
-    public static final int MOTOR_ID_ARMS = 1;
+    public static final int MOTOR_ID_ARMS = 51;
     public static final Canbus CANBUS = Canbus.Rio;
     public static final boolean WITH_BRAKE_ARMS = true;
     public static final double MAX_CURRENT = 40;
@@ -28,7 +28,7 @@ public class ClimbConstants {
             .withInvert(WITH_INVERT_ARMS);
 
     public static final double CLOSE_LEVER_TOLERANCE = Math.toRadians(5);//radians
-    public static final int MOTOR_ID_LEVER = 2;
+    public static final int MOTOR_ID_LEVER = 52;
     public static final boolean WITH_BRAKE_LEVER = false;
     public static final double DIAMETER_LEVER = 0;
     public static final double LEVER_GEAR_RATIO = 1/64;
