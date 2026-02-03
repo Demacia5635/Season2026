@@ -37,9 +37,9 @@ public class ClimbTower extends Command {
     if (IS_AT_BAR) {
       climb.setLeverDuty(ClimbConstants.POWER_TO_OPEN_LEVER);
     }
-      if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
-        climb.setLeverDuty(ClimbConstants.POWER_TO_KEEP_HEIGHT);
-      }
+    //  if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
+    //    climb.setLeverDuty(ClimbConstants.POWER_TO_KEEP_HEIGHT);
+    //  }
   }
 
   private void lowerArmsToBar() {
@@ -60,11 +60,12 @@ public class ClimbTower extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    climb.stopLever();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN);
   }
 }

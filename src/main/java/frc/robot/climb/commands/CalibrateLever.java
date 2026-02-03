@@ -4,63 +4,61 @@
 
 // package frc.robot.climb.commands;
 
-// import edu.wpi.first.wpilibj.Timer;
 // import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.climb.constants.ClimbConstants;
 // import frc.robot.climb.subsystems.Climb;
 
 // /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-// public class ClimbPrep extends Command {
+// public class CalibrateLever extends Command {
 //   Climb climb;
-//   Timer openArmsTimer;
-//   private boolean isArmsOpen;
-//   private boolean isLeverClosed;
-
-//   /** Creates a new OpenArms. */
-//   public ClimbPrep(Climb climb) {
+//   private double currentSpikeCounter = 0;
+//   private static final double CURRENT_THRESHOLD = 0; 
+//   private final int CLOSE_LEVER_CYCLE_TO_STOP = 5;
+//   private boolean IS_LEVER_CLOSED = false;
+//   /** Creates a new CalibrateLever. */
+//   public CalibrateLever(Climb climb) {
 //     this.climb = climb;
-//     openArmsTimer = new Timer();
-//     addRequirements(climb);
 //     // Use addRequirements() here to declare subsystem dependencies.
 //   }
 
 //   // Called when the command is initially scheduled.
 //   @Override
 //   public void initialize() {
-//     openArmsTimer.stop();
-//     openArmsTimer.reset();
-//     openArmsTimer.start();
-//     isArmsOpen = false;    
-//     isLeverClosed = false;
+//     IS_LEVER_CLOSED = false;
+//     currentSpikeCounter = 0;
 //   }
 
 //   // Called every time the scheduler runs while the command is scheduled.
 //   @Override
 //   public void execute() {
-//     climb.setArmsDuty(ClimbConstants.POWER_TO_RAISE_ARMS);
-//     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
-//     if(openArmsTimer.hasElapsed(ClimbConstants.TIME_TO_RAISE_ARMS)){
-//       isArmsOpen =  true;
-//       climb.stopArms();
+//   double currentAmper = climb.getCurrentAmpersLever();
+//     if (currentAmper >= CURRENT_THRESHOLD) {
+//       currentSpikeCounter++;
+//     } else {
+//       currentSpikeCounter = 0;
 //     }
-//     if(climb.getAngleLever()>= ClimbConstants.ANGLE_LEVER_CLOSE){
-//       isLeverClosed = true;
+//     if (currentSpikeCounter >= CLOSE_LEVER_CYCLE_TO_STOP) {
 //       climb.stopLever();
+//       IS_LEVER_CLOSED = true;
+//     } else {
+//       climb.setLeverDuty(ClimbConstants.POWER_TO_CLOSE_LEVER);
 //     }
 //   }
+  
 
+  
 //   // Called once the command ends or is interrupted.
 //   @Override
 //   public void end(boolean interrupted) {
-//     climb.stopArms();
 //     climb.stopLever();
-//     openArmsTimer.stop();
-//     openArmsTimer.reset();
-//   }
+//     climb.resetLeverEncoder();
+//     }
+  
 
 //   // Returns true when the command should end.
 //   @Override
 //   public boolean isFinished() {
-//     return isArmsOpen && isLeverClosed;
+//     return IS_LEVER_CLOSED;
 //   }
 // }
+

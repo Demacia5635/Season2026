@@ -149,7 +149,6 @@ public class VisionConstants {
         public static final double PREDICT_OMEGA = 0.2;
 
 
-        //TODO:find the right offsets
         public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.fromDegrees(180));
         public static final double X_OFFSET_QUEST = 0.1;
         public static final double Y_OFFSET_QUEST = 0.3;
