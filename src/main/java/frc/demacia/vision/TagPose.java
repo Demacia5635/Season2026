@@ -58,7 +58,7 @@ public class TagPose {
   private ChassisSpeeds speeds;
 
   //robot pose
-  public Pose2d pose;
+  public Pose2d pose = new Pose2d();
 
   private double latency;
 
@@ -103,7 +103,7 @@ public TagPose(Camera camera){
     }else {
       cropStop();
       wantedPip = 0;
-      pose = null;
+      pose = new Pose2d();
     }if(wantedPip != Table.getEntry("getpipe").getDouble(0.0)){
       pipeEntry.setDouble(wantedPip);
     }
