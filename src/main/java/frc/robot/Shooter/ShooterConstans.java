@@ -42,7 +42,7 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
         }
 
-        public static final int shooterMotorID = 30;
+        public static final int shooterMotorID = 11;
         public static final Canbus shooterMotorCanbus = Canbus.Rio;
         public static final String shooterMotorName = "Shooter Motor";
 
@@ -55,7 +55,7 @@ public class ShooterConstans {
                         .withPID(0, 0, 0, 0.45, 0.303, 0, 0)
                         .withMeterMotor(1, 4 * 0.0254);
 
-        public static final int INDEXER_ID = 32;
+        public static final int INDEXER_ID = 10;
         public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
         public static final String INDEXER_NAME = "Indexer Motor";
 
@@ -76,7 +76,7 @@ public class ShooterConstans {
                         .withRadiansMotor(INDEXER_GEAR_RATIO)
                         .withInvert(true);
 
-        public static final int HOOD_ID = 31;
+        public static final int HOOD_ID = 8;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
         public static final double HOOD_KP = 1.2;
@@ -108,7 +108,6 @@ public class ShooterConstans {
         public static final AnalogEncoderConfig HOOD_ENCODER_CONFIG = new AnalogEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
         .withOffset(HOOD_OFFSET);
 
-        public static final LimitSwitchConfig LIMIT_SWITCH_CONFIG = new LimitSwitchConfig(0, "Limit Switch");
 
         public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
         public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();

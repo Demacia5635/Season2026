@@ -25,8 +25,6 @@ public class Shooter extends SubsystemBase {
 
   private AnalogEncoder hoodEncoder;
 
-  private LimitSwitch limitSwitch;
-
   public double angle;
 
   public Shooter() {
@@ -35,11 +33,10 @@ public class Shooter extends SubsystemBase {
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
     hoodEncoder = new AnalogEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     this.hasCalibrated = false;
-    this.limitSwitch = new LimitSwitch(ShooterConstans.LIMIT_SWITCH_CONFIG);
     SmartDashboard.putData("Shooter", this);
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
-    hoodMotor.setEncoderPosition(hoodEncoder.get());
+    hoodMotor.setEncoderPosition(getAngleHood());
 
   }
 
@@ -113,7 +110,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getAngleHood() {
-    return hoodMotor.getCurrentAngle();
+    return hoodEncoder.get() *2;
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
@@ -171,3 +168,4 @@ public class Shooter extends SubsystemBase {
       indexerMotor.set(0);
   }
 }
+ 
