@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.AnalogEncoder;
+import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.RobotContainer;
 import frc.robot.Shooter.ShooterConstans;
@@ -24,7 +25,7 @@ public class Shooter extends SubsystemBase {
   private TalonFXMotor hoodMotor;
   private boolean hasCalibrated;
 
-  private AnalogEncoder hoodEncoder;
+  private DigitalEncoder hoodEncoder;
 
   private LimitSwitch limitSwitch;
 
@@ -41,7 +42,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putData("Shooter", this);
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
-    hoodMotor.setEncoderPosition(hoodEncoder.get());
+    hoodMotor.setEncoderPosition(hoodEncoder.get() - ShooterConstans.HOOD_OFFSET);
 
   }
 
