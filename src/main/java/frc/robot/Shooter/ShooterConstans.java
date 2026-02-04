@@ -49,12 +49,12 @@ public class ShooterConstans {
 
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus,
                         shooterMotorName)
-                        .withFeedForward(0.0029, 0)
-                        .withInvert(true)
+                        .withFeedForward(0.00006, 0)
+                        .withInvert(false)
                         .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(0, 0, 0, 0.45, 0.303, 0, 0)
-                        .withMeterMotor(1, 4 * 0.0254);
+                        .withPID(0, 0, 0, 0.16164, 0.47789, 0.30462, 0)
+                        .withMeterMotor(1, 3 * 0.0254);
 
         public static final int INDEXER_ID = 10;
         public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;

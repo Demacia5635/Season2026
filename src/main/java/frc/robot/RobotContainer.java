@@ -21,6 +21,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
+import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTsting;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -57,7 +58,7 @@ public class RobotContainer implements Sendable {
     // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
     shooterTsting = new ShooterTsting(shooter, driverController);
-    shooter.setDefaultCommand(shooterTsting);
+    shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
     //SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
