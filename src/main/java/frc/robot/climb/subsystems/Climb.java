@@ -37,7 +37,6 @@ public class Climb extends SubsystemBase {
     stateChooser.addOption("CLIMB", CLIMB_STATE.CLIMB);
     stateChooser.addOption("GETOFF", CLIMB_STATE.GET_OFF_CLIMB);
     stateChooser.addOption("IDLE", CLIMB_STATE.IDLE);
-    stateChooser.addOption("TESTING", CLIMB_STATE.TESTING);
     stateChooser.onChange(newState -> this.state = newState);
     SmartDashboard.putData(getName() + "Climb State Chooser", stateChooser);
     }

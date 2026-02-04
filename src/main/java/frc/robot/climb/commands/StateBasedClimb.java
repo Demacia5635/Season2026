@@ -4,8 +4,6 @@
 
 package frc.robot.climb.commands;
 
-import com.ctre.phoenix.motorcontrol.IFollower;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -22,16 +20,16 @@ public class StateBasedClimb extends Command {
   Chassis chassis;
   Climb climb;
   CommandController contoller;
-  private double joyright;
-  private double joyleft;
   private boolean IS_AT_BAR;
   private boolean IS_AT_GROUND;
+  private boolean IS_READY_TO_CLIMB;
+  private boolean IS_RIGHT_CLIMB;
   private Pose2d targetRightSide = Pose2d.kZero;
   private Pose2d targetLeftSide = Pose2d.kZero;
   private double driveKp = 1.3;
   private double rotationKp = 2.2;
 
-  public StateBasedClimb(Climb climb, CommandController controller,Chassis chassis) {
+  public StateBasedClimb(Climb climb, CommandController controller, Chassis chassis) {
     this.climb = climb;
     this.chassis = chassis;
     this.contoller = controller;
@@ -44,6 +42,7 @@ public class StateBasedClimb extends Command {
   public void initialize() {
     IS_AT_BAR = false;
     IS_AT_GROUND = false;
+    IS_RIGHT_CLIMB = true; // need to set based on strategy
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,16 +51,13 @@ public class StateBasedClimb extends Command {
 
     switch (RobotCommon.currentState) {
       case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-      if(climb.getArmsAngle() != ClimbConstants.ARMS_ANGLE_CLOSED   || climb.getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSE){
-        climb.setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
-        climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
-      }
+        if (climb.getArmsAngle() != ClimbConstants.ARMS_ANGLE_CLOSED
+            || climb.getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSE) {
+          climb.setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
+          climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
+        }
         break;
       case PrepareClimb:
-      Pose2d chassisPose = chassis.getPose();
-    Translation2d diff = targetRightSide.getTranslation().minus(chassisPose.getTranslation());
-    double headingDiff = targetRightSide.getRotation().getRadians() - chassisPose.getRotation().getRadians();
-    ChassisSpeeds s = new ChassisSpeeds(diff.getX() * driveKp, diff.getY() * driveKp, headingDiff * rotationKp);
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
         if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
@@ -70,21 +66,28 @@ public class StateBasedClimb extends Command {
         if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE) {
           climb.stopLever();
         }
+        Pose2d targetPose = IS_RIGHT_CLIMB ? targetRightSide : targetLeftSide;
+        Pose2d chassisPose = chassis.getPose();
+        Translation2d diff = targetPose.getTranslation().minus(chassisPose.getTranslation());
+        double headingDiff = targetPose.getRotation().getRadians() - chassisPose.getRotation().getRadians();
+        ChassisSpeeds s = new ChassisSpeeds(diff.getX() * driveKp, diff.getY() * driveKp, headingDiff * rotationKp);
+        chassis.setVelocities(s);
         break;
       case Climb:
-      
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
         if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
           climb.stopArms();
           IS_AT_BAR = true;
         }
-        if (IS_AT_BAR) {
+          if(IS_AT_BAR){
+          //
+        }
+        if (IS_READY_TO_CLIMB) {
           climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
         }
         if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
           climb.stopLever();
         }
-
         break;
       case GetOffClimb:
         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
@@ -99,20 +102,7 @@ public class StateBasedClimb extends Command {
           climb.stopArms();
         }
         break;
-      case TESTING:
-        joyright = contoller.getRightY() * 0.2;
-        climb.setArmsDuty(joyright);
-        joyleft = contoller.getLeftY() * 0.2;
-        climb.setLeverDuty(joyleft);
-        break;
-      case CLOSE:
-        climb.setArmsAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
-        climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
-        if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_CLOSE)
-          climb.stopLever();
-        if (climb.getArmsAngle() >= ClimbConstants.ARMS_ANGLE_CLOSED)
-          climb.stopLever();
-        break;
+      
     }
 
   }
