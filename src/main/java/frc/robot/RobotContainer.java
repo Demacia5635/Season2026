@@ -4,26 +4,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation3d;
+import static frc.robot.Constants.*;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.DemaciaUtils;
-import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.chassis.DriveCommand;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.subsystem.ObjectPose;
-import frc.robot.chassis.MK5nChassisConstants;
-import frc.robot.intake.IntakeSubsystem;
-import frc.robot.intake.command.Intake;
-import frc.robot.intake.command.IntakeCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,17 +25,10 @@ import frc.robot.intake.command.IntakeCommand;
  */
 public class RobotContainer implements Sendable {
 
-  public static boolean isComp = false;
-  private static boolean hasRemovedFromLog = false;
-  public static boolean isRed = false;
+  // public static Chassis chassis;
+  // CommandController driverController = new CommandController(0, ControllerType.kPS5);
 
   // The robot's subsystems and commands are defined here...
-  Chassis chassis;
-  public static Camera camera;
-  public static CommandController driverController;
-  public static ObjectPose objectPose;
-  public static IntakeSubsystem intakeSubsystem;
-  public static Intake intake;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -55,22 +37,27 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
-    driverController = new CommandController(0, ControllerType.kPS5);
-    this.chassis = new Chassis(MK5nChassisConstants.CHASSIS_CONFIG);
-    camera = new Camera("fuel", new Translation3d(-0.2702,-0.07,0.575), -20, 0, null);
-    objectPose = new ObjectPose(camera, () -> chassis.getGyroAngle(), () -> chassis.getPose());
-    intakeSubsystem = new IntakeSubsystem();
-    intake = new Intake(chassis, intakeSubsystem, objectPose, driverController);
-    // chassis.setDefaultCommand(new TestModulePID(chassis));
-    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController, intake));
-    intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem));
-    // new Trigger(()->(objectPose.getDistcameraToObject() < 3 && objectPose.getDistcameraToObject() > 0)).onTrue(new IntakeAutonamusVelocities(chassis, new IntakeSubsystem(), objectPose, driverController));
-    //70  270
+    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 
-    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     // Configure the trigger bindings
-    // configureBindings();
+    addStatesToElasticForTesting();
+    configureBindings();
+  }
+
+  public void addStatesToElasticForTesting() {
+    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+      robotStateChooser.addOption(state.name(), state);
+    }
+    robotStateChooser.onChange(state -> RobotCommon.currentState = state);
+    SmartDashboard.putData("Robot State Chooser", robotStateChooser);
+    
+    SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
+    for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
+      shiftsChooser.addOption(state.name(), state);
+    }
+    shiftsChooser.onChange(state -> RobotCommon.currentShift = state);
+    SmartDashboard.putData("Shifts Chooser", shiftsChooser);
   }
 
   /**
@@ -87,34 +74,34 @@ public class RobotContainer implements Sendable {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  public static boolean isShooting = false;
+
   private void configureBindings() {
-    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-  }
-
-  public static boolean getIsRed() {
-    return isRed;
-  }
-
-  public static void setIsRed(boolean isRed) {
-    RobotContainer.isRed = isRed;
-  }
-
-  public static boolean getIsComp() {
-    return isComp;
-  }
-
-  public static void setIsComp(boolean isComp) {
-    RobotContainer.isComp = isComp;
-    if (!hasRemovedFromLog && isComp) {
-      hasRemovedFromLog = true;
-      LogManager.removeInComp();
-    }
+    // DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    // chassis.setDefaultCommand(driveCommand);
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
-    builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
+    builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
+    builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+  }
+
+  static public void updateCommon() {
+    Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
+    RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle - RobotCommon.currentRobotPose.getRotation().getRadians();
+
+    Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
+    RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle - RobotCommon.futureRobotPose.getRotation().getRadians();
+
+    
   }
 
   /**

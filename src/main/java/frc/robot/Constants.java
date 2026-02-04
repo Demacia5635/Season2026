@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -15,7 +15,12 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
+  public static final Translation2d HUB_POS = new Translation2d(11.265 + 0.5969, 4.023);
+    public static final double ALLIANCE_ZONE = 156.61;
+    public static final double OPP_ALLIANCE_ZONE = 490.61;
+    public static final double FIELD_WIDTH = 317.69;
+
+    public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
 

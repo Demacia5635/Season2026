@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.vision.subsystem.ObjectPose;
+import frc.demacia.vision.ObjectPose;
 
 public class AutoIntake extends Command {
     private Chassis chassis;

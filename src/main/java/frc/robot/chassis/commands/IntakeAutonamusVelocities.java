@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
-import frc.demacia.vision.subsystem.ObjectPose;
+import frc.demacia.vision.ObjectPose;
 import frc.robot.intake.IntakeSubsystem;
 
 public class IntakeAutonamusVelocities extends Command {
@@ -39,7 +39,7 @@ public class IntakeAutonamusVelocities extends Command {
   public void execute() {
     Translation2d driverVelocityVectorRobotRel = new Translation2d(controller.getLeftY(), controller.getLeftX())
         .rotateBy(chassis.getGyroAngle().unaryMinus());
-    double wantedVxRobotRel = (Math.min(Math.abs(driverVelocityVectorRobotRel.getX() * chassis.getMaxDriveVelocity()),
+    double wantedVxRobotRel = (Math.min(Math.abs(driverVelocityVectorRobotRel.getX() * chassis.getConfig().maxDriveVelocity),
         2.5));
     Translation2d intakeToTarget = objectPose.getRobotToObject().minus(chassisToIntakeOffset);
     double angleToFix = Math.min(Math.abs(intakeToTarget.getAngle().getRadians() * 2), Math.toRadians(90))
