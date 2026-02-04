@@ -6,7 +6,6 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;
 
 public class ClimbConstants {
-    // Arms Motor Configuration
     public static final int MOTOR_ID_ARMS = 51;
     public static final Canbus CANBUS = Canbus.Rio;
     public static final boolean WITH_BRAKE_ARMS = true;
@@ -22,8 +21,8 @@ public class ClimbConstants {
     public static final double ANGLE_ARMS_LOWERED = Math.toRadians(0);
     public static final double ARMS_ANGLE_CLOSED = 3.901700996125844; // radians
     public static final double armsOffset = 0;
+    public static final double DISTANCE_TOLERANCE_TO_CLOSE_ARMS = 0.05; // meters
 
-    // Lever Motor Configuration
     public static final int MOTOR_ID_LEVER = 52;
     public static final boolean WITH_BRAKE_LEVER = false;
     public static final double DIAMETER_LEVER = 0;
@@ -36,7 +35,6 @@ public class ClimbConstants {
     public static final double CLOSE_LEVER_TOLERANCE = Math.toRadians(5); // radians
     public static final double POWER_TO_KEEP_HEIGHT = 0.05;
 
-    // PID/Control Gains
     public static final double KS = 0;
     public static final double KV = 0;
     public static final double KA = 0;
@@ -45,7 +43,6 @@ public class ClimbConstants {
     public static final double KD = 0;
     public static final double KI = 0;
 
-    // Motor Configurations
     public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, "arms motor")
             .withBrake(WITH_BRAKE_ARMS)
             .withCurrent(MAX_CURRENT)
