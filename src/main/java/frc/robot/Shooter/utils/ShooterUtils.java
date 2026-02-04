@@ -17,10 +17,10 @@ public class ShooterUtils{
     
   }
 
-  public static Translation3d GetChassisVelAsVector() {
-    return new Translation3d(RobotContainer.chassis.getRobotRelVelocities().vxMetersPerSecond,
-        RobotContainer.chassis.getRobotRelVelocities().vyMetersPerSecond, 0);
-  }
+  // public static Translation3d GetChassisVelAsVector() {
+  //   return new Translation3d(RobotContainer.chassis.getRobotRelVelocities().vxMetersPerSecond,
+  //       RobotContainer.chassis.getRobotRelVelocities().vyMetersPerSecond, 0);
+  // }
 
   public static double distensFromToPose2dPoint(Pose2d from, Pose2d to) {
     return from.getTranslation().getDistance(to.getTranslation());

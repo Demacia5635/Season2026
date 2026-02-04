@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.AnalogEncoder;
 import frc.demacia.utils.sensors.DigitalEncoder;
@@ -23,11 +25,8 @@ public class Shooter extends SubsystemBase {
   private TalonFXMotor shooterMotor;
   private TalonFXMotor indexerMotor;
   private TalonFXMotor hoodMotor;
-  private boolean hasCalibrated;
 
-  private AnalogEncoder hoodEncoder;
-
-  private LimitSwitch limitSwitch;
+  private DigitalEncoder hoodEncoder;
 
   private ShooterState currentShooterState = ShooterState.IDLE;
   public double angle;
@@ -36,50 +35,47 @@ public class Shooter extends SubsystemBase {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
-    hoodEncoder = new AnalogEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
-    this.hasCalibrated = false;
-    SmartDashboard.putData("Shooter", this);
+    hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
+    //
+    // TODO: FINEASE
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
-    hoodMotor.setEncoderPosition(hoodEncoder.get());
-
+    SmartDashboard.putData("Shooter", this);
   }
 
-  public boolean shooterCloseLoppCanShoote(){
-    if(shooterMotor.getClosedLoopError().getValueAsDouble() < 0.3){
+  public boolean shooterCloseLoppCanShoote() {
+    if (shooterMotor.getClosedLoopError().getValueAsDouble() < 0.3) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
 
-  public boolean HoodCloseLoopError(){
-    if(hoodMotor.getClosedLoopError().getValueAsDouble() < Math.toRadians(0.5)){
+  public boolean HoodCloseLoopError() {
+    if (hoodMotor.getClosedLoopError().getValueAsDouble() < Math.toRadians(0.5)) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
 
-  public boolean chassisSpeedCeack(){
-    return RobotContainer.chassis.getVelocityAsVector().getNorm() < 1.7;
-  }
-
+  // public boolean chassisSpeedCeack(){
+  // // return RobotContainer.chassis.getVelocityAsVector().getNorm() < 1.7;
+  // }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
-    builder.addDoubleProperty("get angle", () -> Math.toDegrees(getAngleHood()), null);
+    builder.addDoubleProperty("get angle", () -> Math.toDegrees(getHoodAngle()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
-    builder.addBooleanProperty("Is At Limit", () -> isAtLimit(), null);
-    builder.addBooleanProperty("Is Calibrated", () -> hasCalibrated, null);
-    builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote() , null);
+    builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote(), null);
     builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
-    builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(), null);
-  }
-
-  public boolean isAtLimit() {
-    return !limitSwitch.get();
+    // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
+    // null);
+    builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
+    builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
+    // LogManager.add("is encoder dedectad", null, LogLevel.LOG_AND_NT_NOT_IN_COMP,
+    // getName(), hoodEncoder.isConnected());
   }
 
   public void setHoodMotorPosition(double position) {
@@ -103,19 +99,16 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setHoodAngle(double angle) {
-    // this.angle = angle;
-    if (!hasCalibrated) {
-      hoodMotor.set(0);
-      return;
-    }
-
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    hoodMotor.setMotion(angle);
+    hoodMotor.setMotion(getHoodAngleMotor() + (angle-getHoodAngle()));
     SmartDashboard.putNumber("Hood Target", angle);
   }
 
-  public double getAngleHood() {
-    return hoodEncoder.get() *2;
+  public double getHoodAngleMotor(){
+    return hoodMotor.getPosition().getValueAsDouble();
+  }
+  public double getHoodAngle() {
+    return (hoodEncoder.get() * 0.5) + ShooterConstans.HOOD_OFFSET;
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
@@ -124,60 +117,50 @@ public class Shooter extends SubsystemBase {
     setHoodAngle(angle);
   }
 
-  public boolean hasCalibrated() {
-    return this.hasCalibrated;
-  }
-
-  public void setCalibrated() {
-    this.hasCalibrated = true;
-  }
-
   public void setIndexerVel(double vel) {
     indexerMotor.setVelocity(vel);
   }
 
   public boolean canShoot() {
-    double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
+    // double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
     // if (norm > 0.3)
-      
-    //       LogManager.log("norm: " + norm + " is hood ready: "
-    //           + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
-    //           + " is flywheel ready: " + (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
-    //               .toRadians(0.5))
-    //           + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
-    return norm < 2 && isShooterReady();
-        // && RobotContainer.chassis.i
+
+    // LogManager.log("norm: " + norm + " is hood ready: "
+    // + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
+    // + " is flywheel ready: " +
+    // (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
+    // .toRadians(0.5))
+    // + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
+    return isShooterReady();
+    // norm < 2 &&
+    // && RobotContainer.chassis.i
   }
 
   public boolean isShooterReady() {
-    return hasCalibrated && Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 1 &&
+    return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 1 &&
         Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(1);
   }
-
-  
 
   public void stop() {
     shooterMotor.stopMotor();
   }
 
   // shooter pose on the robot
-  public Translation2d ShooterPoseOnRobot() {
-    return new Translation2d(ShooterConstans.shooterDistensFromChassis, RobotContainer.chassis.getGyroAngle());
-  }
+  // public Translation2d ShooterPoseOnRobot() {
+  // return new Translation2d(ShooterConstans.shooterDistensFromChassis,
+  // RobotContainer.chassis.getGyroAngle());
+  // }
 
-  public  ShooterState getCurrentShooterState(){
+  public ShooterState getCurrentShooterState() {
     return currentShooterState;
   }
-  public void setCurrentShooterCommand(ShooterState state){
+
+  public void setCurrentShooterCommand(ShooterState state) {
     this.currentShooterState = state;
   }
 
   @Override
   public void periodic() {
-    if (canShoot())
-      indexerMotor.set(1);
-    else
-      indexerMotor.set(0);
+   
   }
 }
- 

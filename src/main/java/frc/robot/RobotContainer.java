@@ -22,6 +22,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.Shooter.commands.ShooterCommand;
+import frc.robot.Shooter.commands.ShooterTsting;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.commands.ResetModule;
@@ -39,7 +40,8 @@ public class RobotContainer implements Sendable {
 
   Field2d field2d;
   Field2d questField2d;
-  public static Chassis chassis;
+  ShooterTsting shooterTsting;
+  // public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
   Shooter shooter;
 
@@ -52,10 +54,11 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
-
-    SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
+    shooterTsting = new ShooterTsting(shooter, driverController);
+    shooter.setDefaultCommand(shooterTsting);
+    //SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addStatesToElasticForTesting();
@@ -95,19 +98,19 @@ public class RobotContainer implements Sendable {
   public static boolean isShooting = false;
 
   private void configureBindings() {
-    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    ShooterCommand shooterCommand = new ShooterCommand(shooter, chassis);
+    //DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    //ShooterCommand shooterCommand = new ShooterCommand(shooter, chassis);
 
-    chassis.setDefaultCommand(driveCommand);
+    // chassis.setDefaultCommand(driveCommand);
     // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
-    driverController.downButton().onTrue(shooterCommand);
+    // driverController.downButton().onTrue(shooterCommand);
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    driverController.povLeft().onTrue(new RunCommand(()->shooter.setIndexerVel(1)));
-    driverController.rightButton().onTrue(new RunCommand(() -> {
-    }, shooter));
+    // driverController.povLeft().onTrue(new RunCommand(()->shooter.setIndexerVel(1)));
+    // driverController.rightButton().onTrue(new RunCommand(() -> {
+    // }, shooter));
    
-    driverController.upButton().onTrue(new InstantCommand(() -> driveCommand.setActiveToHub()));
+    // driverController.upButton().onTrue(new InstantCommand(() -> driveCommand.setActiveToHub()));
   }
 
   @Override

@@ -89,11 +89,11 @@ public class ShooterCommand extends Command {
     Rotation2d heading = Rotation2d.kZero;
     switch (shooter.getCurrentShooterState()) {
       case DELIVERY:
-        Translation2d chassisToDelivery = RobotCommon.deliveryTarget
-            .minus(RobotContainer.chassis.getPose().getTranslation());
+        // Translation2d chassisToDelivery = RobotCommon.deliveryTarget
+        //     .minus(RobotContainer.chassis.getPose().getTranslation());
         hoodAngle = Math.toRadians(45);
-        vel = 1.7 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
-        heading = chassisToDelivery.getAngle();
+        // vel = 1.7 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
+        // heading = chassisToDelivery.getAngle();
 
         setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
 

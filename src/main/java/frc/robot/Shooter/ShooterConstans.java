@@ -13,6 +13,7 @@ import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.LimitSwitchConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.demacia.utils.sensors.AnalogEncoderConfig;
+import frc.demacia.utils.sensors.DigitalEncoderConfig;
 /** Add your docs here. */
 
 public class ShooterConstans {
@@ -79,17 +80,17 @@ public class ShooterConstans {
         public static final int HOOD_ID = 8;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
-        public static final double HOOD_KP = 1.2;
+        public static final double HOOD_KP = 1;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
-        public static final double HOOD_KS = 0.083;
-        public static final double HOOD_KV = 2;
-        public static final double HOOD_KA = 0.3;
+        public static final double HOOD_KS = 0.09374;
+        public static final double HOOD_KV = 1.87274;
+        public static final double HOOD_KA = 0.17723;
         public static final double HOOD_KG = 0;
-        public static final double HOOD_MAX_VELOCITY = Math.PI;
+        public static final double HOOD_MAX_VELOCITY = 2;
         public static final double HOOD_MAX_ACCEL = 2 * Math.PI;
         public static final double HOOD_MAX_JERK = 10 * Math.PI;
-        public static final double HOOD_GEAR_RATIO = ((110 / 25d) * 32);
+        public static final double HOOD_GEAR_RATIO = 128;
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
                         .withBrake(true)
@@ -103,10 +104,10 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 0;
         public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(0);
+        public static final double HOOD_OFFSET = Math.toRadians(1);
 
-        public static final AnalogEncoderConfig HOOD_ENCODER_CONFIG = new AnalogEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
-        .withOffset(HOOD_OFFSET);
+        public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
+        .withInvert(true);
 
 
         public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
