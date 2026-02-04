@@ -49,7 +49,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPositionMotion(double position) {
-    MathUtil.clamp(position, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    position = MathUtil.clamp(position, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     updatePositionByLimit();
     turretMotor.setMotion(position);
   }
@@ -70,6 +70,10 @@ public class Turret extends SubsystemBase {
     return this.hasCalibrated;
   }
 
+  public void setEncoderPosition(double position) {
+    turretMotor.setEncoderPosition(position);
+    setCalibrated();
+  }
   public void setCalibrated() {
     this.hasCalibrated = true;
   }

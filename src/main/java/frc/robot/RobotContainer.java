@@ -18,6 +18,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
+import frc.robot.Turret.TurretCommands.TurretPower;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,6 +42,7 @@ public class RobotContainer implements Sendable{
     new DemaciaUtils(() -> getIsComp(), () -> getIsRed());
     controller = new CommandController(0, ControllerType.kPS5);
     Turret.getInstance().setDefaultCommand(new TurretCommand());
+    controller.downButton().onTrue(new InstantCommand(()->Turret.getInstance().setEncoderPosition(0)));
     SmartDashboard.putData("Calibration", new TurretCalibration());
     //this.shooter = new Shooter();
 
