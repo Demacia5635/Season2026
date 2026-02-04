@@ -11,8 +11,15 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.demacia.utils.motors.TalonFXConfig;
+import frc.demacia.utils.motors.TalonFXMotor;
+import frc.demacia.utils.motors.TalonSRXConfig;
+import frc.demacia.utils.motors.TalonSRXMotor;
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -24,23 +31,53 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer implements Sendable {
-  
+
   // The robot's subsystems and commands are defined here...
 
   // public static Chassis chassis;
-  // CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  // CommandController driverController = new CommandController(0,
+  // ControllerType.kPS5);
+
+  TalonFXMotor krakenMotor;
+  TalonSRXMotor motor1;
+  TalonSRXMotor motor2;
+
+  public static double krakenPow = 0;
+  public static double redLinePow1 = 0;
+  public static double redLinePow2 = 0;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 
+    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    krakenMotor = new TalonFXMotor(new TalonFXConfig(1, Canbus.Rio, "Kraken"));
+    motor1 = new TalonSRXMotor(new TalonSRXConfig(30, "motor1").withInvert(true));
+    motor2 = new TalonSRXMotor(new TalonSRXConfig(33, "motor2"));
+
+    SmartDashboard.putData("power on motor", new FunctionalCommand(
+        () -> {
+        },
+        () -> {
+          krakenMotor.set(RobotContainer.getKrakenPow());
+          motor1.setDuty(RobotContainer.getRedlinePow1());
+          motor2.setDuty(RobotContainer.getRedlinePow2());
+        },
+        (x) -> {
+          krakenMotor.stop();
+          motor1.stop();
+          motor2.stop();
+        }, () -> false));
     // Configure the trigger bindings
     addStatesToElasticForTesting();
     configureBindings();
   }
+
+  public static double getKrakenPow() {return krakenPow;}
+  public static double getRedlinePow1() {return redLinePow1;}
+  public static double getRedlinePow2() {return redLinePow2;}
 
   public void addStatesToElasticForTesting() {
     SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
@@ -49,7 +86,7 @@ public class RobotContainer implements Sendable {
     }
     robotStateChooser.onChange(state -> RobotCommon.currentState = state);
     SmartDashboard.putData("Robot State Chooser", robotStateChooser);
-    
+
     SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
     for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
       shiftsChooser.addOption(state.name(), state);
@@ -81,25 +118,32 @@ public class RobotContainer implements Sendable {
 
   @Override
   public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("kraken power", RobotContainer::getKrakenPow, (value) -> krakenPow = value);
+    builder.addDoubleProperty("redline power", RobotContainer::getRedlinePow1, (value) -> redLinePow1 = value);
+    builder.addDoubleProperty("redline power2", RobotContainer::getRedlinePow2, (value) -> redLinePow2 = value);
+
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
 
-    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
-    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
+        (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
+        (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
   }
 
   static public void updateCommon() {
     Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
     RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
-    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle - RobotCommon.currentRobotPose.getRotation().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle
+        - RobotCommon.currentRobotPose.getRotation().getRadians();
 
     Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
     RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
-    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle - RobotCommon.futureRobotPose.getRotation().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle
+        - RobotCommon.futureRobotPose.getRotation().getRadians();
 
-    
   }
 
   /**
