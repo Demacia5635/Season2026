@@ -19,28 +19,56 @@ public class Camera {
     private double pitch;
     private double yaw;
     private String tableName;
-    private boolean ishigher;// is higher than a tag 
+    // private boolean ishigher;// is higher than a tag 
+    private boolean isOnTurret;
+    private Supplier<Rotation2d> turretAngle;
+    private Translation3d turretToCamPosition;
+    private boolean isCroping;
+    private boolean isObjectCamera = false;
 
 
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean ishigher) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
-        this.ishigher = ishigher;
-
+        this.isOnTurret = false;
         this.tableName = "limelight-"+name;
+        this.isCroping = isCroping;
+        this.isObjectCamera = isObjectCamera;
     }
+
+      /**
+   * Camera for Turret
+   * * 
+   */
+    public Camera(String name, Translation3d robotToCamPosition,Translation3d turretToCamPosition, double pitch, double yaw,Supplier<Rotation2d> turretAngle, boolean isObjectCamera) {
+        this.name = name;
+        this.robotToCamPosition = robotToCamPosition;
+        this.turretToCamPosition = turretToCamPosition;
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.isOnTurret = true;
+        this.turretAngle = turretAngle;
+        this.tableName = "limelight-"+name;
+        isCroping = false;
+    }
+
+    public Translation3d getturretToCamPosition(){
+        return turretToCamPosition;
+    }
+
     public boolean getIsOnTurret(){
-        return false;
+        return isOnTurret;
     }
+
     public Supplier<Rotation2d> getTurrentAngle(){
 
-        return () -> Rotation2d.kZero;
+        return turretAngle;
     }
 
     public Translation3d getRobotToCamPosition() {
-        return !false ? robotToCamPosition : robotToCamPosition.rotateBy(Rotation3d.kZero);
+        return !isOnTurret ? robotToCamPosition : robotToCamPosition.rotateBy(new Rotation3d(turretAngle.get().unaryMinus()));
     }
 
     public double getHeight() {
@@ -62,5 +90,12 @@ public class Camera {
     public String getTableName() {
         return this.tableName;
     }
-    public boolean getIsHigher(){return this.ishigher;}
+
+    public boolean getIsCroping(){
+        return isCroping;
+    }
+
+    public boolean getIsObjectCamera() {
+        return isObjectCamera;
+    }
 }

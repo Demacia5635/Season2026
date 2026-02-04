@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.AnalogEncoder;
+import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.RobotContainer;
 import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.ShooterConstans.ShooterState;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
@@ -25,6 +27,9 @@ public class Shooter extends SubsystemBase {
 
   private AnalogEncoder hoodEncoder;
 
+  private LimitSwitch limitSwitch;
+
+  private ShooterState currentShooterState = ShooterState.IDLE;
   public double angle;
 
   public Shooter() {
@@ -36,7 +41,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putData("Shooter", this);
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
-    hoodMotor.setEncoderPosition(getAngleHood());
+    hoodMotor.setEncoderPosition(hoodEncoder.get());
 
   }
 
@@ -158,6 +163,13 @@ public class Shooter extends SubsystemBase {
   // shooter pose on the robot
   public Translation2d ShooterPoseOnRobot() {
     return new Translation2d(ShooterConstans.shooterDistensFromChassis, RobotContainer.chassis.getGyroAngle());
+  }
+
+  public  ShooterState getCurrentShooterState(){
+    return currentShooterState;
+  }
+  public void setCurrentShooterCommand(ShooterState state){
+    this.currentShooterState = state;
   }
 
   @Override

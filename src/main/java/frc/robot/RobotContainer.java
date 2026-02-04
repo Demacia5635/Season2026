@@ -21,7 +21,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.robot.Shooter.commands.ShootCommand;
+import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.commands.ResetModule;
@@ -96,12 +96,11 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    ShootCommand shootCommand = new ShootCommand(chassis, shooter);
+    ShooterCommand shooterCommand = new ShooterCommand(shooter, chassis);
 
     chassis.setDefaultCommand(driveCommand);
     // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
-    driverController.downButton().onTrue(shootCommand);
-    driverController.leftButton().onTrue(new InstantCommand(()->shootCommand.changeDelivery()));
+    driverController.downButton().onTrue(shooterCommand);
    
     // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     driverController.povLeft().onTrue(new RunCommand(()->shooter.setIndexerVel(1)));
