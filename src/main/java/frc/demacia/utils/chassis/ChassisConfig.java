@@ -1,9 +1,8 @@
 package frc.demacia.utils.chassis;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import frc.demacia.utils.sensors.PigeonConfig;
-import frc.demacia.vision.subsystem.Tag;
 import frc.demacia.vision.Camera;
+import frc.demacia.vision.TagPose;
 
 /**
  * Configuration class for swerve drive chassis.
@@ -17,21 +16,13 @@ import frc.demacia.vision.Camera;
  * </pre>
  */
 public class ChassisConfig {
-    public String name;
+    public final String name;
 
-    public SwerveModuleConfig frontLeftModuleConfig;
-    public SwerveModuleConfig frontRightModuleConfig;
-    public SwerveModuleConfig backLeftModuleConfig;
-    public SwerveModuleConfig backRightModuleConfig;
+    public final SwerveModuleConfig[] swerveModuleConfig;
 
-    public PigeonConfig pigeonConfig;
+    public final PigeonConfig pigeonConfig;
 
-    public Translation2d frontLeftPosition;
-    public Translation2d frontRightPosition;
-    public Translation2d backLeftPosition;
-    public Translation2d backRightPosition;
-
-    public Tag[] tags;
+    public TagPose[] tags;
     public Camera objectCamera;
 
     public double cycleDt = 0.02;
@@ -46,17 +37,10 @@ public class ChassisConfig {
     public double maxDriveVelocity = 4;
     public double maxRotationalVelocity = 4;
 
-    public ChassisConfig(String name, SwerveModuleConfig frontLeftModuleConfig, SwerveModuleConfig frontRightModuleConfig, SwerveModuleConfig backLeftModuleConfig, SwerveModuleConfig backRightModuleConfig, PigeonConfig pigeonConfig, Translation2d frontLeftPosition, Translation2d frontRightPosition, Translation2d backLeftPosition, Translation2d backRightPosition, Tag[] tags){
+    public ChassisConfig(String name, SwerveModuleConfig[] swerveModuleConfigs, PigeonConfig pigeonConfig, TagPose[] tags) {
         this.name = name;
-        this.frontLeftModuleConfig = frontLeftModuleConfig;
-        this.frontRightModuleConfig = frontRightModuleConfig;
-        this.backLeftModuleConfig = backLeftModuleConfig;
-        this.backRightModuleConfig = backRightModuleConfig;
+        this.swerveModuleConfig = swerveModuleConfigs;
         this.pigeonConfig = pigeonConfig;
-        this.frontLeftPosition = frontLeftPosition;
-        this.frontRightPosition = frontRightPosition;
-        this.backLeftPosition = backLeftPosition;
-        this.backRightPosition = backRightPosition;
         this.tags = tags;
     }
 

@@ -129,7 +129,7 @@ public class DemaciaKinematics {
         }
         // calculate the maximum heading change using the target velocity and allowed
         // radial acceleration
-        double maxAngleChange = (MAX_RADIAL_ACCEL / targetVelocity) * CYCLE_DT;
+        double maxAngleChange = 2 * (MAX_RADIAL_ACCEL / targetVelocity) * CYCLE_DT;
         // set the target angle
         velocityHeadingDiff = MathUtil.clamp(velocityHeadingDiff, -maxAngleChange, maxAngleChange);
         targetVelocityHeading = currentVelocityHeading + velocityHeadingDiff;
