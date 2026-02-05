@@ -53,7 +53,7 @@ public class ShooterConstans {
                         .withInvert(true)
                         .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(0, 0, 0, 2.62173, 0.37721, 0.30462, 0)
+                        .withPID(2, 0, 0, 0.16164, 0.47789, 0.30462, 0)
                         .withMeterMotor(1, 3 * 0.0254);
 
         public static final int INDEXER_ID = 10;
