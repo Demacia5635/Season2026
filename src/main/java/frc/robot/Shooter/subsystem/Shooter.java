@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   private TalonFXMotor shooterMotor;
-  private TalonFXMotor indexerMotor;
+  private TalonFXMotor fedderMotor;
   private TalonFXMotor hoodMotor;
 
   private DigitalEncoder hoodEncoder;
@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
-    indexerMotor = new TalonFXMotor(ShooterConstans.INDEXER_CONFIG);
+    fedderMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     //
     // TODO: FINEASE
@@ -118,7 +118,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setIndexerVel(double vel) {
-    indexerMotor.setVelocity(vel);
+    fedderMotor.setVelocity(vel);
   }
 
   public boolean canShoot() {
