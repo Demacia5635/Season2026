@@ -36,8 +36,6 @@ public class Shooter extends SubsystemBase {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     fedderMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
-    //
-    // TODO: FINEASE
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
     SmartDashboard.putData("Shooter", this);
