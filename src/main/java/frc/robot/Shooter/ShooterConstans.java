@@ -71,6 +71,8 @@ public class ShooterConstans {
         public static final double INDEXER_MAX_ACC = 0;
         public static final double INDEXER_MAX_JERK = 0;
         public static final double INDEXER_GEAR_RATIO = 1;
+        
+        public static final double FEEDER_POWER = 0.8;
 
         public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,INDEXER_NAME)
                         .withPID(INDEXER_KP, INDEXER_KI, INDEXER_KD, INDEXER_KS, INDEXER_KV, INDEXER_KA, INDEXER_KG)
