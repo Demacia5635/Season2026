@@ -1,23 +1,21 @@
 package frc.robot.chassis.commands;
 
-import java.util.logging.LogManager;
-
-import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.vision.ObjectPose;
 
 public class AutoIntake extends Command {
     private Chassis chassis;
-    private boolean finish = false;
+    // private boolean finish = false;
     private ObjectPose objectDetection;
-    private Pose2d targetPoseFromRobot = Pose2d.kZero;
+    // private Pose2d targetPoseFromRobot = Pose2d.kZero;
     private double maxVel = 2;
-    private double maxOmega = Math.toRadians(180);
-    private Translation2d diffVector = Translation2d.kZero;
+    // private double maxOmega = Math.toRadians(180);
+    // private Translation2d diffVector = Translation2d.kZero;
     private Translation2d robotToIntake = new Translation2d(-0.2, 0);
 
     public AutoIntake(Chassis chassis, ObjectPose objectDetection) {
@@ -26,9 +24,9 @@ public class AutoIntake extends Command {
         addRequirements(chassis);
     }
 
-    private double calcTimeToRotate(double angle) {
-        return 2 * (Math.sqrt(Math.abs(angle) / Math.toRadians(540)));
-    }
+    // private double calcTimeToRotate(double angle) {
+        // return 2 * (Math.sqrt(Math.abs(angle) / Math.toRadians(540)));
+    // }
 
     @Override
     public void execute() {

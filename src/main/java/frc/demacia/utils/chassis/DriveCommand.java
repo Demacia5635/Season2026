@@ -9,20 +9,24 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.RobotCommon;
+import frc.robot.RobotCommon.robotStates;
+import frc.robot.intake.command.Intake;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
   private Chassis chassis;
   private CommandController controller;
+  private Intake intake;
   private double direction;
   private ChassisSpeeds speeds;
   private boolean precisionMode;
   public PIDController pidController = new PIDController(1.5, 0.15, 0);
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(Chassis chassis, CommandController controller) {
+  public DriveCommand(Chassis chassis, CommandController controller, Intake intake) {
     this.chassis = chassis;
     this.controller = controller;
+    this.intake = intake;
     precisionMode = false;
     addRequirements(chassis);
   }
@@ -51,25 +55,36 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    direction = RobotCommon.isRed ? 1 : -1;
-    double joyX = controller.getLeftY() * direction;
-    double joyY = controller.getLeftX() * direction;
+    if (RobotCommon.currentState == robotStates.ShootWithIntake) {
+      intake.setDutyIntake(0.8);
+      speeds = intake.AutoIntakeSpeeds();
 
-    // Calculate r]otation from trigger axes
-    double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+      chassis.setRobotRelVelocities(speeds);
+      if (!intake.isSeeFuel()){
+        //need to add something 
+      }
+    } else {
+      intake.setDutyIntake(0);
+      direction = RobotCommon.isRed ? 1 : -1;
+      double joyX = controller.getLeftY() * direction;
+      double joyY = controller.getLeftX() * direction;
 
-    double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
-    double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
-    double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
-    if (precisionMode) {
-      velX /= 4;
-      velY /= 4;
-      velRot /= 4;
+      // Calculate r]otation from trigger axes
+      double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+
+      double velX = Math.pow(joyX, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyX);
+      double velY = Math.pow(joyY, 2) * chassis.getMaxDriveVelocity() * Math.signum(joyY);
+      double velRot = Math.pow(rot, 2) * chassis.getMaxRotationalVelocity() * Math.signum(rot);
+      if (precisionMode) {
+        velX /= 4;
+        velY /= 4;
+        velRot /= 4;
+      }
+
+      speeds = new ChassisSpeeds(velX, velY, velRot);
+
+      chassis.setVelocities(speeds);
     }
-
-    speeds = new ChassisSpeeds(velX, velY, -velRot);
-
-    chassis.setVelocities(speeds);
   }
 
   // Called once the command ends or is interrupted.

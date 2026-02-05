@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.vision.ObjectPose;
-import frc.robot.Constants.ROBOT_STATE;
 import frc.robot.intake.IntakeSubsystem;
 
 public class Intake {
@@ -43,14 +42,6 @@ public class Intake {
   public boolean isSeeFuel() {
     return objectPose.getRobotToObject().minus(chassisToIntakeOffset).getNorm() > 0.03
         && objectPose.getDistcameraToObject() > 0.01;
-  }
-
-  public ROBOT_STATE getCurrState() {
-    return intake.getCurrState();
-  }
-
-  public void setCurrState(ROBOT_STATE state){
-    intake.setCurrState(state);
   }
 
   public void setDutyIntake(double pow){

@@ -499,4 +499,12 @@ public class Chassis extends SubsystemBase {
             i.stop();
         }
     }
+    
+    public double getMaxDriveVelocity() {
+        return chassisConfig.maxDriveVelocity;
+    }
+
+    public double getMaxRotationalVelocity() {
+        return chassisConfig.maxRotationalVelocity;
+    }
 }
