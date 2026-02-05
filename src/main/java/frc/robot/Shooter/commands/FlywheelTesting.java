@@ -27,8 +27,6 @@ public class FlywheelTesting extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    // TODO Auto-generated method stub
-    super.initSendable(builder);
     builder.addDoubleProperty("Wanted flywheel vel", () -> wantedVel, (x) -> wantedVel = x);
   }
 
@@ -40,7 +38,7 @@ public class FlywheelTesting extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setFlywheelPower(wantedVel);
+    shooter.setFlywheelVel(wantedVel);
   }
 
   // Called once the command ends or is interrupted.

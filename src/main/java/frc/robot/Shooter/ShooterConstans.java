@@ -50,10 +50,10 @@ public class ShooterConstans {
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus,
                         shooterMotorName)
                         .withFeedForward(0.00006, 0)
-                        .withInvert(false)
+                        .withInvert(true)
                         .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(0, 0, 0, 0.16164, 0.47789, 0.30462, 0)
+                        .withPID(0, 0, 0, 2.62173, 0.37721, 0.30462, 0)
                         .withMeterMotor(1, 3 * 0.0254);
 
         public static final int INDEXER_ID = 10;
