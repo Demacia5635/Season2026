@@ -5,17 +5,11 @@
 package frc.robot.Shooter.subsystem;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.motors.TalonFXMotor;
-import frc.demacia.utils.sensors.AnalogEncoder;
 import frc.demacia.utils.sensors.DigitalEncoder;
-import frc.demacia.utils.sensors.LimitSwitch;
-import frc.robot.RobotContainer;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.ShooterConstans.ShooterState;
 

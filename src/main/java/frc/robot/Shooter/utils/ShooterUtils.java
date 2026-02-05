@@ -2,10 +2,8 @@
 package frc.robot.Shooter.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import frc.robot.RobotContainer;
 import frc.robot.Shooter.subsystem.Shooter;
 
 public class ShooterUtils{

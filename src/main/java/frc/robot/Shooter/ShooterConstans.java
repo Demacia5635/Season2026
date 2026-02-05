@@ -10,9 +10,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.LookUpTable;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
-import frc.demacia.utils.sensors.LimitSwitchConfig;
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.demacia.utils.sensors.AnalogEncoderConfig;
 import frc.demacia.utils.sensors.DigitalEncoderConfig;
 /** Add your docs here. */
 
