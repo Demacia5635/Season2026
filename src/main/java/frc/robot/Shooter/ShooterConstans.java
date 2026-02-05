@@ -19,18 +19,7 @@ import frc.demacia.utils.sensors.DigitalEncoderConfig;
 public class ShooterConstans {
 
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
-        static { // distance (M) Velocity (M/s) (velocity of the flywheel, not the ball) Hood
-                 // angle (Radians)
-
-                SHOOTER_LOOKUP_TABLE.add(1.5, 13.7, Math.toRadians(85));
-                SHOOTER_LOOKUP_TABLE.add(1.8, 14, Math.toRadians(83));
-                SHOOTER_LOOKUP_TABLE.add(3, 15.5, Math.toRadians(70));
-                SHOOTER_LOOKUP_TABLE.add(3.4, 16.3, Math.toRadians(65));
-                SHOOTER_LOOKUP_TABLE.add(4.2, 18, Math.toRadians(58));
-                // SHOOTER_LOOKUP_TABLE.add(1.96, 14.5, Math.toRadians(78));
-                // SHOOTER_LOOKUP_TABLE.add(3, 16.7, Math.toRadians(71));
-                // SHOOTER_LOOKUP_TABLE.add(4, 18.6, Math.toRadians(68));
-                // SHOOTER_LOOKUP_TABLE.add(4.79, 19, Math.toRadians(62));
+        static {
 
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
                 // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
@@ -43,43 +32,39 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
         }
 
-        public static final int shooterMotorID = 11;
-        public static final Canbus shooterMotorCanbus = Canbus.Rio;
-        public static final String shooterMotorName = "Shooter Motor";
+        public static final Canbus SHOOTER_CANBUS = Canbus.Rio;
 
-        public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(shooterMotorID, shooterMotorCanbus,
-                        shooterMotorName)
-                        .withFeedForward(0.00006, 0)
+        public static final int SHOOTER_MOTOR_ID = 33;
+        public static final String SHOOTER_MOTOR_NAME = "Shooter Motor";
+
+        public static final double SHOOTER_KP = 2;
+        public static final double SHOOTER_KI =0.2;
+        public static final double SHOOTER_KS = 0.16164;
+        public static final double SHOOTER_KV = 0.47789;
+        public static final double SHOOTER_KA = 0.30462;
+
+        public static final double SHHOTER_KV2 =0.00006;
+
+        public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(SHOOTER_MOTOR_ID, SHOOTER_CANBUS,
+                        SHOOTER_MOTOR_NAME)
+                        .withFeedForward(SHHOTER_KV2,0)
                         .withInvert(true)
-                        .withRampTime(0.3)
                         .withBrake(false)
-                        .withPID(2, 0, 0, 0.16164, 0.47789, 0.30462, 0)
+                        .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
                         .withMeterMotor(1, 3 * 0.0254);
 
-        public static final int INDEXER_ID = 10;
-        public static final Canbus CANBUS_MOVE_TO_SOTER_MOTOR = Canbus.Rio;
-        public static final String INDEXER_NAME = "Indexer Motor";
+        public static final int FEEDER_ID = 34;
+        public static final String FEEDER_NAME = "Feeder Motor";
 
-        public static final double INDEXER_KP = 0;
-        public static final double INDEXER_KI = 0;
-        public static final double INDEXER_KD = 0;
-        public static final double INDEXER_KS = 0;
-        public static final double INDEXER_KV = 0;
-        public static final double INDEXER_KA = 0;
-        public static final double INDEXER_KG = 0;
-        public static final double INDEXER_MAX_VEL = 0;
-        public static final double INDEXER_MAX_ACC = 0;
-        public static final double INDEXER_MAX_JERK = 0;
-        public static final double INDEXER_GEAR_RATIO = 1;
+        public static final double FEEDER_GEAR_RATIO = 1;
         
         public static final double FEEDER_POWER = 0.8;
 
-        public static final TalonFXConfig INDEXER_CONFIG = new TalonFXConfig(INDEXER_ID, CANBUS_MOVE_TO_SOTER_MOTOR,INDEXER_NAME)
-                        .withPID(INDEXER_KP, INDEXER_KI, INDEXER_KD, INDEXER_KS, INDEXER_KV, INDEXER_KA, INDEXER_KG)
-                        .withRadiansMotor(INDEXER_GEAR_RATIO)
+        public static final TalonFXConfig FEEDER_CONFIG = new TalonFXConfig(FEEDER_ID, SHOOTER_CANBUS,FEEDER_NAME)
+                        .withRadiansMotor(FEEDER_GEAR_RATIO)
                         .withInvert(true);
 
-        public static final int HOOD_ID = 8;
+        public static final int HOOD_ID = 35;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
         public static final double HOOD_KP = 1;
@@ -94,7 +79,7 @@ public class ShooterConstans {
         public static final double HOOD_MAX_JERK = 10 * Math.PI;
         public static final double HOOD_GEAR_RATIO = 128;
 
-        public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, shooterMotorCanbus, HOOD_NAME)
+        public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)
                         .withBrake(true)
                         .withRadiansMotor(HOOD_GEAR_RATIO)
                         .withInvert(false)
