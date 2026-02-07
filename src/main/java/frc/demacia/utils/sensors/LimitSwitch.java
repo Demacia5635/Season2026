@@ -54,7 +54,7 @@ public class LimitSwitch extends DigitalInput implements DigitalSensorInterface{
     @SuppressWarnings("unchecked")
     private void addLog() {
         LogManager.addEntry(name + ": isTriggered", this::get)
-        .withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP).build();
+        .withLogLevel(LogLevel.LOG_AND_NT).build();
     }
 
     /**
