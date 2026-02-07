@@ -4,16 +4,16 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.*;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.log.LogManager;
-import frc.robot.climb.commands.ControllerClimb;
+import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 
 /**
@@ -27,11 +27,11 @@ import frc.robot.climb.subsystems.Climb;
  */
 public class RobotContainer implements Sendable {
   Climb climb;
-  CommandController controller;
-  ControllerClimb command;
-  public static boolean isComp = false;
-  private static boolean hasRemovedFromLog = false;
-  public static boolean isRed = false;
+  StateBasedClimb stateBasedClimb;
+
+  // public static Chassis chassis;
+  // CommandController driverController = new CommandController(0,
+  // ControllerType.kPS5);
 
   // The robot's subsystems and commands are defined here...
 
@@ -42,11 +42,28 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
+    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     climb = new Climb();
-    controller = new CommandController(1, ControllerType.kXbox);
-    command = new ControllerClimb(controller, climb);
+
     // Configure the trigger bindings
+    addStatesToElasticForTesting();
     configureBindings();
+  }
+
+  public void addStatesToElasticForTesting() {
+    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+      robotStateChooser.addOption(state.name(), state);
+    }
+    robotStateChooser.onChange(state -> RobotCommon.currentState = state);
+    SmartDashboard.putData("Robot State Chooser", robotStateChooser);
+
+    SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
+    for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
+      shiftsChooser.addOption(state.name(), state);
+    }
+    shiftsChooser.onChange(state -> RobotCommon.currentShift = state);
+    SmartDashboard.putData("Shifts Chooser", shiftsChooser);
   }
 
   /**
@@ -63,34 +80,37 @@ public class RobotContainer implements Sendable {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  public static boolean isShooting = false;
+
   private void configureBindings() {
-    climb.setDefaultCommand(command);
-  }
-
-  public static boolean getIsRed() {
-    return isRed;
-  }
-
-  public static void setIsRed(boolean isRed) {
-    RobotContainer.isRed = isRed;
-  }
-
-  public static boolean getIsComp() {
-    return isComp;
-  }
-
-  public static void setIsComp(boolean isComp) {
-    RobotContainer.isComp = isComp;
-    if (!hasRemovedFromLog && isComp) {
-      hasRemovedFromLog = true;
-      LogManager.removeInComp();
-    }
+    // DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    // chassis.setDefaultCommand(driveCommand);
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("isRed", RobotContainer::getIsRed, RobotContainer::setIsRed);
-    builder.addBooleanProperty("isComp", RobotContainer::getIsComp, RobotContainer::setIsComp);
+    builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
+    builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
+        (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
+        (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+  }
+
+  static public void updateCommon() {
+    Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
+    RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle
+        - RobotCommon.currentRobotPose.getRotation().getRadians();
+
+    Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
+    RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
+    RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle
+        - RobotCommon.futureRobotPose.getRotation().getRadians();
+
   }
 
   /**
