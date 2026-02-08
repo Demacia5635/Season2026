@@ -15,10 +15,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.ShooterTsting;
+import frc.robot.Shooter.subsystem.Shooter;
+import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.Shooter.subsystem.Shooter;
 
 
@@ -36,10 +40,10 @@ public class RobotContainer implements Sendable {
   Field2d field2d;
   Field2d questField2d;
   ShooterTsting shooterTsting;
-  // public static Chassis chassis;
+  public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
-  Shooter shooter;
-
+  // Shooter shooter;
+  //TODO: rettorn the shooter
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -49,10 +53,10 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
-    shooter = new Shooter();
-    shooterTsting = new ShooterTsting(shooter, driverController);
-    shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
+    chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    // shooter = new Shooter();
+    // shooterTsting = new ShooterTsting(shooter, driverController);
+    // shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
 
     //SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
@@ -94,10 +98,10 @@ public class RobotContainer implements Sendable {
   public static boolean isShooting = false;
 
   private void configureBindings() {
-    //DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
     //ShooterCommand shooterCommand = new ShooterCommand(shooter, chassis);
 
-    // chassis.setDefaultCommand(driveCommand);
+    chassis.setDefaultCommand(driveCommand);
     // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
     // driverController.downButton().onTrue(shooterCommand);
    
