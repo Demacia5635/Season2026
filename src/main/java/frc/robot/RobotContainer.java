@@ -53,6 +53,7 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter();
     shooterTsting = new ShooterTsting(shooter, driverController);
     shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
+
     //SmartDashboard.putData("chassis/Reset Module Back Left", new ResetModule(chassis, 2, 0).ignoringDisable(true));
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
