@@ -17,5 +17,5 @@ public class IntakeConstants {
     public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(21, Canbus.Rio, "Indexer on top motor").withBrake(true).withInvert(true);
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(22, "Indexer close motor").withBrake(true);
     public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(23, "Indexer far motor").withBrake(true).withInvert(true);
-    public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(24, Canbus.Rio, "Battery Motor").withBrake(true).withInvert(false).withPID(20, 0, 0, 0, 0, 0, 0).withRadiansMotor(64);
+    public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(24, Canbus.Rio, "Battery Motor").withBrake(true).withInvert(false).withPID(20, 0, 0, 0, 0, 0, 0).withRadiansMotor(36);
 }
