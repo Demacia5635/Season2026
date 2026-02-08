@@ -6,6 +6,7 @@ package frc.robot.intake.command;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotCommon;
+import frc.robot.intake.IntakeConstants;
 import frc.robot.intake.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -27,13 +28,75 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    switch (RobotCommon.currentState) {
+    switch (RobotCommon.currentState) { //ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb, Climb, GetOffClimb
       case ShootWithIntake:
-      case DriveWhileIntake:
-        intakeSubsystem.setDutyIntake(0.8);
+        //intake
+        intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+
+        //indexer on top
+        intakeSubsystem.setDutyIndexerOnTop(IntakeConstants.MAX_POWER);
+
+        //indexer close
+        intakeSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+
+        //indexer far
+        intakeSubsystem.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+
+        //battery
+        if (intakeSubsystem.isAtMax(Math.toRadians(15))) {
+          intakeSubsystem.setPower(-IntakeConstants.MAX_POWER);
+        } else if(intakeSubsystem.isAtMin(Math.toRadians(15))){
+          intakeSubsystem.setPower(IntakeConstants.MAX_POWER);
+        }
         break;
-      default:
+
+      case DriveWhileIntake:
+        //intake
+        intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+
+        //indexer on top
+        intakeSubsystem.setDutyIndexerOnTop(-IntakeConstants.MAX_POWER);
+
+        //indexer close
+        intakeSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+
+        //indexer far
+        intakeSubsystem.setDutyIndexerFar(-IntakeConstants.MAX_POWER);
+
+        //battery
+        intakeSubsystem.setPosition(0);
+        break;
+
+      case ShootWithoutIntake:
+        //intake
         intakeSubsystem.stopIntake();
+
+        //indexer on top
+        intakeSubsystem.setDutyIndexerOnTop(IntakeConstants.MAX_POWER);
+
+        //indexer close
+        intakeSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+
+        //indexer far
+        intakeSubsystem.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+
+        //battery
+        if (intakeSubsystem.isAtMax(Math.toRadians(15))) {
+          intakeSubsystem.setPower(-IntakeConstants.MAX_POWER);
+        } else if(intakeSubsystem.isAtMin(Math.toRadians(15))){
+          intakeSubsystem.setPower(IntakeConstants.MAX_POWER);
+        }
+        break;
+      
+      case Drive:
+      case PrepareClimb:
+      case Climb:
+      case GetOffClimb:
+        intakeSubsystem.stopIntake();
+        intakeSubsystem.stopIndexerOnTop();
+        intakeSubsystem.stopIndexerClose();
+        intakeSubsystem.stopIndexerFar();
+        intakeSubsystem.setPosition(0);
         break;
     }
   }

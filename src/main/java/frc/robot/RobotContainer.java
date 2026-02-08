@@ -6,26 +6,17 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.hardware.TalonFX;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXConfig;
@@ -33,9 +24,8 @@ import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.utils.sensors.LimitSwitchConfig;
-import frc.robot.intake.command.BatteryLid;
-import frc.robot.intake.command.CloseBattery;
-import frc.robot.intake.command.ShootBattery;
+import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.command.IntakeCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -56,11 +46,11 @@ public class RobotContainer implements Sendable {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
-  final TalonSRXMotor redlineLeft;
-  final TalonSRXMotor redlineRight;
-  final TalonFXMotor krakenMotor;
-  
-  private BatteryLid batterySubsystem;
+  // final TalonSRXMotor redlineLeft;
+  // final TalonSRXMotor redlineRight;
+  // final TalonFXMotor krakenMotor;
+  IntakeSubsystem intake;
+  IntakeCommand intakeCommand;
 
   static double krakenPow = 0d;
   static double leftPow = 0d;
@@ -74,35 +64,36 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    intake = new IntakeSubsystem();
     SmartDashboard.putData("RC", this);
 
-    krakenMotor = new TalonFXMotor(new TalonFXConfig(21, Canbus.Rio, "Feeder").withBrake(true).withInvert(true));
-    redlineLeft = new TalonSRXMotor(new TalonSRXConfig(22, "RedLine Left motor").withBrake(true));
-    redlineRight = new TalonSRXMotor(new TalonSRXConfig(23, "Red Line Right Motor").withBrake(true).withInvert(true));
-   
-    batterySubsystem = new BatteryLid();
-    Command shinuaCommand = new FunctionalCommand(
-        () -> {
-        },
-        () -> {
-          krakenMotor.setDuty(krakenPow);
-          redlineLeft.setDuty(leftPow);
-          redlineRight.setDuty(rightPow);
-        },
-        (isInterrupted) -> {
-          krakenMotor.stop();
-          redlineLeft.stop();
-          redlineRight.stop();
-        },
-        () -> false);
-    SmartDashboard.putData("Shinua Command", shinuaCommand);
-    SmartDashboard.putData("Reset Motor position min", new InstantCommand(() -> {
-      batterySubsystem.setEncoderPosition(0); 
-    }).ignoringDisable(true));
+
+    // krakenMotor = new TalonFXMotor(new TalonFXConfig(21, Canbus.Rio, "Feeder").withBrake(true).withInvert(true));
+    // redlineLeft = new TalonSRXMotor(new TalonSRXConfig(22, "RedLine Left motor").withBrake(true));
+    // redlineRight = new TalonSRXMotor(new TalonSRXConfig(23, "Red Line Right Motor").withBrake(true).withInvert(true));
+
+    // Command shinuaCommand = new FunctionalCommand(
+    //     () -> {
+    //     },
+    //     () -> {
+    //       krakenMotor.setDuty(krakenPow);
+    //       redlineLeft.setDuty(leftPow);
+    //       redlineRight.setDuty(rightPow);
+    //     },
+    //     (isInterrupted) -> {
+    //       krakenMotor.stop();
+    //       redlineLeft.stop();
+    //       redlineRight.stop();
+    //     },
+    //     () -> false);
+    // SmartDashboard.putData("Shinua Command", shinuaCommand);
+    // SmartDashboard.putData("Reset Motor position min", new InstantCommand(() -> {
+    //   intake.setEncoderPosition(0); 
+    // }).ignoringDisable(true));
     
 
-    SmartDashboard.putData("Shoot Battery", new ShootBattery(batterySubsystem));
-    SmartDashboard.putData("Close Lid", new CloseBattery(batterySubsystem));
+    // SmartDashboard.putData("Shoot Battery", new ShootBattery(batterySubsystem));
+    // SmartDashboard.putData("Close Lid", new CloseBattery(batterySubsystem));
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
     // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
@@ -145,15 +136,17 @@ public class RobotContainer implements Sendable {
   public static boolean isShooting = false;
 
   private void configureBindings() {
+    intakeCommand = new IntakeCommand(intake);
+    intake.setDefaultCommand(intakeCommand);
     // DriveCommand driveCommand = new DriveCommand(chassis, driverController);
     // chassis.setDefaultCommand(driveCommand);
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("kraken pow", RobotContainer::getKrakenPow, RobotContainer::setKrakenPow);
-    builder.addDoubleProperty("left pow", RobotContainer::getLeftPow, RobotContainer::setLeftPow);
-    builder.addDoubleProperty("right pow", RobotContainer::getRightPow, RobotContainer::setRightPow);
+    // builder.addDoubleProperty("kraken pow", RobotContainer::getKrakenPow, RobotContainer::setKrakenPow);
+    // builder.addDoubleProperty("left pow", RobotContainer::getLeftPow, RobotContainer::setLeftPow);
+    // builder.addDoubleProperty("right pow", RobotContainer::getRightPow, RobotContainer::setRightPow);
 
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
@@ -189,41 +182,41 @@ public class RobotContainer implements Sendable {
     return null;
   }
 
-  public TalonSRXMotor getRedlineLeft() {
-    return redlineLeft;
-  }
+  // public TalonSRXMotor getRedlineLeft() {
+  //   return redlineLeft;
+  // }
 
-  public TalonSRXMotor getRedlineRight() {
-    return redlineRight;
-  }
+  // public TalonSRXMotor getRedlineRight() {
+  //   return redlineRight;
+  // }
 
-  public TalonFXMotor getKrakenMotor() {
-    return krakenMotor;
-  }
+  // public TalonFXMotor getKrakenMotor() {
+  //   return krakenMotor;
+  // }
 
-  public static double getKrakenPow() {
-    return krakenPow;
-  }
+  // public static double getKrakenPow() {
+  //   return krakenPow;
+  // }
 
-  public static void setKrakenPow(double krakenPow) {
-    RobotContainer.krakenPow = krakenPow;
-  }
+  // public static void setKrakenPow(double krakenPow) {
+  //   RobotContainer.krakenPow = krakenPow;
+  // }
 
-  public static double getLeftPow() {
-    return leftPow;
-  }
+  // public static double getLeftPow() {
+  //   return leftPow;
+  // }
 
-  public static void setLeftPow(double leftPow) {
-    RobotContainer.leftPow = leftPow;
-  }
+  // public static void setLeftPow(double leftPow) {
+  //   RobotContainer.leftPow = leftPow;
+  // }
 
-  public static double getRightPow() {
-    return rightPow;
-  }
+  // public static double getRightPow() {
+  //   return rightPow;
+  // }
 
-  public static void setRightPow(double rightPow) {
-    RobotContainer.rightPow = rightPow;
-  }
+  // public static void setRightPow(double rightPow) {
+  //   RobotContainer.rightPow = rightPow;
+  // }
 
   public static boolean isShooting() {
     return isShooting;
