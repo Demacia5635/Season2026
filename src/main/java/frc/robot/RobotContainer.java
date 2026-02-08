@@ -43,7 +43,7 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     climb = new Climb();
-    controller = new CommandController(1, ControllerType.kXbox);
+    controller = new CommandController(0, ControllerType.kXbox);
     command = new ControllerClimb(controller, climb);
     // Configure the trigger bindings
     configureBindings();
