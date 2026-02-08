@@ -62,11 +62,6 @@ public class Climb extends SubsystemBase {
     return leverMotor.getCurrentAngle();
   }
 
-    public double getArmsAngle() {
-    return armsMotor.getCurrentAngle();
-  }
-
-
   public void setArmsAngle(double angle) {
     armsMotor.setAngle(angle);
   }
@@ -86,7 +81,7 @@ public class Climb extends SubsystemBase {
   public double getCurrentAmpersLever() {
     return leverMotor.getCurrentCurrent();
   }
-  public double getDigitalEncoderAngle() {
+  public double getDigitalEncoderAngle() {//arms angle
     return digitalEncoder.get();
   }
 

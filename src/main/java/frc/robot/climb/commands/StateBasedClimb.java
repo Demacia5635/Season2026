@@ -24,16 +24,11 @@ public class StateBasedClimb extends Command {
   private boolean IS_AT_GROUND;
   private boolean IS_READY_TO_CLIMB;
   private boolean IS_RIGHT_CLIMB;
-  private Pose2d targetRightSide = Pose2d.kZero;
-  private Pose2d targetLeftSide = Pose2d.kZero;
-  private Pose2d targetToFullyCloseArms = Pose2d.kZero;
-  private double driveKp = 1.3;
-  private double rotationKp = 2.2;
   private Pose2d chassisPose;
   private Translation2d diff;
-  private  ChassisSpeeds s;
+  private ChassisSpeeds s;
   private double headingDiff;
-
+  private Pose2d targetPose;
   public StateBasedClimb(Climb climb, CommandController controller, Chassis chassis) {
     this.climb = climb;
     this.chassis = chassis;
@@ -56,8 +51,7 @@ public class StateBasedClimb extends Command {
 
     switch (RobotCommon.currentState) {
       case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-        if (climb.getArmsAngle() != ClimbConstants.ARMS_ANGLE_CLOSED
-            || climb.getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSE) {
+        if (climb.getDigitalEncoderAngle() != ClimbConstants.ARMS_ANGLE_CLOSED || climb.getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSE) {
           climb.setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
           climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
         }
@@ -65,31 +59,32 @@ public class StateBasedClimb extends Command {
       case PrepareClimb:
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSE);
-        if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
+        if (climb.getDigitalEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
           climb.stopArms();
         }
-        Pose2d targetPose = IS_RIGHT_CLIMB ? targetRightSide : targetLeftSide;
+         targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide : ClimbConstants.targetLeftSide;
        chassisPose = chassis.getPose();
        diff = targetPose.getTranslation().minus(chassisPose.getTranslation());
         headingDiff = targetPose.getRotation().getRadians() - chassisPose.getRotation().getRadians();
-        s = new ChassisSpeeds(diff.getX() * driveKp, diff.getY() * driveKp, headingDiff * rotationKp);
+        s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, diff.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
         chassis.setVelocities(s);
         break;
       case Climb:
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
-        if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
+        if (climb.getDigitalEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
           climb.stopArms();
           IS_AT_BAR = true;
         }
           if(IS_AT_BAR){
            chassisPose = chassis.getPose();
-          Translation2d diff = targetToFullyCloseArms.getTranslation().minus(chassisPose.getTranslation());
-          ChassisSpeeds s = new ChassisSpeeds(diff.getX() * driveKp, 0, 0);
+           diff = ClimbConstants.targetToFullyCloseArms.getTranslation().minus(chassisPose.getTranslation());
+           s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, 0, 0);
           chassis.setVelocities(s);
-          if (chassisPose.getTranslation().getDistance(targetToFullyCloseArms.getTranslation()) < ClimbConstants.DISTANCE_TOLERANCE_TO_CLOSE_ARMS) {
+          }
+          if (chassisPose.getTranslation().getDistance(ClimbConstants.targetToFullyCloseArms.getTranslation()) < ClimbConstants.CHASSIS_TOLERANCE) {
             IS_READY_TO_CLIMB = true;
           }
-        }
+        
         if (IS_READY_TO_CLIMB) {
           climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
         }
@@ -104,9 +99,13 @@ public class StateBasedClimb extends Command {
           IS_AT_GROUND = true;
         }
         if (IS_AT_GROUND) {
+          chassisPose = chassis.getPose();
+          diff = ClimbConstants.targetToOpenArmsAfterClimb.getTranslation().minus(chassisPose.getTranslation());
+           s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, 0, 0);
+          chassis.setVelocities(s);
           climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
         }
-        if (climb.getArmsAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
+        if (climb.getDigitalEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
           climb.stopArms();
         }
         break;
