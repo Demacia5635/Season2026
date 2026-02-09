@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.chassis.Chassis;
@@ -42,7 +43,7 @@ public class RobotContainer implements Sendable {
   ShooterTsting shooterTsting;
   public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
-  // Shooter shooter;
+  Shooter shooter;
   //TODO: rettorn the shooter
   // The robot's subsystems and commands are defined here...
 
@@ -54,7 +55,12 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
     chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
-    // shooter = new Shooter();
+    shooter = new Shooter();
+    shooter.setDefaultCommand(new ShooterTsting(shooter));
+    SmartDashboard.putData("Start feeder",new InstantCommand(()->shooter.setFeederPower(0.4)));
+    
+    SmartDashboard.putData("STop feeder",new InstantCommand(()->shooter.setFeederPower(0)));
+
     // shooterTsting = new ShooterTsting(shooter, driverController);
     // shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
 

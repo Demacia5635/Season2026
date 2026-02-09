@@ -17,7 +17,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
 
   private TalonFXMotor shooterMotor;
-  private TalonFXMotor fedderMotor;
+  private TalonFXMotor feederMotor;
   private TalonFXMotor hoodMotor;
 
   private DigitalEncoder hoodEncoder;
@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
-    fedderMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
+    feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     hoodMotor.configPidFf(0);
     shooterMotor.configPidFf(0);
@@ -92,15 +92,18 @@ public class Shooter extends SubsystemBase {
 
   public void setHoodAngle(double angle) {
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    hoodMotor.setMotion(getHoodAngleMotor() + (angle-getHoodAngle()));
+    hoodMotor.setMotion(getHoodAngleMotor() + (angle - getHoodAngle()));
     SmartDashboard.putNumber("Hood Target", angle);
   }
 
-  public double getHoodAngleMotor(){
+  public double getHoodAngleMotor() {
     return hoodMotor.getPosition().getValueAsDouble();
   }
+
   public double getHoodAngle() {
-    return (hoodEncoder.get() * 0.5) + ShooterConstans.HOOD_OFFSET;
+    return MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5) - ShooterConstans.HOOD_OFFSET);
+   
+    // return (hoodEncoder.get() * 0.5) + ShooterConstans.HOOD_OFFSET;
   }
 
   public void setVelocitiesAndAngle(double vel, double angle) {
@@ -109,9 +112,13 @@ public class Shooter extends SubsystemBase {
     setHoodAngle(angle);
   }
 
-  public void setIndexerVel(double vel) {
-    fedderMotor.setVelocity(vel);
+  public void setFeederPower(double power) {
+    feederMotor.set(power);
   }
+
+  // public void setIndexerVel(double vel) {
+  // feederMotor.setVelocity(vel);
+  // }
 
   public boolean canShoot() {
     // double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
@@ -153,6 +160,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-   
+
   }
 }

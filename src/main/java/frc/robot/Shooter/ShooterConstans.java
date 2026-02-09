@@ -60,6 +60,7 @@ public class ShooterConstans {
 
         public static final TalonFXConfig FEEDER_CONFIG = new TalonFXConfig(FEEDER_ID, SHOOTER_CANBUS,FEEDER_NAME)
                         .withRadiansMotor(FEEDER_GEAR_RATIO)
+                        .withBrake(false)
                         .withInvert(true);
 
         public static final int HOOD_ID = 35;
@@ -89,7 +90,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 0;
         public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(1);
+        public static final double HOOD_OFFSET = -Math.toRadians(55);
 
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
         .withInvert(true);

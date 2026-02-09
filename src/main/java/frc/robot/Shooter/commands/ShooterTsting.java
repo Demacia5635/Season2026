@@ -16,11 +16,10 @@ public class ShooterTsting extends Command {
 
   Shooter shooter;
 
-  CommandController controller;
-
+  double wantedFlywheelVel = 0;
   double wantedAngle = 0;
-  public ShooterTsting(Shooter shooter,CommandController controller) {
-    this.controller = controller;
+
+  public ShooterTsting(Shooter shooter) {
     this.shooter = shooter;
     addRequirements(shooter);
     SmartDashboard.putData("Shooter Testing Command", this);
@@ -29,23 +28,28 @@ public class ShooterTsting extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
-      super.initSendable(builder);
-      builder.addDoubleProperty("Wanted angle", ()->wantedAngle, (x)->wantedAngle=x);
+    // TODO Auto-generated method stub
+    super.initSendable(builder);
+    builder.addDoubleProperty("Wanted angle", () -> wantedAngle, (x) -> wantedAngle = x);
+    builder.addDoubleProperty("Wanted flywheel vel", () -> wantedFlywheelVel, (x) -> wantedFlywheelVel = x);
   }
+
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     shooter.setHoodAngle(Math.toRadians(wantedAngle));
+    shooter.setFlywheelVel(wantedFlywheelVel);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
