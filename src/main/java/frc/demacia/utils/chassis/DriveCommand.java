@@ -55,7 +55,7 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (RobotCommon.currentState == robotStates.ShootWithIntake) {
+    if (RobotCommon.currentState == robotStates.ShootWithIntake || RobotCommon.currentState == robotStates.DriveWhileIntake) {
       intake.setDutyIntake(0.8);
       speeds = intake.AutoIntakeSpeeds();
 
