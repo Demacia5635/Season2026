@@ -47,6 +47,9 @@ public class TagPose {
   // vector for camera
   private Translation2d cameraToTag;
 
+  //vector for turret
+  private Translation2d turretToTag;
+
   // vector for robot
   private Translation2d robotToTag;
   private Translation2d originToRobot;
@@ -136,6 +139,13 @@ public TagPose(Camera camera){
    * * @return Translation2d representing vector to tag
    */
   public Translation2d getRobotToTagFieldRel() {
+    if(camera.getIsOnTurret()){
+      cameraToTag = new Translation2d(GetDistFromCamera(),
+        Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
+      turretToTag = (camera.getTurretToCamPosition().toTranslation2d().plus(cameraToTag)).rotateBy(camera.getTurrentAngle());
+      robotToTag = (camera.getRobotToCamPosition().toTranslation2d().plus(cameraToTag)).rotateBy(RobotAngleCommon);
+      return robotToTag;
+    }
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(GetDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));

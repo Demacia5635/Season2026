@@ -21,7 +21,7 @@ public class Camera {
     private String tableName;
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
-    private Supplier<Rotation2d> turretAngle;
+    private Rotation2d turretAngle;
     private Translation3d turretToCamPosition;
     private boolean isCroping;
     private boolean isObjectCamera = false;
@@ -42,7 +42,7 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToCamPosition,Translation3d turretToCamPosition, double pitch, double yaw,Supplier<Rotation2d> turretAngle, boolean isObjectCamera) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isObjectCamera,Rotation2d turretAngle,Translation3d turretToCamPosition) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.turretToCamPosition = turretToCamPosition;
@@ -54,7 +54,7 @@ public class Camera {
         isCroping = false;
     }
 
-    public Translation3d getturretToCamPosition(){
+    public Translation3d getTurretToCamPosition(){
         return turretToCamPosition;
     }
 
@@ -62,13 +62,13 @@ public class Camera {
         return isOnTurret;
     }
 
-    public Supplier<Rotation2d> getTurrentAngle(){
+    public Rotation2d getTurrentAngle(){
 
         return turretAngle;
     }
 
     public Translation3d getRobotToCamPosition() {
-        return !isOnTurret ? robotToCamPosition : robotToCamPosition.rotateBy(new Rotation3d(turretAngle.get().unaryMinus()));
+        return  robotToCamPosition;
     }
 
     public double getHeight() {

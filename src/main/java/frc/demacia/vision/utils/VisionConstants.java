@@ -211,7 +211,7 @@ public class VisionConstants {
     public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
             new SimpleMatrix(
                 new double[]
-                {0.05, 0.05, 0.035}
+                {0.05, 0.05, 0.1}
             )
         );
 }
