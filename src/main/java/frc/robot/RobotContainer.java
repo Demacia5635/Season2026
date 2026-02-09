@@ -13,6 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.chassis.DriveCommand;
+import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.controller.CommandController.ControllerType;
+import frc.robot.chassis.MK4iChassisConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,8 +30,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer implements Sendable {
 
-  // public static Chassis chassis;
-  // CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  public static Chassis chassis;
+  CommandController driverController = new CommandController(0, ControllerType.kPS5);
 
   // The robot's subsystems and commands are defined here...
 
@@ -37,7 +42,7 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 
     // Configure the trigger bindings
     addStatesToElasticForTesting();
@@ -77,8 +82,8 @@ public class RobotContainer implements Sendable {
   public static boolean isShooting = false;
 
   private void configureBindings() {
-    // DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    // chassis.setDefaultCommand(driveCommand);
+    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    chassis.setDefaultCommand(driveCommand);
   }
 
   @Override

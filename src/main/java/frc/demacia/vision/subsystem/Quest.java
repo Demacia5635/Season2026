@@ -3,6 +3,7 @@ package frc.demacia.vision.subsystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -99,6 +100,6 @@ public class Quest extends SubsystemBase {
 
 
   public void questResetfromRobotToQuest(Rotation2d angle){
-    questNav.setPose(new Pose3d(getRobotPose2d().rotateBy(angle)));
+    setQuestPose(new Pose3d(getRobotPose2d().getX(),getRobotPose2d().getY(),currentQuestPose.getZ(),new Rotation3d(angle)));
   }
 }

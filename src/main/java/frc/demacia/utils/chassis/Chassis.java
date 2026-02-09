@@ -407,9 +407,9 @@ public class Chassis extends SubsystemBase {
             updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
             visionFusePoseEstimation = null;
         }
-        if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        // if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
             updateQuest(quest.getRobotPose2d());
-        }
+        // }
         updateCommon();
     }
 
