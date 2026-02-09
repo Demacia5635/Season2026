@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathSharedStore;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.proto.Rotation2dProto;
 import edu.wpi.first.math.geometry.struct.Rotation2dStruct;
 import edu.wpi.first.math.interpolation.Interpolatable;
@@ -377,6 +378,10 @@ public class Rotation2dDemacia
   @Override
   public Rotation2dDemacia interpolate(Rotation2dDemacia endValue, double t) {
     return new Rotation2dDemacia(m_value).plus(((new Rotation2dDemacia(endValue.m_value)).minus(this).times(MathUtil.clamp(t, 0, 1))));
+  }
+
+  public Rotation2d getRotation2d() {
+    return new Rotation2d(m_value);
   }
 
   /** Rotation2d protobuf for serialization. */

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.proto.Pose2dProto;
 import edu.wpi.first.math.geometry.struct.Pose2dStruct;
@@ -456,6 +457,10 @@ public class Pose2dDemacia implements Interpolatable<Pose2dDemacia>, ProtobufSer
       var scaledTwist = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
       return this.exp(scaledTwist);
     }
+  }
+
+  public Pose2d getPose2d() {
+    return new Pose2d(getX(), getY(), m_rotation.getRotation2d());
   }
 
   /** Pose2d protobuf for serialization. */

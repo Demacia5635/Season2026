@@ -8,6 +8,8 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,10 +34,13 @@ public class RobotContainer implements Sendable {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
+  private static final PowerDistribution PDH = new PowerDistribution(16, ModuleType.kRev);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    PDH.setSwitchableChannel(true);
     SmartDashboard.putData("RC", this);
     // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 

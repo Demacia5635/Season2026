@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.proto.Translation2dProto;
 import edu.wpi.first.math.geometry.struct.Translation2dStruct;
 import edu.wpi.first.math.interpolation.Interpolatable;
@@ -399,6 +400,10 @@ public class Translation2dDemacia
     return new Translation2dDemacia(
         MathUtil.interpolate(this.getX(), endValue.getX(), t),
         MathUtil.interpolate(this.getY(), endValue.getY(), t));
+  }
+
+  public Translation2d getTranslation2d() {
+    return new Translation2d(m_x, m_y);
   }
 
   /** Translation2d protobuf for serialization. */

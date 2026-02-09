@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.proto.Transform2dProto;
 import edu.wpi.first.math.geometry.struct.Transform2dStruct;
 import edu.wpi.first.math.numbers.N3;
@@ -283,6 +284,10 @@ public class Transform2dDemacia implements ProtobufSerializable, StructSerializa
   @Override
   public int hashCode() {
     return Objects.hash(m_translation, m_rotation);
+  }
+
+  public Transform2d getTransform2d() {
+    return new Transform2d(m_translation.getX(), m_translation.getY(), m_rotation.getRotation2d());
   }
 
   /** Transform2d protobuf for serialization. */
