@@ -86,6 +86,10 @@ public TagPose(Camera camera){
     id = (int) Table.getEntry("tid").getDouble(0.0);
     speeds = robotRelativeSpeeds;
     RobotAngleCommon = robotAngle;
+    if(camera.getIsOnTurret()){
+      camera.setTurretAngle(new Rotation2d().fromDegrees(currentAngleFormTarget));
+    } 
+
   }
 
 

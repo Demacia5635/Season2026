@@ -204,10 +204,9 @@ public class VisionConstants {
         Z_OFFSET_QUEST, 
         YAW_OFFSET_QUEST
     );
-    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false, true));
+    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.329, -0.24325, 0.3195), -24, 0, false, true));
 
-    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.088, -0.126, 0.535), 30, 0, false, false));
-
+    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.35345), 30.0, 0.0, false,  Rotation2d.kZero, new Translation3d(0.11307,0.14305,0.18386) ));
     public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
             new SimpleMatrix(
                 new double[]

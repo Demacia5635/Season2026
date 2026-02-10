@@ -58,6 +58,9 @@ public class Camera {
     public Translation3d getTurretToCamPosition(){
         return turretToCamPosition;
     }
+    public void setTurretAngle(Rotation2d turretAngle){
+        this.turretAngle = turretAngle;
+    }
 
     public boolean getIsOnTurret(){
         return isOnTurret;

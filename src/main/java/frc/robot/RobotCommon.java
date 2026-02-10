@@ -28,6 +28,7 @@ public class RobotCommon {
     public static double futureAngleFormTarget = 0;
     public static double currentWantedTurretAngle = 0;
     public static double futureWantedTurretAngle = 0;
+    public static double currentTurrentAngle = 0;
     public static boolean isRed = false;
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
