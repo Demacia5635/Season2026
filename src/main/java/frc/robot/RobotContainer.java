@@ -22,9 +22,8 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.ShooterTsting;
-import frc.robot.Shooter.subsystem.Shooter;
+// import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
-import frc.robot.Shooter.subsystem.Shooter;
 
 
 /**
@@ -54,7 +53,7 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+   // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
     shooter.setDefaultCommand(new ShooterTsting(shooter));
     SmartDashboard.putData("Start feeder",new InstantCommand(()->shooter.setFeederPower(0.4)));
@@ -68,7 +67,7 @@ public class RobotContainer implements Sendable {
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addStatesToElasticForTesting();
-    configureBindings();
+    configureBindings(); 
   }
 
   public void addStatesToElasticForTesting() {
@@ -107,7 +106,7 @@ public class RobotContainer implements Sendable {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
     //ShooterCommand shooterCommand = new ShooterCommand(shooter, chassis);
 
-    chassis.setDefaultCommand(driveCommand);
+ //   chassis.setDefaultCommand(driveCommand);
     // driverController.leftButton().onTrue(new ShooterCommand(shooter, chassis, driverController));
     // driverController.downButton().onTrue(shooterCommand);
    
