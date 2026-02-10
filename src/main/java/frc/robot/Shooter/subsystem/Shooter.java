@@ -31,6 +31,7 @@ public class Shooter extends SubsystemBase {
     feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     hoodMotor.configPidFf(0);
+    hoodMotor.configMotionMagic();
     shooterMotor.configPidFf(0);
     SmartDashboard.putData("Shooter", this);
   }
@@ -92,7 +93,12 @@ public class Shooter extends SubsystemBase {
 
   public void setHoodAngle(double angle) {
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    hoodMotor.setMotion(getHoodAngleMotor() + (angle - getHoodAngle()));
+    
+    if(Math.abs(angle - getHoodAngle()) < Math.toRadians(0.5)){
+      hoodMotor.set(0);
+      return;
+    }
+    hoodMotor.setMotionExpo(getHoodAngleMotor() + (angle - getHoodAngle()));
     SmartDashboard.putNumber("Hood Target", angle);
   }
 

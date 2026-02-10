@@ -66,16 +66,16 @@ public class ShooterConstans {
         public static final int HOOD_ID = 35;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
-        public static final double HOOD_KP = 1;
+        public static final double HOOD_KP = 2;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
-        public static final double HOOD_KS = 0.09374;
-        public static final double HOOD_KV = 1.87274;
-        public static final double HOOD_KA = 0.17723;
+        public static final double HOOD_KS = 0.11388;
+        public static final double HOOD_KV = 1.87478;
+        public static final double HOOD_KA = 0.25343;
         public static final double HOOD_KG = 0;
-        public static final double HOOD_MAX_VELOCITY = 2;
-        public static final double HOOD_MAX_ACCEL = 2 * Math.PI;
-        public static final double HOOD_MAX_JERK = 10 * Math.PI;
+        public static final double HOOD_MAX_VELOCITY = Math.toRadians(130);
+        public static final double HOOD_MAX_ACCEL = Math.toRadians(180);
+        public static final double HOOD_MAX_JERK = Math.toRadians(400);
         public static final double HOOD_GEAR_RATIO = 128;
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)

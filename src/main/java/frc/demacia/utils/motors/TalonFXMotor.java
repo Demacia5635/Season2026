@@ -6,6 +6,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -257,6 +258,11 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     public void setMotion(double position, double feedForward) {
         setControl(motionMagicVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
         controlMode = ControlMode.MOTION;  
+    }
+
+    MotionMagicExpoVoltage motionMagicExpoVoltage = new MotionMagicExpoVoltage(0); 
+    public void setMotionExpo(double position){
+      setControl(motionMagicExpoVoltage.withPosition(position).withFeedForward(positionFeedForward(position)));
     }
 
     @Override

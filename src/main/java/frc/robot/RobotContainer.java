@@ -21,7 +21,9 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.Shooter.commands.FlywheelTesting;
+import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterTsting;
+import frc.robot.Shooter.subsystem.Shooter;
 // import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.chassis.MK4iChassisConstants;
 
@@ -55,6 +57,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("RC", this);
    // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     shooter = new Shooter();
+    // shooter.setDefaultCommand(new HoodTesting(shooter , driverController));
     shooter.setDefaultCommand(new ShooterTsting(shooter));
     SmartDashboard.putData("Start feeder",new InstantCommand(()->shooter.setFeederPower(0.4)));
     
@@ -67,7 +70,7 @@ public class RobotContainer implements Sendable {
     // Configure the trigger bindings
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addStatesToElasticForTesting();
-    configureBindings(); 
+    // configureBindings(); 
   }
 
   public void addStatesToElasticForTesting() {
