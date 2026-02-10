@@ -4,18 +4,11 @@
 
 package frc.demacia.vision.utils;
 
-import org.ejml.simple.SimpleMatrix;
-
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.TagPose;
 
 /**
  * Constants and configuration values for AprilTag vision processing.
@@ -190,10 +183,10 @@ public class VisionConstants {
 
     // Quest VR headset mounting configuration
     // TODO: Find the right offsets for your robot's Quest mounting position
-    public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(0, 0, 180);
-    public static final double Y_OFFSET_QUEST = 0.2896;
-    public static final double X_OFFSET_QUEST = 0.1462;
-    public static final double Z_OFFSET_QUEST = 0.460;
+    public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(Rotation2d.kCCW_90deg);
+    public static final double X_OFFSET_QUEST = 0.0;
+    public static final double Y_OFFSET_QUEST = 0.0;
+    public static final double Z_OFFSET_QUEST = 0.52;
     
     /**
      * Transform from the center of the robot to Quest headset position in 3d
@@ -204,14 +197,4 @@ public class VisionConstants {
         Z_OFFSET_QUEST, 
         YAW_OFFSET_QUEST
     );
-    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.355, -0.07, 0.570), 27, 194, false, true));
-
-    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.088, -0.126, 0.535), 30, 0, false, false));
-
-    public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
-            new SimpleMatrix(
-                new double[]
-                {0.05, 0.05, 0.1}
-            )
-        );
 }

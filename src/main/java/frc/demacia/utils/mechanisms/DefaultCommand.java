@@ -15,7 +15,7 @@ public class DefaultCommand extends Command {
   StateBaseMechanism mechanism;
   MotorInterface[] motors;
   int length;
-  Runnable[] controls;
+  Runnable[] Controls;
 
   /** * Creates a new DefaultCommand.
    * Initializes a set of runnables to control each motor based on the provided control modes.
@@ -26,35 +26,35 @@ public class DefaultCommand extends Command {
     this.mechanism = mechanism;
     motors = mechanism.getMotors();
     length = Math.min(motors.length, controlModes.length);
-    controls = new Runnable[length];
+    Controls = new Runnable[length];
     for (int i = 0; i < length; i++) {
       switch (controlModes[i]) {
         case DUTYCYCLE:
           final int powerIndex = i;
-          controls[i] = () -> mechanism.setPower(powerIndex, mechanism.getValue(powerIndex));
+          Controls[i] = () -> mechanism.setPower(powerIndex, mechanism.getValue(powerIndex));
           break;
         case VOLTAGE:
           final int voltageIndex = i;
-          controls[i] = () -> mechanism.setVoltage(voltageIndex, mechanism.getValue(voltageIndex));
+          Controls[i] = () -> mechanism.setVoltage(voltageIndex, mechanism.getValue(voltageIndex));
           break;
         case VELOCITY:
           final int velocityIndex = i;
-          controls[i] = () -> mechanism.setVelocity(velocityIndex, mechanism.getValue(velocityIndex));
+          Controls[i] = () -> mechanism.setVelocity(velocityIndex, mechanism.getValue(velocityIndex));
           break;
         case POSITION_VOLTAGE:
           final int positionVoltageIndex = i;
-          controls[i] = () -> mechanism.setPositionVoltage(positionVoltageIndex, mechanism.getValue(positionVoltageIndex));
+          Controls[i] = () -> mechanism.setPositionVoltage(positionVoltageIndex, mechanism.getValue(positionVoltageIndex));
           break;
         case MOTION:
           final int motionIndex = i;
-          controls[i] = () -> mechanism.setMotion(motionIndex, mechanism.getValue(motionIndex));
+          Controls[i] = () -> mechanism.setMotion(motionIndex, mechanism.getValue(motionIndex));
           break;
         case ANGLE:
           final int angleIndex = i;
-          controls[i] = () -> mechanism.setAngle(angleIndex, mechanism.getValue(angleIndex));
+          Controls[i] = () -> mechanism.setAngle(angleIndex, mechanism.getValue(angleIndex));
           break;
         default:
-          controls[i] = () -> {};
+          Controls[i] = () -> {};
           break;
       }
   }
@@ -70,7 +70,7 @@ public class DefaultCommand extends Command {
   @Override
   public void execute() {
     for (int i = 0; i < length; i++) {
-      controls[i].run();
+      Controls[i].run();
     }
   }
 
