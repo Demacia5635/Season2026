@@ -95,10 +95,10 @@ public class Shooter extends SubsystemBase {
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     
     if(Math.abs(angle - getHoodAngle()) < Math.toRadians(0.5)){
-      hoodMotor.set(0);
       return;
+      
     }
-    hoodMotor.setMotionExpo(getHoodAngleMotor() + (angle - getHoodAngle()));
+    hoodMotor.setMotion(getHoodAngleMotor() + (angle - getHoodAngle()));
     SmartDashboard.putNumber("Hood Target", angle);
   }
 
