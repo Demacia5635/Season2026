@@ -25,6 +25,7 @@ public class Camera {
     private Translation3d turretToCamPosition;
     private boolean isCroping;
     private boolean isObjectCamera = false;
+    private Translation3d robotToTurretPosition;
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
@@ -42,9 +43,9 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isObjectCamera,Rotation2d turretAngle,Translation3d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,Rotation2d turretAngle,Translation3d turretToCamPosition) {
         this.name = name;
-        this.robotToCamPosition = robotToCamPosition;
+        this.robotToTurretPosition = robotToTurretPosition;
         this.turretToCamPosition = turretToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
@@ -70,9 +71,12 @@ public class Camera {
     public Translation3d getRobotToCamPosition() {
         return  robotToCamPosition;
     }
+    public Translation3d getRobotToTurretPosition(){
+        return robotToTurretPosition;
+    }
 
     public double getHeight() {
-        return robotToCamPosition.getZ();
+        return !isOnTurret ? robotToCamPosition.getZ() : robotToCamPosition.getZ()+turretToCamPosition.getZ();
     }
 
     public double getPitch() {

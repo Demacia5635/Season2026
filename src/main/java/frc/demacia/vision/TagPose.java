@@ -143,7 +143,7 @@ public TagPose(Camera camera){
       cameraToTag = new Translation2d(GetDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
       turretToTag = (camera.getTurretToCamPosition().toTranslation2d().plus(cameraToTag)).rotateBy(camera.getTurrentAngle());
-      robotToTag = (camera.getRobotToCamPosition().toTranslation2d().plus(cameraToTag)).rotateBy(RobotAngleCommon);
+      robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag)).rotateBy(RobotAngleCommon);
       return robotToTag;
     }
     // Convert camera measurements to vector
