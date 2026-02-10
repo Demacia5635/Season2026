@@ -30,6 +30,7 @@ public class Shooter extends SubsystemBase {
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
+    setHoodMotorPosition(MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5) - ShooterConstans.HOOD_OFFSET));
     hoodMotor.configPidFf(0);
     hoodMotor.configMotionMagic();
     shooterMotor.configPidFf(0);
@@ -63,6 +64,7 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
     builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote(), null);
     builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
+    
     // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
     // null);
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
@@ -91,6 +93,7 @@ public class Shooter extends SubsystemBase {
     hoodMotor.set(power);
   }
 
+
   public void setHoodAngle(double angle) {
     angle = MathUtil.clamp(angle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     
@@ -98,7 +101,7 @@ public class Shooter extends SubsystemBase {
       return;
       
     }
-    hoodMotor.setMotion(getHoodAngleMotor() + (angle - getHoodAngle()));
+    hoodMotor.setMotion(angle);
     SmartDashboard.putNumber("Hood Target", angle);
   }
 

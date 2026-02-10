@@ -12,6 +12,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.demacia.utils.sensors.DigitalEncoderConfig;
+
 /** Add your docs here. */
 
 public class ShooterConstans {
@@ -36,16 +37,16 @@ public class ShooterConstans {
         public static final String SHOOTER_MOTOR_NAME = "Shooter Motor";
 
         public static final double SHOOTER_KP = 2;
-        public static final double SHOOTER_KI =0.2;
+        public static final double SHOOTER_KI = 0.2;
         public static final double SHOOTER_KS = 0.16164;
         public static final double SHOOTER_KV = 0.47789;
         public static final double SHOOTER_KA = 0.30462;
 
-        public static final double SHHOTER_KV2 =0.00006;
+        public static final double SHHOTER_KV2 = 0.00006;
 
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(SHOOTER_MOTOR_ID, SHOOTER_CANBUS,
                         SHOOTER_MOTOR_NAME)
-                        .withFeedForward(SHHOTER_KV2,0)
+                        .withFeedForward(SHHOTER_KV2, 0)
                         .withInvert(true)
                         .withBrake(false)
                         .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
@@ -55,10 +56,10 @@ public class ShooterConstans {
         public static final String FEEDER_NAME = "Feeder Motor";
 
         public static final double FEEDER_GEAR_RATIO = 1;
-        
+
         public static final double FEEDER_POWER = 0.8;
 
-        public static final TalonFXConfig FEEDER_CONFIG = new TalonFXConfig(FEEDER_ID, SHOOTER_CANBUS,FEEDER_NAME)
+        public static final TalonFXConfig FEEDER_CONFIG = new TalonFXConfig(FEEDER_ID, SHOOTER_CANBUS, FEEDER_NAME)
                         .withRadiansMotor(FEEDER_GEAR_RATIO)
                         .withBrake(false)
                         .withInvert(true);
@@ -66,16 +67,16 @@ public class ShooterConstans {
         public static final int HOOD_ID = 35;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
-        public static final double HOOD_KP = 0.8;
+        public static final double HOOD_KP = 0.65;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
-        public static final double HOOD_KS = 0.11388;
-        public static final double HOOD_KV = 1.90478;
-        public static final double HOOD_KA = 0.25343;
+        public static final double HOOD_KS = 0.13955;
+        public static final double HOOD_KV = 1.87402;
+        public static final double HOOD_KA = 0.1778;
         public static final double HOOD_KG = 0;
-        public static final double HOOD_MAX_VELOCITY = 1;
-        public static final double HOOD_MAX_ACCEL = 3;
-        public static final double HOOD_MAX_JERK = 10 * Math.PI;
+        public static final double HOOD_MAX_VELOCITY = 2.5;
+        public static final double HOOD_MAX_ACCEL =  Math.PI;
+        public static final double HOOD_MAX_JERK = 0;
         public static final double HOOD_GEAR_RATIO = 128;
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)
@@ -93,9 +94,9 @@ public class ShooterConstans {
         public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
         public static final double HOOD_OFFSET = -Math.toRadians(55);
 
-        public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL, HOOD_ENCODER_NAME)
-        .withInvert(true);
-
+        public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
+                        HOOD_ENCODER_NAME)
+                        .withInvert(true);
 
         public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
         public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
@@ -107,10 +108,10 @@ public class ShooterConstans {
         public static final double shooterDistensFromChassis = 0; // in meters
 
         public enum ShooterState {
-        IDLE,
-        SHOOTING,
-        DELIVERY,
-        TRENCH
+                IDLE,
+                SHOOTING,
+                DELIVERY,
+                TRENCH
         }
 
 }

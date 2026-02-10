@@ -63,6 +63,7 @@ public class RobotContainer implements Sendable {
     
     SmartDashboard.putData("STop feeder",new InstantCommand(()->shooter.setFeederPower(0)));
 
+    SmartDashboard.putData("reset Motor position", new InstantCommand(()->shooter.setHoodMotorPosition(Math.toRadians(45))).ignoringDisable(true));
     // shooterTsting = new ShooterTsting(shooter, driverController);
     // shooter.setDefaultCommand(new FlywheelTesting(shooter, driverController));
 
