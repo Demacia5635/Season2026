@@ -41,7 +41,13 @@ public class Tag extends SubsystemBase {
   private double camToTagPitch;
   private double id;
   private double height;
-  private double dist;
+
+
+  // vector for camera
+  private Translation2d cameraToTag;
+
+  // vector for robot
+  private Translation2d robotToTag;
   private Translation2d originToRobot;
   private Translation2d origintoTag;
   private Translation2d robotToTagRR;
@@ -191,6 +197,33 @@ public class Tag extends SubsystemBase {
     }
     return new Translation2d();
 
+  }
+
+  /**
+   * Calculates vector from robot center to detected AprilTag
+   * Accounts for camera offset from robot center
+   * * @return Translation2d representing vector to tag
+   */
+  public Translation2d getRobotToTagFieldRel() {
+    // Convert camera measurements to vector
+    cameraToTag = new Translation2d(GetDistFromCamera(),
+        Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
+    // LogManager.log("cameraToTag :" +cameraToTag);
+    // LogManager.log("Camera to Tag Yaw :" + camToTagYaw);
+    // Add camera offset to get robot center to tag vector
+    robotToTag = (camera.getRobotToCamPosition().toTranslation2d()
+        .plus(cameraToTag)).rotateBy(RobotAngleCommon);
+    // LogManager.log("Robot to Tag :" + robotToTag);
+    return robotToTag;
+  }
+
+  public double GetDistFromCamera() {
+
+    alpha = Math.abs(camToTagPitch + camera.getPitch());
+    dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
+    // dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))));
+
+    return dist;
   }
 
   private void crop() {
