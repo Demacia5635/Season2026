@@ -9,160 +9,120 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SysidApp {
+public class SysidApp implements Consumer<File> {
     public static boolean[] kFlags = {true, true, true, false, false, false};
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) { e.printStackTrace(); }
-
-        SysidMain app = new SysidMain();
+        SysidApp app = new SysidApp();
         app.show();
     }
-}
-
-class SysidMain implements Consumer<File> {
-    JFrame frame = new JFrame("SysID - Pro Version");
     
+    JFrame frame = new JFrame("Sysid");
     FileChooserPanel fileChooser = new FileChooserPanel(this);
     DefaultListModel<MotorData> listModel = new DefaultListModel<>();
     JList<MotorData> motorList = new JList<>(listModel);
     SysidResultPanel result = new SysidResultPanel(this);
-    
     JTextArea msgArea = new JTextArea();
-    JScrollPane msgPane = new JScrollPane(msgArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    JScrollPane msgPane = new JScrollPane(msgArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    Map<String, LogReader.BucketResult> analysisResults;
     File currentFile;
 
-    private static SysidMain sysid = null;
+    private static SysidApp sysid = null;
 
-    public SysidMain() {
+    public SysidApp() {
         sysid = this;
-        frame.setSize(1280, 850); 
-        frame.setLocationRelativeTo(null); 
+        frame.setSize(1024,800);
+        frame.setMinimumSize(new Dimension(1024,800));
+        frame.setLocation(300,200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
         var pane = frame.getContentPane();
         pane.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        
         motorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        motorList.setBorder(BorderFactory.createTitledBorder("Select Motor Data"));
-        JScrollPane listScroll = new JScrollPane(motorList);
+        motorList.setMinimumSize(new Dimension(300,400));
+        motorList.setBorder(BorderFactory.createEtchedBorder());
         
         motorList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 MotorData selected = motorList.getSelectedValue();
                 if (selected != null) {
+                    msg("Selected motor: " + selected.name);
                     result.updateDisplay(selected);
                 }
             }
         });
         
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0; gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 5, 10);
-        pane.add(fileChooser, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.weightx = 0.3; gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(5, 10, 5, 5);
-        pane.add(listScroll, gbc);
-
-        gbc.gridx = 1; gbc.gridy = 1;
-        gbc.weightx = 0.7; gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(5, 0, 5, 10);
-        pane.add(result, gbc);
-
-        msgArea.setEditable(false);
-        msgArea.setFont(new Font("Consolas", Font.PLAIN, 12));
-        msgPane.setBorder(BorderFactory.createTitledBorder("Console"));
-        msgPane.setPreferredSize(new Dimension(100, 150));
-
-        gbc.gridx = 0; gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0; gbc.weighty = 0.2;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(5, 10, 10, 10);
-        pane.add(msgPane, gbc);
+        pane.add(fileChooser, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 0), 5, 5));
+        pane.add(motorList, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 0), 5, 5));
+        pane.add(msgPane, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 0), 5, 5));
+        pane.add(result, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 0), 5, 5));
+        frame.pack();
     }
 
     public void show() {
         frame.setVisible(true);
     }
 
-    public static void msg(String message) {
+    public static void msg(String msg) {
         if(sysid != null) {
-            SwingUtilities.invokeLater(() -> {
-                sysid.msgArea.append(message + "\n");
-                sysid.msgArea.setCaretPosition(sysid.msgArea.getDocument().getLength());
-            });
+            sysid.msgArea.append(msg + "\n");
+            sysid.msgArea.setCaretPosition(sysid.msgArea.getDocument().getLength());
         }
     }
 
     @Override
     public void accept(File file) {
-        msg("File selected: " + file.getName());
+        System.out.println("File set to " + file);
         this.currentFile = file;
-        performFullAnalysis();
+        LogReader.loadFile(file.getAbsolutePath());
+        analyzeFile();
     }
 
-    public void performFullAnalysis() {
+    public void analyzeFile() {
         if (currentFile == null) return;
         
         MotorData currentlySelected = motorList.getSelectedValue();
-        String selectedName = (currentlySelected != null) ? currentlySelected.fullName : null;
+        String selectedName = (currentlySelected != null) ? currentlySelected.name : null;
 
         try {
-            msg("Starting analysis...");
             MotorData.motors.clear();
             listModel.clear();
             
-            analysisResults = LogReader.getResult(currentFile.getAbsolutePath());
+            Map<String, LogReader.SysIDResults> analysisResults = LogReader.analyze();
             
-            msg("Analysis complete. Found " + analysisResults.size() + " motor groups.");
+            msg("Analysis complete. Found " + analysisResults.size() + " groups.");
             
+            int newIndexToSelect = 0;
+            int counter = 0;
+
             List<String> sortedNames = new ArrayList<>(analysisResults.keySet());
             Collections.sort(sortedNames);
 
-            int indexToSelect = 0;
-            int i = 0;
-            
             for(String groupName : sortedNames) {
                 MotorData motorData = new MotorData();
-                motorData.fullName = groupName;
-                
-                String[] parts = groupName.split(":");
-                motorData.displayName = parts.length > 0 ? parts[0] : groupName;
-                
-                motorData.bucketResult = analysisResults.get(groupName);
+                motorData.name = groupName;
+                motorData.sysidResult = analysisResults.get(groupName);
                 MotorData.motors.add(motorData);
                 listModel.addElement(motorData);
-                
-                if(selectedName != null && selectedName.equals(groupName)) {
-                    indexToSelect = i;
+
+                if (selectedName != null && selectedName.equals(groupName)) {
+                    newIndexToSelect = counter;
                 }
-                i++;
+                counter++;
             }
             
             if (!listModel.isEmpty()) {
-                motorList.setSelectedIndex(indexToSelect);
-            } else {
-                msg("No valid motor data found in file.");
+                motorList.setSelectedIndex(newIndexToSelect);
+                result.updateDisplay(motorList.getSelectedValue());
             }
             
         } catch (Exception e) {
-            msg("Error during analysis: " + e.getMessage());
+            msg("Analysis error: " + e);
             e.printStackTrace();
-            fileChooser.field.setText("Error loading file");
         }
+    }
+
+    public MotorData getMotor() {
+        return motorList.getSelectedValue();
     }
 }
 
@@ -173,27 +133,21 @@ class FileChooserPanel extends JPanel implements ActionListener {
     Consumer<File> consumer;
 
     public FileChooserPanel(Consumer<File> consumer) {
-        super(new BorderLayout(5, 0));
+        super(new FlowLayout(FlowLayout.LEFT, 10, 5));
         this.consumer = consumer;
-        
-        button = new JButton("Open WPILOG");
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        
-        field = new JTextField();
+        button = new JButton("File:");
+        field = new JTextField(50);
         field.setEditable(false);
-        field.setBackground(Color.WHITE);
-        
         button.addActionListener(this);
         chooser = new JFileChooser(System.getProperty("user.dir"));
-        chooser.setFileFilter(new FileNameExtensionFilter("WPILOG Files", "wpilog"));
-        
-        add(button, BorderLayout.WEST);
-        add(field, BorderLayout.CENTER);
+        chooser.setFileFilter(new FileNameExtensionFilter("wpi log", "wpilog"));
+        add(button);
+        add(field);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        int res = chooser.showOpenDialog(this);
+        int res = chooser.showOpenDialog(null);
         if(res == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             field.setText(file.getAbsolutePath());
@@ -205,166 +159,100 @@ class FileChooserPanel extends JPanel implements ActionListener {
 }
 
 class SysidResultPanel extends JPanel {
+    public static int nK = KTypes.values().length;
     JCheckBox[] checkBoxes;
-    JLabel[] valueLabels;
-    JButton recalcButton;
+    JLabel[][] k;
     
-    JLabel countLabel = new JLabel("0 / 0");
-    JLabel r2Label = new JLabel("0.0000");
-    JLabel avgErrLabel = new JLabel("0.0000 V");
-    JLabel maxErrLabel = new JLabel("0.0000 V");
-    
-    JLabel kpLabel = new JLabel("0.0000");
-    JComboBox<String> kpTypeCombo;
-    
-    SysidMain app;
-    String[] names = {"kS", "kV", "kA", "kG", "kCos", "kV²"};
+    JLabel[] labels = {new JLabel("Result Type"), new JLabel("Final Analysis")};
+    JLabel[] countLabels = {new JLabel("Points"), new JLabel("0")};
+    JLabel[] avgErrorLabels = {new JLabel("Avg Error %"), new JLabel("0")};
+    JLabel[] maxErrorLabels = {new JLabel("Max Error %"), new JLabel("0")};
+    JLabel[] kpLabels = {new JLabel("KP"), new JLabel("0")};
+    SysidApp app;
 
-    public SysidResultPanel(SysidMain app) {
-        super(new GridBagLayout());
+    public SysidResultPanel(SysidApp app) {
+        super(new GridLayout(nK + 7, 2, 5, 5));
         this.app = app;
-        setBorder(BorderFactory.createTitledBorder("Analysis Results"));
 
-        checkBoxes = new JCheckBox[6];
-        valueLabels = new JLabel[6];
+        add(labels[0]); add(labels[1]);
+        add(countLabels[0]); add(countLabels[1]);
+        add(avgErrorLabels[0]); add(avgErrorLabels[1]);
+        add(maxErrorLabels[0]); add(maxErrorLabels[1]);
+
+        checkBoxes = new JCheckBox[nK];
+        k = new JLabel[nK][1];
         
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        JLabel pLabel = new JLabel("Parameter");
-        pLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        add(pLabel, gbc);
-        
-        gbc.gridx = 1;
-        JLabel vLabel = new JLabel("Value");
-        vLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        add(vLabel, gbc);
-
-        for(int i = 0; i < 6; i++) {
-            gbc.gridx = 0; gbc.gridy = i + 1;
-            checkBoxes[i] = new JCheckBox(names[i]);
+        for(int i = 0; i < nK; i++) {
+            KTypes type = KTypes.values()[i];
+            checkBoxes[i] = new JCheckBox(type.name());
             checkBoxes[i].setSelected(SysidApp.kFlags[i]);
-            int idx = i;
-            checkBoxes[i].addActionListener(e -> {
-                SysidApp.kFlags[idx] = checkBoxes[idx].isSelected();
-                app.performFullAnalysis();
-            });
-            add(checkBoxes[i], gbc);
             
-            gbc.gridx = 1;
-            valueLabels[i] = new JLabel("0.0000");
-            valueLabels[i].setFont(new Font("Monospaced", Font.BOLD, 14));
-            valueLabels[i].setForeground(new Color(0, 100, 0));
-            add(valueLabels[i], gbc);
+            int finalI = i;
+            checkBoxes[i].addActionListener(e -> {
+                SysidApp.kFlags[finalI] = checkBoxes[finalI].isSelected();
+                if (app.getMotor() != null) {
+                    app.analyzeFile();
+                }
+            });
+            
+            add(checkBoxes[i]);
+            
+            k[i][0] = new JLabel("0");
+            add(k[i][0]);
         }
 
-        addSeparator(8, gbc);
-
-        addStatRow("Points:", countLabel, 9, gbc);
-        addStatRow("R²:", r2Label, 10, gbc);
-        
-        addStatRow("Avg Error (Volts):", avgErrLabel, 11, gbc);
-        addStatRow("Max Error (Volts):", maxErrLabel, 12, gbc);
-        
-        addSeparator(13, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 14;
-        JPanel kpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        kpPanel.add(new JLabel("Suggested kP: "));
-        kpTypeCombo = new JComboBox<>(new String[]{"Position", "Velocity"});
-        kpTypeCombo.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        kpTypeCombo.addActionListener(e -> app.performFullAnalysis());
-        kpPanel.add(kpTypeCombo);
-        add(kpPanel, gbc);
-
-        gbc.gridx = 1;
-        kpLabel.setFont(new Font("Monospaced", Font.BOLD, 16));
-        kpLabel.setForeground(Color.BLUE);
-        add(kpLabel, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 15; gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(20, 0, 5, 0);
-        recalcButton = new JButton("Recalculate Fit");
-        recalcButton.addActionListener(e -> app.performFullAnalysis());
-        add(recalcButton, gbc);
-        
-        gbc.gridy = 16; gbc.weighty = 1.0;
-        add(new JLabel(), gbc);
-    }
-    
-    private void addSeparator(int y, GridBagConstraints gbc) {
-        gbc.gridx = 0; gbc.gridy = y; gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JSeparator(), gbc);
-        gbc.gridwidth = 1; 
-    }
-
-    private void addStatRow(String name, JLabel label, int y, GridBagConstraints gbc) {
-        gbc.gridx = 0; gbc.gridy = y;
-        add(new JLabel(name), gbc);
-        gbc.gridx = 1;
-        label.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        add(label, gbc);
+        add(kpLabels[0]); add(kpLabels[1]);
     }
     
     public void updateDisplay(MotorData motorData) {
-        if (motorData == null || motorData.bucketResult == null) {
+        if (motorData == null || motorData.sysidResult == null) {
             clearDisplay();
             return;
         }
         
-        LogReader.BucketResult r = motorData.bucketResult;
+        LogReader.SysIDResults result = motorData.sysidResult;
+        LogReader.BucketResult bucket = result.finalFit;
         
-        valueLabels[0].setText(String.format("%.5f", r.ks));
-        valueLabels[1].setText(String.format("%.5f", r.kv));
-        valueLabels[2].setText(String.format("%.5f", r.ka));
-        valueLabels[3].setText(String.format("%.5f", r.kg));
-        valueLabels[4].setText(String.format("%.5f", r.ksin));
-        valueLabels[5].setText(String.format("%.5f", r.kv2));
-        
-        countLabel.setText(r.points + " / " + r.rawPoints);
-        r2Label.setText(String.format("%.4f", r.rSquared));
-        
-        avgErrLabel.setText(String.format("%.4f V", r.avgError));
-        maxErrLabel.setText(String.format("%.4f V", r.maxError));
-        
-        double kp = 0;
-        double kaSafe = Math.max(Math.abs(r.ka), 0.0001);
-        
-        String type = (String) kpTypeCombo.getSelectedItem();
-        
-        if ("Position".equals(type)) {
-            kp = (2.0 * r.kv) / kaSafe; 
+        if(bucket != null) {
+            k[KTypes.KS.ordinal()][0].setText(String.format("%7.5f", bucket.ks));
+            k[KTypes.KV.ordinal()][0].setText(String.format("%7.5f", bucket.kv));
+            k[KTypes.KA.ordinal()][0].setText(String.format("%7.5f", bucket.ka));
+            k[KTypes.KG.ordinal()][0].setText(String.format("%7.5f", bucket.kg));
+            k[KTypes.KSIN.ordinal()][0].setText(String.format("%7.5f", bucket.ksin));
+            k[KTypes.KV2.ordinal()][0].setText(String.format("%7.5f", bucket.kv2));
+            
+            countLabels[1].setText(Integer.toString(bucket.points));
+            avgErrorLabels[1].setText(String.format("%4.2f%%", bucket.avgError*100));
+            maxErrorLabels[1].setText(String.format("%4.2f%%", bucket.maxError*100));
+            
+            kpLabels[1].setText(String.format("%.5f", bucket.kp));
         } else {
-            kp = r.kv / kaSafe;
+            clearDisplay();
         }
         
-        kpLabel.setText(String.format("%.4f", kp));
-        
-        SysidMain.msg("Results for: " + motorData.displayName);
+        SysidApp.msg("Display updated for " + motorData.name);
     }
-
+    
     private void clearDisplay() {
-        for(JLabel l : valueLabels) l.setText("0.0000");
-        countLabel.setText("0 / 0");
-        r2Label.setText("0.0000");
-        avgErrLabel.setText("0.0000 V");
-        maxErrLabel.setText("0.0000 V");
-        kpLabel.setText("0.0000");
+        for(int i = 0; i < nK; i++) {
+            k[i][0].setText("0");
+        }
+        countLabels[1].setText("0");
+        avgErrorLabels[1].setText("0");
+        maxErrorLabels[1].setText("0");
+        kpLabels[1].setText("0");
     }
 }
 
 class MotorData {
     static List<MotorData> motors = new ArrayList<>();
-    String fullName = "Motor";
-    String displayName = "Motor";
-    LogReader.BucketResult bucketResult;
+    String name = "Motor";
+    LogReader.SysIDResults sysidResult;
 
     @Override
     public String toString() {
-        return displayName;
+        return name;
     }
 }
+
+enum KTypes {KS, KV, KA, KG, KSIN, KV2}

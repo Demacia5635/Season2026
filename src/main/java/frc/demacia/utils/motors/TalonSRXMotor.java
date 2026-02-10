@@ -134,7 +134,7 @@ public class TalonSRXMotor extends TalonSRX implements MotorInterface {
     }
 
     @Override
-    public void setVelocityWithAcceleration(double velocity, Supplier<Double> wantedAccelerationSupplier) {
+    public void setVelocityWithAcceleratoin(double velocity, Supplier<Double> wantedAccelerationSupplier) {
         setVelocity(velocity, wantedAccelerationSupplier.get() * config.pid[slot].kA());
     }
 

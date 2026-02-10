@@ -7,10 +7,7 @@ import frc.demacia.utils.chassis.SwerveModuleConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
-import frc.demacia.vision.TagPose;
-import static frc.demacia.vision.utils.VisionConstants.*;
-
-
+import frc.demacia.vision.subsystem.Tag;
 
 public class MK5nChassisConstants {
 
@@ -103,5 +100,5 @@ public class MK5nChassisConstants {
       NAME,
       modules,
       PIGEON_CONFIG,
-      new TagPose[] {LIMELIGHT4,FUEL});
+      new Tag[] {});
 }

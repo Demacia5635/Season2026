@@ -4,10 +4,6 @@
 
 package frc.demacia.vision;
 
-import java.util.function.Supplier;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 /** Add your docs here. */
@@ -21,18 +17,17 @@ public class Camera {
     private String tableName;
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
-    private Rotation2d turretAngle;
+    private Supplier<Rotation2d> turretAngle;
     private Translation3d turretToCamPosition;
     private boolean isCroping;
     private boolean isObjectCamera = false;
 
-
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
+    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, Enum<?> cameraType) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
-        this.isOnTurret = false;
+        this.cameraType = cameraType;
         this.tableName = "limelight-"+name;
         this.isCroping = isCroping;
         this.isObjectCamera = isObjectCamera;
@@ -42,7 +37,7 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isObjectCamera,Rotation2d turretAngle,Translation3d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToCamPosition,Translation3d turretToCamPosition, double pitch, double yaw,Supplier<Rotation2d> turretAngle, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.turretToCamPosition = turretToCamPosition;
@@ -54,7 +49,7 @@ public class Camera {
         isCroping = false;
     }
 
-    public Translation3d getTurretToCamPosition(){
+    public Translation3d getturretToCamPosition(){
         return turretToCamPosition;
     }
 
@@ -62,13 +57,13 @@ public class Camera {
         return isOnTurret;
     }
 
-    public Rotation2d getTurrentAngle(){
+    public Supplier<Rotation2d> getTurrentAngle(){
 
         return turretAngle;
     }
 
     public Translation3d getRobotToCamPosition() {
-        return  robotToCamPosition;
+        return !isOnTurret ? robotToCamPosition : robotToCamPosition.rotateBy(new Rotation3d(turretAngle.get().unaryMinus()));
     }
 
     public double getHeight() {
@@ -90,12 +85,5 @@ public class Camera {
     public String getTableName() {
         return this.tableName;
     }
-
-    public boolean getIsCroping(){
-        return isCroping;
-    }
-
-    public boolean getIsObjectCamera() {
-        return isObjectCamera;
-    }
+    public Enum<?> getCameraType(){return this.cameraType;}
 }

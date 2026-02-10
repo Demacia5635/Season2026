@@ -6,21 +6,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.ejml.simple.SimpleMatrix;
 
 public class LogReader {
 
-    private static final double VOLTAGE_THRESHOLD = 0.5;
-    private static final int SMOOTH_WINDOW = 3;
-    private static final double OUTLIER_PERCENTAGE = 0.15;
-
-    private static Map<Integer, List<EntryDescription>> entries;
+    private static Map<Integer,List<EntryDescription>> entries = new HashMap<>();
+    private static double minPowerToMove = Double.MAX_VALUE;
 
     private static class EntryDescription {
         String name;
@@ -43,15 +40,39 @@ public class LogReader {
         }
     }
 
-    public static Map<String, BucketResult> getResult(String fileName) {
+    public static class SysIDResults {
+        public BucketResult finalFit;
+
+        public SysIDResults(BucketResult finalFit) {
+            this.finalFit = finalFit;
+        }
+
+        @Override
+        public String toString() {
+            return finalFit != null ? finalFit.toString() : "No Result";
+        }
+    }
+
+    public static void loadFile(String fileName) {
         entries = new HashMap<>();
         try {
+            System.out.println("Reading log file: " + fileName);
             wpilogReader(fileName);
-            return performAnalysis();
         } catch (IOException e) {
+            System.err.println("Error reading log file: " + e.getMessage());
             e.printStackTrace();
-            return new HashMap<>();
         }
+    }
+
+    public static Map<String, SysIDResults> analyze() {
+        if (entries == null || entries.isEmpty()) return new HashMap<>();
+        System.out.println("Analyzing");
+        return performAnalysis();
+    }
+
+    public static Map<String, SysIDResults> getResult(String fileName) {
+        loadFile(fileName);
+        return analyze();
     }
 
     private static void wpilogReader(String fileName) throws IOException {
@@ -60,7 +81,7 @@ public class LogReader {
             
             byte[] signature = readHeader(dataInputStream);
             if (!Arrays.equals(signature, "WPILOG".getBytes())) {
-                throw new IOException("Invalid WPILOG");
+                throw new IOException("Invalid WPILOG file format. Expected WPILOG, got: " + new String(signature));
             }
             
             skipHeaderExtra(dataInputStream);
@@ -75,21 +96,30 @@ public class LogReader {
     }
 
     private static void skipHeaderExtra(DataInputStream dataInputStream) throws IOException {
-        dataInputStream.readShort();
+        short version = Short.reverseBytes(dataInputStream.readShort());
         int extraLength = Integer.reverseBytes(dataInputStream.readInt());
+        System.out.println("WPILOG version: " + version + ", extra header length: " + extraLength);
         if(extraLength > 0) {
             dataInputStream.skipBytes(extraLength);
         }
     }
 
     private static void readRecords(DataInputStream dataInputStream) throws IOException {
+        int recordCount = 0;
+        int dataRecordsProcessed = 0;
+        
         while (true) {
             try {
-                readRecord(dataInputStream);
+                if (readRecord(dataInputStream)) {
+                    dataRecordsProcessed++;
+                }
+                recordCount++;
             } catch (EOFException e) {
                 break;
             }
         }
+        System.out.println("Total records scanned: " + recordCount);
+        System.out.println("Valid data records stored: " + dataRecordsProcessed);
     }
 
     private static boolean readRecord(DataInputStream dataInputStream) throws IOException {
@@ -109,6 +139,7 @@ public class LogReader {
             List<EntryDescription> entryList = entries.get(recordId);
             if (entryList != null && !entryList.isEmpty()) {
                 String type = entryList.get(0).type.trim();
+
                 boolean isFloat = type.equals("float") || type.equals("float[]");
                 boolean isDouble = type.equals("double") || type.equals("double[]");
 
@@ -154,6 +185,7 @@ public class LogReader {
                         }
                         return true;
                     }
+
                 } else {
                     dataInputStream.skipBytes(payloadSize);
                 }
@@ -166,7 +198,7 @@ public class LogReader {
 
     private static void addEntryFromControlRecord(DataInputStream dataInputStream, int payloadSize) throws IOException {
         int recordType = dataInputStream.readUnsignedByte();
-        if (recordType == 0) { 
+        if (recordType == 0) {
             int entryId = Integer.reverseBytes(dataInputStream.readInt());
             int nameLength = Integer.reverseBytes(dataInputStream.readInt());
             String name = readString(dataInputStream, nameLength);
@@ -216,12 +248,12 @@ public class LogReader {
         return result;
     }
 
-    private static Map<String, BucketResult> performAnalysis() {
-        Map<String, BucketResult> results = new HashMap<>();
+    private static Map<String, SysIDResults> performAnalysis() {
+        Map<String, SysIDResults> results = new HashMap<>();
         Set<String> groups = findGroups();
         
         for (String group : groups) {
-            BucketResult result = analyzeGroup(group);
+            SysIDResults result = analyzeGroup(group);
             if (result != null) {
                 results.put(group, result);
             }
@@ -239,8 +271,9 @@ public class LogReader {
         return groups;
     }
 
-    private static BucketResult analyzeGroup(String name) {
+    private static SysIDResults analyzeGroup(String name) {
         List<DataPoint> allData = new ArrayList<>();
+
         for (List<EntryDescription> list : entries.values()) {
             for (EntryDescription entry : list) {
                 if (entry.name.equals(name)) {
@@ -249,24 +282,25 @@ public class LogReader {
             }
         }
 
-        if (allData.isEmpty()) return null;
+        if (allData.isEmpty()) {
+            return null;
+        }
 
         allData.sort((p1, p2) -> Long.compare(p1.timestamp, p2.timestamp));
+
         List<SyncedDataPoint> syncedData = synchronizeData(allData);
-        
-        return calculateResult(syncedData, name);
+        return performSysIdLikeAnalysis(syncedData);
     }
 
     public static class SyncedDataPoint {
         double velocity, position, acceleration, rawAcceleration, voltage;
         long timestamp;
-        double error;
-        
+        SyncedDataPoint prev;
+
         SyncedDataPoint(double velocity, double position, double acceleration, double voltage, long timestamp) {
             this.velocity = velocity;
             this.position = position;
             this.acceleration = acceleration;
-            this.rawAcceleration = acceleration;
             this.voltage = voltage;
             this.timestamp = timestamp;
         }
@@ -279,174 +313,184 @@ public class LogReader {
                 result.add(new SyncedDataPoint(dp.value[1], dp.value[0], dp.value[2], dp.value[3], dp.timestamp));
             }
         }
+        updateAccelerationAndMinPower(result);
         return result;
     }
 
-    private static BucketResult calculateResult(List<SyncedDataPoint> rawData, String name) {
-        List<SyncedDataPoint> cleanData = filterAndSmooth(rawData, VOLTAGE_THRESHOLD, SMOOTH_WINDOW);
-        if (cleanData.size() < 10) return null;
+    private static void updateAccelerationAndMinPower(List<SyncedDataPoint> data) {
+        minPowerToMove = Double.MAX_VALUE;
+        int windowSize = 5; 
 
-        BucketResult initialResult = solveOLS(cleanData);
-        if (initialResult == null) return null;
-
-        List<SyncedDataPoint> refinedData = removeOutliers(cleanData, initialResult, OUTLIER_PERCENTAGE);
-        if (refinedData.size() < 10) return null;
-
-        BucketResult finalModel = solveOLS(refinedData);
-        
-        if (finalModel != null) {
-            double sumErr = 0;
-            double maxErr = 0;
-            boolean[] flags = SysidApp.kFlags;
-
-            for(SyncedDataPoint p : rawData) {
-                double pred = 0;
-                if(flags[0]) pred += finalModel.ks * Math.signum(p.velocity);
-                if(flags[1]) pred += finalModel.kv * p.velocity;
-                if(flags[2]) pred += finalModel.ka * p.acceleration;
-                if(flags[3]) pred += finalModel.kg * 1.0;
-                if(flags[4]) pred += finalModel.ksin * Math.cos(p.position);
-                if(flags[5]) pred += finalModel.kv2 * p.velocity * Math.abs(p.velocity);
+        for (int i = 0; i < data.size(); i++) {
+            SyncedDataPoint current = data.get(i);
+            
+            if (i >= windowSize && i < data.size() - windowSize) {
+                SyncedDataPoint future = data.get(i + windowSize);
+                SyncedDataPoint past = data.get(i - windowSize);
                 
-                double error = Math.abs(p.voltage - pred);
-                sumErr += error;
-                if(error > maxErr) maxErr = error;
+                double dt = (future.timestamp - past.timestamp) / 1_000_000.0;
+                if (dt > 0) {
+                    double smoothAcc = (future.velocity - past.velocity) / dt;
+                    current.acceleration = (current.acceleration + smoothAcc) / 2.0; 
+                }
+            } else if (current.prev != null) {
+                double dt = (current.timestamp - current.prev.timestamp) / 1_000_000.0;
+                if (dt <= 0) dt = 1e-6;
+                double rawAcc = (current.velocity - current.prev.velocity) / dt;
+                current.acceleration = (current.acceleration + rawAcc) / 2.0;
             }
 
-            finalModel.avgError = sumErr / rawData.size();
-            finalModel.maxError = maxErr;
-            finalModel.rawPoints = rawData.size();
-        }
-
-        return finalModel;
-    }
-
-    private static List<SyncedDataPoint> filterAndSmooth(List<SyncedDataPoint> rawData, double voltageThresh, int windowSize) {
-        List<SyncedDataPoint> filtered = new ArrayList<>();
-        for (int i = 0; i < rawData.size(); i++) {
-            SyncedDataPoint current = rawData.get(i);
-            
-            double sumAccel = 0;
-            int count = 0;
-            for (int j = Math.max(0, i - windowSize/2); j < Math.min(rawData.size(), i + windowSize/2 + 1); j++) {
-                sumAccel += rawData.get(j).rawAcceleration;
-                count++;
+            if (current.prev != null) {
+                 double absVolt = Math.abs(current.voltage);
+                 if (current.prev.velocity == 0 && current.velocity != 0 && absVolt > 0.01 && 
+                    (current.velocity * current.voltage) > 0 && absVolt < minPowerToMove) {
+                    minPowerToMove = absVolt;
+                }
             }
-            current.acceleration = sumAccel / count;
-
-            if (Math.abs(current.voltage) > voltageThresh) {
-                filtered.add(current);
-            }
+            current.prev = (i > 0) ? data.get(i-1) : null;
         }
-        return filtered;
-    }
-
-    private static List<SyncedDataPoint> removeOutliers(List<SyncedDataPoint> data, BucketResult model, double percentage) {
-        if (percentage <= 0.001) return data;
-
-        double kS = model.ks;
-        double kV = model.kv;
-        double kA = model.ka;
-        double kG = model.kg;
-        double kCos = model.ksin;
-        double kV2 = model.kv2;
-        boolean[] flags = SysidApp.kFlags;
-
-        for (SyncedDataPoint p : data) {
-            double pred = 0;
-            if(flags[0]) pred += kS * Math.signum(p.velocity);
-            if(flags[1]) pred += kV * p.velocity;
-            if(flags[2]) pred += kA * p.acceleration;
-            if(flags[3]) pred += kG * 1.0;
-            if(flags[4]) pred += kCos * Math.cos(p.position);
-            if(flags[5]) pred += kV2 * p.velocity * Math.abs(p.velocity);
-            
-            p.error = Math.abs(p.voltage - pred);
-        }
-
-        Collections.sort(data, (p1, p2) -> Double.compare(p1.error, p2.error));
-
-        int removeCount = (int)(data.size() * percentage);
-        int keepCount = data.size() - removeCount;
-        
-        if (keepCount < 1) return new ArrayList<>();
-        return new ArrayList<>(data.subList(0, keepCount));
-    }
-
-    private static BucketResult solveOLS(List<SyncedDataPoint> data) {
-        int n = data.size();
-        boolean[] flags = SysidApp.kFlags;
-        int numParams = 0;
-        for(boolean f : flags) if(f) numParams++;
-
-        if(numParams == 0) return null;
-
-        SimpleMatrix A = new SimpleMatrix(n, numParams);
-        SimpleMatrix b = new SimpleMatrix(n, 1);
-
-        for (int i = 0; i < n; i++) {
-            SyncedDataPoint p = data.get(i);
-            b.set(i, 0, p.voltage);
-
-            int col = 0;
-            if(flags[0]) A.set(i, col++, Math.signum(p.velocity));
-            if(flags[1]) A.set(i, col++, p.velocity);
-            if(flags[2]) A.set(i, col++, p.acceleration);
-            if(flags[3]) A.set(i, col++, 1.0);
-            if(flags[4]) A.set(i, col++, Math.cos(p.position));
-            if(flags[5]) A.set(i, col++, p.velocity * Math.abs(p.velocity));
-        }
-
-        SimpleMatrix x;
-        try {
-            x = A.solve(b);
-        } catch(Exception e) {
-            return null;
-        }
-
-        double[] k = new double[6];
-        int col = 0;
-        for(int i=0; i<6; i++) {
-            if(flags[i]) k[i] = x.get(col++);
-        }
-
-        double ssTot = 0, ssRes = 0, meanV = 0;
-        for(SyncedDataPoint p : data) meanV += p.voltage;
-        meanV /= n;
-
-        for (SyncedDataPoint p : data) {
-            double pred = 0;
-            if(flags[0]) pred += k[0] * Math.signum(p.velocity);
-            if(flags[1]) pred += k[1] * p.velocity;
-            if(flags[2]) pred += k[2] * p.acceleration;
-            if(flags[3]) pred += k[3] * 1.0;
-            if(flags[4]) pred += k[4] * Math.cos(p.position);
-            if(flags[5]) pred += k[5] * p.velocity * Math.abs(p.velocity);
-
-            ssTot += Math.pow(p.voltage - meanV, 2);
-            ssRes += Math.pow(p.voltage - pred, 2);
-        }
-
-        double r2 = 1 - (ssRes / ssTot);
-
-        return new BucketResult(k[0], k[1], k[5], k[2], k[3], k[4], 0, 0, n, r2);
+        if (minPowerToMove == Double.MAX_VALUE) minPowerToMove = 0.0;
     }
 
     public static class BucketResult {
-        double ks, kv, kv2, ka, kg, ksin, avgError, maxError, rSquared;
-        int points, rawPoints;
+        double ks, kv, kv2, ka, kg, ksin, kp, avgError, maxError;
+        int points;
 
-        BucketResult(double ks, double kv, double kv2, double ka, double kg, double ksin, double avgError, double maxError, int points, double rSquared) {
+        BucketResult(double ks, double kv, double kv2, double ka, double kg, double ksin, double kp, double avgError, double maxError, int points) {
             this.ks = ks;
             this.kv = kv;
             this.kv2 = kv2;
             this.ka = ka;
             this.kg = kg;
             this.ksin = ksin;
+            this.kp = kp;
             this.avgError = avgError;
             this.maxError = maxError;
             this.points = points;
-            this.rSquared = rSquared;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("KS=%.4f, KV=%.4f, KV2=%.4f, KA=%.4f, KG=%.4f, KSIN=%.4f, KP=%.4f, AvgError=%.2f%%, MaxError=%.2f%%", 
+                               ks, kv, kv2, ka, kg, ksin, kp, avgError*100, maxError*100);
+        }
+    }
+
+    private static SysIDResults performSysIdLikeAnalysis(List<SyncedDataPoint> data) {
+        if (data.isEmpty()) return new SysIDResults(null);
+
+        List<SyncedDataPoint> validData = new ArrayList<>();
+        double maxV = 0.0;
+        for (SyncedDataPoint d : data) {
+            maxV = Math.max(maxV, Math.abs(d.velocity));
+            if (Math.abs(d.velocity) > 0.01 || Math.abs(d.voltage) > 0.01) {
+                validData.add(d);
+            }
+        }
+
+        BucketResult Result = solveBucket(validData);
+
+        return new SysIDResults(Result);
+    }
+
+    private static BucketResult solveBucket(List<SyncedDataPoint> sourceData) {
+        if (sourceData == null || sourceData.isEmpty()) return null;
+        if (sourceData.size() < 10) return null;
+
+        int rows = sourceData.size();
+        
+        int cols = 0;
+        int idxSign = -1, idxVel = -1, idxAcc = -1, idxGrav = -1, idxSin = -1, idxKv2 = -1;
+
+        if (SysidApp.kFlags[0]) idxSign = cols++;
+        if (SysidApp.kFlags[1]) idxVel = cols++;
+        if (SysidApp.kFlags[2]) idxAcc = cols++;
+        if (SysidApp.kFlags[3]) idxGrav = cols++;
+        if (SysidApp.kFlags[4]) idxSin = cols++;
+        if (SysidApp.kFlags[5]) idxKv2 = cols++;
+
+        SimpleMatrix mat = new SimpleMatrix(rows, cols);
+        SimpleMatrix volt = new SimpleMatrix(rows, 1);
+        
+        for (int r = 0; r < rows; r++) {
+            SyncedDataPoint d = sourceData.get(r);
+            
+            if (idxSign != -1) {
+                mat.set(r, idxSign, Math.signum(d.velocity));
+            }
+            
+            if (idxVel != -1) {
+                mat.set(r, idxVel, d.velocity);
+            }
+            
+            if (idxAcc != -1) {
+                mat.set(r, idxAcc, d.acceleration);
+            }
+            
+            if (idxGrav != -1) {
+                mat.set(r, idxGrav, 1.0);
+            }
+
+            if (idxSin != -1) {
+                mat.set(r, idxSin, Math.cos(d.position)); 
+            }
+            
+            if (idxKv2 != -1) {
+                mat.set(r, idxKv2, d.velocity * Math.abs(d.velocity));
+            }
+            
+            double effectiveVoltage = d.voltage;
+            volt.set(r, 0, effectiveVoltage);
+        }
+        
+        try {
+            SimpleMatrix res = mat.solve(volt);
+            
+            double calculatedKs = 0, calculatedKv = 0, calculatedKa = 0, calculatedKg = 0, calculatedKSin = 0, calculatedKv2 = 0;
+            
+            if (idxSign != -1) calculatedKs = res.get(idxSign, 0);
+            if (idxVel != -1) calculatedKv = res.get(idxVel, 0);
+            if (idxKv2 != -1) calculatedKv2 = res.get(idxKv2, 0);
+            if (idxAcc != -1) calculatedKa = res.get(idxAcc, 0);
+            if (idxGrav != -1) calculatedKg = res.get(idxGrav, 0);
+            if (idxSin != -1) calculatedKSin = res.get(idxSin, 0);
+
+            double sumError = 0;
+            double maxError = 0;
+            int validCount = 0;
+            
+            for (SyncedDataPoint d : sourceData) {
+                if (Math.abs(d.voltage) > 0.001) {
+                    double predVolts = 0;
+                    if (idxSign != -1) predVolts += calculatedKs * Math.signum(d.velocity);
+                    if (idxVel != -1) predVolts += calculatedKv * d.velocity;
+                    if (idxAcc != -1) predVolts += calculatedKa * d.acceleration;
+                    if (idxGrav != -1) predVolts += calculatedKg;
+                    if (idxSin != -1) predVolts += calculatedKSin * Math.cos(d.position);
+                    if (idxKv2 != -1) predVolts += calculatedKv2 * d.velocity * Math.abs(d.velocity);
+
+                    double relError = Math.abs(d.voltage - predVolts) / Math.abs(d.voltage);
+                    sumError += relError;
+                    maxError = Math.max(maxError, relError);
+                    validCount++;
+                }
+            }
+            double avgError = validCount > 0 ? sumError / validCount : 0;
+            double kp = CalculateFeedbackGains.calculateFeedbackGains(calculatedKv, calculatedKa);
+            
+            return new BucketResult(calculatedKs, calculatedKv, calculatedKv2, calculatedKa, calculatedKg, calculatedKSin, kp, avgError, maxError, rows);
+        } catch (Exception e) {
+            System.err.println("Error solving bucket: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static class CalculateFeedbackGains {
+        private static final double MIN_PHYSICAL_KA = 0.05;
+
+        public static double calculateFeedbackGains(double kv, double ka) {
+            double effectiveKa = Math.max(Math.abs(ka), MIN_PHYSICAL_KA);
+            return (kv * kv) / (4.0 * effectiveKa);
         }
     }
 }
