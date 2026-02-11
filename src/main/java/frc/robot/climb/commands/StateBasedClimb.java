@@ -52,10 +52,7 @@ public class StateBasedClimb extends Command {
 
     switch (RobotCommon.currentState) {
       case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-        if (climb.getArmEncoderAngle() != ClimbConstants.ARMS_ANGLE_CLOSED || climb.getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSED) {
-          climb.setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
-          climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
-        }
+        climb.armStateClose();
         break;
       case PrepareClimb:
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);

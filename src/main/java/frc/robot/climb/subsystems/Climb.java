@@ -33,6 +33,13 @@ public class Climb extends SubsystemBase {
   }
   
 
+  public void armStateClose(){
+    if (getArmEncoderAngle() != ClimbConstants.ARMS_ANGLE_CLOSED || getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSED) {
+          setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
+          setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
+        }
+  }
+
   public void setArmsDuty(double power) {
     armsMotor.setDuty(power);
   }
