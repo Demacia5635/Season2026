@@ -99,7 +99,7 @@ public class RobotContainer implements Sendable {
     // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
 
     // Configure the trigger bindings
-    // addStatesToElasticForTesting();
+    addStatesToElasticForTesting();
     configureBindings();
   }
 
