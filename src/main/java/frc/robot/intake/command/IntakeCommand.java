@@ -48,6 +48,7 @@ public class IntakeCommand extends Command {
         } else if(intakeSubsystem.isAtMin(Math.toRadians(15))){
           intakeSubsystem.setPower(IntakeConstants.MAX_POWER);
         }
+
         break;
 
       case DriveWhileIntake:
@@ -64,7 +65,7 @@ public class IntakeCommand extends Command {
         intakeSubsystem.setDutyIndexerFar(-IntakeConstants.MAX_POWER);
 
         //battery
-        intakeSubsystem.setPosition(0);
+        intakeSubsystem.setPositionBattery(0);
         break;
 
       case ShootWithoutIntake:
@@ -88,26 +89,13 @@ public class IntakeCommand extends Command {
         }
         break;
       
-      case Drive:
-      case PrepareClimb:
-      case Climb:
       case GetOffClimb:
         intakeSubsystem.stopIntake();
         intakeSubsystem.stopIndexerOnTop();
         intakeSubsystem.stopIndexerClose();
         intakeSubsystem.stopIndexerFar();
-        intakeSubsystem.setPosition(0);
+        intakeSubsystem.setPositionBattery(0);
         break;
     }
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }
