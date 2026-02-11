@@ -119,7 +119,6 @@ public class Translation2dDemacia
   /**
    * Calculates the distance between two translations in 2D space.
    *
-   * <p>The distance between translations is defined as √((x₂−x₁)²+(y₂−y₁)²).
    *
    * @param other The translation to compute the distance to.
    * @return The distance between the two translations.
@@ -133,7 +132,6 @@ public class Translation2dDemacia
    * to squaring the result of {@link #getDistance(Translation2dDemacia)}, but avoids computing a square
    * root.
    *
-   * <p>The square of the distance between translations is defined as (x₂−x₁)²+(y₂−y₁)².
    *
    * @param other The translation to compute the squared distance to.
    * @return The square of the distance between the two translations, in square meters.
@@ -267,7 +265,6 @@ public class Translation2dDemacia
   /**
    * Computes the dot product between this translation and another translation in 2D space.
    *
-   * <p>The dot product between two translations is defined as x₁x₂+y₁y₂.
    *
    * @param other The translation to compute the dot product with.
    * @return The dot product between the two translations, in square meters.
@@ -279,7 +276,6 @@ public class Translation2dDemacia
   /**
    * Computes the cross product between this translation and another translation in 2D space.
    *
-   * <p>The 2D cross product between two translations is defined as x₁y₂-x₂y₁.
    *
    * @param other The translation to compute the cross product with.
    * @return The cross product between the two translations, in square meters.
