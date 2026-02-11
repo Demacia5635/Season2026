@@ -1,0 +1,73 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.intake;
+
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
+import frc.demacia.utils.motors.TalonFXConfig;
+import frc.demacia.utils.motors.TalonSRXConfig;
+
+/** Add your docs here. */
+public class IntakeConstants {
+    //the all intake canbus
+    public static final Canbus INTAKE_CANBUS = Canbus.Rio;
+
+    //the motors max power
+    public static final double MAX_POWER = 0.8;
+
+    //the motors max pose
+    public static final double MAX_POSITION = 4.2;
+
+    public static final int INTAKE_ID = 20;
+    public static final String INTAKE_NAME = "intake motor";
+
+    //intake motor
+    public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(INTAKE_ID, INTAKE_CANBUS, INTAKE_NAME).withInvert(true);
+    
+    //battery value
+    public static final int BATTERY_ID = 31;
+    public static final String BATTER_NAME = "Battery Motor";
+
+    //battery pid feet forward
+    public static final double BATTERY_KP = 20;
+    public static final double BATTERT_KI = 0;
+    public static final double BATTERY_KD = 0;
+    public static final double BATTERT_KS = 0;
+    public static final double BATTERY_KV = 0;
+    public static final double BATTERY_KA = 0;
+    public static final double BATTER_KG = 0;
+
+    //the battry motor config
+    public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(BATTERY_ID, INTAKE_CANBUS, BATTER_NAME)
+    .withBrake(true)
+    .withInvert(false)
+    .withPID(BATTERY_KP, BATTERT_KI, BATTERY_KD, BATTERT_KS, BATTERY_KV, BATTERY_KA, BATTER_KG)
+    .withRadiansMotor(36);
+
+    //inexer on the top valuo
+    public static final int INDEXER_ON_TOP_ID = 30;
+    public static final String INDEXER_TOP_NAME  = "Indexer on top motor";
+
+    //the top indexer config
+    public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, INTAKE_CANBUS, INDEXER_TOP_NAME)
+    .withBrake(true)
+    .withInvert(true);
+
+    //inexer close valuo
+    public static final int INDEXER_CLOSE_ID = 33;
+    public static final String INDEXER_CLOSE_NAME  = "Indexer on top motor";
+
+    //indexr motor colose config
+    public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
+    .withBrake(true);
+
+    //inexer close valuo
+    public static final int INDEXER_FAR_ID = 32;
+    public static final String INDEXER_FAR_NAME  = "Indexer on top motor";
+
+    //indexr motor far config
+    public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(24, "Indexer far motor")
+    .withBrake(true)
+    .withInvert(true);
+}
