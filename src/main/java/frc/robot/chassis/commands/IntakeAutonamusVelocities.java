@@ -7,6 +7,7 @@ package frc.robot.chassis.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.ObjectPose;
 import frc.robot.intake.subsystem.IntakeSubsystem;
 
@@ -31,33 +32,22 @@ public class IntakeAutonamusVelocities extends Command {
   }
 
   @Override
-  public void initialize() {
-  //   toTarget = objectPose.getRobotToObject();
-  //   distance = objectPose.getDistcameraToObject();
-  //   System.out.println("Distance: " + distance);
-  //   targetPose = new Pose2d(toTarget.rotateBy(chassis.getGyroAngle()).plus(chassis.getPose().getTranslation()), new Rotation2d(0));
-  //   omega = toTarget.getAngle().getRadians() / (distance / toTarget.getY());
-  //   speeds = new ChassisSpeeds(toTarget.getX(), toTarget.getY(), 0);
-    
-
-  //  chassis.setVelocitiesRotateToTarget(speeds,targetPose);
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
-    // fieldRelativeAngle = angle + chassis.getGyroAngle().getRadians();
     intake.setDutyIntake(0.8);
     omega = objectPose.getRobotToObject().getAngle().getRadians();
     if (Math.abs(omega) < 0.06) omega = 0;
     omega *= 2;
     speeds = new ChassisSpeeds(-objectPose.getY(), objectPose.getX(), omega);
-    System.out.println("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians() + "/n Distance: " + objectPose.getDistcameraToObject());
+    LogManager.log("Omega: " + omega + "/nAngle to Object: " + objectPose.getRobotToObject().getAngle().getRadians() + "/n Distance: " + objectPose.getDistcameraToObject());
     chassis.setRobotRelVelocities(speeds);
   }
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("IntakeAutonamusVelocities.end()");
+    LogManager.log("IntakeAutonamusVelocities.end()");
     chassis.stop();
     intake.setDutyIntake(0);
   }
