@@ -9,9 +9,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.climb.constants.ClimbConstants;
-import frc.robot.climb.constants.ClimbConstants.CLIMB_STATE;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climb extends SubsystemBase {
@@ -19,27 +17,20 @@ public class Climb extends SubsystemBase {
   private TalonFXMotor leverMotor;
   private DigitalEncoder digitalEncoder;
 
-  private CLIMB_STATE state;
-
   /** Creates a new Climb. */
   public Climb() {
     armsMotor = new TalonSRXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
     leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
     digitalEncoder = new DigitalEncoder(ClimbConstants.DIGITAL_ENCODER_CONFIG);
-    state = CLIMB_STATE.IDLE;
-     addNT();
-
     SmartDashboard.putData("Climb", this);
   }
-  public void addNT() {
-    SendableChooser<CLIMB_STATE> stateChooser = new SendableChooser<>();
-    stateChooser.addOption("PREP CLI+MB", CLIMB_STATE.PREP_CLIMB);
-    stateChooser.addOption("CLIMB", CLIMB_STATE.CLIMB);
-    stateChooser.addOption("GETOFF", CLIMB_STATE.GET_OFF_CLIMB);
-    stateChooser.addOption("IDLE", CLIMB_STATE.IDLE);
-    stateChooser.onChange(newState -> this.state = newState);
-    SmartDashboard.putData(getName() + "Climb State Chooser", stateChooser);
-    }
+
+    public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
+    builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
+    builder.addDoubleProperty("Encoder Angle", this::getArmEncoderAngle, null);
+  }
   
 
   public void setArmsDuty(double power) {
@@ -81,24 +72,10 @@ public class Climb extends SubsystemBase {
   public double getCurrentAmpersLever() {
     return leverMotor.getCurrentCurrent();
   }
-  public double getDigitalEncoderAngle() {//arms angle
+  public double getArmEncoderAngle() {//arms angle
     return digitalEncoder.get();
   }
 
-  public void setState(CLIMB_STATE state) {
-    this.state = state;
-  }
-
-  public CLIMB_STATE getState() {
-    return state;
-  }
-
-  public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
-    builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
-    builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
-    builder.addDoubleProperty("Encoder Angle", this::getDigitalEncoderAngle, null);
-  }
 
   @Override
   public void periodic() {
