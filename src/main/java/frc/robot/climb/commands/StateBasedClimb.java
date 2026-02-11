@@ -25,8 +25,8 @@ public class StateBasedClimb extends Command {
   private boolean IS_READY_TO_CLIMB;
   private boolean IS_RIGHT_CLIMB;
   private Pose2d chassisPose;
-  private Translation2d diff;
-  private ChassisSpeeds s;
+  private Translation2d difference;
+  private ChassisSpeeds speed;
   private double headingDiff;
   private Pose2d targetPose;
 
@@ -49,37 +49,42 @@ public class StateBasedClimb extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     switch (RobotCommon.currentState) {
       case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
         climb.armStateClose();
         break;
+
       case PrepareClimb:
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
+
         if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
           climb.stopArms();
         }
+
         targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide : ClimbConstants.targetLeftSide;
         chassisPose = chassis.getPose();
-        diff = targetPose.getTranslation().minus(chassisPose.getTranslation());
+        difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
         headingDiff = targetPose.getRotation().getRadians() - chassisPose.getRotation().getRadians();
-        s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, diff.getY() * ClimbConstants.driveKp,
-            headingDiff * ClimbConstants.rotationKp);
-        chassis.setVelocities(s);
+        speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
+        chassis.setVelocities(speed);
         break;
+
       case Climb:
         climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
+
         if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
           climb.stopArms();
           IS_AT_BAR = true;
         }
+
         if (IS_AT_BAR) {
           chassisPose = chassis.getPose();
-          diff = ClimbConstants.targetToFullyCloseArms.getTranslation().minus(chassisPose.getTranslation());
-          s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, 0, 0);
-          chassis.setVelocities(s);
+          difference = ClimbConstants.targetToFullyCloseArms.getTranslation().minus(chassisPose.getTranslation());
+          speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, 0, 0);
+          chassis.setVelocities(speed);
         }
+
         if (chassisPose.getTranslation()
             .getDistance(ClimbConstants.targetToFullyCloseArms.getTranslation()) < ClimbConstants.CHASSIS_TOLERANCE) {
           IS_READY_TO_CLIMB = true;
@@ -88,37 +93,40 @@ public class StateBasedClimb extends Command {
         if (IS_READY_TO_CLIMB) {
           climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
         }
+
         if (climb.getAngleLever() >= ClimbConstants.ANGLE_LEVER_OPEN) {
           climb.stopLever();
         }
+
         break;
       case GetOffClimb:
         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
+
         if (climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSED) {
           climb.stopLever();
           IS_AT_GROUND = true;
         }
+
         if (IS_AT_GROUND) {
           chassisPose = chassis.getPose();
-          diff = ClimbConstants.targetToOpenArmsAfterClimb.getTranslation().minus(chassisPose.getTranslation());
-          s = new ChassisSpeeds(diff.getX() * ClimbConstants.driveKp, 0, 0);
-          chassis.setVelocities(s);
+          difference = ClimbConstants.targetToOpenArmsAfterClimb.getTranslation().minus(chassisPose.getTranslation());
+          speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, 0, 0);
+          chassis.setVelocities(speed);
           climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
         }
+
         if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
           climb.stopArms();
         }
-        break;
 
+        break;
     }
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

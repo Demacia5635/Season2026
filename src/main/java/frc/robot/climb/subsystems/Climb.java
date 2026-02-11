@@ -60,6 +60,7 @@ public class Climb extends SubsystemBase {
     return leverMotor.getCurrentAngle();
   }
 
+
   public void setArmsAngle(double angle) {
     armsMotor.setAngle(angle);
   }

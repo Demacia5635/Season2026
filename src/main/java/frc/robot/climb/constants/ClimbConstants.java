@@ -21,7 +21,7 @@ public class ClimbConstants {
         public static final double ARMS_ANGLE_CLOSED = 3.901700996125844; // radians
         public static final double armsOffset = 0;
 
-        //arm pid feet forward
+        //arm pid feedforward
         public static final double ARMS_KS = 0;
         public static final double ARMS_KV = 0;
         public static final double ARMS_KA = 0;
@@ -31,7 +31,7 @@ public class ClimbConstants {
         public static final double ARMS_KI = 0;
 
         
-        //clime armd motor
+        //climb arms motor
         public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, "arms motor")
                         .withPID(ARMS_KP, ARMS_KI, ARMS_KD, ARMS_KS, ARMS_KV, ARMS_KA, ARM_KG)
                         .withBrake(WITH_BRAKE_ARMS)
@@ -40,7 +40,7 @@ public class ClimbConstants {
                         .withInvert(WITH_INVERT_ARMS);
 
 
-        //CLIME LEVER MOTOR POD AND FEET FORWARD
+        //CLIME LEVER MOTOR PID AND FEEDFORWARD
         public static final double LEVER_KS = 0;
         public static final double LEVER_KV = 0;
         public static final double LEVER_KA = 0;
@@ -60,7 +60,7 @@ public class ClimbConstants {
         public static final double ANGLE_LEVER_OPEN = 0.2854944237345549; // radians
         public static final double CLOSE_LEVER_TOLERANCE = Math.toRadians(5); // radians
 
-        //lever clime motor config
+        //lever climb motor config
         public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIME, "motor lever")
                         .withPID(ARMS_KP, ARMS_KI, ARMS_KD, ARMS_KS, ARMS_KV, ARMS_KA, ARM_KG)
                         .withBrake(WITH_BRAKE_LEVER)
@@ -68,7 +68,7 @@ public class ClimbConstants {
                         .withInvert(WITH_INVERT_LEVER)
                         .withRadiansMotor(LEVER_GEAR_RATIO);
 
-        //the clime arm encodr
+        //the climb arm encoder
         public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(9, "climb encoder")
                         .withInvert(false)
                         .withOffset(armsOffset);
@@ -80,7 +80,7 @@ public class ClimbConstants {
         public static final double driveKp = 1.3;
 
         //TODO: toke with tomer move it to the fild class
-        //clime pose
+        //climb pose
         public static Pose2d targetRightSide = Pose2d.kZero;
         public static Pose2d targetLeftSide = Pose2d.kZero;
         public static Pose2d targetToFullyCloseArms = Pose2d.kZero;
