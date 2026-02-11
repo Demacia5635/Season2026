@@ -82,6 +82,11 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         LogManager.log(name + " motor initialized");
     }
 
+
+    public TalonFXConfig getConfig() {
+      return config;
+    }
+
     /**
      * Applies the initial configuration to the motor.
      * Sets limits, ramps, PID, and Motion Magic parameters.
