@@ -4,10 +4,7 @@
 
 package frc.demacia.vision;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 /** Add your docs here. */
@@ -72,14 +69,14 @@ public class Camera {
     }
 
     public Translation3d getRobotToCamPosition() {
-        return  robotToCamPosition;
+        return robotToCamPosition != null? robotToCamPosition  : new Translation3d();
     }
     public Translation3d getRobotToTurretPosition(){
         return robotToTurretPosition;
     }
 
     public double getHeight() {
-        return !isOnTurret ? robotToCamPosition.getZ() : robotToCamPosition.getZ()+turretToCamPosition.getZ();
+        return !isOnTurret ? getRobotToCamPosition().getZ() : getRobotToCamPosition().getZ()+turretToCamPosition.getZ();
     }
 
     public double getPitch() {

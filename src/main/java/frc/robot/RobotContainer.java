@@ -18,6 +18,7 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.chassis.MK4iChassisConstants;
+import frc.robot.chassis.RobotAChassisConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,7 +43,7 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
     SmartDashboard.putData("RC", this);
-    chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
+    chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
 
     // Configure the trigger bindings
     addStatesToElasticForTesting();

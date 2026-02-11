@@ -1,6 +1,8 @@
 package frc.robot.chassis;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.chassis.ChassisConfig;
 import frc.demacia.utils.chassis.Mk5nConstants;
 import frc.demacia.utils.chassis.SwerveModuleConfig;
@@ -8,6 +10,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
+import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
 /** 
@@ -33,14 +36,14 @@ public final class RobotAChassisConstants {
         /** Set if the motor is brake or coast */
         private static final boolean IS_BRAKE = true;
         /** Set if the motor is clockwise or inverted */
-        private static final boolean IS_INVERT = true;
+        private static final boolean IS_INVERT = false;
 
         /* Drive Motor PID and FF */
-        private static final double KP = 0d;
+        private static final double KP = 4d;
         private static final double KI = 0d;
         private static final double KD = 0d;
-        private static final double KS = 0d;
-        private static final double KV = 0d;
+        private static final double KS = 0.8018d;
+        private static final double KV = 2.6822d;
         private static final double KA = 0d;
         private static final double KG = 0d;
 
@@ -74,11 +77,11 @@ public final class RobotAChassisConstants {
         private static final boolean IS_INVERT = true;
 
         /* Steer Motor PID + FF*/
-        private static final double KP = 0d;
+        private static final double KP = 4d;
         private static final double KI = 0d;
         private static final double KD = 0d;
-        private static final double KS = 0d;
-        private static final double KV = 0d;
+        private static final double KS = 0.4254d;
+        private static final double KV = 0.3218d;
         private static final double KA = 0d;
         private static final double KG = 0d;
 
@@ -153,12 +156,20 @@ public final class RobotAChassisConstants {
     /** The swerve modules config using the function */
     private static final SwerveModuleConfig[] MODULES = getSwerveModuleConfigs(
             new double[] {
-                    /* Front Left Offset: */ 0d,
-                    /* Front Right Offset: */ 0d,
-                    /* Back Left Offset: */ 0d,
-                    /* Back Right Offset: */ 0
+                    /* Front Left Offset: */ -0.2024882128944765333918712166259,
+                    /* Front Right Offset: */ 0.18254538272948852591411035642884,
+                    /* Back Left Offset: */ -0.11197892854455459019176246075361,
+                    /* Back Right Offset: */ 0.01840973295003618837739109022602
             });
 
+
+    public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.329, -0.24325, 0.3195), -24, 0, false, true));
+
+    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.35345), 30.0, 0.0, false,  Rotation2d.kZero, new Translation3d(0.11307,0.14305,0.18386) ));
     /** The Chassis config with the chassis name, modules config, pigeon config and tags */
-    public static final ChassisConfig CHASSIS_CONFIG = new ChassisConfig(NAME, MODULES, PIGEON_CONFIG, new TagPose[] {});
+    public static final ChassisConfig CHASSIS_CONFIG = new ChassisConfig(
+        NAME, 
+        MODULES, 
+        PIGEON_CONFIG, 
+        new TagPose[] {FUEL});
 }
