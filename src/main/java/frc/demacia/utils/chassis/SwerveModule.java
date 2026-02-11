@@ -42,6 +42,10 @@ public class SwerveModule {
         ((TalonFXMotor)steerMotor).configPidFf(0);
     }
 
+    public MotorInterface getSteerMotor() {
+        return steerMotor;
+    }
+
     /**
      * Checks electronics for both motors and encoder.
      */
@@ -92,6 +96,7 @@ public class SwerveModule {
      * @param positionRadians Target angle in radians
      */
     public void setSteerPosition(double positionRadians) {
+        if(Math.abs(positionRadians - steerMotor.getCurrentPosition()) <= Math.toRadians(0.5) ) steerMotor.setDuty(0);
         steerMotor.setPositionVoltage(positionRadians);
         // steerMotor.setMotionMagic(positionRadians);
     }
@@ -133,6 +138,8 @@ public class SwerveModule {
             vel = -vel;
             diff = diff + Math.PI;
         }
+
+        if (Math.abs(diff) <= Math.toRadians(0.5))diff = 0;
 
         setSteerPosition(steerMotor.getCurrentPosition() + diff);
         setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);

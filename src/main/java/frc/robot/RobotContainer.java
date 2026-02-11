@@ -19,6 +19,9 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.RobotAChassisConstants;
+import frc.robot.chassis.commands.DrivePower;
+import frc.robot.chassis.commands.DriveVelocity;
+import frc.robot.chassis.commands.SetModuleAngle;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

@@ -160,6 +160,11 @@ public class Chassis extends SubsystemBase {
         lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
     }
 
+    public void setDrivePower(double power){
+        for(int i = 0; i < 4; i++){
+            setDrivePower(power, i);
+        }
+    }
     public void setDrivePower(double pow, int id) {
         modules[id].setDrivePower(pow);
     }

@@ -24,23 +24,25 @@ public class MK5nChassisConstants {
   public static final double DRIVE_GEAR_RATIO = 6.03;
   public static final double WHEEL_DIAMETER = 4 * 0.0254;
 
-  public static final double STEER_KP = 6.43;
-  public static final double STEER_KI = 0.07;
+  public static final double STEER_KP = 7;
+  public static final double STEER_KI = 0;
   public static final double STEER_KD = 0;
   public static final double STEER_KS = 0;
   public static final double STEER_KV = 0;
   public static final double STEER_KA = 0;
 
-  public static final double DRIVE_KP = 19;
+  public static final double DRIVE_KP = 0;
   public static final double DRIVE_KI = 0;
   public static final double DRIVE_KD = 0;
-  public static final double DRIVE_KS = 0.15839;
-  public static final double DRIVE_KV = 2.25994;
-  public static final double DRIVE_KA = 0.08058;
+  public static final double DRIVE_KS = 0.22880;
+  public static final double DRIVE_KV = 1.84755;
+  public static final double DRIVE_KA = 0.79385;
 
   public static final double MOTION_MAGIC_VEL = 15 * 2 * Math.PI;
   public static final double MOTION_MAGIC_ACCEL = 8 * 2 * Math.PI;
   public static final double MOTION_MAGIC_JERK = 160 * 2 * Math.PI;
+
+  public static final double MAX_DRIVE_VELOCITY = 5d;
 
   public static final double RAMP_TIME_STEER = 0.25;
 
