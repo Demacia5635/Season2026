@@ -75,7 +75,7 @@ public class ShooterConstans {
         public static final double HOOD_KA = 0.1778;
         public static final double HOOD_KG = 0;
         public static final double HOOD_MAX_VELOCITY = 2.5;
-        public static final double HOOD_MAX_ACCEL =  Math.PI;
+        public static final double HOOD_MAX_ACCEL = Math.PI;
         public static final double HOOD_MAX_JERK = 0;
         public static final double HOOD_GEAR_RATIO = 128;
 
