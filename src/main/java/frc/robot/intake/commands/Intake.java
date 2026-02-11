@@ -2,14 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.intake.command;
+package frc.robot.intake.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.vision.ObjectPose;
-import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.subsystems.IntakeSubsystem;
 
 public class Intake {
   private Chassis chassis;

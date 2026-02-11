@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.vision.ObjectPose;
-import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.subsystems.IntakeSubsystem;
 
 public class IntakeAutonamusVelocities extends Command {
   private Chassis chassis;
