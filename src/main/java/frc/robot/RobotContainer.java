@@ -11,6 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
@@ -29,6 +30,9 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.intake.commands.IntakeCommand;
+import frc.robot.intake.subsystems.IntakeSubsystem;
+import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,6 +48,8 @@ public class RobotContainer implements Sendable {
   public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
   public static Turret turret;
+  public static IntakeSubsystem intake;
+  public static ShinuaSubsystem shinua;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -52,8 +58,10 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    turret = new Turret();
-    turret.setDefaultCommand(new TurretCalibration());
+    intake = new IntakeSubsystem();
+    shinua = new ShinuaSubsystem();
+    // turret = new Turret();
+    // turret.setDefaultCommand(new TurretCalibration());
     SmartDashboard.putData("RC", this);
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     // Configure the trigger bindings
@@ -95,7 +103,9 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     DriveCommand driveCommand = new DriveCommand(chassis, driverController);
+    IntakeCommand intakeCommand = new IntakeCommand(intake, shinua);
     chassis.setDefaultCommand(driveCommand);
+    intake.setDefaultCommand(intakeCommand);
   }
 
   @Override

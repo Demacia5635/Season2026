@@ -48,8 +48,6 @@ public class IntakeConstants {
     //indexer on the top value
     public static final int INDEXER_ON_TOP_ID = 30;
     public static final String INDEXER_TOP_NAME  = "Indexer on top motor";
-
-    //the top indexer config
     public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, INTAKE_CANBUS, INDEXER_TOP_NAME)
     .withBrake(true)
     .withInvert(true);
@@ -57,17 +55,13 @@ public class IntakeConstants {
     //indexer close value
     public static final int INDEXER_CLOSE_ID = 33;
     public static final String INDEXER_CLOSE_NAME  = "Indexer on top motor";
-
-    //indexer motor close config
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
     .withBrake(true);
 
     //indexer close value
     public static final int INDEXER_FAR_ID = 32;
-    public static final String INDEXER_FAR_NAME  = "Indexer on top motor";
-
-    //indexer motor far config
-    public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(24, "Indexer far motor")
+    public static final String INDEXER_FAR_NAME  = "Indexer far motor";
+    public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(INDEXER_FAR_ID, INDEXER_FAR_NAME)
     .withBrake(true)
     .withInvert(true);
 }
