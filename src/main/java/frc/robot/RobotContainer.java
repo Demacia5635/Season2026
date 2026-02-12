@@ -43,7 +43,7 @@ public class RobotContainer implements Sendable {
 
   public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
-
+  public static Turret turret;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -52,9 +52,10 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    turret = new Turret();
+    turret.setDefaultCommand(new TurretCalibration());
     SmartDashboard.putData("RC", this);
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-
     // Configure the trigger bindings
     addStatesToElasticForTesting();
     configureBindings();

@@ -32,7 +32,7 @@ public class Turret extends SubsystemBase {
 
   private static Turret instance;
 
-  private Turret() {
+  public Turret() {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
     limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
@@ -78,7 +78,12 @@ public class Turret extends SubsystemBase {
     turretMotor.setMotion(position);
   }
 
+  public double getTurretPose(){
+    return turretMotor.getPosition().getValueAsDouble();
+  }
+
   public void setPower(double power) {
+    if(getTurretPose() > 110 || getTurretPose() < -110) return;
     turretMotor.set(power);
   }
 
