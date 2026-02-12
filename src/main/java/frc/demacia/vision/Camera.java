@@ -64,7 +64,6 @@ public class Camera {
     }
 
     public Rotation2d getTurrentAngle(){
-
         return turretAngle;
     }
 

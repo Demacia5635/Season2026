@@ -16,13 +16,6 @@
       "name": "SysidApp",
       "request": "launch",
       "mainClass": "frc.demacia.sysID.SysidApp",
-      "projectName": "Season2026"
-    },
-    {
-      "type": "java",
-      "name": "SysidApp",
-      "request": "launch",
-      "mainClass": "frc.demacia.sysID.SysidApp",
       "projectName": "Season2026-Imported"
     },
     {

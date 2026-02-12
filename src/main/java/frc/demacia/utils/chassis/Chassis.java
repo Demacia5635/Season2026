@@ -67,8 +67,23 @@ import static frc.demacia.vision.utils.VisionConstants.*;
  * <pre>
  * ChassisConfig config = new ChassisConfig(
  *         "MainChassis",
+<<<<<<< HEAD
  *         swerveModueles[] swerveModulesConfig,
  *         pigeonConfig,
+=======
+<<<<<<< HEAD
+ *         frontLeftConfig, frontRightConfig,
+ *         backLeftConfig, backRightConfig,
+ *         pigeonConfig,
+ *         new Translation2d(0.3, 0.3), // FL position
+ *         new Translation2d(0.3, -0.3), // FR position
+ *         new Translation2d(-0.3, 0.3), // BL position
+ *         new Translation2d(-0.3, -0.3) // BR position
+=======
+ *         swerveModueles[] swerveModulesConfig,
+ *         pigeonConfig,
+>>>>>>> 63b077a562aac2b40f84fbeaf92ab603a0a1ebd8
+>>>>>>> ee6de16a3315562049973a55298559729e72ceef
  * );
  * 
  * Chassis chassis = new Chassis(config);

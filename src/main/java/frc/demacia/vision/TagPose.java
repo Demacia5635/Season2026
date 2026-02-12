@@ -257,4 +257,9 @@ public TagPose(Camera camera){
   public boolean getIsObjectCamera() {
       return camera.getIsObjectCamera();
   }
+
+  public Translation2d getCameraToTag(){
+    return cameraToTag = cameraToTag = new Translation2d(GetDistFromCamera(),Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
+  }
+
 }
