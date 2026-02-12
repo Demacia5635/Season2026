@@ -5,11 +5,16 @@
 package frc.robot.Turret;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
+import frc.demacia.vision.TagPose;
+import frc.robot.Field;
+import frc.robot.Field.Red;
 
 import static frc.robot.Turret.TurretConstants.*;
 
@@ -17,6 +22,11 @@ public class Turret extends SubsystemBase {
   private TalonFXMotor turretMotor;
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
+
+  TagPose tag;
+  Field field;
+  Red redSide;
+
 
   private boolean hasCalibrated = false;
 
@@ -39,6 +49,20 @@ public class Turret extends SubsystemBase {
     if (instance == null)
       instance = new Turret();
     return instance;
+  }
+
+  public Translation2d getTurretPoseOnTheRobot(){
+    return new Translation2d();
+  }
+
+  public double getTurretToHubAngle(){
+    Translation2d cameraToTag = tag.getCameraToTag(); 
+    Pose2d TagPose = new Pose2d();
+    Translation2d HubPose = redSide.HUB_CENTER;
+    Translation2d TagToHub = TagPose.getTranslation().minus(HubPose);
+    Translation2d cameraToHub = cameraToTag.plus(TagToHub);
+    Translation2d TurretToHUb = cameraToHub.minus(getTurretPoseOnTheRobot());
+    return TurretToHUb.getAngle().getRadians();
   }
 
   public void setPositionPID(double position) {
