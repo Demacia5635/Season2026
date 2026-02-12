@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
     motorBattery.setPositionVoltage(position);
   }
 
-  public void setPower(double power){
+  public void setPowerBattery(double power){
     motorBattery.set(power);
   }
 

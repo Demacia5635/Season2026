@@ -12,6 +12,7 @@ import frc.robot.intake.subsystems.IntakeSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeCommand extends Command {
 
+  private double batteryPower;
   private IntakeSubsystem intakeSubsystem;
 
   /** Creates a new IntakeCommand. */
@@ -23,7 +24,9 @@ public class IntakeCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    batteryPower = IntakeConstants.MAX_POWER;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -44,11 +47,11 @@ public class IntakeCommand extends Command {
 
         //battery
         if (intakeSubsystem.isAtMax(Math.toRadians(15))) {
-          intakeSubsystem.setPower(-IntakeConstants.MAX_POWER);
+          batteryPower = -IntakeConstants.MAX_POWER;
         } else if(intakeSubsystem.isAtMin(Math.toRadians(15))){
-          intakeSubsystem.setPower(IntakeConstants.MAX_POWER);
+          batteryPower = IntakeConstants.MAX_POWER;
         }
-
+        intakeSubsystem.setPowerBattery(batteryPower);
         break;
 
       case DriveWhileIntake:
@@ -83,19 +86,19 @@ public class IntakeCommand extends Command {
 
         //battery
         if (intakeSubsystem.isAtMax(Math.toRadians(15))) {
-          intakeSubsystem.setPower(-IntakeConstants.MAX_POWER);
+          batteryPower = -IntakeConstants.MAX_POWER;
         } else if(intakeSubsystem.isAtMin(Math.toRadians(15))){
-          intakeSubsystem.setPower(IntakeConstants.MAX_POWER);
+          batteryPower = IntakeConstants.MAX_POWER;
         }
+        intakeSubsystem.setPowerBattery(batteryPower);
         break;
       
-      case GetOffClimb:
+      default:
         intakeSubsystem.stopIntake();
         intakeSubsystem.stopIndexerOnTop();
         intakeSubsystem.stopIndexerClose();
         intakeSubsystem.stopIndexerFar();
         intakeSubsystem.setPositionBattery(0);
-        break;
     }
   }
 }

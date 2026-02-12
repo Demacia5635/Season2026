@@ -29,7 +29,7 @@ public class IntakeConstants {
     public static final int BATTERY_ID = 31;
     public static final String BATTER_NAME = "Battery Motor";
 
-    //battery pid feet forward
+    //battery pid feed forward
     public static final double BATTERY_KP = 20;
     public static final double BATTERT_KI = 0;
     public static final double BATTERY_KD = 0;
@@ -38,14 +38,14 @@ public class IntakeConstants {
     public static final double BATTERY_KA = 0;
     public static final double BATTER_KG = 0;
 
-    //the battry motor config
+    //the battery motor config
     public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(BATTERY_ID, INTAKE_CANBUS, BATTER_NAME)
     .withBrake(true)
     .withInvert(false)
     .withPID(BATTERY_KP, BATTERT_KI, BATTERY_KD, BATTERT_KS, BATTERY_KV, BATTERY_KA, BATTER_KG)
     .withRadiansMotor(36);
 
-    //inexer on the top valuo
+    //indexer on the top value
     public static final int INDEXER_ON_TOP_ID = 30;
     public static final String INDEXER_TOP_NAME  = "Indexer on top motor";
 
@@ -54,19 +54,19 @@ public class IntakeConstants {
     .withBrake(true)
     .withInvert(true);
 
-    //inexer close valuo
+    //indexer close value
     public static final int INDEXER_CLOSE_ID = 33;
     public static final String INDEXER_CLOSE_NAME  = "Indexer on top motor";
 
-    //indexr motor colose config
+    //indexer motor close config
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
     .withBrake(true);
 
-    //inexer close valuo
+    //indexer close value
     public static final int INDEXER_FAR_ID = 32;
     public static final String INDEXER_FAR_NAME  = "Indexer on top motor";
 
-    //indexr motor far config
+    //indexer motor far config
     public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(24, "Indexer far motor")
     .withBrake(true)
     .withInvert(true);
