@@ -259,7 +259,7 @@ public TagPose(Camera camera){
   }
 
   public Translation2d getCameraToTag(){
-    return cameraToTag = cameraToTag = new Translation2d(GetDistFromCamera(),Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));;
+    return cameraToTag = cameraToTag = new Translation2d(GetDistFromCamera(),Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
   }
 
 }
