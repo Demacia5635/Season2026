@@ -2,23 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.demacia.vision.subsystem;
-
-import java.util.function.Supplier;
+package frc.demacia.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.vision.Camera;
+import static frc.robot.RobotCommon.*;
 
 // Subsystem that tracks and calculates the position of a vision target (object) on the field
-public class ObjectPose extends SubsystemBase {
+public class ObjectPose {
   private Translation2d robotToObject;
   private Translation2d cameraToObject;
   private Translation2d OriginToObject;
@@ -32,8 +28,8 @@ public class ObjectPose extends SubsystemBase {
   private double camToObjectPitch;
 
   
-  private Supplier<Rotation2d> getRobotAngle;
-  private Supplier<Pose2d> robotCurrentPose;
+  private Rotation2d getRobotAngle;
+  private Pose2d robotCurrentPose;
 
 
   private Camera camera;
@@ -43,9 +39,7 @@ public class ObjectPose extends SubsystemBase {
    * Constructor - Initializes the object tracker with camera configuration and robot position suppliers.
    * Sets up the NetworkTable connection to receive vision data from the camera.
    */
-  public ObjectPose(Camera camera, Supplier<Rotation2d> getRobotAngle,Supplier<Pose2d> robotCurrentPose) {
-    this.getRobotAngle = getRobotAngle;
-    this.robotCurrentPose = robotCurrentPose;
+  public ObjectPose(Camera camera) {
     field = new Field2d();
     robotfield = new Field2d();
 
@@ -59,17 +53,13 @@ public class ObjectPose extends SubsystemBase {
 
   }
 
-  /**
-   * Periodic method called every robot loop (~20ms).
-   * Reads the latest vision data (pitch, yaw) from NetworkTables and updates the object's field position
-   * if a valid target is detected.
-   */
-  @Override
-  public void periodic() {
+
+  public void updateValues() {
     camToObjectPitch = Table.getEntry("ty").getDouble(0.0)+ camera.getPitch();
     camToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    getRobotAngle = robotAngle;
     if(Table.getEntry("tv").getDouble(0.0) != 0){
-      objectPose = new Pose2d(getOriginToObject(), getRobotAngle.get());
+      objectPose = new Pose2d(getOriginToObject(), getRobotAngle);
       field.setRobotPose(objectPose);
       // robotfield.setRobotPose(robotCurrentPose.get());
     }
@@ -117,9 +107,9 @@ public class ObjectPose extends SubsystemBase {
    * @return Translation2d from field origin to object in field coordinates 0.775
    */
   public Translation2d getOriginToObject(){
-    if(robotCurrentPose.get() != null){
-      robotToObject = getRobotToObject().rotateBy(getRobotAngle.get());
-      OriginToObject = robotToObject.plus(robotCurrentPose.get().getTranslation());
+    if(robotCurrentPose != null){
+      robotToObject = getRobotToObject().rotateBy(getRobotAngle);
+      OriginToObject = robotToObject.plus(robotCurrentPose.getTranslation());
     }
     else{
       return Translation2d.kZero;
@@ -127,15 +117,6 @@ public class ObjectPose extends SubsystemBase {
     return OriginToObject;
   }
 
-  /**
-   * Configures the Shuffleboard/SmartDashboard display for this subsystem.
-   * Adds the X and Y coordinates of the tracked object to the dashboard.
-   */
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("object pos X:", this::getX, null);
-      builder.addDoubleProperty("object pos Y:", this::getY, null);
-  }
 
   
   /**

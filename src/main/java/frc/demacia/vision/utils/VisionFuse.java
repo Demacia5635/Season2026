@@ -8,21 +8,23 @@ import static frc.demacia.vision.utils.VisionConstants.TAG_ANGLE;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.demacia.vision.subsystem.Tag;
+import frc.demacia.vision.TagPose;
+
 
 /** Add your docs here. */
 public class VisionFuse {
 
-    private Tag[] tags;
+    private TagPose[] tags;
+    
 
-    public VisionFuse(Tag... tags) {
+    public VisionFuse(TagPose... tags) {
         this.tags = tags;
     }
 
     private double getColectedConfidence() {
         double confidence = 0;
-        for (Tag tag : tags) {
-            if (tag.getPose() != null) {
+        for (TagPose tag : tags) {
+            if (tag.getRobotPose2d() != null) {
                 confidence += tag.getPoseEstemationConfidence();
             }
         }
@@ -37,12 +39,12 @@ public class VisionFuse {
         double x = 0;
         double y = 0;
         double angle = 0;
-        for (Tag tag : tags) {
-            if (tag.getPose() == null)
+        for (TagPose tag : tags) {
+            if (tag.getRobotPose2d() == null)
                 continue;
-            x += tag.getPose().getX() * normalizeConfidence(tag.getPoseEstemationConfidence());
-            y += tag.getPose().getY() * normalizeConfidence(tag.getPoseEstemationConfidence());
-            angle += tag.getPose().getRotation().getRadians() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            x += tag.getRobotPose2d().getX() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            y += tag.getRobotPose2d().getY() * normalizeConfidence(tag.getPoseEstemationConfidence());
+            angle += tag.getRobotPose2d().getRotation().getRadians() * normalizeConfidence(tag.getPoseEstemationConfidence());
         }
         return (x == 0 && y == 0) ? null : new Pose2d(x, y, (getRotationEstimation() == null) ? new Rotation2d(angle) : getRotationEstimation());
     }
@@ -54,8 +56,8 @@ public class VisionFuse {
 
     public double getVisionTimestamp() {
         double timestamp = 0;
-        for (Tag tag : tags) {
-            if (tag.getPose() != null) {
+        for (TagPose tag : tags) {
+            if (tag.getRobotPose2d() != null) {
                 timestamp += tag.getTimestamp() * normalizeConfidence(tag.getPoseEstemationConfidence());
             }
         }
@@ -69,7 +71,7 @@ public class VisionFuse {
         for (int i = 0; i < tags.length; i++) {
             double currentConfidence = tags[i].getPoseEstemationConfidence();
 
-            if (currentConfidence > highestConfidence && (currentConfidence > 0.1 || tags[i].is3D)) {
+            if (currentConfidence > highestConfidence && (currentConfidence > 0.1)) {
                 highestConfidence = currentConfidence;
                 bestCamera = i;
             }
@@ -87,11 +89,11 @@ public class VisionFuse {
     }
 
     public Rotation2d get2dAngle() {
-        // Ensure that 'tags' is not empty or has a valid index before accessing
-        if (tags != null && tags.length > 3 && tags[0].getCameraToTag() != null
-                && tags[3].getCameraToTag() != null
+        // Ensure that 'tags' is not empty or has a valid index before accessing getRobotToTagFieldRel
+        if (tags != null && tags.length > 3 && tags[0].getRobotToTagFieldRel() != null
+                && tags[3].getRobotToTagFieldRel() != null
                 && tags[0].getTagId() == tags[3].getTagId()) {
-            return tags[0].getCameraToTag().minus(tags[3].getCameraToTag())
+            return tags[0].getRobotToTagFieldRel().minus(tags[3].getRobotToTagFieldRel())
                     .getAngle().rotateBy(Rotation2d.fromDegrees(90))
                     .plus(TAG_ANGLE[tags[3].getTagId()]);
         } else {
@@ -99,14 +101,14 @@ public class VisionFuse {
         }
     }
 
-    public void set3D(boolean is3D){
-        for (Tag tag : tags) {
-            tag.set3D(is3D);
-        }
-    }
+    // public void set3D(boolean is3D){
+    //     for (TagPose tag : tags) {
+    //         tag.set3D(is3D);
+    //     }
+    // }
 
-    public double get3DAngle() {
-        Integer bestCamera = getBestCamera();
-        return bestCamera != null ? tags[bestCamera].getAngle() : 0;
-    }
+    // public double get3DAngle() {
+    //     Integer bestCamera = getBestCamera();
+    //     return bestCamera != null ? tags[bestCamera].getAngle() : 0;
+    // }
 }
