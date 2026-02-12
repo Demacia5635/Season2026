@@ -57,6 +57,9 @@ public class ObjectPose{
 
     SmartDashboard.putData("fieldObject" + camera.getName(), field);
     SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
+    
+    // SmartDashboard.putNumber("tx", camera.getX());
+    // SmartDashboard.putNumber("ty", camera.getY());
   }
 
   /**

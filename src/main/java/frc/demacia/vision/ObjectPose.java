@@ -71,6 +71,8 @@ public class ObjectPose{
   private Pose2d chooseObjectPose() {
     double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
     double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    SmartDashboard.putNumber("tx", Table.getEntry("tx").getDouble(0.0));
+    SmartDashboard.putNumber("ty",Table.getEntry("ty").getDouble(0.0));
     boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
 
     // Case 1: No current target detected
