@@ -4,91 +4,116 @@
 
 package frc.robot.intake.commands;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotCommon;
 import frc.robot.intake.IntakeConstants;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * This command activates the intake by the value of the {@link RobotCommon.robotStates}
+ */
 public class IntakeCommand extends Command {
 
-  private double batteryPower;
+  /** The Intake Subsystem */
   private IntakeSubsystem intakeSubsystem;
-  private ShinuaSubsystem shinuaSubsystem;
 
-  /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, ShinuaSubsystem shinuaSubsystem) {
+  private double power;
+
+  /**
+   * Creates a new Intake Command
+   * @param intakeSubsystem the intake subsystem of the Robot Container
+   */
+  public IntakeCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
-    this.shinuaSubsystem = shinuaSubsystem;
-    batteryPower = IntakeConstants.MAX_POWER;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem, shinuaSubsystem);
+    addRequirements(intakeSubsystem);
+
+    power = 0;
+
+    SmartDashboard.putData("Intake Command", this);
   }
 
-  // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+    
+      builder.addDoubleProperty("Intake Power", this::getPower, this::setPower);
+  }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * activates Intake based on the current state
+   */
   @Override
   public void execute() {
-    switch (RobotCommon.currentState) { //ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb, Climb, GetOffClimb
+    switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
+                                        // Climb, GetOffClimb
       case ShootWithIntake:
-        //intake
+        // intake
         intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
 
-        //indexers
-        shinuaSubsystem.setDutyIndexerOnTop(IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+        // indexers
 
-        //battery
+        // battery
         // if (shinuaSubsystem.isAtMax(Math.toRadians(15))) {
-        //   batteryPower = -IntakeConstants.MAX_POWER;
+        // batteryPower = -IntakeConstants.MAX_POWER;
         // } else if(shinuaSubsystem.isAtMin(Math.toRadians(15))){
-        //   batteryPower = IntakeConstants.MAX_POWER;
+        // batteryPower = IntakeConstants.MAX_POWER;
         // }
         // shinuaSubsystem.setPowerBattery(batteryPower);
         break;
 
       case DriveWhileIntake:
-        //intake
+        // intake
         intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
 
-        //indexers
-        shinuaSubsystem.setDutyIndexerOnTop(-IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerFar(-IntakeConstants.MAX_POWER);
-
-        //battery
-        // shinuaSubsystem.setPositionBattery(0);
         break;
 
       case ShootWithoutIntake:
-        //intake
+        // intake
         intakeSubsystem.stopIntake();
 
-        //indexers
-        shinuaSubsystem.setDutyIndexerOnTop(IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-        shinuaSubsystem.setDutyIndexerFar(IntakeConstants.MAX_POWER);
-
-        //battery
-        // if (shinuaSubsystem.isAtMax(Math.toRadians(15))) {
-        //   batteryPower = -IntakeConstants.MAX_POWER;
-        // } else if(shinuaSubsystem.isAtMin(Math.toRadians(15))){
-        //   batteryPower = IntakeConstants.MAX_POWER;
-        // }
-        // shinuaSubsystem.setPowerBattery(batteryPower);
         break;
-      
+
+      case Test:
+        intakeSubsystem.setDutyIntake(power);
+        break;
+
       default:
         intakeSubsystem.stopIntake();
-        shinuaSubsystem.stopIndexerOnTop();
-        shinuaSubsystem.stopIndexerClose();
-        shinuaSubsystem.stopIndexerFar();
-        // shinuaSubsystem.setPositionBattery(0);
     }
+  }
+
+  /**
+   * At the end of the command disable the intake
+   */
+  @Override
+  public void end(boolean interrupted) {
+    intakeSubsystem.stopIntake();
+  }
+
+  /**
+   * never stop
+   */
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+
+  public IntakeSubsystem getIntakeSubsystem() {
+    return intakeSubsystem;
+  }
+
+  public void setIntakeSubsystem(IntakeSubsystem intakeSubsystem) {
+    this.intakeSubsystem = intakeSubsystem;
+  }
+
+  public double getPower() {
+    return power;
+  }
+
+  public void setPower(double power) {
+    this.power = power;
   }
 }

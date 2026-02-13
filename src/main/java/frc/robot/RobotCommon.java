@@ -11,7 +11,7 @@ public class RobotCommon {
     }
 
     public enum robotStates{
-        ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb, Climb, GetOffClimb
+        ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb, Climb, GetOffClimb, Test
     }
     
     public static robotStates currentState = robotStates.Drive;

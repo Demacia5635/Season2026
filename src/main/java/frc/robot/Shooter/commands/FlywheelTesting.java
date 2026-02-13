@@ -10,7 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.Shooter.subsystem.Shooter;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/** 
+ * this command is a fly weel tsting
+ * for test the vel of the fly weel
+*/
 public class FlywheelTesting extends Command {
   Shooter shooter;
   CommandController controller;
@@ -25,6 +28,12 @@ public class FlywheelTesting extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  /**
+   * @param wantedVel
+   * a viable that cange the vel
+   * we set it in the elastic
+   */
+
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("Wanted flywheel vel", () -> wantedVel, (x) -> wantedVel = x);
@@ -35,8 +44,13 @@ public class FlywheelTesting extends Command {
   public void initialize() {
   }
 
+  /**
+   * in the execute we set the vel
+   * by set the vaubole to the funcsan setFlyWeelVel()
+   * he is set in the subsystem
+   */
+
   // Called every time the scheduler runs while the command is scheduled.
-  @Override
   public void execute() {
     shooter.setFlywheelVel(wantedVel);
   }

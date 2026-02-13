@@ -15,7 +15,21 @@ import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * this is the main shooter command
+ * 
+ * he cange the shooter by the state:
+ * 
+ * @param delevery that the state for delvery the boll from the mideal to are side 
+ * @param shooting that state is for shooting boll to the hub
+ * @param tranch that state is for move ander the tranch
+ * 
+ * he cuod shoot and delvery by moving with the funcsan 
+ * @param setShootingAndAngle that thke the wanted angle and vel and set it to be wille moving 
+ * 
+ * in the end of the command the shooter stop
+ */
+
 public class ShooterCommand extends Command {
   Shooter shooter;
   Chassis chassis;
@@ -28,6 +42,18 @@ public class ShooterCommand extends Command {
     addRequirements(shooter);
 
   }
+  
+  /**
+   * this funcsan take get the whnnted angle and vel
+   * and return calcolit the angle and vel by driving
+   *
+   * and move the hud and the fly weel to this vel to angle
+   *  
+   * @param hoodAngle this is the angle of the hood
+   * @param vel this is the velof the fly weel
+   * @param heding i aksily not shoor
+   * @param robotSpeed os the vurrent robot speed meter per secend
+   */
 
   private void setShootingAndHood(double hoodAngle, double vel, Rotation2d heading, ChassisSpeeds robotSpeeds) {
 
@@ -80,6 +106,19 @@ public class ShooterCommand extends Command {
   public void initialize() {
   }
 
+  /**
+   * this funcsan the execute run every 0.02 secand
+   * he set what angle and vel the shooter shood be by the state
+   * 
+   * @param shooter.getCurrentShooterState() this is how we get witch state the shooter need to be
+   * 
+   * the state are:
+   * 
+   * @param delivery this state is for delever the code from the senter of the field to are sidr team
+   * @param shooting this state is to shoot the fuol to the hub
+   * @param tranch this state is to move the hood to angle for get ander the truench
+   */
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -124,9 +163,15 @@ public class ShooterCommand extends Command {
     }
   }
 
+
+  /**
+   * the funcsan @param end stop the shooter when the command end
+   */
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    shooter.stop();
   }
 
   // Returns true when the command should end.

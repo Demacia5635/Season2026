@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
@@ -19,71 +20,80 @@ import frc.robot.Field.Red;
 import static frc.robot.Turret.TurretConstants.*;
 
 public class Turret extends SubsystemBase {
+  private static Turret instance;
+  public static Turret getInstance() {
+    if (instance == null)
+      instance = new Turret();
+    return instance;
+  }
   private TalonFXMotor turretMotor;
+
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
-
   TagPose tag;
+
+
   Field field;
+
   Red redSide;
 
-
   private boolean hasCalibrated = false;
-
-  private static Turret instance;
 
   public Turret() {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
     limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
     SmartDashboard.putData("Turret",this);
-    
-  }
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      builder.addBooleanProperty("/Min limit", ()->isAtMinLimit(), null);
-      builder.addBooleanProperty("/Max limit", ()->isAtMaxLimit(), null);
+    SmartDashboard.putData("Turret/Motor/set coast", new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Turret/Motor/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
   }
 
-  public static Turret getInstance() {
-    if (instance == null)
-      instance = new Turret();
-    return instance;
+  public void setNeutralMode(boolean isBrake) {
+    turretMotor.setNeutralMode(isBrake);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addBooleanProperty("/Min limit", this::isAtMinLimit, null);
+      builder.addBooleanProperty("/Max limit", this::isAtMaxLimit, null);
   }
 
   public Translation2d getTurretPoseOnTheRobot(){
-    return new Translation2d();
+    return TurretConstants.TURRET_POS;
   }
 
-  public double getTurretToHubAngle(){
-    Translation2d cameraToTag = tag.getCameraToTag(); 
-    Pose2d TagPose = new Pose2d();
-    Translation2d HubPose = redSide.HUB_CENTER;
-    Translation2d TagToHub = TagPose.getTranslation().minus(HubPose);
-    Translation2d cameraToHub = cameraToTag.plus(TagToHub);
-    Translation2d TurretToHUb = cameraToHub.minus(getTurretPoseOnTheRobot());
-    return TurretToHUb.getAngle().getRadians();
+  // public double getTurretToHubAngle() {
+  //   Translation2d cameraToTag = tag.getCameraToTag(); 
+  //   Pose2d TagPose = new Pose2d();
+  //   Translation2d HubPose = redSide.HUB_CENTER;
+  //   Translation2d TagToHub = TagPose.getTranslation().minus(HubPose);
+  //   Translation2d cameraToHub = cameraToTag.plus(TagToHub);
+  //   Translation2d TurretToHUb = cameraToHub.minus(getTurretPoseOnTheRobot());
+  //   return TurretToHUb.getAngle().getRadians();
+  // }
+
+  public void setPositionPID(double wantedPosition) {
+    if (!hasCalibrated) return;
+    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    turretMotor.setPosition(pos);
   }
 
-  public void setPositionPID(double position) {
-    MathUtil.clamp(position, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
-    updatePositionByLimit();
-
-    turretMotor.setPosition(position);
-  }
-
-  public void setPositionMotion(double position) {
-    position = MathUtil.clamp(position, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
-    updatePositionByLimit();
-    turretMotor.setMotion(position);
+  public void setPositionMotion(double wantedPosition) {
+    if (!hasCalibrated) return;
+    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    turretMotor.setMotion(pos);
   }
 
   public double getTurretPose(){
-    return turretMotor.getPosition().getValueAsDouble();
+    return turretMotor.getCurrentPosition();
   }
 
   public void setPower(double power) {
-    if(getTurretPose() > 110 || getTurretPose() < -110) return;
+    if (!hasCalibrated) return;
+    if(getTurretPose() > Math.toRadians(110) || getTurretPose() < -Math.toRadians(110)) {
+      turretMotor.stop();
+      return;
+    }
     turretMotor.set(power);
   }
 
@@ -103,6 +113,7 @@ public class Turret extends SubsystemBase {
     turretMotor.setEncoderPosition(position);
     setCalibrated();
   }
+
   public void setCalibrated() {
     this.hasCalibrated = true;
   }
@@ -112,5 +123,9 @@ public class Turret extends SubsystemBase {
       turretMotor.setEncoderPosition(MIN_TURRET_ANGLE);
     if (isAtMaxLimit())
       turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
+  }
+
+  public void stop() {
+    turretMotor.stop();
   }
 }

@@ -8,15 +8,21 @@ import static frc.robot.Constants.*;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Shooter.commands.ShooterTesting;
+import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
@@ -30,7 +36,9 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.intake.commands.BatteryTest;
 import frc.robot.intake.commands.IntakeCommand;
+import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
@@ -50,6 +58,7 @@ public class RobotContainer implements Sendable {
   public static Turret turret;
   public static IntakeSubsystem intake;
   public static ShinuaSubsystem shinua;
+  public static Shooter shooter;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -60,13 +69,14 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     intake = new IntakeSubsystem();
     shinua = new ShinuaSubsystem();
-    // turret = new Turret();
-    // turret.setDefaultCommand(new TurretCalibration());
-    SmartDashboard.putData("RC", this);
+    shooter = new Shooter();
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-    // Configure the trigger bindings
+    turret = new Turret();
+    SmartDashboard.putData("RC", this);
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addStatesToElasticForTesting();
     configureBindings();
+    setUserButton();
   }
 
   public void addStatesToElasticForTesting() {
@@ -76,7 +86,7 @@ public class RobotContainer implements Sendable {
     }
     robotStateChooser.onChange(state -> RobotCommon.currentState = state);
     SmartDashboard.putData("Robot State Chooser", robotStateChooser);
-    
+
     SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
     for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
       shiftsChooser.addOption(state.name(), state);
@@ -99,13 +109,15 @@ public class RobotContainer implements Sendable {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  public static boolean isShooting = false;
-
   private void configureBindings() {
-    DriveCommand driveCommand = new DriveCommand(chassis, driverController);
-    IntakeCommand intakeCommand = new IntakeCommand(intake, shinua);
-    chassis.setDefaultCommand(driveCommand);
-    intake.setDefaultCommand(intakeCommand);
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    intake.setDefaultCommand(new IntakeCommand(intake));
+    shinua.setDefaultCommand(new ShinuaCommand(shinua));
+    shooter.setDefaultCommand(new ShooterTesting(shooter));
+  }
+
+  private void setUserButton() {
+    new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton()).onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
   }
 
   @Override
@@ -113,22 +125,25 @@ public class RobotContainer implements Sendable {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
 
-    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated, (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
-    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy, (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+    builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
+        (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
+    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
+        (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
   }
 
   static public void updateCommon() {
     Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
     RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
-    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle - RobotCommon.currentRobotPose.getRotation().getRadians();
+    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle
+        - RobotCommon.currentRobotPose.getRotation().getRadians();
 
     Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
     RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
-    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle - RobotCommon.futureRobotPose.getRotation().getRadians();
+    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle
+        - RobotCommon.futureRobotPose.getRotation().getRadians();
 
-    
   }
 
   /**

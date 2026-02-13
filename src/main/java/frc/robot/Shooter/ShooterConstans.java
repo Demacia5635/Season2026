@@ -33,7 +33,7 @@ public class ShooterConstans {
 
         public static final Canbus SHOOTER_CANBUS = Canbus.Rio;
 
-        public static final int SHOOTER_MOTOR_ID = 33;
+        public static final int SHOOTER_MOTOR_ID = 51;
         public static final String SHOOTER_MOTOR_NAME = "Shooter Motor";
 
         public static final double SHOOTER_KP = 2;
@@ -52,7 +52,7 @@ public class ShooterConstans {
                         .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
                         .withMeterMotor(1, 3 * 0.0254);
 
-        public static final int FEEDER_ID = 34;
+        public static final int FEEDER_ID = 50;
         public static final String FEEDER_NAME = "Feeder Motor";
 
         public static final double FEEDER_GEAR_RATIO = 1;
@@ -64,7 +64,7 @@ public class ShooterConstans {
                         .withBrake(false)
                         .withInvert(true);
 
-        public static final int HOOD_ID = 35;
+        public static final int HOOD_ID = 52;
         public static final String HOOD_NAME = "HOOD MOTOR";
 
         public static final double HOOD_KP = 0.65;
@@ -90,10 +90,9 @@ public class ShooterConstans {
         public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 0;
+        public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
-        public static final double HOOD_OFFSET = -Math.toRadians(55);
-
+        public static final double HOOD_OFFSET = 1.5-1.6481580458895453;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

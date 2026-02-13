@@ -17,7 +17,8 @@ public class IntakeConstants {
     public static final double MAX_POWER = 0.8;
 
     //the motors max pose
-    public static final double MAX_POSITION = 4.2;
+    public static final double MAX_POSITION = 6;
+    public static final double MIN_POSITION = 0;
 
     public static final int INTAKE_ID = 20;
     public static final String INTAKE_NAME = "intake motor";
@@ -56,7 +57,7 @@ public class IntakeConstants {
     public static final int INDEXER_CLOSE_ID = 33;
     public static final String INDEXER_CLOSE_NAME  = "Indexer on top motor";
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
-    .withBrake(true);
+    .withBrake(true).withInvert(true);
 
     //indexer close value
     public static final int INDEXER_FAR_ID = 32;

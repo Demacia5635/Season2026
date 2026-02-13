@@ -11,6 +11,11 @@ import frc.demacia.utils.controller.CommandController;
 import frc.robot.Shooter.subsystem.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+
+/**
+ * this command is  acommand for the tsting of the hood
+*/
+
 public class HoodTesting extends Command {
   Shooter shooter;
   CommandController controller;
@@ -24,6 +29,11 @@ public class HoodTesting extends Command {
   @Override
   public void initialize() {}
 
+  /**
+   * in the execute we set the hood power
+   * to the conroller * 0.8
+   */
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -32,9 +42,7 @@ public class HoodTesting extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
+  public void end(boolean interrupted) {} // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
