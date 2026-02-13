@@ -67,7 +67,7 @@ public class ShooterTesting extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // shooter.setHoodAngle(Math.toRadians(wantedAngle));
+    shooter.setHoodAngle(Math.toRadians(wantedAngle));
     shooter.setFlywheelVel(wantedFlywheelVel);
     shooter.setFeederPower(isFeederOn ? 0.4 : 0);
   }

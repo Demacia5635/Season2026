@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
 
   private boolean hasCalibrated = false;
 
-  public Turret() {
+  private Turret() {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
     limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
@@ -54,8 +54,10 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addBooleanProperty("/Min limit", this::isAtMinLimit, null);
-      builder.addBooleanProperty("/Max limit", this::isAtMaxLimit, null);
+      super.initSendable(builder);
+      
+      builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
+      builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
   }
 
   public Translation2d getTurretPoseOnTheRobot(){
@@ -89,11 +91,11 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    if (!hasCalibrated) return;
-    if(getTurretPose() > Math.toRadians(110) || getTurretPose() < -Math.toRadians(110)) {
-      turretMotor.stop();
-      return;
-    }
+    // if (!hasCalibrated) return;
+    // if(getTurretPose() > Math.toRadians(110) || getTurretPose() < -Math.toRadians(110)) {
+    //   turretMotor.stop();
+    //   return;
+    // }
     turretMotor.set(power);
   }
 
@@ -116,6 +118,10 @@ public class Turret extends SubsystemBase {
 
   public void setCalibrated() {
     this.hasCalibrated = true;
+  }
+
+  public double getTurretAngle() {
+    return turretMotor.getCurrentAngle();
   }
 
   public void updatePositionByLimit() {

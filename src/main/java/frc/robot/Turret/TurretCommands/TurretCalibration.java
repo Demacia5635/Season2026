@@ -12,9 +12,9 @@ import frc.robot.Turret.Turret;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretCalibration extends Command {
   Turret turret;
-  public TurretCalibration() {
-    this.turret = Turret.getInstance();
-    SmartDashboard.putData("turret calibrate", new InstantCommand() );
+  public TurretCalibration(Turret turret) {
+    this.turret = turret;
+    addRequirements(turret);
   }
 
   @Override
@@ -31,8 +31,10 @@ public class TurretCalibration extends Command {
   @Override
   public void end(boolean interrupted) {
     turret.stop();
-    turret.setCalibrated();
-    turret.updatePositionByLimit();
+    if (!interrupted) {
+      turret.setCalibrated();
+      turret.updatePositionByLimit();
+    }
   }
 
   // Returns true when the command should end.

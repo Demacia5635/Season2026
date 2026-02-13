@@ -1,6 +1,7 @@
 package frc.robot.intake.commands;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
@@ -27,6 +28,7 @@ public class ShinuaCommand extends Command {
     private double batteryPow;
 
     private boolean isDirectionUp;
+    private Timer timer;
 
     private final CommandController controller;
 
@@ -45,6 +47,7 @@ public class ShinuaCommand extends Command {
         isDirectionUp = true;
 
         this.controller = controller;
+        this.timer = new Timer();
 
         addRequirements(shinua);
 
@@ -64,6 +67,8 @@ public class ShinuaCommand extends Command {
     @Override
     public void initialize() {
         isDirectionUp = true;
+        timer.stop();
+        timer.reset();
     }
 
     /**
@@ -74,6 +79,7 @@ public class ShinuaCommand extends Command {
         switch (RobotCommon.currentState) {
             case ShootWithIntake:
             case ShootWithoutIntake:
+                timer.start();
                 shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
@@ -83,11 +89,12 @@ public class ShinuaCommand extends Command {
                 if (shinua.isAtMin()) {
                     isDirectionUp = true;
                 }
-                shinua.setPowerBattery(-controller.getRightY());
-                // shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
+                // shinua.setPowerBattery(-controller.getRightY());
+                shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
                 break;
 
             case DriveWhileIntake:
+                timer.start();
                 shinua.setDutyIndexerFar(-0.6);
                 shinua.setDutyIndexerClose(0.25);
                 shinua.setDutyIndexerOnTop(-0.4);
@@ -102,6 +109,8 @@ public class ShinuaCommand extends Command {
                 break;
 
             case Test:
+                timer.stop();
+                timer.reset();
                 shinua.setDutyIndexerClose(rightPow);
                 shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
@@ -109,6 +118,8 @@ public class ShinuaCommand extends Command {
                 break;
 
             default:
+                timer.stop();
+                timer.reset();
                 shinua.stop();
                 break;
         }
@@ -117,6 +128,8 @@ public class ShinuaCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         shinua.stop();
+        timer.stop();
+        timer.reset();
     }
 
     @Override

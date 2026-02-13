@@ -71,7 +71,7 @@ public class RobotContainer implements Sendable {
     shinua = new ShinuaSubsystem();
     shooter = new Shooter();
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-    turret = new Turret();
+    turret = Turret.getInstance();
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     addStatesToElasticForTesting();
@@ -114,6 +114,8 @@ public class RobotContainer implements Sendable {
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
     shooter.setDefaultCommand(new ShooterTesting(shooter));
+    turret.setDefaultCommand(new TurretCommand(turret));
+    SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 
   private void setUserButton() {

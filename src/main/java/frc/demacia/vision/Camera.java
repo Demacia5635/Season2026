@@ -40,7 +40,7 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,Rotation2d turretAngle,Translation3d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera, Rotation2d turretAngle,Translation3d turretToCamPosition) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
         this.turretToCamPosition = turretToCamPosition;

@@ -28,13 +28,14 @@ public class SetRobotNeutralMode extends Command {
 
     @Override
     public void initialize() {
+        isBrake = !isBrake;
+
         chassis.setNeutralMode(isBrake);
         intake.setNeutralMode(isBrake);
         shinua.setNeutralMode(isBrake);
         turret.setNeutralMode(isBrake);
         shooter.setNeutralMode(isBrake);
         
-        isBrake = !isBrake;
     }
 
     @Override

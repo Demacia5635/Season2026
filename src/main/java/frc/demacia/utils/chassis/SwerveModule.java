@@ -139,10 +139,17 @@ public class SwerveModule {
             diff = diff + Math.PI;
         }
 
-        if (Math.abs(diff) <= Math.toRadians(0.5))diff = 0;
+        if (Math.abs(diff) <= Math.toRadians(0.5)) {
+            setSteerPower(0);
+        } else {
+            setSteerPosition(steerMotor.getCurrentPosition() + diff);
+        }
 
-        setSteerPosition(steerMotor.getCurrentPosition() + diff);
-        setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);
+        if (vel == 0) {
+            setDrivePower(0);
+        } else {
+            setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);
+        }
     }
 
     /**

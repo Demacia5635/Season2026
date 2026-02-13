@@ -21,14 +21,14 @@ public class IntakeConstants {
     public static final double MIN_POSITION = 0;
 
     public static final int INTAKE_ID = 20;
-    public static final String INTAKE_NAME = "intake motor";
+    public static final String INTAKE_NAME = "Intake/Motor";
 
     //intake motor
     public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(INTAKE_ID, INTAKE_CANBUS, INTAKE_NAME).withInvert(true);
     
     //battery value
     public static final int BATTERY_ID = 31;
-    public static final String BATTER_NAME = "Battery Motor";
+    public static final String BATTER_NAME = "Shinua/Battery";
 
     //battery pid feed forward
     public static final double BATTERY_KP = 20;
@@ -48,7 +48,7 @@ public class IntakeConstants {
 
     //indexer on the top value
     public static final int INDEXER_ON_TOP_ID = 30;
-    public static final String INDEXER_TOP_NAME  = "Indexer on top motor";
+    public static final String INDEXER_TOP_NAME  = "Shinua/Top";
     public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, INTAKE_CANBUS, INDEXER_TOP_NAME)
     .withBrake(true)
     .withInvert(true);

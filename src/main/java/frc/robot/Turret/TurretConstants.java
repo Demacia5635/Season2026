@@ -25,15 +25,15 @@ public class TurretConstants {
     private static final double MAX_ACCEL = Math.toRadians(180);
     private static final double MAX_JERK = Math.toRadians(2000);    
     
-    public static final TalonFXConfig TURRET_MOTOR_CONFIG = new TalonFXConfig(TURRET_MOTOR_ID, CANBUS, "Turret Motor")
+    public static final TalonFXConfig TURRET_MOTOR_CONFIG = new TalonFXConfig(TURRET_MOTOR_ID, CANBUS, "Turret/Motor")
     .withBrake(true)
-    .withInvert(true)
+    .withInvert(false)
     .withRadiansMotor(GEAR_RATIO)
     .withPID(kP, kI, kD, kS, kV, kA, 0)
     .withMotionParam(MAX_VELOCITY, MAX_ACCEL, MAX_JERK);
 
-    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(0, "Min Limit Switch"); 
-    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(1, "Max Limit Switch"); 
+    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(1, "Min Limit Switch"); 
+    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(0, "Max Limit Switch"); 
 
     public static final Translation2d TURRET_POS = Translation2d.kZero;
 

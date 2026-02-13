@@ -23,14 +23,14 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorBattery.configPidFf(0);
 
     SmartDashboard.putData("Shinua", this);
-    SmartDashboard.putData("Shinua/top/set coast", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/top/set brake", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/left/set coast", new InstantCommand(() -> motorIndexerFar.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/left/set brake", new InstantCommand(() -> motorIndexerFar.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/right/set coast", new InstantCommand(() -> motorIndexerClose.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/right/set brake", new InstantCommand(() -> motorIndexerClose.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/battery/set coast", new InstantCommand(() -> motorBattery.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/battery/set brake", new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Top/set coast", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Top/set brake", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Left/set coast", new InstantCommand(() -> motorIndexerFar.setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Left/set brake", new InstantCommand(() -> motorIndexerFar.setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Right/set coast", new InstantCommand(() -> motorIndexerClose.setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Right/set brake", new InstantCommand(() -> motorIndexerClose.setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Battery/set coast", new InstantCommand(() -> motorBattery.setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Shinua/Battery/set brake", new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
   }
 
   @Override

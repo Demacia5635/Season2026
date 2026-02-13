@@ -13,15 +13,21 @@ public class TurretCommand extends Command{
     private final Turret turret;
     private double wantedAngle = 0;
     
-    public TurretCommand(){
-        this.turret = Turret.getInstance();
+    public TurretCommand(Turret turret){
+        this.turret = turret;
         addRequirements(turret);
+        SmartDashboard.putData("Turret Command", this);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         builder.addDoubleProperty("Wanted Turret Angle", ()->wantedAngle, (x)->wantedAngle = x);
+    }
+
+    @Override
+    public void initialize() {
+        wantedAngle = Math.toDegrees(turret.getTurretAngle());
     }
 
     @Override
@@ -34,7 +40,7 @@ public class TurretCommand extends Command{
             //     break;
 
             case Test:
-                turret.setPositionMotion(wantedAngle);
+                turret.setPositionMotion(Math.toRadians(wantedAngle));
                 break;
 
             default:
