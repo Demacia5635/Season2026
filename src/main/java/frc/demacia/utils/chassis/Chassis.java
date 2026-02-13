@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.Utilities;
 import frc.demacia.utils.sensors.Pigeon;
+import frc.demacia.vision.Camera;
 import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
@@ -138,19 +140,20 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis", this);
 
         int c = 0;
-        for (int i = 0; i < chassisConfig.tags.length; i++) {
-            if (!chassisConfig.tags[i].getIsObjectCamera()) {
-                c++;
-            }
-        }
-        tags = new TagPose[c];
-        int count = 0;
-        for(int i = 0; i < chassisConfig.tags.length; i++){
-            if(!chassisConfig.tags[i].getIsObjectCamera()){
-                tags[count] = chassisConfig.tags[i];
-                count++;
-            }
-        }
+        // for (int i = 0; i < chassisConfig.tags.length; i++) {
+        //     if (!chassisConfig.tags[i].getIsObjectCamera()) {
+        //         c++;
+        //     }
+        // }
+        // tags = new TagPose[c];
+        // int count = 0;
+        // for(int i = 0; i < chassisConfig.tags.length; i++){
+        //     if(!chassisConfig.tags[i].getIsObjectCamera()){
+        //         tags[count] = chassisConfig.tags[i];
+        //         count++;
+        //     }
+        // }
+
         visionFuse = new VisionFuse(tags);
     }
 

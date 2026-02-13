@@ -20,6 +20,8 @@ import frc.demacia.utils.log.LogManager;
 import static frc.demacia.vision.utils.VisionConstants.*;
 import static frc.robot.RobotCommon.*;
 
+import java.util.function.Supplier;
+
 /** Add your docs here. */
 public class TagPose {
   // NetworkTables communication for each camera
@@ -50,6 +52,8 @@ public class TagPose {
   //vector for turret
   private Translation2d turretToTag;
 
+  private Supplier<Double> turretAngle;
+
   // vector for robot
   private Translation2d robotToTag;
   private Translation2d originToRobot;
@@ -57,8 +61,8 @@ public class TagPose {
   //vector for tag
   private Translation2d origintoTag;
 
-  private Rotation2d RobotAngleCommon;
-  private ChassisSpeeds speeds;
+  private Supplier<Double> RobotAngle;
+  private Supplier<ChassisSpeeds> speeds;
 
   //robot pose
   public Pose2d pose = new Pose2d();
@@ -66,7 +70,10 @@ public class TagPose {
   private double latency;
 
   @SuppressWarnings("unchecked")
-public TagPose(Camera camera){
+public TagPose(Camera camera,Supplier<Double> RobotAngle,Supplier<ChassisSpeeds> speeds,Supplier<Double> turretAngle){
+    this.speeds = speeds;
+    this.RobotAngle =RobotAngle;
+    this.turretAngle = turretAngle;
     wantedPip = 0;
     confidence = 0;
     this.camera = camera;
@@ -84,10 +91,8 @@ public TagPose(Camera camera){
     camToTagPitch = Table.getEntry("ty").getDouble(0.0);
     camToTagYaw = (-Table.getEntry("tx").getDouble(0.0));
     id = (int) Table.getEntry("tid").getDouble(0.0);
-    speeds = robotRelativeSpeeds;
-    RobotAngleCommon = robotAngle;
     if(camera.getIsOnTurret()){
-      camera.setTurretAngle(new Rotation2d().fromDegrees(currentAngleFormTarget));
+      camera.setTurretAngle(new Rotation2d().fromDegrees(turretAngle.get()));
     } 
 
   }
@@ -102,7 +107,7 @@ public TagPose(Camera camera){
       }
 
       if (id > 0 && id < TAG_HEIGHT.length) {
-        pose = new Pose2d(getOriginToRobot(), RobotAngleCommon);
+        pose = new Pose2d(getOriginToRobot(),new Rotation2d().fromDegrees(RobotAngle.get()));
         field.setRobotPose(pose);
         confidence = getConfidence();
         wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
@@ -147,7 +152,7 @@ public TagPose(Camera camera){
       cameraToTag = new Translation2d(GetDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw+camera.getYaw()));
       turretToTag = (camera.getTurretToCamPosition().toTranslation2d().plus(cameraToTag)).rotateBy(camera.getTurrentAngle());
-      robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag)).rotateBy(RobotAngleCommon);
+      robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag)).rotateBy( new Rotation2d().fromDegrees(RobotAngle.get()));
       return robotToTag;
     }
     // Convert camera measurements to vector
@@ -157,7 +162,7 @@ public TagPose(Camera camera){
     // LogManager.log("Camera to Tag Yaw :" + camToTagYaw);
     // Add camera offset to get robot center to tag vector
     robotToTag = (camera.getRobotToCamPosition().toTranslation2d()
-        .plus(cameraToTag)).rotateBy(RobotAngleCommon);
+        .plus(cameraToTag)).rotateBy(new Rotation2d().fromDegrees(RobotAngle.get()));
     // LogManager.log("Robot to Tag :" + robotToTag);
     return robotToTag;
   }
@@ -186,12 +191,12 @@ public TagPose(Camera camera){
 
   private double getYawCrop() {
     double TagYaw = ((-camToTagYaw) + camera.getYaw()) / 31.25;
-    return TagYaw + speeds.vyMetersPerSecond * PREDICT_Y + speeds.omegaRadiansPerSecond * PREDICT_OMEGA;
+    return TagYaw + speeds.get().vyMetersPerSecond * PREDICT_Y + speeds.get().omegaRadiansPerSecond * PREDICT_OMEGA;
   }
 
   private double getPitchCrop() {
     double TagPitch = camToTagPitch / 24.45;
-    return TagPitch + speeds.vxMetersPerSecond * PREDICT_X;
+    return TagPitch + speeds.get().vxMetersPerSecond * PREDICT_X;
   }
 
   private void cropStop() {

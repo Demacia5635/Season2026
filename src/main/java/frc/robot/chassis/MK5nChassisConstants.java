@@ -103,5 +103,5 @@ public class MK5nChassisConstants {
       NAME,
       modules,
       PIGEON_CONFIG,
-      new TagPose[] {LIMELIGHT4,FUEL});
+      new TagPose[] {});
 }
