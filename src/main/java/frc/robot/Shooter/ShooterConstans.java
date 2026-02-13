@@ -92,7 +92,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Hood Angle Encoder";
-        public static final double HOOD_OFFSET = 1.5-1.6481580458895453;
+        public static final double HOOD_OFFSET = 1.5 - 1.5327045158701202;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

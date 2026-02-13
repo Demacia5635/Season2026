@@ -96,7 +96,7 @@ public class Shooter extends SubsystemBase {
     // null);
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
-    builder.addDoubleProperty("abs encoder", ()->(hoodEncoder.get() * 0.5) , null);
+    builder.addDoubleProperty("abs encoder", ()->(MathUtil.angleModulus(hoodEncoder.get()) * 0.5) , null);
     // LogManager.add("is encoder dedectad", null, LogLevel.LOG_AND_NT_NOT_IN_COMP,
     // getName(), hoodEncoder.isConnected());
   }
@@ -169,7 +169,7 @@ public class Shooter extends SubsystemBase {
    * this funcsan is the get the acsole hood angle
    */
   public double getHoodAngle() {
-    return Math.PI + MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5) + ShooterConstans.HOOD_OFFSET);
+    return MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5) + ShooterConstans.HOOD_OFFSET);
     // return (hoodEncoder.get() * 0.5) + ShooterConstans.HOOD_OFFSET;
   }
 

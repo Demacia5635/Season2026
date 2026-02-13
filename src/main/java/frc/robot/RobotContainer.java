@@ -112,7 +112,7 @@ public class RobotContainer implements Sendable {
   private void configureBindings() {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
-    shinua.setDefaultCommand(new ShinuaCommand(shinua));
+    shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
     shooter.setDefaultCommand(new ShooterTesting(shooter));
   }
 

@@ -14,7 +14,7 @@ public class IntakeConstants {
     public static final Canbus INTAKE_CANBUS = Canbus.Rio;
 
     //the motors max power
-    public static final double MAX_POWER = 0.8;
+    public static final double MAX_POWER = 1;
 
     //the motors max pose
     public static final double MAX_POSITION = 6;

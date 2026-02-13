@@ -3,6 +3,7 @@ package frc.robot.intake.commands;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.demacia.utils.controller.CommandController;
 import frc.robot.RobotCommon;
 import frc.robot.intake.IntakeConstants;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
@@ -27,11 +28,13 @@ public class ShinuaCommand extends Command {
 
     private boolean isDirectionUp;
 
+    private final CommandController controller;
+
     /**
      * Creates a new ShinuaCommand
      * @param shinua the shinua subsytem of the Robot Container
      */
-    public ShinuaCommand(ShinuaSubsystem shinua) {
+    public ShinuaCommand(ShinuaSubsystem shinua, CommandController controller) {
         this.shinua = shinua;
 
         topPow = 0;
@@ -40,6 +43,8 @@ public class ShinuaCommand extends Command {
         batteryPow = 0;
 
         isDirectionUp = true;
+
+        this.controller = controller;
 
         addRequirements(shinua);
 
@@ -78,7 +83,8 @@ public class ShinuaCommand extends Command {
                 if (shinua.isAtMin()) {
                     isDirectionUp = true;
                 }
-                shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
+                shinua.setPowerBattery(-controller.getRightY());
+                // shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
                 break;
 
             case DriveWhileIntake:
