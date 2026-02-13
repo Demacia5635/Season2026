@@ -1,9 +1,8 @@
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.demacia.vision;
+package frc.demacia.vision.subsystem;
 
 import java.util.function.Supplier;
 
@@ -58,6 +57,9 @@ public class ObjectPose{
 
     SmartDashboard.putData("fieldObject" + camera.getName(), field);
     SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
+    
+    // SmartDashboard.putNumber("tx", camera.getX());
+    // SmartDashboard.putNumber("ty", camera.getY());
   }
 
   /**
@@ -71,8 +73,6 @@ public class ObjectPose{
   private Pose2d chooseObjectPose() {
     double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
     double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
-    SmartDashboard.putNumber("tx", Table.getEntry("tx").getDouble(0.0));
-    SmartDashboard.putNumber("ty",Table.getEntry("ty").getDouble(0.0));
     boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
 
     // Case 1: No current target detected

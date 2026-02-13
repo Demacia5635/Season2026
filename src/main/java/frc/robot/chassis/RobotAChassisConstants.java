@@ -165,11 +165,11 @@ public final class RobotAChassisConstants {
 
     // public static final TagPose FUEL = new TagPose(new Camera("fuel", new Translation3d(0.329, -0.24325, 0.3195), -24, 0, false, true));
 
-    public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.35345), 30.0, 0.0, false,  Rotation2d.kZero, new Translation3d(0.11307,0.14305,0.18386) ));
+    // public static final TagPose LIMELIGHT4 = new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.35345), 30.0, 0.0, false,  Rotation2d.kZero, new Translation3d(0.11307,0.14305,0.18386) ));
     /** The Chassis config with the chassis name, modules config, pigeon config and tags */
     public static final ChassisConfig CHASSIS_CONFIG = new ChassisConfig(
         NAME, 
         MODULES, 
         PIGEON_CONFIG, 
-        new TagPose[] {LIMELIGHT4});
+        new TagPose[] {});
 }
