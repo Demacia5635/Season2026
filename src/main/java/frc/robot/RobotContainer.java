@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTesting;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
@@ -113,8 +114,10 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
-    shooter.setDefaultCommand(new ShooterTesting(shooter));
-    turret.setDefaultCommand(new TurretCommand(turret));
+    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    
+    // shooter.setDefaultCommand(new ShooterTesting(shooter));
+    // turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 

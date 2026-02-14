@@ -6,6 +6,7 @@ package frc.robot.Shooter.subsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +48,14 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putData("Shooter/FlyWheel/set brake", new InstantCommand(() -> shooterMotor.setNeutralMode(true)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Feeder/set coast", new InstantCommand(() -> feederMotor.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Feeder/set brake", new InstantCommand(() -> feederMotor.setNeutralMode(true)).ignoringDisable(true));
+
+    SendableChooser<ShooterState> stateChooser = new SendableChooser<>();
+    for (ShooterState state : ShooterState.values()) {
+      stateChooser.addOption(state.name(), state);      
+    }
+    stateChooser.onChange((state) -> this.currentShooterState = state);
+    stateChooser.setDefaultOption("SHOOTING", ShooterState.SHOOTING);
+    SmartDashboard.putData("Shooter/State Chooser", stateChooser);
   }
 
   /**

@@ -5,6 +5,7 @@
 package frc.demacia.vision;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 /** Add your docs here. */
@@ -19,7 +20,7 @@ public class Camera {
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
     private Rotation2d turretAngle;
-    private Translation3d turretToCamPosition;
+    private Translation2d turretToCamPosition;
     private boolean isCroping;
     private boolean isObjectCamera = false;
     private Translation3d robotToTurretPosition;
@@ -40,31 +41,23 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera, Rotation2d turretAngle,Translation3d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,Translation2d turretToCamPosition) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
         this.turretToCamPosition = turretToCamPosition;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = true;
-        this.turretAngle = turretAngle;
         this.tableName = "limelight-"+name;
         isCroping = false;
     }
 
-    public Translation3d getTurretToCamPosition(){
+    public Translation2d getTurretToCamPosition(){
         return turretToCamPosition;
-    }
-    public void setTurretAngle(Rotation2d turretAngle){
-        this.turretAngle = turretAngle;
     }
 
     public boolean getIsOnTurret(){
         return isOnTurret;
-    }
-
-    public Rotation2d getTurrentAngle(){
-        return turretAngle;
     }
 
     public Translation3d getRobotToCamPosition() {
@@ -75,7 +68,7 @@ public class Camera {
     }
 
     public double getHeight() {
-        return !isOnTurret ? getRobotToCamPosition().getZ() : getRobotToCamPosition().getZ()+turretToCamPosition.getZ();
+        return !isOnTurret ? robotToCamPosition.getZ() : robotToTurretPosition.getZ();
     }
 
     public double getPitch() {

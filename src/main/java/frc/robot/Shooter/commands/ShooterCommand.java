@@ -10,10 +10,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogManager;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
+import frc.robot.Turret.Turret;
 
 /**
  * this is the main shooter command
@@ -96,7 +98,8 @@ public class ShooterCommand extends Command {
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
-    chassis.setTargetAngle(ballHeading.getRadians());
+    LogManager.log("Ball Heading" + ballHeading.getDegrees());
+    if(Turret.getInstance().hasCalibrated()) Turret.getInstance().setPositionMotion(ballHeading.getRadians());
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
 
@@ -107,7 +110,7 @@ public class ShooterCommand extends Command {
   }
 
   /**
-   * this funcsan the execute run every 0.02 secand
+   * this function the execute run every 0.02 secand
    * he set what angle and vel the shooter shood be by the state
    * 
    * @param shooter.getCurrentShooterState() this is how we get witch state the shooter need to be
@@ -151,10 +154,12 @@ public class ShooterCommand extends Command {
         hoodAngle = lut[1];
 
         setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
+        break;
 
       case TRENCH:
         shooter.setHoodAngle(Math.toRadians(45));
         shooter.setFlywheelVel(10);
+        break;
 
       default:
         shooter.setHoodPower(0);

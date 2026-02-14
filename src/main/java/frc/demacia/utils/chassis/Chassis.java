@@ -6,6 +6,7 @@ package frc.demacia.utils.chassis;
 
 import org.ejml.simple.SimpleMatrix;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 
@@ -41,6 +42,8 @@ import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.VisionFuse;
 import frc.robot.RobotCommon;
+import frc.robot.Turret.Turret;
+
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
@@ -113,6 +116,7 @@ public class Chassis extends SubsystemBase {
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
+    private TagPose limelight4;
     private Rotation2d lastGyroYaw;
 
     public Chassis(ChassisConfig chassisConfig) {
@@ -156,33 +160,38 @@ public class Chassis extends SubsystemBase {
 
         int c = 0;
         // for (int i = 0; i < chassisConfig.tags.length; i++) {
-        //     if (!chassisConfig.tags[i].getIsObjectCamera()) {
-        //         c++;
-        //     }
+        // if (!chassisConfig.tags[i].getIsObjectCamera()) {
+        // c++;
+        // }
         // }
         // tags = new TagPose[c];
         // int count = 0;
         // for(int i = 0; i < chassisConfig.tags.length; i++){
-        //     if(!chassisConfig.tags[i].getIsObjectCamera()){
-        //         tags[count] = chassisConfig.tags[i];
-        //         count++;
-        //     }
+        // if(!chassisConfig.tags[i].getIsObjectCamera()){
+        // tags[count] = chassisConfig.tags[i];
+        // count++;
         // }
-
+        // }
+        tags = new TagPose[1];
+        Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
+                new Translation2d(0.11307, 0.14305));
+        limelight4 = new TagPose(cg, () -> getGyroAngle().getDegrees(), () -> getChassisSpeedsRobotRel(),
+                () -> Turret.getInstance().getTurretAngle());
+        tags[0] = limelight4;
         visionFuse = new VisionFuse(tags);
     }
-
 
     private void addStatus() {
         gyroYawStatus = gyro.getYaw();
         lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
     }
 
-    public void setDrivePower(double power){
-        for(int i = 0; i < 4; i++){
+    public void setDrivePower(double power) {
+        for (int i = 0; i < 4; i++) {
             setDrivePower(power, i);
         }
     }
+
     public void setDrivePower(double pow, int id) {
         modules[id].setDrivePower(pow);
     }
@@ -358,7 +367,7 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
         questField.setRobotPose(questPose);
     }
-    
+
     private Matrix<N3, N1> getSTD() {
         double x = 0.05;
         double y = 0.05;
@@ -400,16 +409,13 @@ public class Chassis extends SubsystemBase {
     }
 
     Pose2d questPoseEstimation;
-
-    Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
 
     private boolean hasVisionUpdated = false;
 
-
     @Override
     public void periodic() {
-        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+    
         gyroAngle = getGyroAngle();
 
         OdometryObservation observation = new OdometryObservation(
@@ -419,19 +425,20 @@ public class Chassis extends SubsystemBase {
 
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         field.setRobotPose(getPose());
-        
-        if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-                hasVisionUpdated = true;
-                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-            }
 
-
-            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-            visionFusePoseEstimation = null;
+        tags[0].updateValues();
+        if(tags[0].getIsCameraDetects()){
+            updateVision(tags[0].getRobotPose2d());
         }
+
+        // if (visionFusePoseEstimation != null) {
+        //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        //         hasVisionUpdated = true;
+        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        //     }
+        // }
         // if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-            updateQuest(quest.getRobotPose2d());
+        // updateQuest(quest.getRobotPose2d());
         // }
         updateCommon();
     }
@@ -444,11 +451,11 @@ public class Chassis extends SubsystemBase {
         RobotCommon.robotAngle = getGyroAngle();
     }
 
-    public Pose2d getFuturePose(double dtSeconds){
+    public Pose2d getFuturePose(double dtSeconds) {
         Pose2d poseAtTime = getPose().exp(new Twist2d(
-        (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
-        (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
-        getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
+                (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
+                (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
+                getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
         return poseAtTime;
     }
 
@@ -506,7 +513,8 @@ public class Chassis extends SubsystemBase {
             gyro.setYaw(angle.getDegrees());
             quest.questResetfromRobotToQuest(angle);
             demaciaPoseEstimator
-                    .resetPose(new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
+                    .resetPose(
+                            new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
         }
     }
 
