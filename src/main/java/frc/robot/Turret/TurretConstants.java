@@ -7,8 +7,8 @@ import frc.demacia.utils.sensors.LimitSwitchConfig;
 
 public class TurretConstants {
 
-    public static final double MAX_TURRET_ANGLE = Math.toRadians(110);
-    public static final double MIN_TURRET_ANGLE = -Math.toRadians(110);
+    public static final double MAX_TURRET_ANGLE = Math.toRadians(120);
+    public static final double MIN_TURRET_ANGLE = -Math.toRadians(100);
 
     private static final int TURRET_MOTOR_ID = 40;
     private static final Canbus CANBUS = Canbus.Rio;

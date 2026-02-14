@@ -58,6 +58,7 @@ public class Turret extends SubsystemBase {
       
       builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
       builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
+      builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
   }
 
   public Translation2d getTurretPoseOnTheRobot(){

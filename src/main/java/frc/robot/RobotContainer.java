@@ -27,6 +27,7 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
+import frc.robot.Turret.TurretCommands.TurretFollow;
 import frc.robot.Turret.TurretCommands.TurretPower;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
@@ -115,9 +116,10 @@ public class RobotContainer implements Sendable {
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {shooter.setFeederPower(0.8);}, () -> {shooter.setFeederPower(0);}));
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 

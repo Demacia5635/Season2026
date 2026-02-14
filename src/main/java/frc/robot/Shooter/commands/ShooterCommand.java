@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
@@ -37,12 +39,25 @@ public class ShooterCommand extends Command {
   Chassis chassis;
   private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.48;
   private double MAGNUS_CORRECTION = 0.05;
+  private double wantedAngle;
+  private double wantedVel;
 
   public ShooterCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
     this.shooter = shooter;
-    addRequirements(shooter);
+    this.wantedAngle = Math.toDegrees(shooter.getHoodAngle());
+    this.wantedVel = 0;
 
+    addRequirements(shooter);
+    SmartDashboard.putData(this);
+
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+      builder.addDoubleProperty("wanted angle", () -> wantedAngle, (value) -> wantedAngle = value);
+      builder.addDoubleProperty("wanted vel", () -> wantedVel, (value) -> wantedVel = value);
   }
   
   /**
@@ -98,8 +113,8 @@ public class ShooterCommand extends Command {
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
-    LogManager.log("Ball Heading" + ballHeading.getDegrees());
-    if(Turret.getInstance().hasCalibrated()) Turret.getInstance().setPositionMotion(ballHeading.getRadians());
+    // LogManager.log("Ball Heading" + (ballHeading.getDegrees() - chassis.getPose().getRotation().getDegrees()));
+    // if(Turret.getInstance().hasCalibrated()) Turret.getInstance().setPositionMotion(ballHeading.getRadians() - chassis.getPose().getRotation().getRadians());
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
 
@@ -159,6 +174,11 @@ public class ShooterCommand extends Command {
       case TRENCH:
         shooter.setHoodAngle(Math.toRadians(45));
         shooter.setFlywheelVel(10);
+        break;
+    
+      case TEST:
+        shooter.setHoodAngle(Math.toRadians(wantedAngle));
+        shooter.setFlywheelVel(wantedVel);
         break;
 
       default:

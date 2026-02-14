@@ -52,7 +52,7 @@ public final class Field {
         return Blue.LOWER_BUMP;
     }
 
-    public Rectangle2d HUB(boolean isRed){
+    public static Rectangle2d HUB(boolean isRed){
         if(isRed) return Red.HUB;
         return Blue.HUB;
     }
