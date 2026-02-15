@@ -53,8 +53,6 @@ public class TagPose {
   // vector for turret
   private Translation2d turretToTag;
 
-  private DoubleSupplier turretAngle;
-
   // vector for robot
   private Translation2d robotToTag;
   private Translation2d originToRobot;
@@ -71,10 +69,9 @@ public class TagPose {
   private double latency;
 
   @SuppressWarnings("unchecked")
-  public TagPose(Camera camera, DoubleSupplier RobotAngle, Supplier<ChassisSpeeds> speeds, DoubleSupplier turretAngle) {
+  public TagPose(Camera camera, DoubleSupplier RobotAngle, Supplier<ChassisSpeeds> speeds) {
     this.speeds = speeds;
     this.RobotAngle = RobotAngle;
-    this.turretAngle = turretAngle;
     wantedPip = 0;
     confidence = 0;
     this.camera = camera;
@@ -152,7 +149,8 @@ public class TagPose {
           Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
 
       turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
-          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
+          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle())).times(-1);
+          System.out.println(turretToTag);
 
       robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))
           .rotateBy(Rotation2d.fromDegrees(RobotAngle.getAsDouble()));

@@ -23,9 +23,11 @@ public class RobotCommon {
     public static Translation2d deliveryTarget = Translation2d.kZero;
     public static double targetAccuracy = 1; //0-1
     public static double currentDistanceFromTarget = 0;
-    public static double currentAngleFormTarget = 0;
+    public static double currentAngleFromTarget = 0;
     public static double futureDistanceFromTarget = 0;
-    public static double futureAngleFormTarget = 0;
+    
+    public static double futureAngleFromTarget = 0;
+    public static double futureAngleFromTargetRobotRelative = 0;
     public static double currentWantedTurretAngle = 0;
     public static double futureWantedTurretAngle = 0;
     public static double currentTurrentAngle = 0;

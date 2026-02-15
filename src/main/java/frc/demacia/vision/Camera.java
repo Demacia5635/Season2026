@@ -7,6 +7,7 @@ package frc.demacia.vision;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.Turret.Turret;
 
 /** Add your docs here. */
 
@@ -20,10 +21,11 @@ public class Camera {
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
     private Rotation2d turretAngle;
-    private Translation2d turretToCamPosition;
+    private double turretToCamdistance;
     private boolean isCroping;
     private boolean isObjectCamera = false;
     private Translation3d robotToTurretPosition;
+    private Translation2d turretToCameraVector = Translation2d.kZero;
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
@@ -34,6 +36,7 @@ public class Camera {
         this.isOnTurret = false;
         this.tableName = "limelight-"+name;
         this.isCroping = isCroping;
+        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
         this.isObjectCamera = isObjectCamera;
     }
 
@@ -41,19 +44,21 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,Translation2d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,double turretToCamdistance) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
-        this.turretToCamPosition = turretToCamPosition;
+        this.turretToCamdistance = turretToCamdistance;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = true;
         this.tableName = "limelight-"+name;
         isCroping = false;
+        
+        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
     }
 
     public Translation2d getTurretToCamPosition(){
-        return turretToCamPosition;
+        return  turretToCameraVector;
     }
 
     public boolean getIsOnTurret(){

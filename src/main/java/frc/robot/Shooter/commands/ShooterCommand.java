@@ -115,6 +115,8 @@ public class ShooterCommand extends Command {
     // ballHeading);
     // LogManager.log("Ball Heading" + (ballHeading.getDegrees() - chassis.getPose().getRotation().getDegrees()));
     // if(Turret.getInstance().hasCalibrated()) Turret.getInstance().setPositionMotion(ballHeading.getRadians() - chassis.getPose().getRotation().getRadians());
+    LogManager.log("Chassis heading: " + chassis.getPose().getRotation().getRadians() +  " robot to hub: " + ballHeading.getRadians());
+    RobotCommon.futureAngleFromTargetRobotRelative = chassis.getPose().getRotation().getRadians() - ballHeading.getRadians();
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
 
