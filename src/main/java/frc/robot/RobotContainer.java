@@ -141,13 +141,13 @@ public class RobotContainer implements Sendable {
   static public void updateCommon() {
     Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
-    RobotCommon.currentAngleFormTarget = currentPoseFromHub.getAngle().getRadians();
+    RobotCommon.currentAngleFromTarget = currentPoseFromHub.getAngle().getRadians();
     RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle
         - RobotCommon.currentRobotPose.getRotation().getRadians();
 
     Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
-    RobotCommon.futureAngleFormTarget = futurePoseFromHub.getAngle().getRadians();
+    RobotCommon.futureAngleFromTarget = futurePoseFromHub.getAngle().getRadians();
     RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle
         - RobotCommon.futureRobotPose.getRotation().getRadians();
 

@@ -1,5 +1,7 @@
 package frc.robot.Turret.TurretCommands;
 
+import java.util.logging.LogManager;
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,6 +41,10 @@ public class TurretCommand extends Command{
             //     turret.setPositionMotion(turret.getTurretToHubAngle());
             //     break;
 
+            case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
+                turret.setPositionMotion(RobotCommon.futureAngleFromTargetRobotRelative);
+                frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
+                break;
             case Test:
                 turret.setPositionMotion(Math.toRadians(wantedAngle));
                 break;

@@ -90,7 +90,7 @@ public class ShinuaCommand extends Command {
                     isDirectionUp = true;
                 }
                 // shinua.setPowerBattery(-controller.getRightY());
-                shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
+                // shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
                 break;
 
             case DriveWhileIntake:
@@ -105,7 +105,7 @@ public class ShinuaCommand extends Command {
                 if (shinua.isAtMin()) {
                     isDirectionUp = true;
                 }
-                shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
+                // shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
                 break;
 
             case Test:
@@ -114,7 +114,7 @@ public class ShinuaCommand extends Command {
                 shinua.setDutyIndexerClose(rightPow);
                 shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
-                shinua.setPowerBattery(batteryPow);
+                // shinua.setPowerBattery(batteryPow);
                 break;
 
             default:

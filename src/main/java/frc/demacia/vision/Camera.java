@@ -21,23 +21,22 @@ public class Camera {
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
     private Rotation2d turretAngle;
-    private Translation2d turretToCamPosition;
+    private double turretToCamdistance;
     private boolean isCroping;
     private boolean isObjectCamera = false;
     private Translation3d robotToTurretPosition;
-    private double distanceToCamera;
-
+    private Translation2d turretToCameraVector = Translation2d.kZero;
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
-        this.distanceToCamera = distanceToCamera;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = false;
         this.tableName = "limelight-"+name;
         this.isCroping = isCroping;
+        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
         this.isObjectCamera = isObjectCamera;
     }
 
@@ -45,20 +44,21 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,double distanceToCamera) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,double turretToCamdistance) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
-        this.distanceToCamera = Math.hypot(0.122,  0.143);
-        this.turretToCamPosition = new Translation2d(distanceToCamera,new Rotation2d(0.122,  0.143));
+        this.turretToCamdistance = turretToCamdistance;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = true;
         this.tableName = "limelight-"+name;
         isCroping = false;
+        
+        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
     }
 
     public Translation2d getTurretToCamPosition(){
-        return turretToCamPosition;
+        return  turretToCameraVector;
     }
 
     public boolean getIsOnTurret(){

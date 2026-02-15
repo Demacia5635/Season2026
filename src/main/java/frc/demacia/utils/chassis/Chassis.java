@@ -173,16 +173,14 @@ public class Chassis extends SubsystemBase {
         // tags[count] = chassisConfig.tags[i];
         // count++;
         // }
+
         // }
         tags = new TagPose[1];
-        Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,0.0);
-
-        Camera cg2 = new Camera("climb", new Translation3d(0.152, -0.162, 0.31), 0.0, 0.0, false, false);
-
+        // Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
+        //         new Translation2d(0.122,  0.143));
+        Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
+                0.1879);
         limelight4 = new TagPose(cg, () -> getGyroAngle().getDegrees(), () -> getChassisSpeedsRobotRel());
-
-        limelight3 = new TagPose(cg2, () -> getGyroAngle().getDegrees(), () -> getChassisSpeedsRobotRel());
-
         tags[0] = limelight4;
         // tags[1] = limelight3;
         visionFuse = new VisionFuse(tags);
