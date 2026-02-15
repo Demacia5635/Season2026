@@ -149,7 +149,7 @@ public class TagPose {
           Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
 
       turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
-          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle())).times(-1);
+          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
           System.out.println(turretToTag);
 
       robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))

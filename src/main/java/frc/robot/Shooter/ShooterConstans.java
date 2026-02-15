@@ -120,4 +120,5 @@ public class ShooterConstans {
                 TEST;
         }
 
+        public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(0.165,  0.195);
 }

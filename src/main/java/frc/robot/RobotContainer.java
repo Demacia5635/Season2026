@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
+import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.log.LogManager;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTesting;
@@ -43,6 +44,7 @@ import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
+import frc.robot.leds.RobotALedStrip;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -61,6 +63,8 @@ public class RobotContainer implements Sendable {
   public static IntakeSubsystem intake;
   public static ShinuaSubsystem shinua;
   public static Shooter shooter;
+  public static LedManager ledManager;
+  public static RobotALedStrip leds;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -72,6 +76,9 @@ public class RobotContainer implements Sendable {
     intake = new IntakeSubsystem();
     shinua = new ShinuaSubsystem();
     shooter = new Shooter();
+    ledManager = new LedManager();
+    leds = new RobotALedStrip();
+
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
     SmartDashboard.putData("RC", this);
@@ -115,11 +122,12 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
-    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+   shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    
+    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {shooter.setFeederPower(0.8);}, () -> {shooter.setFeederPower(0);}));
-    shooter.setDefaultCommand(new ShooterTesting(shooter));
-    turret.setDefaultCommand(new TurretCommand(turret));
+    // shooter.setDefaultCommand(new ShooterTesting(shooter));
+    // turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 
