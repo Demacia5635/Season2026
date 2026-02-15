@@ -7,6 +7,7 @@ package frc.demacia.vision;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.Turret.Turret;
 
 /** Add your docs here. */
 
@@ -24,11 +25,14 @@ public class Camera {
     private boolean isCroping;
     private boolean isObjectCamera = false;
     private Translation3d robotToTurretPosition;
+    private double distanceToCamera;
+
 
 
     public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
+        this.distanceToCamera = distanceToCamera;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = false;
@@ -41,10 +45,11 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,Translation2d turretToCamPosition) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,double distanceToCamera) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
-        this.turretToCamPosition = turretToCamPosition;
+        this.distanceToCamera = Math.hypot(0.122,  0.143);
+        this.turretToCamPosition = new Translation2d(distanceToCamera,new Rotation2d(0.122,  0.143));
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = true;

@@ -115,10 +115,10 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {shooter.setFeederPower(0.8);}, () -> {shooter.setFeederPower(0);}));
-    // shooter.setDefaultCommand(new ShooterTesting(shooter));
+    shooter.setDefaultCommand(new ShooterTesting(shooter));
     turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
