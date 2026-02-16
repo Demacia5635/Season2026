@@ -7,7 +7,7 @@ package frc.demacia.vision;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import frc.robot.Turret.Turret;
+
 
 /** Add your docs here. */
 
@@ -20,7 +20,6 @@ public class Camera {
     private String tableName;
     // private boolean ishigher;// is higher than a tag 
     private boolean isOnTurret;
-    private Rotation2d turretAngle;
     private double turretToCamdistance;
     private boolean isCroping;
     private boolean isObjectCamera = false;

@@ -216,8 +216,7 @@ public class DemaciaPoseEstimator {
     public record OdometryObservation(double timeStamp, Rotation2d gyroAngle, SwerveModulePosition[] swerveModules) {
     }
 
-    public record VisionMeasurment(double timeStamp, Translation2d pos, Optional<Rotation2d> angle) {
-    }
+    
 
     private static final class VisionUpdate {
         // The vision-compensated pose estimate.

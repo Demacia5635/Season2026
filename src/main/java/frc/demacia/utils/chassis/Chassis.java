@@ -4,9 +4,9 @@
 
 package frc.demacia.utils.chassis;
 
-import org.ejml.simple.SimpleMatrix;
+// import org.ejml.simple.SimpleMatrix;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+// import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 
@@ -14,17 +14,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
+// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+// import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+// import edu.wpi.first.math.numbers.N1;
+// import edu.wpi.first.math.numbers.N3;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
@@ -34,17 +34,17 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.Utilities;
+// import frc.demacia.utils.Utilities;
 import frc.demacia.utils.sensors.Pigeon;
-import frc.demacia.vision.Camera;
+// import frc.demacia.vision.Camera;
 import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
-import frc.demacia.vision.utils.VisionFuse;
+import frc.demacia.vision.utils.Vision;
 import frc.robot.RobotCommon;
-import frc.robot.Turret.Turret;
+// import frc.robot.Turret.Turret;
 
-import static frc.demacia.vision.utils.VisionConstants.*;
+// import static frc.demacia.vision.utils.VisionConstants.*;
 
 /**
  * Main swerve drive chassis controller.
@@ -112,11 +112,11 @@ public class Chassis extends SubsystemBase {
     private Field2d tagsField;
     public Quest quest;
     private Field2d questField;
-    public VisionFuse visionFuse;
+    public Vision visionFuse;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
-    private TagPose limelight4;
+    // private TagPose limelight4;
     private Rotation2d lastGyroYaw;
 
     public Chassis(ChassisConfig chassisConfig) {
@@ -158,7 +158,7 @@ public class Chassis extends SubsystemBase {
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
         SmartDashboard.putData("chassis", this);
 
-        int c = 0;
+        // int c = 0;
         // for (int i = 0; i < chassisConfig.tags.length; i++) {
         // if (!chassisConfig.tags[i].getIsObjectCamera()) {
         // c++;
@@ -173,14 +173,14 @@ public class Chassis extends SubsystemBase {
         // }
 
         // }
-        tags = new TagPose[1];
+        // tags = new TagPose[1];
         // Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
         //         new Translation2d(0.122,  0.143));
-        Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
-                0.1879);
-        limelight4 = new TagPose(cg, () -> getGyroAngle().getDegrees(), () -> getChassisSpeedsRobotRel());
-        tags[0] = limelight4;
-        visionFuse = new VisionFuse(tags);
+        // Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
+        //         0.1879);
+        // limelight4 = new TagPose(cg);
+        // tags[0] = limelight4;
+        // visionFuse = new Vision(tags);
     }
 
     private void addStatus() {
@@ -358,65 +358,66 @@ public class Chassis extends SubsystemBase {
         }
     }
 
-    private void updateVision(Pose2d pose) {
-        demaciaPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05);
-        demaciaPoseEstimator.setVisionMeasurementStdDevs(getSTD());
-        tagsField.setRobotPose(pose);
-    }
+    // private void updateVision(Pose2d pose) {
+    //     demaciaPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - 0.05);
+    //     demaciaPoseEstimator.setVisionMeasurementStdDevs(getSTD());
+    //     tagsField.setRobotPose(pose);
+    // }
 
-    private void updateQuest(Pose2d questPose) {
-        demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
-        demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
-        questField.setRobotPose(questPose);
-    }
+    // private void updateQuest(Pose2d questPose) {
+    //     demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
+    //     demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
+    //     questField.setRobotPose(questPose);
+    // }
 
-    private Matrix<N3, N1> getSTD() {
-        double x = 0.05;
-        double y = 0.05;
-        double theta = 0.03;
+    // private Matrix<N3, N1> getSTD() {
+    //     double x = 0.05;
+    //     double y = 0.05;
+    //     double theta = 0.03;
 
-        ChassisSpeeds currentSpeeds = getChassisSpeedsRobotRel();
-        double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+    //     ChassisSpeeds currentSpeeds = getChassisSpeedsRobotRel();
+    //     double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
 
-        // Vision confidence adjustment
-        // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
-        // x += 0.3;
-        // y += 0.3;
-        // }
+    //     // Vision confidence adjustment
+    //     // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
+    //     // x += 0.3;
+    //     // y += 0.3;
+    //     // }
 
-        // Speed-based confidence calculation
-        if (speed > WORST_RELIABLE_SPEED) {
-            // Maximum uncertainty for high speeds
-            x += 0.02;
-            y += 0.02;
-        } else if (speed <= BEST_RELIABLE_SPEED) {
-            // Minimum uncertainty for low speeds
-            x -= 0.02;
-            y -= 0.02;
-        } else {
-            // Calculate normalized speed for the falloff range
-            double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
-                    / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
+    //     // Speed-based confidence calculation
+    //     if (speed > WORST_RELIABLE_SPEED) {
+    //         // Maximum uncertainty for high speeds
+    //         x += 0.02;
+    //         y += 0.02;
+    //     } else if (speed <= BEST_RELIABLE_SPEED) {
+    //         // Minimum uncertainty for low speeds
+    //         x -= 0.02;
+    //         y -= 0.02;
+    //     } else {
+    //         // Calculate normalized speed for the falloff range
+    //         double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
+    //                 / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
 
-            // Apply exponential falloff to calculate additional uncertainty
-            double speedConfidence = Math.exp(-3 * normalizedSpeed);
+    //         // Apply exponential falloff to calculate additional uncertainty
+    //         double speedConfidence = Math.exp(-3 * normalizedSpeed);
 
-            // Scale the uncertainty adjustment based on confidence
-            double adjustment = 0.02 * (1 - speedConfidence);
-            x += adjustment;
-            y += adjustment;
-        }
+    //         // Scale the uncertainty adjustment based on confidence
+    //         double adjustment = 0.02 * (1 - speedConfidence);
+    //         x += adjustment;
+    //         y += adjustment;
+    //     }
 
-        return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
-    }
+    //     return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
+    // }
 
     Pose2d questPoseEstimation;
     Rotation2d gyroAngle;
 
-    private boolean hasVisionUpdated = false;
+    // private boolean hasVisionUpdated = false;
 
     @Override
     public void periodic() {
+        updateCommon();
     
         gyroAngle = getGyroAngle();
 
@@ -425,13 +426,15 @@ public class Chassis extends SubsystemBase {
                 getGyroAngle(),
                 getModulePositions());
 
+        
+
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         field.setRobotPose(getPose());
 
-        tags[0].updateValues();
-        if(tags[0].getIsCameraDetects()){
-            updateVision(tags[0].getRobotPose2d());
-        }
+        // tags[0].updateValues();
+        // if(tags[0].isSeeTag()){
+        //     updateVision(tags[0].getRobotPose2d());
+        // }
 
         // if (visionFusePoseEstimation != null) {
         //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
@@ -442,7 +445,7 @@ public class Chassis extends SubsystemBase {
         // if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
         // updateQuest(quest.getRobotPose2d());
         // }
-        updateCommon();
+
     }
 
     public void updateCommon() {
@@ -450,7 +453,7 @@ public class Chassis extends SubsystemBase {
         RobotCommon.futureRobotPose = getFuturePose(0.04);
         RobotCommon.fieldRelativeSpeeds = getChassisSpeedsFieldRel();
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
-        RobotCommon.robotAngle = getGyroAngle();
+        RobotCommon.robotAngle = getPose().getRotation();
     }
 
     public Pose2d getFuturePose(double dtSeconds) {
