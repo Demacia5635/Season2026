@@ -12,7 +12,7 @@ public class ClimbConstants {
         //arm constans
         public static final boolean WITH_BRAKE_ARMS = true;
         public static final double MAX_CURRENT = 40;
-        public static final int MOTOR_ID_ARMS = 51;
+        public static final int MOTOR_ID_ARMS = 60;//TODO: CAMGE IN TUNER
         public static final double DIAMETER_ARMS = 0;
         public static final double GEAR_RATIO_ARMS = 1 / 24;
         public static final boolean WITH_INVERT_ARMS = false;        
@@ -51,7 +51,7 @@ public class ClimbConstants {
 
 
         //lever constans
-        public static final int MOTOR_ID_LEVER = 52;
+        public static final int MOTOR_ID_LEVER = 61;
         public static final boolean WITH_BRAKE_LEVER = false;
         public static final double DIAMETER_LEVER = 0;
         public static final double LEVER_GEAR_RATIO = 1 / 64;
@@ -68,7 +68,7 @@ public class ClimbConstants {
                         .withRadiansMotor(LEVER_GEAR_RATIO);
 
         //the climb arm encoder
-        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(9, "climb encoder")
+        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(3, "climb encoder")
                         .withInvert(false)
                         .withOffset(armsOffset);
 
