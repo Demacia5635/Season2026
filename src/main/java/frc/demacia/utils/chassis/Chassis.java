@@ -117,6 +117,8 @@ public class Chassis extends SubsystemBase {
 
     private StatusSignal<Angle> gyroYawStatus;
     // private TagPose limelight4;
+    private TagPose limelight3;
+
     private Rotation2d lastGyroYaw;
 
     public Chassis(ChassisConfig chassisConfig) {
@@ -176,6 +178,12 @@ public class Chassis extends SubsystemBase {
         // tags = new TagPose[1];
         // Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
         //         new Translation2d(0.122,  0.143));
+        Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
+                Math.hypot(0.175, 0.145));
+        limelight4 = new TagPose(cg, () -> getGyroAngle().getDegrees(), () -> getChassisSpeedsRobotRel());
+        tags[0] = limelight4;
+        // tags[1] = limelight3;
+        visionFuse = new VisionFuse(tags);
         // Camera cg = new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 30.0, 0.0, false,
         //         0.1879);
         // limelight4 = new TagPose(cg);
@@ -383,6 +391,11 @@ public class Chassis extends SubsystemBase {
     //     // x += 0.3;
     //     // y += 0.3;
     //     // }
+        // Vision confidence adjustment
+        if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
+            x += 0.3;
+            y += 0.3;
+        }
 
     //     // Speed-based confidence calculation
     //     if (speed > WORST_RELIABLE_SPEED) {
@@ -411,6 +424,7 @@ public class Chassis extends SubsystemBase {
     // }
 
     Pose2d questPoseEstimation;
+    Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
 
     // private boolean hasVisionUpdated = false;
@@ -419,6 +433,7 @@ public class Chassis extends SubsystemBase {
     public void periodic() {
         updateCommon();
     
+
         gyroAngle = getGyroAngle();
 
         OdometryObservation observation = new OdometryObservation(
@@ -431,16 +446,23 @@ public class Chassis extends SubsystemBase {
         demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
         field.setRobotPose(getPose());
 
-        // tags[0].updateValues();
-        // if(tags[0].isSeeTag()){
-        //     updateVision(tags[0].getRobotPose2d());
-        // }
+        if (tags[0] != null) {
+
+            for (TagPose t : tags) {
+                t.updateValues();
+            }
+        }
+        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        if (visionFusePoseEstimation != null) {
+            updateVision(visionFusePoseEstimation);
+        }
 
         // if (visionFusePoseEstimation != null) {
-        //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-        //         hasVisionUpdated = true;
-        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-        //     }
+        // if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        // hasVisionUpdated = true;
+        // quest.setQuestPose(new Pose3d(new
+        // Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        // }
         // }
         // if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
         // updateQuest(quest.getRobotPose2d());

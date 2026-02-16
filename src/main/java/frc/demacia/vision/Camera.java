@@ -53,7 +53,7 @@ public class Camera {
         this.tableName = "limelight-"+name;
         isCroping = false;
         
-        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
+        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.175, 0.145));
     }
 
     public Translation2d getTurretToCamPosition(){

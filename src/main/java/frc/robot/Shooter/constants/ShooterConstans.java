@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Shooter;
+package frc.robot.Shooter.constants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,7 +19,12 @@ public class ShooterConstans {
 
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
-                SHOOTER_LOOKUP_TABLE.add(1, 1, Math.toRadians(85));
+                // SHOOTER_LOOKUP_TABLE.add(1, 0, Math.toRadians(85));
+
+                
+                SHOOTER_LOOKUP_TABLE.add(1.32, 12, Math.toRadians(70));
+                SHOOTER_LOOKUP_TABLE.add(2.75, 13.5, Math.toRadians(63));
+                SHOOTER_LOOKUP_TABLE.add(3.75, 15, Math.toRadians(60));
 
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
                 // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
@@ -93,7 +98,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = (Math.PI/2) - 0.47218137583454567;
+        public static final double HOOD_OFFSET = (Math.PI*0.5) - 0.39709731141374993;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);
@@ -115,4 +120,5 @@ public class ShooterConstans {
                 TEST;
         }
 
+        public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(0.165,  0.195);
 }

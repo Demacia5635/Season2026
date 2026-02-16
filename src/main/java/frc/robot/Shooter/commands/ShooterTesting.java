@@ -28,11 +28,10 @@ public class ShooterTesting extends Command {
 
   double wantedFlywheelVel = 0;
   double wantedAngle = 0;
-  boolean isFeederOn;
+  double wantedFedderPower = 0;
 
   public ShooterTesting(Shooter shooter) {
     this.shooter = shooter;
-    this.isFeederOn = false;
     
     wantedAngle = Math.toDegrees(shooter.getHoodAngleMotor());
 
@@ -51,7 +50,9 @@ public class ShooterTesting extends Command {
     super.initSendable(builder);
     builder.addDoubleProperty("Wanted angle", () -> wantedAngle, (x) -> wantedAngle = x);
     builder.addDoubleProperty("Wanted flywheel vel", () -> wantedFlywheelVel, (x) -> wantedFlywheelVel = x);
-    builder.addBooleanProperty("activate feeder", () -> isFeederOn, (value) -> isFeederOn = value);
+    builder.addDoubleProperty("whanted feeder power", () -> wantedFedderPower, (x) -> wantedFedderPower = x);
+
+    //builder.addBooleanProperty("activate feeder", () -> isFeederOn, (value) -> isFeederOn = value);
   }
 
   // Called when the command is initially scheduled.
@@ -69,7 +70,7 @@ public class ShooterTesting extends Command {
   public void execute() {
     shooter.setHoodAngle(Math.toRadians(wantedAngle));
     shooter.setFlywheelVel(wantedFlywheelVel);
-    shooter.setFeederPower(isFeederOn ? 0.4 : 0);
+    shooter.setFeederPower(wantedFedderPower);
   }
 
   /**

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.ShooterConstans;
+import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
 import frc.robot.Turret.Turret;
@@ -115,10 +115,11 @@ public class ShooterCommand extends Command {
     // ballHeading);
     // LogManager.log("Ball Heading" + (ballHeading.getDegrees() - chassis.getPose().getRotation().getDegrees()));
     // if(Turret.getInstance().hasCalibrated()) Turret.getInstance().setPositionMotion(ballHeading.getRadians() - chassis.getPose().getRotation().getRadians());
-    LogManager.log("Chassis heading: " + chassis.getPose().getRotation().getRadians() +  " robot to hub: " + ballHeading.getRadians());
+    // LogManager.log("Chassis heading: " + chassis.getPose().getRotation().getRadians() +  " robot to hub: " + ballHeading.getRadians());
     RobotCommon.futureAngleFromTargetRobotRelative = chassis.getPose().getRotation().getRadians() - ballHeading.getRadians();
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
+    shooter.setFeederPower(0.4);
 
   }
 
@@ -160,7 +161,8 @@ public class ShooterCommand extends Command {
       case SHOOTING:
         ChassisSpeeds robotSpeeds = RobotCommon.robotRelativeSpeeds;
         Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, RobotCommon.currentRobotPose, 0.04);
-        Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(nextPose.getTranslation());
+        Translation2d turretPos = nextPose.getTranslation().plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(chassis.getPose().getRotation()));
+        Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(turretPos);
 
         // get the distance, heading and LUT valuse
         double distance = toHub.getNorm();
@@ -170,7 +172,12 @@ public class ShooterCommand extends Command {
         vel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
         hoodAngle = lut[1];
 
-        setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
+
+        shooter.setFeederPower(0.4);
+        shooter.setHoodAngle(lut[1]);
+        shooter.setFlywheelVel(lut[0]);
+        
+        // setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
         break;
 
       case TRENCH:
