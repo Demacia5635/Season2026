@@ -7,9 +7,9 @@ package frc.robot.climb.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.controller.CommandController;
 import frc.robot.RobotCommon;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
@@ -19,7 +19,7 @@ public class StateBasedClimb extends Command {
   /** Creates a new StateBasedClimb. */
   Chassis chassis;
   Climb climb;
-  CommandController contoller;
+  Timer timer;
   private boolean IS_AT_BAR;
   private boolean IS_AT_GROUND;
   private boolean IS_READY_TO_CLIMB;
@@ -30,10 +30,10 @@ public class StateBasedClimb extends Command {
   private double headingDiff;
   private Pose2d targetPose;
 
-  public StateBasedClimb(Climb climb, CommandController controller, Chassis chassis) {
+  public StateBasedClimb(Climb climb, Chassis chassis) {
     this.climb = climb;
     this.chassis = chassis;
-    this.contoller = controller;
+    this.timer = new Timer();
     addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -44,6 +44,9 @@ public class StateBasedClimb extends Command {
     IS_AT_BAR = false;
     IS_AT_GROUND = false;
     IS_RIGHT_CLIMB = true; // need to set based on strategy
+    timer.stop();
+    timer.reset();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -65,9 +68,12 @@ public class StateBasedClimb extends Command {
         targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide : ClimbConstants.targetLeftSide;
         chassisPose = chassis.getPose();
         difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
-        headingDiff = targetPose.getRotation().getRadians() - chassisPose.getRotation().getRadians();
+        headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
         speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
         chassis.setVelocities(speed);
+        if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+        chassis.stop();
+        }
         break;
 
       case Climb:
@@ -79,15 +85,14 @@ public class StateBasedClimb extends Command {
         }
 
         if (IS_AT_BAR) {
-          chassisPose = chassis.getPose();
-          difference = ClimbConstants.targetToFullyCloseArms.getTranslation().minus(chassisPose.getTranslation());
-          speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, 0, 0);
-          chassis.setVelocities(speed);
-        }
+          timer.start();
+          chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToStraightenArms, 0, 0));
+          if (timer.hasElapsed(ClimbConstants.timeToStraightenArms)) {
+            timer.stop();
+            timer.reset();
+            IS_READY_TO_CLIMB = true;
 
-        if (chassisPose.getTranslation()
-            .getDistance(ClimbConstants.targetToFullyCloseArms.getTranslation()) < ClimbConstants.CHASSIS_TOLERANCE) {
-          IS_READY_TO_CLIMB = true;
+          }
         }
 
         if (IS_READY_TO_CLIMB) {
@@ -108,25 +113,23 @@ public class StateBasedClimb extends Command {
         }
 
         if (IS_AT_GROUND) {
-          chassisPose = chassis.getPose();
-          difference = ClimbConstants.targetToOpenArmsAfterClimb.getTranslation().minus(chassisPose.getTranslation());
-          speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, 0, 0);
-          chassis.setVelocities(speed);
+          timer.start();
+          chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
           climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
+          if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
+            timer.stop();
+            timer.reset();
+            climb.stopArms();
+          }
         }
-
-        if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
-          climb.stopArms();
-        }
-
         break;
     }
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
