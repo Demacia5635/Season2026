@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
-import frc.robot.Shooter.ShooterConstans;
-import frc.robot.Shooter.ShooterConstans.ShooterState;
+import frc.robot.Shooter.constants.ShooterConstans;
+import frc.robot.Shooter.constants.ShooterConstans.ShooterState;
 
 /**
  * this is the subsystem of the shooter
