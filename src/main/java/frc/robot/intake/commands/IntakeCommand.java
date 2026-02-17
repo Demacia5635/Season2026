@@ -13,7 +13,8 @@ import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
- * This command activates the intake by the value of the {@link RobotCommon.robotStates}
+ * This command activates the intake by the value of the
+ * {@link RobotCommon.robotStates}
  */
 public class IntakeCommand extends Command {
 
@@ -24,6 +25,7 @@ public class IntakeCommand extends Command {
 
   /**
    * Creates a new Intake Command
+   * 
    * @param intakeSubsystem the intake subsystem of the Robot Container
    */
   public IntakeCommand(IntakeSubsystem intakeSubsystem) {
@@ -37,9 +39,9 @@ public class IntakeCommand extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      super.initSendable(builder);
-    
-      builder.addDoubleProperty("Intake Power", this::getPower, this::setPower);
+    super.initSendable(builder);
+
+    builder.addDoubleProperty("Intake Power", this::getPower, this::setPower);
   }
 
   /**

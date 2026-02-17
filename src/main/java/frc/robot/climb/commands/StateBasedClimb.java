@@ -80,44 +80,38 @@ public class StateBasedClimb extends Command {
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
 
-                // if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_RAISED) {
-                // climb.stopArms();
-                // }
-
-                // targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide :
-                // ClimbConstants.targetLeftSide;
-                // chassisPose = chassis.getPose();
-                // difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
-                // headingDiff =
-                // targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
-                // speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
-                // difference.getY() * ClimbConstants.driveKp, headingDiff *
-                // ClimbConstants.rotationKp);
-                // chassis.setVelocities(speed);
-                // if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
-                // && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
-                // chassis.stop();
-                // }
+                targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide : ClimbConstants.targetLeftSide;
+                chassisPose = chassis.getPose();
+                difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
+                headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
+                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
+                        difference.getY() * ClimbConstants.driveKp, headingDiff *
+                                ClimbConstants.rotationKp);
+                chassis.setVelocities(speed);
+                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
+                        && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+                    chassis.stop();
+                }
                 break;
 
             case Climb:
-                // climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
+                climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
 
-                // if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
-                //     IS_AT_BAR = true;
-                // }
+                if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
+                    IS_AT_BAR = true;
+                }
 
-                // if (IS_AT_BAR) {
-                //     timer.start();
-                //     chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToStraightenArms, 0, 0));
-                //     climb.setArmsDuty(0.1);
-                //     if (timer.hasElapsed(ClimbConstants.timeToStraightenArms)) {
-                //         timer.stop();
-                //         timer.reset();
-                //         climb.stopArms();
+                if (IS_AT_BAR) {
+                    timer.start();
+                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToStraightenArms, 0, 0));
+                    climb.setArmsDuty(0.1);
+                    if (timer.hasElapsed(ClimbConstants.timeToStraightenArms)) {
+                        timer.stop();
+                        timer.reset();
+                        climb.stopArms();
                         IS_READY_TO_CLIMB = true;
-                    // }
-                    // }
+                    }
+                }
 
                 if (IS_READY_TO_CLIMB) {
                     climb.setArmsDuty(0.1);
