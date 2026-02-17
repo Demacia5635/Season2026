@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotCommon;
 import frc.robot.intake.IntakeConstants;
 import frc.robot.intake.subsystems.IntakeSubsystem;
-import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
  * This command activates the intake by the value of the

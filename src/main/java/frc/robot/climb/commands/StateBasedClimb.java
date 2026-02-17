@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.robot.RobotCommon;
@@ -32,26 +31,26 @@ public class StateBasedClimb extends Command {
     private ChassisSpeeds speed;
     private double headingDiff;
     private Pose2d targetPose;
-
-    private double krakenAngle;
+    private double krakenPow;
     private double armsAngle;
 
     public StateBasedClimb(Climb climb, Chassis chassis) {
         this.climb = climb;
         this.chassis = chassis;
         this.timer = new Timer();
-        this.krakenAngle = Math.toDegrees(climb.getAngleLever());
-        this.armsAngle = Math.toDegrees(climb.getArmEncoderAngle());
+        this.krakenPow = 0;
+        this.armsAngle = climb.getArmEncoderAngle();
         addRequirements(climb);
-        SmartDashboard.putData("Climb Command", this);
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addDoubleProperty("Kraken Power", () -> krakenAngle, (value) -> krakenAngle = value);
+        builder.addDoubleProperty("Kraken Power", () -> krakenPow, (value) -> krakenPow = value);
         builder.addDoubleProperty("Arms Angle", () -> armsAngle, (value) -> armsAngle = value);
+        builder.addBooleanProperty("is right", () -> IS_RIGHT_CLIMB, (value) -> IS_RIGHT_CLIMB = value);
+        builder.addBooleanProperty("is red",() -> RobotCommon.isRed,(value) -> RobotCommon.isRed = value);
     }
 
     // Called when the command is initially scheduled.
@@ -63,8 +62,8 @@ public class StateBasedClimb extends Command {
         timer.stop();
         timer.reset();
 
-        krakenAngle = Math.toDegrees(climb.getAngleLever());
-        this.armsAngle = Math.toDegrees(climb.getArmEncoderAngle());
+        krakenPow = 0;
+        armsAngle = climb.getArmEncoderAngle();
 
     }
 
@@ -73,23 +72,20 @@ public class StateBasedClimb extends Command {
     public void execute() {
         switch (RobotCommon.currentState) {
             case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-                climb.armStateClose();
+                climb.stateClose();
                 break;
 
             case PrepareClimb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
 
-                targetPose = IS_RIGHT_CLIMB ? ClimbConstants.targetRightSide : ClimbConstants.targetLeftSide;
+                targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
                 chassisPose = chassis.getPose();
                 difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
                 headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
-                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
-                        difference.getY() * ClimbConstants.driveKp, headingDiff *
-                                ClimbConstants.rotationKp);
+                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
                 chassis.setVelocities(speed);
-                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
-                        && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
                     chassis.stop();
                 }
                 break;
@@ -114,9 +110,7 @@ public class StateBasedClimb extends Command {
                 }
 
                 if (IS_READY_TO_CLIMB) {
-                    climb.setArmsDuty(0.1);
-                    climb.leverClimb();
-                    // climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
+                    climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
                 }
 
                 break;
@@ -140,8 +134,8 @@ public class StateBasedClimb extends Command {
                 }
                 break;
             case Test:
-                climb.setArmsAngle(Math.toRadians(armsAngle));
-                climb.setLeverAngle(Math.toRadians(krakenAngle));
+                climb.setArmsAngle(armsAngle);
+                climb.setLeverDuty(krakenPow);
                 break;
             default:
                 break;
@@ -151,8 +145,6 @@ public class StateBasedClimb extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        climb.stopArms();
-        climb.stopLever();
     }
 
     // Returns true when the command should end.
