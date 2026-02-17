@@ -91,6 +91,7 @@ public class Camera {
         return this.tableName;
     }
 
+
     public boolean getIsCroping(){
         return isCroping;
     }
