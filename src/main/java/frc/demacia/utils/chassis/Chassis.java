@@ -39,9 +39,14 @@ import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
-import frc.demacia.vision.utils.VisionFuse;
+import frc.demacia.vision.utils.Vision;
 import frc.robot.RobotCommon;
 import static frc.demacia.vision.utils.VisionConstants.*;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -104,7 +109,7 @@ public class Chassis extends SubsystemBase {
     private Field2d tagsField;
     public Quest quest;
     private Field2d questField;
-    public VisionFuse visionFuse;
+    public Vision visionFuse;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
@@ -166,7 +171,7 @@ public class Chassis extends SubsystemBase {
                 count++;
             }
         }
-        visionFuse = new VisionFuse(tags);
+        visionFuse = new Vision(new ArrayList<>(List.of(tags)));
     }
 
 
@@ -177,6 +182,10 @@ public class Chassis extends SubsystemBase {
 
     public void setDrivePower(double pow, int id) {
         modules[id].setDrivePower(pow);
+    }
+
+    public void setDrivePower(double pow) {
+        for (int i = 0; i < 4; i++) setDrivePower(pow, i);
     }
 
     /**
@@ -420,7 +429,7 @@ public class Chassis extends SubsystemBase {
 
     @Override
     public void periodic() {
-        visionFusePoseEstimation = visionFuse.getPoseEstemation();
+        visionFusePoseEstimation = visionFuse.getPoseEstimation();
         gyroAngle = getGyroAngle();
         
 

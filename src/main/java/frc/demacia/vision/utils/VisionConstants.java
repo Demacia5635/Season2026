@@ -18,6 +18,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import frc.demacia.vision.Camera;
+import frc.demacia.vision.TagPose;
 
 /**
  * Constants and configuration values for AprilTag vision processing.
@@ -183,7 +188,13 @@ public class VisionConstants {
     public static double inchToMeter(double inch) {
         return inch * 0.0254;
     }
-
+    /**
+     * Converts a measurement from inches to meters
+     * 
+     * @param inch Value in inches
+     * @return Value in meters
+     */
+;
     // Vision processing constants
     public static final double MIN_CROP = 0.5;
     public static final double MAX_CROP = 0.6;

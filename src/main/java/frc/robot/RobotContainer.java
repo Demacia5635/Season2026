@@ -39,6 +39,9 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.climb.commands.ControllerClimb;
+import frc.robot.climb.commands.StateBasedClimb;
+import frc.robot.climb.subsystems.Climb;
 import frc.robot.intake.commands.BatteryTest;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
@@ -65,6 +68,7 @@ public class RobotContainer implements Sendable {
   public static Shooter shooter;
   public static LedManager ledManager;
   public static RobotALedStrip leds;
+  public static Climb climb;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -78,6 +82,7 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
+    climb = new Climb();
 
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
@@ -119,20 +124,27 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
-   shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    
+    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
+    climb.setDefaultCommand(new ControllerClimb(driverController, climb));
+
     turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
-    SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {shooter.setFeederPower(0.8);}, () -> {shooter.setFeederPower(0);}));
+    SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
+      shooter.setFeederPower(0.8);
+    }, () -> {
+      shooter.setFeederPower(0);
+    }));
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 
   private void setUserButton() {
-    new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton()).onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
+    new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton())
+        .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
   }
 
   @Override
