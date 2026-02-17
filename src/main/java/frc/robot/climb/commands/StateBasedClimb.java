@@ -71,10 +71,6 @@ public class StateBasedClimb extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
-            case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-                climb.stateClose();
-                break;
-
             case PrepareClimb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
@@ -138,6 +134,7 @@ public class StateBasedClimb extends Command {
                 climb.setLeverDuty(krakenPow);
                 break;
             default:
+                climb.stateClose();
                 break;
         }
     }
