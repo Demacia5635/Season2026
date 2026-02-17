@@ -7,7 +7,7 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;
 
 public class ClimbConstants {
-        public static final Canbus CANBUS_CLIME = Canbus.Rio;
+        public static final Canbus CANBUS_CLIMB = Canbus.Rio;
 
         //arm constans
         public static final boolean WITH_BRAKE_ARMS = true;
@@ -48,6 +48,10 @@ public class ClimbConstants {
         public static final boolean WITH_INVERT_LEVER = false;
         public static final double ANGLE_LEVER_CLOSED = 0; // radians
         public static final double ANGLE_LEVER_OPEN = 1.66; // radians
+        public static final double ANGLE_LEVER_MID = Math.toRadians(40);
+        public static final double powerOpen = 0.8;
+        public static final double powerMid = 0.2;
+
 
         //lever climb motor config
         public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIME, "motor lever")
@@ -71,12 +75,11 @@ public class ClimbConstants {
         public static final double timeToStraightenArms = 0.2; // seconds
         public static final double timeToRaiseArmsAfterClimb = 0.1; // seconds
 
-        public static final double ANGLE_LEVER_MID = Math.toRadians(40);
 
-
-
-        //TODO: talk with tomer move it to the fild class
         //climb pose
-        public static Pose2d targetRightSide = new Pose2d(15.439, 3.863, new Rotation2d());
-        public static Pose2d targetLeftSide = new Pose2d(15.43, 4.720, new Rotation2d());
+        public static Pose2d targetRightSideRed = new Pose2d(15.439, 3.863, new Rotation2d());
+        public static Pose2d targetLeftSideRed = new Pose2d(15.43, 4.720, new Rotation2d());
+        public static Pose2d targetLeftSideBlue = new Pose2d(1,1,new Rotation2d(180));
+        public static Pose2d targetRightSideBlue = new Pose2d(1,1,new Rotation2d(180));
+
 }

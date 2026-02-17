@@ -11,6 +11,7 @@ import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.climb.constants.ClimbConstants;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,19 +35,19 @@ public class Climb extends SubsystemBase {
     builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
     builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
     builder.addDoubleProperty("Encoder Angle", this::getArmEncoderAngle, null);
+    builder.addDoubleProperty("", null, null);
   }
   
   public void leverClimb(){
     if(getAngleLever()<ClimbConstants.ANGLE_LEVER_MID){
-       setLeverDuty(0.2);
+       setLeverDuty(ClimbConstants.powerMid);
     }
     else if (getAngleLever() < ClimbConstants.ANGLE_LEVER_OPEN){
-      setLeverDuty(0.8);
+      setLeverDuty(ClimbConstants.powerOpen);
     }
     else{leverMotor.stop();}
   }
-
-  public void armStateClose(){
+  public void stateClose(){
     if (getArmEncoderAngle() != ClimbConstants.ARMS_ANGLE_CLOSED || getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSED) {
           setArmsAngle(ClimbConstants.ARMS_ANGLE_CLOSED);
           setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
@@ -75,7 +76,7 @@ public class Climb extends SubsystemBase {
 
 
   public void setArmsAngle(double angle) {
-    angle = MathUtil.clamp(angle, 0, Math.toRadians(170));
+    angle = MathUtil.clamp(angle, 0, ClimbConstants.ANGLE_LEVER_CLOSED);
     double error = MathUtil.angleModulus(angle - getArmEncoderAngle());
     armsMotor.setVoltage(error*ClimbConstants.ARMS_KP);
   }
@@ -96,8 +97,15 @@ public class Climb extends SubsystemBase {
   public double getCurrentAmpersLever() {
     return leverMotor.getCurrentCurrent();
   }
-  public double getArmEncoderAngle() {//arms angle
+  public double getArmEncoderAngle() {
     return MathUtil.angleModulus(MathUtil.angleModulus(digitalEncoder.get()) - ClimbConstants.ARMS_OFFSET);
+  }
+  public Pose2d getTargetClimbPose(boolean isRed, boolean isRightClimb) {
+    if (isRed) {
+      return isRightClimb ? ClimbConstants.targetRightSideRed : ClimbConstants.targetLeftSideRed;
+    } else {
+      return isRightClimb ? ClimbConstants.targetRightSideBlue : ClimbConstants.targetLeftSideBlue;
+    }
   }
 
 
