@@ -12,7 +12,7 @@ public class TurretConstants {
 
     private static final int TURRET_MOTOR_ID = 40;
     private static final Canbus CANBUS = Canbus.Rio;
-    private static final double GEAR_RATIO = ((64d*112d)/27d);
+    private static final double GEAR_RATIO = ((48d*112d)/27d);
     
     private static final double kP = 1;
     private static final double kI = 0;
