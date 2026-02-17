@@ -27,7 +27,7 @@ public class IntakeConstants {
     public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(INTAKE_ID, INTAKE_CANBUS, INTAKE_NAME).withInvert(true);
     
     //battery value
-    public static final int BATTERY_ID = 31;
+    public static final int BATTERY_ID = 34;
     public static final String BATTER_NAME = "Shinua/Battery";
 
     //battery pid feed forward

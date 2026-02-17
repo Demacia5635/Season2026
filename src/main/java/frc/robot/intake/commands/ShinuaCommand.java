@@ -30,13 +30,11 @@ public class ShinuaCommand extends Command {
     private boolean isDirectionUp;
     private Timer timer;
 
-    private final CommandController controller;
-
     /**
      * Creates a new ShinuaCommand
      * @param shinua the shinua subsytem of the Robot Container
      */
-    public ShinuaCommand(ShinuaSubsystem shinua, CommandController controller) {
+    public ShinuaCommand(ShinuaSubsystem shinua) {
         this.shinua = shinua;
 
         topPow = 0;
@@ -46,7 +44,6 @@ public class ShinuaCommand extends Command {
 
         isDirectionUp = true;
 
-        this.controller = controller;
         this.timer = new Timer();
 
         addRequirements(shinua);
@@ -83,20 +80,13 @@ public class ShinuaCommand extends Command {
                 shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
-                if (shinua.isAtMax()) {
-                    isDirectionUp = false;
-                }
-                if (shinua.isAtMin()) {
-                    isDirectionUp = true;
-                }
-                // shinua.setPowerBattery(-controller.getRightY());
-                // shinua.setPowerBattery(isDirectionUp ? IntakeConstants.MAX_POWER : -IntakeConstants.MAX_POWER);
+                shinua.setPowerBattery(0.4);
                 break;
 
             case DriveWhileIntake:
                 timer.start();
                 shinua.setDutyIndexerFar(-0.6);
-                
+
                 shinua.setDutyIndexerClose(0.25);
                 shinua.setDutyIndexerOnTop(-0.4);
 
@@ -115,7 +105,7 @@ public class ShinuaCommand extends Command {
                 shinua.setDutyIndexerClose(rightPow);
                 shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
-                // shinua.setPowerBattery(batteryPow);
+                shinua.setPowerBattery(batteryPow);
                 break;
 
             default:

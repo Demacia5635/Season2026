@@ -188,11 +188,13 @@ public class ShooterCommand extends Command {
       case TEST:
         shooter.setHoodAngle(Math.toRadians(wantedAngle));
         shooter.setFlywheelVel(wantedVel);
+        shooter.setFeederPower(0.4);
         break;
 
       default:
         shooter.setHoodPower(0);
         shooter.setFlywheelPower(0);
+        shooter.setFeederPower(0);
         break;
     }
   }
