@@ -12,6 +12,8 @@ public class KinematicsConstants {
     
     public static final double MIN_VELOCITY = 0.01; // slower is 0
     
+    public static  final double MAX_ROTATIONAL_VELOCITY = Math.toRadians(360);
+    public static final  double MAX_ROTATIONAL_ACCEL = Math.toRadians(540);
     public static final double MAX_RADIAL_ACCEL = 8;
     public static final double MAX_LINEAR_ACCEL = 10.0; 
     public static final double MAX_DELTA_V = MAX_LINEAR_ACCEL * CYCLE_DT;

@@ -27,7 +27,7 @@ public class ChassisConfig {
 
     public double cycleDt = 0.02;
     public double maxLinearAccel = 10;
-    public double maxOmegaVelocity = Math.toRadians(540);
+    public double maxOmegaVelocity = Math.toRadians(360);
     public double maxRadialAccel = 6;
     public double maxRadius = 0.4;
     public double minOmegaDiff = Math.toRadians(20);

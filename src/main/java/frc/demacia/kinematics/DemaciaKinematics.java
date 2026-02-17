@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogManager;
 
 import static frc.demacia.kinematics.KinematicsConstants.*;
 
@@ -92,6 +94,8 @@ public class DemaciaKinematics {
 
     }
 
+    
+
     private ChassisSpeeds limitVelocities(ChassisSpeeds wantedSpeeds, ChassisSpeeds currentSpeeds) {
         double currentVelocity = Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
         double wantedVelocity = Math.hypot(wantedSpeeds.vxMetersPerSecond, wantedSpeeds.vyMetersPerSecond);
@@ -114,14 +118,17 @@ public class DemaciaKinematics {
 
         if (Math.abs(velocityHeadingDiff) < MAX_FAST_TURN_ANGLE) { // small heading change
             // accelerate to target v
-            targetVelocity = MathUtil.clamp(targetVelocity, currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
-        } else if (Math.abs(velocityHeadingDiff) > MIN_REVERSE_ANGLE) { // optimization - deaccdelerate and turn the other way
+            targetVelocity = MathUtil.clamp(targetVelocity, currentVelocity - MAX_DELTA_V,
+                    currentVelocity + MAX_DELTA_V);
+        } else if (Math.abs(velocityHeadingDiff) > MIN_REVERSE_ANGLE) { // optimization - deaccdelerate and turn the
+                                                                        // other way
 
             targetVelocity = currentVelocity - MAX_DELTA_V;
             velocityHeadingDiff = optimizeAngleChange(velocityHeadingDiff);
 
         } else {
-            targetVelocity = MathUtil.clamp(Math.min(MAX_ROTATION_VELOCITY, targetVelocity), currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
+            targetVelocity = MathUtil.clamp(Math.min(MAX_ROTATION_VELOCITY, targetVelocity),
+                    currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
         }
 
         if (targetVelocity < MIN_VELOCITY) {
@@ -135,7 +142,8 @@ public class DemaciaKinematics {
         targetVelocityHeading = currentVelocityHeading + velocityHeadingDiff;
 
         // return the speeds - using target velocity and target angle
-        return new ChassisSpeeds(targetVelocity * Math.cos(targetVelocityHeading), targetVelocity * Math.sin(targetVelocityHeading),
+        return new ChassisSpeeds(targetVelocity * Math.cos(targetVelocityHeading),
+                targetVelocity * Math.sin(targetVelocityHeading),
                 wantedSpeeds.omegaRadiansPerSecond);
     }
 
