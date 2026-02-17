@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.controller.CommandController.ControllerType;
+import frc.robot.climb.commands.ArmsAngleTest;
+import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 
@@ -44,6 +48,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("RC", this);
     // chassis = new Chassis(MK4iChassisConstants.CHASSIS_CONFIG);
     climb = new Climb();
+    climb.setDefaultCommand(new ControllerClimb(new CommandController(0, ControllerType.kPS5), climb) );
     // Configure the trigger bindings
     addStatesToElasticForTesting();
     configureBindings();

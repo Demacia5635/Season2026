@@ -87,6 +87,7 @@ public class StateBasedClimb extends Command {
         if (IS_AT_BAR) {
           timer.start();
           chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToStraightenArms, 0, 0));
+          climb.setLeverDuty(0.1);
           if (timer.hasElapsed(ClimbConstants.timeToStraightenArms)) {
             timer.stop();
             timer.reset();

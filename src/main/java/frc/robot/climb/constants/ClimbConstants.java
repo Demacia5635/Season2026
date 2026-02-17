@@ -11,32 +11,23 @@ public class ClimbConstants {
 
         //arm constans
         public static final boolean WITH_BRAKE_ARMS = true;
-        public static final double MAX_CURRENT = 40;
-        public static final int MOTOR_ID_ARMS = 60;//TODO: CAMGE IN TUNER
+        public static final double MAX_CURRENT = 20;
+        public static final int MOTOR_ID_ARMS = 61;//TODO: CAMGE IN TUNER
         public static final double DIAMETER_ARMS = 0;
-        public static final double GEAR_RATIO_ARMS = 1 / 24;
+        public static final double GEAR_RATIO_ARMS = 24;
         public static final boolean WITH_INVERT_ARMS = false;        
         public static final double ANGLE_ARMS_RAISED = 0.6399424235362409; // radians
-        public static final double ANGLE_ARMS_LOWERED = Math.toRadians(0);
+        public static final double ANGLE_ARMS_LOWERED = Math.toRadians(22.86102);
         public static final double ARMS_ANGLE_CLOSED = 3.901700996125844; // radians
-        public static final double armsOffset = 0;
+        public static final double ARMS_OFFSET = 1.6465087097464108;
 
-        //arm pid feedforward
-        public static final double ARMS_KS = 0;
-        public static final double ARMS_KV = 0;
-        public static final double ARMS_KA = 0;
-        public static final double ARMS_KP = 0;
-        public static final double ARM_KG = 0;
-        public static final double ARMS_KD = 0;
-        public static final double ARMS_KI = 0;
+        public static final double ARMS_KP = 3;
 
         
         //climb arms motor
         public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, "arms motor")
-                        .withPID(ARMS_KP, ARMS_KI, ARMS_KD, ARMS_KS, ARMS_KV, ARMS_KA, ARM_KG)
                         .withBrake(WITH_BRAKE_ARMS)
                         .withCurrent(MAX_CURRENT)
-                        .withMeterMotor(GEAR_RATIO_ARMS, DIAMETER_ARMS)
                         .withInvert(WITH_INVERT_ARMS);
 
 
@@ -51,10 +42,10 @@ public class ClimbConstants {
 
 
         //lever constans
-        public static final int MOTOR_ID_LEVER = 61;
-        public static final boolean WITH_BRAKE_LEVER = false;
+        public static final int MOTOR_ID_LEVER = 60;
+        public static final boolean WITH_BRAKE_LEVER ;
         public static final double DIAMETER_LEVER = 0;
-        public static final double LEVER_GEAR_RATIO = 1 / 64;
+        public static final double LEVER_GEAR_RATIO = 64;
         public static final boolean WITH_INVERT_LEVER = false;
         public static final double ANGLE_LEVER_CLOSED = -0.4393564709457465; // radians
         public static final double ANGLE_LEVER_OPEN = 0.2854944237345549; // radians
@@ -69,8 +60,7 @@ public class ClimbConstants {
 
         //the climb arm encoder
         public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(3, "climb encoder")
-                        .withInvert(false)
-                        .withOffset(armsOffset);
+                        .withInvert(true);
 
 
         //constans to auto drive to tower

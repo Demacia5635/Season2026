@@ -74,6 +74,7 @@ public abstract class BaseMotorConfig<T extends BaseMotorConfig<T>> {
 
     public CloseLoopParam[] pid = {new CloseLoopParam(), new CloseLoopParam(), new CloseLoopParam(), new CloseLoopParam()};
 
+    
     public boolean isMeterMotor = false;
     public boolean isRadiansMotor = false;
 

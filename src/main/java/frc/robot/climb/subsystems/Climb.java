@@ -9,6 +9,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.climb.constants.ClimbConstants;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -62,10 +63,13 @@ public class Climb extends SubsystemBase {
 
 
   public void setArmsAngle(double angle) {
-    armsMotor.setAngle(angle);
+    angle = MathUtil.clamp(angle, 0, Math.toRadians(170));
+    double error = MathUtil.angleModulus(angle - getArmEncoderAngle());
+    armsMotor.setVoltage(error*ClimbConstants.ARMS_KP);
   }
 
   public void setLeverAngle(double angle) {
+
     leverMotor.setAngle(angle);
   }
 
@@ -81,7 +85,7 @@ public class Climb extends SubsystemBase {
     return leverMotor.getCurrentCurrent();
   }
   public double getArmEncoderAngle() {//arms angle
-    return digitalEncoder.get();
+    return MathUtil.angleModulus(MathUtil.angleModulus(digitalEncoder.get()) - ClimbConstants.ARMS_OFFSET);
   }
 
 
