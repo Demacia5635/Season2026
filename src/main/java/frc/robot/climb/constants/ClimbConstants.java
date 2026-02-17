@@ -54,7 +54,7 @@ public class ClimbConstants {
 
 
         //lever climb motor config
-        public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIME, "motor lever")
+        public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIMB, "motor lever")
                         .withPID(LEVER_KP, LEVER_KI, LEVER_KD, LEVER_KS, LEVER_KV, LEVER_KA, LEVER_KG)
                         .withBrake(WITH_BRAKE_LEVER)
                         .withCurrent(MAX_CURRENT)
