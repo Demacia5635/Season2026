@@ -49,8 +49,8 @@ public class StateBasedClimb extends Command {
         super.initSendable(builder);
         builder.addDoubleProperty("Kraken Power", () -> krakenPow, (value) -> krakenPow = value);
         builder.addDoubleProperty("Arms Angle", () -> armsAngle, (value) -> armsAngle = value);
-        builder.addDoubleProperty("Where To Climb", () -> armsAngle, (value) -> armsAngle = value);
-
+        builder.addBooleanProperty("is right", () -> IS_RIGHT_CLIMB, (value) -> IS_RIGHT_CLIMB = value);
+        builder.addBooleanProperty("is red",() -> RobotCommon.isRed,(value) -> RobotCommon.isRed = value);
     }
 
     // Called when the command is initially scheduled.
@@ -83,11 +83,9 @@ public class StateBasedClimb extends Command {
                 chassisPose = chassis.getPose();
                 difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
                 headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
-                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
-                        difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
+                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
                 chassis.setVelocities(speed);
-                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
-                        && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
                     chassis.stop();
                 }
                 break;
