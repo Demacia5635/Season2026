@@ -4,6 +4,7 @@
 
 package frc.robot.climb.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
@@ -23,6 +24,8 @@ public class Climb extends SubsystemBase {
     armsMotor = new TalonSRXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
     leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
     digitalEncoder = new DigitalEncoder(ClimbConstants.DIGITAL_ENCODER_CONFIG);
+    leverMotor.setPosition(0);
+    SmartDashboard.putData("reset motor position", new InstantCommand(() -> leverMotor.setPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Climb", this);
   }
 
@@ -33,6 +36,15 @@ public class Climb extends SubsystemBase {
     builder.addDoubleProperty("Encoder Angle", this::getArmEncoderAngle, null);
   }
   
+  public void leverClimb(){
+    if(getAngleLever()<ClimbConstants.ANGLE_LEVER_MID){
+       setLeverDuty(0.2);
+    }
+    else if (getAngleLever() < ClimbConstants.ANGLE_LEVER_OPEN){
+      setLeverDuty(0.8);
+    }
+    else{leverMotor.stop();}
+  }
 
   public void armStateClose(){
     if (getArmEncoderAngle() != ClimbConstants.ARMS_ANGLE_CLOSED || getAngleLever() != ClimbConstants.ANGLE_LEVER_CLOSED) {
@@ -70,7 +82,7 @@ public class Climb extends SubsystemBase {
 
   public void setLeverAngle(double angle) {
 
-    leverMotor.setAngle(angle);
+    leverMotor.setPositionVoltage(angle);
   }
 
   public void resetLeverEncoder() {

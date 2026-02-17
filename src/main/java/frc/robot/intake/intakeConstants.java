@@ -55,7 +55,7 @@ public class IntakeConstants {
 
     //indexer close value
     public static final int INDEXER_CLOSE_ID = 33;
-    public static final String INDEXER_CLOSE_NAME  = "Indexer on top motor";
+    public static final String INDEXER_CLOSE_NAME  = "Indexer Close motor";
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
     .withBrake(true).withInvert(true);
 

@@ -96,6 +96,7 @@ public class ShinuaCommand extends Command {
             case DriveWhileIntake:
                 timer.start();
                 shinua.setDutyIndexerFar(-0.6);
+                
                 shinua.setDutyIndexerClose(0.25);
                 shinua.setDutyIndexerOnTop(-0.4);
 

@@ -35,7 +35,7 @@ public class ClimbConstants {
         public static final double LEVER_KS = 0;
         public static final double LEVER_KV = 0;
         public static final double LEVER_KA = 0;
-        public static final double LEVER_KP = 0;
+        public static final double LEVER_KP = 2;
         public static final double LEVER_KG = 0;
         public static final double LEVER_KD = 0;
         public static final double LEVER_KI = 0;
@@ -44,10 +44,10 @@ public class ClimbConstants {
         //lever constans
         public static final int MOTOR_ID_LEVER = 60;
         public static final boolean WITH_BRAKE_LEVER = true;
-        public static final double LEVER_GEAR_RATIO = 64;
+        public static final double LEVER_GEAR_RATIO = 100;
         public static final boolean WITH_INVERT_LEVER = false;
-        public static final double ANGLE_LEVER_CLOSED = -0.4393564709457465; // radians
-        public static final double ANGLE_LEVER_OPEN = 2.2705078125; // radians
+        public static final double ANGLE_LEVER_CLOSED = 0; // radians
+        public static final double ANGLE_LEVER_OPEN = 1.66; // radians
 
         //lever climb motor config
         public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIME, "motor lever")
@@ -70,6 +70,8 @@ public class ClimbConstants {
         public static final double CHASSIS_TOLERANCE = Math.toRadians(5); // radians
         public static final double timeToStraightenArms = 0.2; // seconds
         public static final double timeToRaiseArmsAfterClimb = 0.1; // seconds
+
+        public static final double ANGLE_LEVER_MID = Math.toRadians(40);
 
 
 

@@ -124,12 +124,13 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    //chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
-    climb.setDefaultCommand(new ControllerClimb(driverController, climb));
+    driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
+    // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
     turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {

@@ -32,11 +32,11 @@ public class ControllerClimb extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    joyright = contoller.getRightY() * 0.2;
-    climb.setArmsDuty(joyright);
+    joyright = contoller.getRightY();
+    climb.setLeverDuty(joyright);
 
     joyleft = contoller.getLeftY() * 0.2;
-    climb.setLeverDuty(joyleft);
+    climb.setArmsDuty(joyleft);
   }
 
   // Called once the command ends or is interrupted.
