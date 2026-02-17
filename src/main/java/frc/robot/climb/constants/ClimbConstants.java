@@ -1,6 +1,6 @@
 package frc.robot.climb.constants;
-
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.DigitalEncoderConfig;
 import frc.demacia.utils.motors.TalonFXConfig;
@@ -12,7 +12,7 @@ public class ClimbConstants {
         //arm constans
         public static final boolean WITH_BRAKE_ARMS = true;
         public static final double MAX_CURRENT = 20;
-        public static final int MOTOR_ID_ARMS = 61;//TODO: CAMGE IN TUNER
+        public static final int MOTOR_ID_ARMS = 61;
         public static final double DIAMETER_ARMS = 0;
         public static final double GEAR_RATIO_ARMS = 24;
         public static final boolean WITH_INVERT_ARMS = false;        
@@ -75,7 +75,6 @@ public class ClimbConstants {
 
         //TODO: talk with tomer move it to the fild class
         //climb pose
-        public static Pose2d targetRightSide = Pose2d.kZero;
-        public static Pose2d targetLeftSide = Pose2d.kZero;
-      
+        public static Pose2d targetRightSide = new Pose2d(15.439, 3.863, new Rotation2d());
+        public static Pose2d targetLeftSide = new Pose2d(15.43, 4.720, new Rotation2d());
 }
