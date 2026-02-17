@@ -61,7 +61,7 @@ import frc.robot.leds.RobotALedStrip;
 public class RobotContainer implements Sendable {
 
   public static Chassis chassis;
-  CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  CommandController driverController = new CommandController(0, ControllerType.kXbox);
   public static Turret turret;
   public static IntakeSubsystem intake;
   public static ShinuaSubsystem shinua;
@@ -126,13 +126,13 @@ public class RobotContainer implements Sendable {
   private void configureBindings() {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
-    shinua.setDefaultCommand(new ShinuaCommand(shinua, driverController));
+    shinua.setDefaultCommand(new ShinuaCommand(shinua));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
-    driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
+    // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
+    // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
       shooter.setFeederPower(0.8);
     }, () -> {
@@ -152,6 +152,7 @@ public class RobotContainer implements Sendable {
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
+    builder.addDoubleProperty("maxDriveVelocity", () -> chassis.getConfig().maxDriveVelocity, (max) -> chassis.getConfig().withMaxDriveVelocity(max));
 
     builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
         (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
