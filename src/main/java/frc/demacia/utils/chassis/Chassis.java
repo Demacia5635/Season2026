@@ -27,6 +27,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.demacia.kinematics.DemaciaKinematics;
 import frc.demacia.odometry.DemaciaPoseEstimator;
+import frc.demacia.odometry.RobotPose;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
@@ -40,6 +41,7 @@ import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
+import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
@@ -109,7 +111,6 @@ public class Chassis extends SubsystemBase {
     private Field2d tagsField;
     public Quest quest;
     private Field2d questField;
-    public Vision visionFuse;
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
@@ -165,15 +166,17 @@ public class Chassis extends SubsystemBase {
         }
         tags = new TagPose[c];
         int count = 0;
-        for(int i = 0; i < chassisConfig.tags.length; i++){
-            if(!chassisConfig.tags[i].getIsObjectCamera()){
+        for (int i = 0; i < chassisConfig.tags.length; i++) {
+            if (!chassisConfig.tags[i].getIsObjectCamera()) {
                 tags[count] = chassisConfig.tags[i];
                 count++;
             }
         }
-        visionFuse = new Vision(new ArrayList<>(List.of(tags)));
+        RobotPose.initialize(modulePositions, new Matrix<>(
+                new SimpleMatrix(
+                        new double[] { 0.01, 0.01, 0 })),
+                QUEST_STD);
     }
-
 
     private void addStatus() {
         gyroYawStatus = gyro.getYaw();
@@ -185,7 +188,8 @@ public class Chassis extends SubsystemBase {
     }
 
     public void setDrivePower(double pow) {
-        for (int i = 0; i < 4; i++) setDrivePower(pow, i);
+        for (int i = 0; i < 4; i++)
+            setDrivePower(pow, i);
     }
 
     /**
@@ -218,7 +222,7 @@ public class Chassis extends SubsystemBase {
      * @return Current pose (position and rotation) using odometry fusion
      */
     public Pose2d getPose() {
-        return demaciaPoseEstimator.getEstimatedPose();
+        return RobotPose.getInstance().getPose();
     }
 
     public Pose2d getPoseWithVelocity(double dt) {
@@ -265,7 +269,6 @@ public class Chassis extends SubsystemBase {
                 getGyroAngle());
         setModuleStates(states);
     }
-
 
     public Translation2d getVelocityAsVector() {
         return new Translation2d(getChassisSpeedsFieldRel().vxMetersPerSecond,
@@ -359,102 +362,112 @@ public class Chassis extends SubsystemBase {
     }
 
     // private void updateQuest(Pose2d questPose) {
-    //     demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
-    //     demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
-    //     questField.setRobotPose(questPose);
+    // demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp()
+    // - 0.05);
+    // demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
+    // questField.setRobotPose(questPose);
     // }
 
     // private Matrix<N3, N1> getSTD() {
-    //     double x = 0.05;
-    //     double y = 0.05;
-    //     double theta = 0.03;
+    // double x = 0.05;
+    // double y = 0.05;
+    // double theta = 0.03;
     private void updateQuest(Pose2d questPose) {
         demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
         demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
         questField.setRobotPose(questPose);
     }
-    
+
     private Matrix<N3, N1> getSTD() {
         double x = 0.05;
         double y = 0.05;
         double theta = 0.03;
 
-    //     ChassisSpeeds currentSpeeds = getChassisSpeedsRobotRel();
-    //     double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+        // ChassisSpeeds currentSpeeds = getChassisSpeedsRobotRel();
+        // double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond,
+        // currentSpeeds.vyMetersPerSecond);
 
-    //     // Vision confidence adjustment
-    //     // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
-    //     // x += 0.3;
-    //     // y += 0.3;
-    //     // }
+        // // Vision confidence adjustment
+        // // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
+        // // x += 0.3;
+        // // y += 0.3;
+        // // }
         // Vision confidence adjustment
         // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
         // x += 0.3;
         // y += 0.3;
         // }
 
-    //     // Speed-based confidence calculation
-    //     if (speed > WORST_RELIABLE_SPEED) {
-    //         // Maximum uncertainty for high speeds
-    //         x += 0.02;
-    //         y += 0.02;
-    //     } else if (speed <= BEST_RELIABLE_SPEED) {
-    //         // Minimum uncertainty for low speeds
-    //         x -= 0.02;
-    //         y -= 0.02;
-    //     } else {
-    //         // Calculate normalized speed for the falloff range
-    //         double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
-    //                 / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
+        // // Speed-based confidence calculation
+        // if (speed > WORST_RELIABLE_SPEED) {
+        // // Maximum uncertainty for high speeds
+        // x += 0.02;
+        // y += 0.02;
+        // } else if (speed <= BEST_RELIABLE_SPEED) {
+        // // Minimum uncertainty for low speeds
+        // x -= 0.02;
+        // y -= 0.02;
+        // } else {
+        // // Calculate normalized speed for the falloff range
+        // double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
+        // / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
 
-    //         // Apply exponential falloff to calculate additional uncertainty
-    //         double speedConfidence = Math.exp(-3 * normalizedSpeed);
+        // // Apply exponential falloff to calculate additional uncertainty
+        // double speedConfidence = Math.exp(-3 * normalizedSpeed);
 
-    //         // Scale the uncertainty adjustment based on confidence
-    //         double adjustment = 0.02 * (1 - speedConfidence);
-    //         x += adjustment;
-    //         y += adjustment;
-    //     }
+        // // Scale the uncertainty adjustment based on confidence
+        // double adjustment = 0.02 * (1 - speedConfidence);
+        // x += adjustment;
+        // y += adjustment;
+        // }
 
         return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
     }
 
     Pose2d questPoseEstimation;
 
-    Pose2d visionFusePoseEstimation;
     Rotation2d gyroAngle;
 
     private boolean hasVisionUpdated = false;
 
-
     @Override
     public void periodic() {
-        visionFusePoseEstimation = visionFuse.getPoseEstimation();
-        gyroAngle = getGyroAngle();
-        
+        // visionFusePoseEstimation = visionFuse.getPoseEstimation();
+        // gyroAngle = getGyroAngle();
 
+        // OdometryObservation observation = new OdometryObservation(
+        //         Timer.getFPGATimestamp(),
+        //         getGyroAngle(),
+        //         getModulePositions());
+
+        // demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
+        // field.setRobotPose(getPose());
+
+        // if (visionFusePoseEstimation != null) {
+        //     if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        //         hasVisionUpdated = true;
+        //         quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
+        //     }
+
+        //     updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
+        //     visionFusePoseEstimation = null;
+        // }
+        // if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
+        //     updateQuest(quest.getRobotPose2d());
+        // }
+
+
+        updateCommon();
+        
         OdometryObservation observation = new OdometryObservation(
                 Timer.getFPGATimestamp(),
                 getGyroAngle(),
                 getModulePositions());
 
-        demaciaPoseEstimator.addOdometryCalculation(observation, getChassisSpeedsVector());
+
+        RobotPose.getInstance().update(observation, getVelocityAsVector());
         field.setRobotPose(getPose());
-        
-        if (visionFusePoseEstimation != null) {
-            if (!hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-                hasVisionUpdated = true;
-                quest.setQuestPose(new Pose3d(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle)));
-            }
 
-
-            updateVision(new Pose2d(visionFusePoseEstimation.getTranslation(), gyroAngle));
-            visionFusePoseEstimation = null;
-        }
-        if (hasVisionUpdated && quest.isConnected() && quest.isTracking()) {
-            updateQuest(quest.getRobotPose2d());
-        }
-        updateCommon();
     }
 
     public void updateCommon() {
@@ -465,11 +478,11 @@ public class Chassis extends SubsystemBase {
         RobotCommon.robotAngle = getGyroAngle();
     }
 
-    public Pose2d getFuturePose(double dtSeconds){
+    public Pose2d getFuturePose(double dtSeconds) {
         Pose2d poseAtTime = getPose().exp(new Twist2d(
-        (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
-        (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
-        getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
+                (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
+                (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
+                getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
         return poseAtTime;
     }
 
@@ -527,7 +540,8 @@ public class Chassis extends SubsystemBase {
             gyro.setYaw(angle.getDegrees());
             quest.questResetfromRobotToQuest(angle);
             demaciaPoseEstimator
-                    .resetPose(new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
+                    .resetPose(
+                            new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
         }
     }
 

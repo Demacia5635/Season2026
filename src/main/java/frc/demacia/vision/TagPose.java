@@ -144,8 +144,8 @@ public class TagPose {
           Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
 
       turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
-          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle())).times(-1);
-      System.out.println(turretToTag);
+          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
+   //   System.out.println(turretToTag);
 
       robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))
           .rotateBy(RobotCommon.robotAngle);
@@ -251,7 +251,7 @@ public class TagPose {
   }
 
   public boolean isSeeTag() {
-    return  Table.getEntry("tv").getDouble(0.0) != 0 && (camera.getIsOnTurret() ? GetDistFromCamera() < 3.7 : GetDistFromCamera() < 3);
+    return Table.getEntry("tv").getDouble(0.0) >= 0.1;
   }
 
   public Translation2d getCameraToTag() {

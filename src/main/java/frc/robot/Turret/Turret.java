@@ -46,6 +46,9 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putData("Turret",this);
     SmartDashboard.putData("Turret/Motor/set coast", new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Turret/Motor/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+    turretMotor.configMotionMagic();
+    turretMotor.configPidFf(0);
+    SmartDashboard.putData("reset motor position", new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
   }
 
   public void setNeutralMode(boolean isBrake) {

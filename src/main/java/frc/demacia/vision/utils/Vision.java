@@ -20,6 +20,12 @@ public class Vision {
     private ArrayList<TagPose> tags;
     
 
+    public Vision(TagPose[] poses){
+        this.tags = new ArrayList<>();
+        for(TagPose p : poses){
+            tags.add(p);
+        }
+    }
     public Vision(ArrayList<TagPose> tags) {
         this.tags = tags;
     }
@@ -33,6 +39,7 @@ public class Vision {
 
     public boolean isSeeTag(){
         for(TagPose tag : tags){
+            
             if(tag.isSeeTag()) return true;
         }
         return false; 
@@ -50,7 +57,7 @@ public class Vision {
     }
 
     private double normalizeConfidence(double confidence) {
-        return getCollectedConfidence() == 0 ? 0 : confidence * (1 / getCollectedConfidence());
+        return getCollectedConfidence() == 0 ? 0 : confidence * (1d / getCollectedConfidence());
     }
 
     public Pose2d getPoseEstimation() {

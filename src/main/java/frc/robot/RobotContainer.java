@@ -83,6 +83,7 @@ public class RobotContainer implements Sendable {
     ledManager = new LedManager();
     leds = new RobotALedStrip();
     climb = new Climb();
+    
 
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
@@ -139,7 +140,8 @@ public class RobotContainer implements Sendable {
       shooter.setFeederPower(0);
     }));
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    // turret.setDefaultCommand(new TurretPower(driverController)); 
+    turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }
 
