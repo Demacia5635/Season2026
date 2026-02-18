@@ -24,7 +24,6 @@ public class StateBasedClimb extends Command {
     Timer timer;
     private boolean IS_AT_BAR;
     private boolean IS_AT_GROUND;
-    private boolean IS_READY_TO_CLIMB;
     private boolean IS_RIGHT_CLIMB;
     private Pose2d chassisPose;
     private Translation2d difference;
@@ -33,6 +32,7 @@ public class StateBasedClimb extends Command {
     private Pose2d targetPose;
     private double krakenPow;
     private double armsAngle;
+    private boolean afterClimb;
 
     public StateBasedClimb(Climb climb, Chassis chassis) {
         this.climb = climb;
@@ -40,7 +40,7 @@ public class StateBasedClimb extends Command {
         this.timer = new Timer();
         this.krakenPow = 0;
         this.armsAngle = climb.getArmEncoderAngle();
-        addRequirements(climb);
+        addRequirements(climb, chassis);
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -50,7 +50,7 @@ public class StateBasedClimb extends Command {
         builder.addDoubleProperty("Kraken Power", () -> krakenPow, (value) -> krakenPow = value);
         builder.addDoubleProperty("Arms Angle", () -> armsAngle, (value) -> armsAngle = value);
         builder.addBooleanProperty("is right", () -> IS_RIGHT_CLIMB, (value) -> IS_RIGHT_CLIMB = value);
-        builder.addBooleanProperty("is red",() -> RobotCommon.isRed,(value) -> RobotCommon.isRed = value);
+        builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (value) -> RobotCommon.isRed = value);
     }
 
     // Called when the command is initially scheduled.
@@ -58,6 +58,8 @@ public class StateBasedClimb extends Command {
     public void initialize() {
         IS_AT_BAR = false;
         IS_AT_GROUND = false;
+        afterClimb = false;
+
         IS_RIGHT_CLIMB = true; // need to set based on strategy
         timer.stop();
         timer.reset();
@@ -94,21 +96,9 @@ public class StateBasedClimb extends Command {
                 }
 
                 if (IS_AT_BAR) {
-                    timer.start();
-                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToStraightenArms, 0, 0));
                     climb.setArmsDuty(0.1);
-                    if (timer.hasElapsed(ClimbConstants.timeToStraightenArms)) {
-                        timer.stop();
-                        timer.reset();
-                        climb.stopArms();
-                        IS_READY_TO_CLIMB = true;
-                    }
-                }
-
-                if (IS_READY_TO_CLIMB) {
                     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
                 }
-
                 break;
             case GetOffClimb:
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
@@ -120,13 +110,25 @@ public class StateBasedClimb extends Command {
                 if (IS_AT_GROUND) {
                     timer.start();
                     chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
-                    climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
+                    climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
                     if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
                         timer.stop();
                         timer.reset();
                         climb.stopArms();
-                        RobotCommon.currentState = robotStates.Drive;
+                        afterClimb = true;
                     }
+                    if(afterClimb){
+                     timer.start();
+                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb,0,0));
+                    }
+                    if(timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)){
+                     timer.stop();
+                     timer.reset();
+                     chassis.stop();
+                    }  
+
+                 RobotCommon.currentState = robotStates.Drive;
+
                 }
                 break;
             case Test:
