@@ -43,6 +43,7 @@ public class IntakeConstants {
     public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(BATTERY_ID, INTAKE_CANBUS, BATTER_NAME)
     .withBrake(true)
     .withInvert(false)
+    .withCurrent(20)
     .withPID(BATTERY_KP, BATTERT_KI, BATTERY_KD, BATTERT_KS, BATTERY_KV, BATTERY_KA, BATTER_KG)
     .withRadiansMotor(36);
 
@@ -57,12 +58,13 @@ public class IntakeConstants {
     public static final int INDEXER_CLOSE_ID = 33;
     public static final String INDEXER_CLOSE_NAME  = "Indexer Close motor";
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
-    .withBrake(true).withInvert(true);
+    .withBrake(true).withInvert(true).withCurrent(15);
 
     //indexer close value
     public static final int INDEXER_FAR_ID = 32;
     public static final String INDEXER_FAR_NAME  = "Indexer far motor";
     public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(INDEXER_FAR_ID, INDEXER_FAR_NAME)
     .withBrake(true)
+    .withCurrent(15)
     .withInvert(true);
 }

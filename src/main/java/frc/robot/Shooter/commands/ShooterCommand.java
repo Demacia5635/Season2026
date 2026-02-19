@@ -41,6 +41,7 @@ public class ShooterCommand extends Command {
   private double MAGNUS_CORRECTION = 0.05;
   private double wantedAngle;
   private double wantedVel;
+  private double velocityFromBattery = 0.96;
 
   public ShooterCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
@@ -171,6 +172,7 @@ public class ShooterCommand extends Command {
         double[] lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
         vel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
         hoodAngle = lut[1];
+
 
 
         shooter.setFeederPower(0.4);

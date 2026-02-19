@@ -173,25 +173,25 @@ public class LogManager extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    // Data.refreshAll();
+    Data.refreshAll();
 
-    // for (int i = activeConsole.size() - 1; i >= 0; i--) {
-    //   ConsoleAlert alert = activeConsole.get(i);
-    //   if (alert.isTimerOver()) {
-    //       alert.set(false);
-    //       activeConsole.remove(i);
-    //   }
-    // }
+    for (int i = activeConsole.size() - 1; i >= 0; i--) {
+      ConsoleAlert alert = activeConsole.get(i);
+      if (alert.isTimerOver()) {
+          alert.set(false);
+          activeConsole.remove(i);
+      }
+    }
 
-    // for (int i = 0; i < individualLogEntries.size(); i++) {
-    //     individualLogEntries.get(i).log();
-    // }
+    for (int i = 0; i < individualLogEntries.size(); i++) {
+        individualLogEntries.get(i).log();
+    }
     
-    // for (LogEntry<?> e : categoryLogEntries) {
-    //   if (e != null){
-    //     e.log();
-    //   }
-    // }
+    for (LogEntry<?> e : categoryLogEntries) {
+      if (e != null){
+        e.log();
+      }
+    }
   }
 
   /**

@@ -127,17 +127,16 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
-    shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
       shooter.setFeederPower(0.8);
     }, () -> {
@@ -145,7 +144,7 @@ public class RobotContainer implements Sendable {
     }));
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController)); 
-    turret.setDefaultCommand(new TurretCommand(turret));
+    // turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
   }

@@ -31,7 +31,7 @@ public class ShooterConstans {
                 SHOOTER_LOOKUP_TABLE.add(2.75, 13.7, Math.toRadians(55));
                 SHOOTER_LOOKUP_TABLE.add(3.74, 14.6, Math.toRadians(52));
                 
-                SHOOTER_LOOKUP_TABLE.add(5, 16.5, Math.toRadians(48));
+                SHOOTER_LOOKUP_TABLE.add(5, 16.8, Math.toRadians(50));
                 
 
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);

@@ -77,6 +77,8 @@ public class Vision {
         return new Pose2d(x, y, RobotCommon.robotAngle);
     }
 
+      
+
     public void updateValues() {
         for (TagPose tag : tags) {
             tag.updateValues();
