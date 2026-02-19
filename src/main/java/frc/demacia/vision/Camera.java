@@ -35,7 +35,6 @@ public class Camera {
         this.isOnTurret = false;
         this.tableName = "limelight-"+name;
         this.isCroping = isCroping;
-        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.122,  0.143));
         this.isObjectCamera = isObjectCamera;
     }
 
@@ -43,17 +42,16 @@ public class Camera {
    * Camera for Turret
    * * 
    */
-    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera,double turretToCamdistance) {
+    public Camera(String name, Translation3d robotToTurretPosition, double pitch, double yaw, boolean isObjectCamera) {
         this.name = name;
         this.robotToTurretPosition = robotToTurretPosition;
-        this.turretToCamdistance = turretToCamdistance;
         this.pitch = pitch;
         this.yaw = yaw;
         this.isOnTurret = true;
         this.tableName = "limelight-"+name;
         isCroping = false;
         
-        turretToCameraVector = new Translation2d(turretToCamdistance, new Rotation2d(0.175, 0.145));
+        turretToCameraVector = new Translation2d(0.13,0.152);
     }
 
     public Translation2d getTurretToCamPosition(){

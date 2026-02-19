@@ -20,9 +20,6 @@ import frc.demacia.utils.log.LogManager;
 
 import static frc.demacia.vision.utils.VisionConstants.*;
 
-
-
-
 /** Add your docs here. */
 public class TagPose {
   // NetworkTables communication for each camera
@@ -66,7 +63,6 @@ public class TagPose {
 
   @SuppressWarnings("unchecked")
   public TagPose(Camera camera) {
-
     wantedPip = 0;
     confidence = 0;
     this.camera = camera;
@@ -90,7 +86,6 @@ public class TagPose {
   }
 
   public Pose2d getRobotPose2d() {
-    // updateValues();
     if (isSeeTag()) {
       if (camera.getIsCroping()) {
         crop();
@@ -145,7 +140,7 @@ public class TagPose {
 
       turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
           .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
-   //   System.out.println(turretToTag);
+      // System.out.println(turretToTag);
 
       robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))
           .rotateBy(RobotCommon.robotAngle);
@@ -165,7 +160,7 @@ public class TagPose {
 
   public double GetDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch + camera.getPitch());
+    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     // dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))))
 
@@ -239,7 +234,8 @@ public class TagPose {
   }
 
   // public double getAngle() {
-  //   return Table.getEntry("botpose").getDoubleArray(new double[] { 0, 0, 0, 0, 0, 0 })[5];
+  // return Table.getEntry("botpose").getDoubleArray(new double[] { 0, 0, 0, 0, 0,
+  // 0 })[5];
   // }
 
   public Rotation2d getRobotAngle() {

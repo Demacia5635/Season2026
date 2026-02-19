@@ -7,14 +7,14 @@ import frc.demacia.utils.sensors.LimitSwitchConfig;
 
 public class TurretConstants {
 
-    public static final double MAX_TURRET_ANGLE = 1.96875;
+    public static final double MAX_TURRET_ANGLE = 1.94;
     public static final double MIN_TURRET_ANGLE = -2.019531;
 
     private static final int TURRET_MOTOR_ID = 40;
     private static final Canbus CANBUS = Canbus.Rio;
     private static final double GEAR_RATIO = ((48d*112d)/27d);
     
-    private static final double kP = 4;
+    private static final double kP = 1;
     private static final double kI = 0;
     private static final double kD = 0;
     private static final double kS = 0.05979;

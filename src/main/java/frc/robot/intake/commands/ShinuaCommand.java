@@ -86,23 +86,13 @@ public class ShinuaCommand extends Command {
 
             case DriveWhileIntake:
 
-                shinua.setDutyIndexerFar(-0.1);
 
-                shinua.setDutyIndexerClose(0.2);
-                shinua.setDutyIndexerOnTop(0);
+                timer.start();
+                shinua.setDutyIndexerFar(-0.6);
 
-                // timer.start();
-                // shinua.setDutyIndexerFar(-0.5);
-
-                // shinua.setDutyIndexerClose(0.35);
-                // shinua.setDutyIndexerOnTop(-0.8);
-
-                // if (shinua.isAtMax()) {
-                // isDirectionUp = false;
-                // }
-                // if (shinua.isAtMin()) {
-                // isDirectionUp = true;
-                // }
+                shinua.setDutyIndexerClose(0.5);
+                shinua.setDutyIndexerOnTop(-0.8);
+                
                 shinua.setPowerBattery(0);
                 break;
 

@@ -13,38 +13,39 @@ import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
 // import frc.robot.RobotCommon.*;
 
-
 /** Add your docs here. */
 public class Vision {
 
     private ArrayList<TagPose> tags;
-    
 
-    public Vision(TagPose[] poses){
+    public Vision(TagPose[] poses) {
+
         this.tags = new ArrayList<>();
-        for(TagPose p : poses){
+        for (TagPose p : poses) {
             tags.add(p);
         }
     }
+
     public Vision(ArrayList<TagPose> tags) {
         this.tags = tags;
     }
-    public Vision(){
+
+    public Vision() {
         this.tags = new ArrayList<>();
     }
-    public void addTag(TagPose tag){
+
+    public void addTag(TagPose tag) {
         tags.add(tag);
     }
 
+    public boolean isSeeTag() {
+        for (TagPose tag : tags) {
 
-    public boolean isSeeTag(){
-        for(TagPose tag : tags){
-            
-            if(tag.isSeeTag()) return true;
+            if (tag.isSeeTag())
+                return true;
         }
-        return false; 
+        return false;
     }
-
 
     private double getCollectedConfidence() {
         double confidence = 0;
@@ -63,87 +64,90 @@ public class Vision {
     public Pose2d getPoseEstimation() {
         double x = 0;
         double y = 0;
-        double confidence =  0;
+        double confidence = 0;
         for (TagPose tag : tags) {
             if (tag.getRobotPose2d() == null)
                 continue;
             confidence = normalizeConfidence(tag.getPoseEstemationConfidence());
-            x += tag.getRobotPose2d().getX() * confidence;
-            y += tag.getRobotPose2d().getY() * confidence;
+            Pose2d pose2d = tag.getRobotPose2d();
+            x += pose2d.getX() * confidence;
+            y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y,RobotCommon.robotAngle);
+        return new Pose2d(x, y, RobotCommon.robotAngle);
     }
-    
-    public void updateValues()
-    {
-        for(TagPose tag : tags){
+
+    public void updateValues() {
+        for (TagPose tag : tags) {
             tag.updateValues();
         }
     }
 
     // public Rotation2d getRotationEstimation() {
-    //     Integer bestCam = getBestCamera();
-    //     return bestCam != null ? Rotation2d.fromDegrees(tags.get(bestCam).getAngle()) : null;
+    // Integer bestCam = getBestCamera();
+    // return bestCam != null ? Rotation2d.fromDegrees(tags.get(bestCam).getAngle())
+    // : null;
     // }
 
-
     // public double getVisionTimestamp() {
-    //     double timestamp = 0;
-    //     for (TagPose tag : tags) {
-    //         if (tag.getRobotPose2d() != null) {
-    //             timestamp += tag.getTimestamp() * normalizeConfidence(tag.getPoseEstemationConfidence());
-    //         }
-    //     }
-    //     return timestamp;
+    // double timestamp = 0;
+    // for (TagPose tag : tags) {
+    // if (tag.getRobotPose2d() != null) {
+    // timestamp += tag.getTimestamp() *
+    // normalizeConfidence(tag.getPoseEstemationConfidence());
+    // }
+    // }
+    // return timestamp;
     // }
 
     // private Integer getBestCamera() {
-    //     Integer bestCamera = null;
-    //     double highestConfidence = 0.0;
+    // Integer bestCamera = null;
+    // double highestConfidence = 0.0;
 
-    //     for (int i = 0; i < tags.size(); i++) {
-    //         double currentConfidence = tags.get(i).getPoseEstemationConfidence();
+    // for (int i = 0; i < tags.size(); i++) {
+    // double currentConfidence = tags.get(i).getPoseEstemationConfidence();
 
-    //         if (currentConfidence > highestConfidence && (currentConfidence > 0.1)) {
-    //             highestConfidence = currentConfidence;
-    //             bestCamera = i;
-    //         }
-    //     }
+    // if (currentConfidence > highestConfidence && (currentConfidence > 0.1)) {
+    // highestConfidence = currentConfidence;
+    // bestCamera = i;
+    // }
+    // }
 
-    //     return bestCamera;
+    // return bestCamera;
     // }
 
     // public Rotation2d getVisionEstimatedAngle() {
-    //     return getBestCamera() != null ? tags.get(getBestCamera()).getRobotAngle() : null;
+    // return getBestCamera() != null ? tags.get(getBestCamera()).getRobotAngle() :
+    // null;
     // }
 
     // public double getVisionConfidence() {
-    //     return Math.max(getCollectedConfidence(), 1);
+    // return Math.max(getCollectedConfidence(), 1);
     // }
 
     // public Rotation2d get2dAngle() {
-    //     // Ensure that 'tags' is not empty or has a valid index before accessing getRobotToTagFieldRel
-    //     if (tags != null && tags.size() > 3 && tags[0].getRobotToTagFieldRel() != null
-    //             && tags[3].getRobotToTagFieldRel() != null
-    //             && tags[0].getTagId() == tags[3].getTagId()) {
-    //         return tags[0].getRobotToTagFieldRel().minus(tags[3].getRobotToTagFieldRel())
-    //                 .getAngle().rotateBy(Rotation2d.fromDegrees(90))
-    //                 .plus(TAG_ANGLE[tags[3].getTagId()]);
-    //     } else {
-    //         return null; // If the tags array is not correctly initialized, return null.
-    //     }
+    // // Ensure that 'tags' is not empty or has a valid index before accessing
+    // getRobotToTagFieldRel
+    // if (tags != null && tags.size() > 3 && tags[0].getRobotToTagFieldRel() !=
+    // null
+    // && tags[3].getRobotToTagFieldRel() != null
+    // && tags[0].getTagId() == tags[3].getTagId()) {
+    // return tags[0].getRobotToTagFieldRel().minus(tags[3].getRobotToTagFieldRel())
+    // .getAngle().rotateBy(Rotation2d.fromDegrees(90))
+    // .plus(TAG_ANGLE[tags[3].getTagId()]);
+    // } else {
+    // return null; // If the tags array is not correctly initialized, return null.
+    // }
     // }
 
-
     // public void set3D(boolean is3D){
-    //     for (TagPose tag : tags) {
-    //         tag.set3D(is3D);
-    //     }
+    // for (TagPose tag : tags) {
+    // tag.set3D(is3D);
+    // }
     // }
 
     // public double get3DAngle() {
-    //     Integer bestCamera = getBestCamera();
-    //     return bestCamera != null ? tags[bestCamera].getAngle() : 0;
+    // Integer bestCamera = getBestCamera();
+    // return bestCamera != null ? tags[bestCamera].getAngle() : 0;
     // }
 }

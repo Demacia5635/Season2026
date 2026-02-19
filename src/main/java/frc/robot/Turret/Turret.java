@@ -118,7 +118,7 @@ public class Turret extends SubsystemBase {
 
   public void setEncoderPosition(double position) {
     turretMotor.setEncoderPosition(position);
-    setCalibrated();
+
   }
 
   public void setCalibrated() {

@@ -12,6 +12,8 @@ import frc.robot.Turret.Turret;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretCalibration extends Command {
   Turret turret;
+  private double timeToRight = 0.2; //seconds
+  
   public TurretCalibration(Turret turret) {
     this.turret = turret;
     addRequirements(turret);
@@ -23,7 +25,7 @@ public class TurretCalibration extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turret.setPower(0.3);
+    turret.setPower(0.1);
 
   }
 

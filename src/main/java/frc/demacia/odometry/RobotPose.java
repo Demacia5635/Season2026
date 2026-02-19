@@ -110,8 +110,8 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
-        // if (hasVisionUpdated)
-        //     addQuestMeasurement();
+        if (hasVisionUpdated && quest.isConnected())
+            addQuestMeasurement();
 
         if (vision.isSeeTag()) addVisionMeasurement();
     }
