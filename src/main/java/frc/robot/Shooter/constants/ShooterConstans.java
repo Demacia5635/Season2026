@@ -26,7 +26,13 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(2.75, 13.5, Math.toRadians(63));
                 // SHOOTER_LOOKUP_TABLE.add(3.75, 15, Math.toRadians(60));
 
-                SHOOTER_LOOKUP_TABLE.add(1.32, 12.5, Math.toRadians(62));
+                SHOOTER_LOOKUP_TABLE.add(1.3, 12.5, Math.toRadians(65));
+                SHOOTER_LOOKUP_TABLE.add(2.25, 13.2, Math.toRadians(58));
+                SHOOTER_LOOKUP_TABLE.add(2.75, 13.7, Math.toRadians(55));
+                SHOOTER_LOOKUP_TABLE.add(3.74, 14.6, Math.toRadians(52));
+                
+                SHOOTER_LOOKUP_TABLE.add(5, 16.5, Math.toRadians(48));
+                
 
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
                 // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
@@ -75,12 +81,12 @@ public class ShooterConstans {
         public static final int HOOD_ID = 52;
         public static final String HOOD_NAME = "Shooter/Hood";
 
-        public static final double HOOD_KP = 0.65;
+        public static final double HOOD_KP = 20;//0.65;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
-        public static final double HOOD_KS = 0.13955;
-        public static final double HOOD_KV = 1.87402;
-        public static final double HOOD_KA = 0.1778;
+        public static final double HOOD_KS = 0.08699;
+        public static final double HOOD_KV = 1.93076;
+        public static final double HOOD_KA = 0.05575;
         public static final double HOOD_KG = 0;
         public static final double HOOD_MAX_VELOCITY = 2.5;
         public static final double HOOD_MAX_ACCEL =  Math.PI;
@@ -100,7 +106,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = (Math.PI*0.5) - 0.39709731141374993;
+        public static final double HOOD_OFFSET = (Math.PI*0.5) - 0.3330873610968581;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

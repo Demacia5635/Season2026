@@ -81,7 +81,7 @@ public class Turret extends SubsystemBase {
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated) return;
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
-    turretMotor.setPosition(pos);
+    turretMotor.setPositionVoltage(pos);
   }
 
   public void setPositionMotion(double wantedPosition) {

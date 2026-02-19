@@ -78,10 +78,11 @@ public class ShinuaCommand extends Command {
             case ShootWithIntake:
             case ShootWithoutIntake:
                 timer.start();
+                // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
-                shinua.setPowerBattery(0.4);
+                // shinua.setPowerBattery(0.4);
                 break;
 
             case DriveWhileIntake:

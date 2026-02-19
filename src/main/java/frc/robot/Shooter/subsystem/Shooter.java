@@ -164,7 +164,7 @@ public class Shooter extends SubsystemBase {
       hoodMotor.stop();
       return;
     }
-    hoodMotor.setMotion(angle);
+    hoodMotor.setPositionVoltage(angle);
   }
 
   /**

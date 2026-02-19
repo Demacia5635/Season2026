@@ -70,7 +70,7 @@ public class ShooterTesting extends Command {
   public void execute() {
     shooter.setHoodAngle(Math.toRadians(wantedAngle));
     shooter.setFlywheelVel(wantedFlywheelVel);
-    shooter.setFeederPower(wantedFedderPower);
+    // shooter.setFeederPower(wantedFedderPower);
   }
 
   /**

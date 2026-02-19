@@ -46,7 +46,7 @@ public class TurretCommand extends Command{
                 // frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
                 break;
             case Test:
-                turret.setPositionMotion(Math.toRadians(wantedAngle));
+                turret.setPositionPID(Math.toRadians(wantedAngle));
                 break;
 
             default:

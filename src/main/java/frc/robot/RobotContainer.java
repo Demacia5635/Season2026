@@ -22,6 +22,8 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Shooter.commands.FlywheelTesting;
+import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTesting;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -61,7 +63,7 @@ import frc.robot.leds.RobotALedStrip;
 public class RobotContainer implements Sendable {
 
   public static Chassis chassis;
-  CommandController driverController = new CommandController(0, ControllerType.kXbox);
+  CommandController driverController = new CommandController(0, ControllerType.kPS5);
   public static Turret turret;
   public static IntakeSubsystem intake;
   public static ShinuaSubsystem shinua;
@@ -125,10 +127,12 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+
+    shooter.setDefaultCommand(new ShooterTesting(shooter));
+    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
