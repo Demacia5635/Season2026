@@ -25,6 +25,10 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putData("Intake/Motor/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
   }
 
+  public void checkElectronics() {
+    motorIntake.checkElectronics();
+  }
+
   public void setNeutralMode(boolean isBrake) {
     motorIntake.setNeutralMode(isBrake);
   }

@@ -58,6 +58,13 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putData("Shooter/State Chooser", stateChooser);
   }
 
+  public void checkElectronics() {
+    shooterMotor.checkElectronics();
+    hoodMotor.checkElectronics();
+    feederMotor.checkElectronics();
+    hoodEncoder.checkElectronics();
+  }
+
   /**
    * 
    * this funcsan is to set all the shooter  to const or brake

@@ -56,8 +56,8 @@ public class ObjectPose{
     this.camera = camera;
     table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
 
-    SmartDashboard.putData("fieldObject" + camera.getName(), field);
-    SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
+    // SmartDashboard.putData("fieldObject" + camera.getName(), field);
+    // SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
   }
 
   /**

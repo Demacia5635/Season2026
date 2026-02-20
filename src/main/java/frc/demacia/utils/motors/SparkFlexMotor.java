@@ -54,7 +54,7 @@ public class SparkFlexMotor extends SparkFlex implements MotorInterface {
     configMotor();
     addLog();
     setName(name);
-    SmartDashboard.putData(name, this);
+    // SmartDashboard.putData(name, this);
     LogManager.log(name + " motor initialized");
   }
 

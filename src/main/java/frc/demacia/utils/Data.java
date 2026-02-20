@@ -270,7 +270,7 @@ public class Data<T> {
      */
     public static void refreshAll() {
         if (signals.length > 0) {
-            BaseStatusSignal.refreshAll(signals);
+            // BaseStatusSignal.refreshAll(signals);
         }
 
         for (int i = 0; i < signalInstances.size(); i++) {

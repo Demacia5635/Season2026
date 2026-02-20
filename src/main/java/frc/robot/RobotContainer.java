@@ -100,6 +100,14 @@ public class RobotContainer implements Sendable {
     turret = Turret.getInstance();
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
+      chassis.checkElectronics();
+      intake.checkElectronics();
+      shinua.checkElectronics();
+      turret.checkElectronics();
+      shooter.checkElectronics();
+      climb.checkElectronics();
+    }).ignoringDisable(true));
     addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
