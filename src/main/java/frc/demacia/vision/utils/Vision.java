@@ -38,9 +38,17 @@ public class Vision {
         tags.add(tag);
     }
 
+    public boolean isSeeTagWithDistance() {
+
+        for (TagPose tag : tags) {
+            if (tag.isSeeTag() && tag.GetDistFromCamera() < 2.5)
+                return true;
+        }
+        return false;
+    }
+
     public boolean isSeeTag() {
         for (TagPose tag : tags) {
-
             if (tag.isSeeTag())
                 return true;
         }
@@ -74,7 +82,7 @@ public class Vision {
             y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y, RobotCommon.robotAngle);
+        return new Pose2d(x, y,  RobotCommon.robotAngle);
     }
 
       

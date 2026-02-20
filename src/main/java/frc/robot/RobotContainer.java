@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Hertz;
 import static frc.robot.Constants.*;
+
+import com.ctre.phoenix6.StatusSignal;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.FrequencyUnit;
+import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,6 +38,7 @@ import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.robot.Turret.TurretCommands.TurretFollow;
 import frc.robot.Turret.TurretCommands.TurretPower;
+import frc.demacia.utils.Data;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
@@ -94,6 +101,8 @@ public class RobotContainer implements Sendable {
     addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
+
+    Data.setFrequancyAll();
   }
 
   public void addStatesToElasticForTesting() {

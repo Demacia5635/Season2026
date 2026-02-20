@@ -68,15 +68,10 @@ public class Turret extends SubsystemBase {
     return TurretConstants.TURRET_POS;
   }
 
-  // public double getTurretToHubAngle() {
-  //   Translation2d cameraToTag = tag.getCameraToTag(); 
-  //   Pose2d TagPose = new Pose2d();
-  //   Translation2d HubPose = redSide.HUB_CENTER;
-  //   Translation2d TagToHub = TagPose.getTranslation().minus(HubPose);
-  //   Translation2d cameraToHub = cameraToTag.plus(TagToHub);
-  //   Translation2d TurretToHUb = cameraToHub.minus(getTurretPoseOnTheRobot());
-  //   return TurretToHUb.getAngle().getRadians();
-  // }
+
+  public double getTurretVelocity(){
+    return turretMotor.getVelocity().getValueAsDouble();
+  }
 
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated) return;

@@ -1,5 +1,7 @@
 package frc.demacia.utils;
 
+import static edu.wpi.first.units.Units.Hertz;
+
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -7,17 +9,23 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 
+import edu.wpi.first.units.measure.Frequency;
+
 /**
  * A generic wrapper class for data sources (StatusSignals or Suppliers).
  * <p>
- * This class abstracts the source of data and its type, allowing uniform handling
+ * This class abstracts the source of data and its type, allowing uniform
+ * handling
  * of logging and network tables. It caches values to detect changes and convert
  * types (e.g., Boolean to Double) efficiently.
  * </p>
+ * 
  * @param <T> The type of the data (Double, Boolean, String, etc.)
  */
 public class Data<T> {
-    /** Static array of all signals to refresh them all at once (CTRE optimization) */
+    /**
+     * Static array of all signals to refresh them all at once (CTRE optimization)
+     */
     private static BaseStatusSignal[] signals = new BaseStatusSignal[0];
     /** List of all Data instances based on Signals */
     private static final ArrayList<Data<?>> signalInstances = new ArrayList<>();
@@ -42,10 +50,11 @@ public class Data<T> {
 
     /**
      * Creates a new Data object from Phoenix 6 StatusSignals.
+     * 
      * @param signal Variable arguments of StatusSignals
      */
     @SuppressWarnings("unchecked")
-    public Data(StatusSignal<T>... signal){
+    public Data(StatusSignal<T>... signal) {
         this.signal = signal;
         length = signal.length;
 
@@ -55,13 +64,14 @@ public class Data<T> {
         registerSignal();
         refresh();
     }
-    
+
     /**
      * Creates a new Data object from Java Suppliers.
+     * 
      * @param supplier Variable arguments of Suppliers
      */
     @SuppressWarnings("unchecked")
-    public Data(Supplier<T>... supplier){
+    public Data(Supplier<T>... supplier) {
         this.supplier = supplier;
         length = supplier.length;
 
@@ -80,6 +90,7 @@ public class Data<T> {
 
     /**
      * Adds new signals to the static master array.
+     * 
      * @param newSignals The signals to add
      */
     private void registerSignal(BaseStatusSignal[] newSignals) {
@@ -98,19 +109,19 @@ public class Data<T> {
 
     /** Detects the data type based on the first signal's value */
     private void detectTypeFromSignal() {
-        if (length == 0) return;
-        
-        if (length > 1) isArray = true;
+        if (length == 0)
+            return;
+
+        if (length > 1)
+            isArray = true;
 
         T value = signal[0].getValue();
-        
+
         if (value instanceof Number) {
             isDouble = true;
-        }
-        else if (value instanceof Boolean) {
+        } else if (value instanceof Boolean) {
             isBoolean = true;
-        }
-        else {
+        } else {
             try {
                 signal[0].getValueAsDouble();
                 isDouble = true;
@@ -122,16 +133,17 @@ public class Data<T> {
 
     /** Detects the data type based on the first supplier's value */
     private void detectTypeFromSupplier() {
-        if (length == 0) return;
+        if (length == 0)
+            return;
 
-        if (length > 1) isArray = true;
+        if (length > 1)
+            isArray = true;
 
         T value = supplier[0].get();
 
         if (value instanceof Number) {
             isDouble = true;
-        }
-        else if (value instanceof Boolean) {
+        } else if (value instanceof Boolean) {
             isBoolean = true;
         }
     }
@@ -149,7 +161,7 @@ public class Data<T> {
             }
         }
     }
-    
+
     /**
      * Refreshes the local data from the source.
      * If using signals, assumes the master refresh has already been called.
@@ -170,29 +182,33 @@ public class Data<T> {
     private void updateSignalValue() {
         changed = false;
         if (isDouble) {
-            if (doubleArrayValues == null) return;
+            if (doubleArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
                 if (doubleArrayValues[i] != signal[i].getValueAsDouble()) {
                     changed = true;
                     doubleArrayValues[i] = signal[i].getValueAsDouble();
                 }
-                if (floatArrayValues[i] != (float) signal[i].getValueAsDouble()) {
-                    changed = true;
-                    floatArrayValues[i] = (float) signal[i].getValueAsDouble();
-                }
+                // if (floatArrayValues[i] != (float) signal[i].getValueAsDouble()) {
+                //     changed = true;
+                //     floatArrayValues[i] = (float) signal[i].getValueAsDouble();
+                // }
             }
         } else if (isBoolean) {
-            if (booleanArrayValues == null) return;
+            if (booleanArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
                 if (booleanArrayValues[i] != (Boolean) signal[i].getValue()) {
                     changed = true;
                     booleanArrayValues[i] = (Boolean) signal[i].getValue();
                 }
             }
-        } else{
-            if (stringArrayValues == null) return;
+        } else {
+            if (stringArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
-                if (!Objects.equals(stringArrayValues[i], (signal[i].getValue() == null) ? "null" : signal[i].getValue().toString())) {
+                if (!Objects.equals(stringArrayValues[i],
+                        (signal[i].getValue() == null) ? "null" : signal[i].getValue().toString())) {
                     changed = true;
                     stringArrayValues[i] = (signal[i].getValue() == null) ? "null" : signal[i].getValue().toString();
                 }
@@ -207,21 +223,23 @@ public class Data<T> {
     private void refreshSupplier() {
         changed = false;
         if (isDouble) {
-            if (doubleArrayValues == null) return;
+            if (doubleArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
-            double newVal = ((Number) supplier[i].get()).doubleValue();
-            if (doubleArrayValues[i] != newVal) {
-                changed = true;
-                doubleArrayValues[i] = newVal;
-            }
-            float newFloatVal = ((Number) supplier[i].get()).floatValue();
-                if (floatArrayValues[i] != newFloatVal) {
+                double newVal = ((Number) supplier[i].get()).doubleValue();
+                if (doubleArrayValues[i] != newVal) {
                     changed = true;
-                    floatArrayValues[i] = newFloatVal;
+                    doubleArrayValues[i] = newVal;
                 }
+                // float newFloatVal = ((Number) supplier[i].get()).floatValue();
+                // if (floatArrayValues[i] != newFloatVal) {
+                //     changed = true;
+                //     floatArrayValues[i] = newFloatVal;
+                // }
             }
         } else if (isBoolean) {
-            if (booleanArrayValues == null) return;
+            if (booleanArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
                 boolean newVal = (Boolean) supplier[i].get();
                 if (booleanArrayValues[i] != newVal) {
@@ -229,8 +247,9 @@ public class Data<T> {
                     booleanArrayValues[i] = newVal;
                 }
             }
-        } else{
-            if (stringArrayValues == null) return;
+        } else {
+            if (stringArrayValues == null)
+                return;
             for (int i = 0; i < length; i++) {
                 String newVal = (supplier[i].get() == null) ? "null" : supplier[i].get().toString();
                 if (!Objects.equals(stringArrayValues[i], newVal)) {
@@ -241,13 +260,17 @@ public class Data<T> {
         }
     }
 
+    public static void setFrequancyAll() {
+        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), signals);
+    }
+
     /**
      * Static method to refresh all registered Data instances.
      * First refreshes all Phoenix signals, then updates local values.
      */
     public static void refreshAll() {
         if (signals.length > 0) {
-            BaseStatusSignal.refreshAll(signals);
+            // BaseStatusSignal.refreshAll(signals);
         }
 
         for (int i = 0; i < signalInstances.size(); i++) {
@@ -262,32 +285,37 @@ public class Data<T> {
     /**
      * @return true if the data has changed since the last refresh
      */
-    public boolean hasChanged() { return changed; }
+    public boolean hasChanged() {
+        return changed;
+    }
 
     /**
      * @return The value as a double (1.0 for true if boolean)
      */
     public double getDouble() {
         return length == 0 ? 0
-        : isDouble? doubleArrayValues[0]
-        : isBoolean? booleanArrayValues[0] ? 1.0 : 0.0
-        : 0;
+                : isDouble ? doubleArrayValues[0]
+                        : isBoolean ? booleanArrayValues[0] ? 1.0 : 0.0
+                                : 0;
     }
 
     /**
      * @return The array of values as doubles
      */
     public double[] getDoubleArray() {
-        if (length == 0) { return new double[0]; }
-        else if (isDouble) { return doubleArrayValues; }
-        else if (isBoolean) {
+        if (length == 0) {
+            return new double[0];
+        } else if (isDouble) {
+            return doubleArrayValues;
+        } else if (isBoolean) {
             double[] doubles = new double[length];
             for (int i = 0; i < length; i++) {
                 doubles[i] = booleanArrayValues[i] ? 1.0 : 0.0;
             }
             return doubles;
+        } else {
+            return new double[0];
         }
-        else { return new double[0]; }
     }
 
     /**
@@ -295,25 +323,28 @@ public class Data<T> {
      */
     public float getFloat() {
         return length == 0 ? 0f
-        : isDouble? floatArrayValues[0]
-        : isBoolean? booleanArrayValues[0] ? 1f : 0f
-        : 0f;
+                : isDouble ? floatArrayValues[0]
+                        : isBoolean ? booleanArrayValues[0] ? 1f : 0f
+                                : 0f;
     }
 
     /**
      * @return The array of values as floats
      */
     public float[] getFloatArray() {
-        if (length == 0) { return new float[0]; }
-        else if (isDouble) { return floatArrayValues; }
-        else if (isBoolean) {
+        if (length == 0) {
+            return new float[0];
+        } else if (isDouble) {
+            return floatArrayValues;
+        } else if (isBoolean) {
             float[] floats = new float[length];
             for (int i = 0; i < length; i++) {
                 floats[i] = booleanArrayValues[i] ? 1f : 0f;
             }
             return floats;
+        } else {
+            return new float[0];
         }
-        else { return new float[0]; }
     }
 
     /**
@@ -321,25 +352,28 @@ public class Data<T> {
      */
     public boolean getBoolean() {
         return length == 0 ? false
-        : isBoolean? booleanArrayValues[0]
-        : isDouble ? doubleArrayValues[0] == 1
-        : false;
+                : isBoolean ? booleanArrayValues[0]
+                        : isDouble ? doubleArrayValues[0] == 1
+                                : false;
     }
 
     /**
      * @return The array of values as booleans
      */
     public boolean[] getBooleanArray() {
-        if (length == 0) { return new boolean[0]; }
-        else if (isBoolean) { return booleanArrayValues; }
-        else if (isDouble) {
+        if (length == 0) {
+            return new boolean[0];
+        } else if (isBoolean) {
+            return booleanArrayValues;
+        } else if (isDouble) {
             boolean[] bools = new boolean[length];
             for (int i = 0; i < length; i++) {
                 bools[i] = (doubleArrayValues[i] == 1);
             }
             return bools;
+        } else {
+            return new boolean[0];
         }
-        else { return new boolean[0]; }
     }
 
     /**
@@ -347,39 +381,40 @@ public class Data<T> {
      */
     public String getString() {
         return length == 0 ? ""
-        : isDouble ? ((Double) doubleArrayValues[0]).toString()
-        : isBoolean? ((Boolean) booleanArrayValues[0]).toString()
-        : stringArrayValues[0];
+                : isDouble ? ((Double) doubleArrayValues[0]).toString()
+                        : isBoolean ? ((Boolean) booleanArrayValues[0]).toString()
+                                : stringArrayValues[0];
     }
 
     /**
      * @return The array of values as strings
      */
     public String[] getStringArray() {
-        if (length == 0) { return new String[0]; }
-        else if (isDouble) {
+        if (length == 0) {
+            return new String[0];
+        } else if (isDouble) {
             String[] strs = new String[length];
             for (int i = 0; i < length; i++) {
                 strs[i] = ((Double) doubleArrayValues[i]).toString();
             }
             return strs;
-        }
-        else if (isBoolean) {
+        } else if (isBoolean) {
             String[] strs = new String[length];
             for (int i = 0; i < length; i++) {
                 strs[i] = ((Boolean) booleanArrayValues[i]).toString();
             }
             return strs;
+        } else {
+            return stringArrayValues;
         }
-        else { return stringArrayValues; }
     }
-    
+
     /**
      * @return The first StatusSignal if available
      */
     public StatusSignal<T> getSignal() {
         return (signal != null && signal.length > 0) ? signal[0]
-        : null;
+                : null;
     }
 
     /**
@@ -387,7 +422,7 @@ public class Data<T> {
      */
     public StatusSignal<T>[] getSignalArray() {
         return (signal != null) ? signal
-        : null;
+                : null;
     }
 
     /**
@@ -395,7 +430,7 @@ public class Data<T> {
      */
     public Supplier<T> getSupplier() {
         return (supplier != null && supplier.length > 0) ? supplier[0]
-        : null;
+                : null;
     }
 
     /**
@@ -403,20 +438,29 @@ public class Data<T> {
      */
     public Supplier<T>[] getSupplierArray() {
         return (supplier != null) ? supplier
-        : null;
+                : null;
     }
 
     /**
      * @return The timestamp of the signal (in milliseconds) or 0
      */
     public long getTime() {
-        if (signal != null) return (long) (signal[0].getTimestamp().getTime() * 1000);
+        if (signal != null)
+            return (long) (signal[0].getTimestamp().getTime() * 1000);
         return 0;
     }
 
-    public boolean isDouble() { return isDouble; }
-    public boolean isBoolean() { return isBoolean; }
-    public boolean isArray() { return isArray; }
+    public boolean isDouble() {
+        return isDouble;
+    }
+
+    public boolean isBoolean() {
+        return isBoolean;
+    }
+
+    public boolean isArray() {
+        return isArray;
+    }
 
     /**
      * Removes this instance from the static management lists.
@@ -436,12 +480,13 @@ public class Data<T> {
                         break;
                     }
                 }
-                if (!isMine) count++;
+                if (!isMine)
+                    count++;
             }
 
             BaseStatusSignal[] newSignalsArray = new BaseStatusSignal[count];
             int index = 0;
-            
+
             for (BaseStatusSignal s : signals) {
                 boolean isMine = false;
                 for (StatusSignal<T> mySignal : signal) {
@@ -454,15 +499,15 @@ public class Data<T> {
                     newSignalsArray[index++] = s;
                 }
             }
-            
+
             signals = newSignalsArray;
         }
-        
-        signal = null; 
-        supplier = null; 
-        doubleArrayValues = null; 
-        floatArrayValues = null; 
-        booleanArrayValues = null; 
+
+        signal = null;
+        supplier = null;
+        doubleArrayValues = null;
+        floatArrayValues = null;
+        booleanArrayValues = null;
         stringArrayValues = null;
     }
 
@@ -477,11 +522,13 @@ public class Data<T> {
 
     /**
      * Expands the current Data object by adding more StatusSignals.
+     * 
      * @param newSignals The new signals to append
      */
     @SuppressWarnings("unchecked")
     public void expandWithSignals(StatusSignal<T>[] newSignals) {
-        if (newSignals == null || newSignals.length == 0) return;
+        if (newSignals == null || newSignals.length == 0)
+            return;
 
         int newLength = length + newSignals.length;
         StatusSignal<T>[] expandedSignals = new StatusSignal[newLength];
@@ -492,8 +539,9 @@ public class Data<T> {
         signal = expandedSignals;
 
         length = signal.length;
-        
-        if (length > 1) isArray = true;
+
+        if (length > 1)
+            isArray = true;
 
         detectTypeFromSignal();
         allocateCachedArrays();
@@ -504,12 +552,14 @@ public class Data<T> {
 
     /**
      * Expands the current Data object by adding more Suppliers.
+     * 
      * @param newSuppliers The new suppliers to append
      */
     @SuppressWarnings("unchecked")
     public void expandWithSuppliers(Supplier<T>[] newSuppliers) {
 
-        if (newSuppliers == null || newSuppliers.length == 0) return;
+        if (newSuppliers == null || newSuppliers.length == 0)
+            return;
         int newLength = length + newSuppliers.length;
         Supplier<T>[] expandedSuppliers = new Supplier[newLength];
         if (supplier != null) {
@@ -520,7 +570,8 @@ public class Data<T> {
 
         length = expandedSuppliers.length;
 
-        if (length > 1) isArray = true;
+        if (length > 1)
+            isArray = true;
 
         detectTypeFromSupplier();
         allocateCachedArrays();

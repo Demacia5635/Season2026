@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -161,18 +162,19 @@ public class ShooterCommand extends Command {
 
       case SHOOTING:
         ChassisSpeeds robotSpeeds = RobotCommon.robotRelativeSpeeds;
-        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, RobotCommon.currentRobotPose, 0.04);
+        Pose2d nextPose = ShooterUtils.computeFuturePosition(robotSpeeds, RobotCommon.currentRobotPose, 0.1);
         Translation2d turretPos = nextPose.getTranslation().plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(chassis.getPose().getRotation()));
-        Translation2d toHub = ShooterConstans.HUB_POSE_Translation2d.minus(turretPos);
+        Translation2d toHub = Field.HUB(true).getCenter().getTranslation().minus(turretPos);
 
         // get the distance, heading and LUT valuse
         double distance = toHub.getNorm();
         heading = toHub.getAngle();
 
+
+        SmartDashboard.putNumber("Shooter distance", distance);
         double[] lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
         vel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO; // correct to actual ball shooting
         hoodAngle = lut[1];
-
 
 
         shooter.setFeederPower(0.4);

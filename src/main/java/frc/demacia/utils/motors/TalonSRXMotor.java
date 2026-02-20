@@ -72,16 +72,16 @@ public class TalonSRXMotor extends TalonSRX implements MotorInterface {
     /** Configures the logging entries for this motor */
     @SuppressWarnings("unchecked")
     private void addLog() {
-      LogManager.addEntry(name + ": position, Velocity, Acceleration, Voltage, Current, CloseLoopError, CloseLoopSP", 
-        () -> getCurrentPosition(),
-        () -> getCurrentVelocity(),
-        () -> getCurrentAcceleration(),
-        () -> getCurrentVoltage(),
-        () -> getCurrentCurrent(),
-        () -> getCurrentClosedLoopError(),
-        () -> getCurrentClosedLoopSP()
-        ).withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP)
-        .withIsMotor().build();
+    //   LogManager.addEntry(name + ": position, Velocity, Acceleration, Voltage, Current, CloseLoopError, CloseLoopSP", 
+    //     () -> getCurrentPosition(),
+    //     () -> getCurrentVelocity(),
+    //     () -> getCurrentAcceleration(),
+    //     () -> getCurrentVoltage(),
+    //     () -> getCurrentCurrent(),
+    //     () -> getCurrentClosedLoopError(),
+    //     () -> getCurrentClosedLoopSP()
+    //     ).withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP)
+    //     .withIsMotor().build();
     }
 
     @Override

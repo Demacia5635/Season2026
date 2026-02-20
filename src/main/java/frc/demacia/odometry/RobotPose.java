@@ -29,6 +29,8 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
+import frc.robot.RobotCommon;
+import frc.robot.Turret.Turret;
 
 /** Add your docs here. */
 public class RobotPose {
@@ -43,19 +45,22 @@ public class RobotPose {
     private boolean hasVisionUpdated;
 
     private Matrix<N3, N1> visionSTD;
+
     private RobotPose(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
         this.vision = new Vision((VisionConstants.Tags.TAGS_ARRAY));
 
         this.quest = new Quest();
         this.questSTD = questSTD;
-        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3 ,999999 }));
+        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 999999 }));
         this.hasVisionUpdated = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
     }
-    public Pose2d getPose(){
+
+    public Pose2d getPose() {
         return poseEstimator.getEstimatedPose();
     }
+
     public static void initialize(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
 
@@ -87,7 +92,7 @@ public class RobotPose {
             hasVisionUpdated = true;
         }
 
-        poseEstimator.setVisionMeasurementStdDevs(visionSTD);
+        poseEstimator.setVisionMeasurementStdDevs(getSTD());
         poseEstimator.addVisionMeasurement(visionPose, timestamp);
     }
 
@@ -107,53 +112,60 @@ public class RobotPose {
 
     }
 
+    private boolean shouldUpdateVision() {
+        return Math.hypot(RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond,
+                RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
+                && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
+                && vision.isSeeTagWithDistance();
+    }
+
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
         if (hasVisionUpdated && quest.isConnected())
             addQuestMeasurement();
-
-        if (vision.isSeeTag()) addVisionMeasurement();
+        if (shouldUpdateVision())
+            addVisionMeasurement();
     }
 
-    // private static Matrix<N3, N1> getSTD() {
-    //     double x = 0.05;
-    //     double y = 0.05;
-    //     double theta = 0.03;
+    private static Matrix<N3, N1> getSTD() {
+        double x = 0.05;
+        double y = 0.05;
+        double theta = 0.03;
 
-    //     ChassisSpeeds currentSpeeds = RobotCommon.robotRelativeSpeeds;
-    //     double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
+        ChassisSpeeds currentSpeeds = RobotCommon.robotRelativeSpeeds;
+        double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
 
-    //     // Vision confidence adjustment
-    //     // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
-    //     // x += 0.3;
-    //     // y += 0.3;
-    //     // }
+        // Vision confidence adjustment
+        // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
+        // x += 0.3;
+        // y += 0.3;
+        // }
 
-    //     // Speed-based confidence calculation
-    //     if (speed > WORST_RELIABLE_SPEED) {
-    //         // Maximum uncertainty for high speeds
-    //         x += 0.02;
-    //         y += 0.02;
-    //     } else if (speed <= BEST_RELIABLE_SPEED) {
-    //         // Minimum uncertainty for low speeds
-    //         x -= 0.02;
-    //         y -= 0.02;
-    //     } else {
-    //         // Calculate normalized speed for the falloff range
-    //         double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
-    //                 / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
+        // Speed-based confidence calculation
+        if (speed > WORST_RELIABLE_SPEED) {
+            // Maximum uncertainty for high speeds
+            x += 0.02;
+            y += 0.02;
+        } else if (speed <= BEST_RELIABLE_SPEED) {
+            // Minimum uncertainty for low speeds
+            x -= 0.02;
+            y -= 0.02;
+        } else {
+            // Calculate normalized speed for the falloff range
+            double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
+                    / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
 
-    //         // Apply exponential falloff to calculate additional uncertainty
-    //         double speedConfidence = Math.exp(-3 * normalizedSpeed);
+            // Apply exponential falloff to calculate additional uncertainty
+            double speedConfidence = Math.exp(-3 * normalizedSpeed);
 
-    //         // Scale the uncertainty adjustment based on confidence
-    //         double adjustment = 0.02 * (1 - speedConfidence);
-    //         x += adjustment;
-    //         y += adjustment;
-    //     }
+            // Scale the uncertainty adjustment based on confidence
+            double adjustment = 0.02 * (1 - speedConfidence);
+            x += adjustment;
+            y += adjustment;
+        }
 
-    //     return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
-    // }
+        return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
+    }
 
 }

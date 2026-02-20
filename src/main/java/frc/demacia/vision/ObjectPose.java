@@ -26,7 +26,7 @@ public class ObjectPose{
   private Pose2d previousObjectPose;
   private boolean hasPreviousTarget = false;
 
-  private NetworkTable Table;
+  private NetworkTable table;
   private Field2d field;
   private Field2d robotfield;
 
@@ -54,7 +54,7 @@ public class ObjectPose{
     robotfield = new Field2d();
 
     this.camera = camera;
-    Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
+    table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
 
     SmartDashboard.putData("fieldObject" + camera.getName(), field);
     SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
@@ -69,11 +69,11 @@ public class ObjectPose{
    * @return The chosen Pose2d to use for object tracking
    */
   private Pose2d chooseObjectPose() {
-    double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
-    double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
-    SmartDashboard.putNumber("tx", Table.getEntry("tx").getDouble(0.0));
-    SmartDashboard.putNumber("ty",Table.getEntry("ty").getDouble(0.0));
-    boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
+    double currentCamToObjectPitch = table.getEntry("ty").getDouble(0.0) + camera.getPitch();
+    double currentCamToObjectYaw = (-table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    SmartDashboard.putNumber("tx", table.getEntry("tx").getDouble(0.0));
+    SmartDashboard.putNumber("ty",table.getEntry("ty").getDouble(0.0));
+    boolean hasCurrentTarget = table.getEntry("tv").getDouble(0.0) != 0;
 
     // Case 1: No current target detected
     if (!hasCurrentTarget) {
