@@ -69,10 +69,28 @@ public class DemaciaKinematics {
     public SwerveModuleState[] toSwerveModuleStatesWithLimit(ChassisSpeeds fieldRelWantedSpeeds,
             ChassisSpeeds fieldRelCurrentSpeeds, Rotation2d currentGyroAngle) {
 
+        if (isOnlyRotating(fieldRelWantedSpeeds)) {
+            return onlyRotate(fieldRelWantedSpeeds);
+        }
         ChassisSpeeds limitedWantedVel = limitVelocities(fieldRelWantedSpeeds, fieldRelCurrentSpeeds);
         limitedWantedVel = ChassisSpeeds.fromFieldRelativeSpeeds(limitedWantedVel, currentGyroAngle);
         swerveStates = toSwerveModuleStates(limitedWantedVel);
         return swerveStates;
+    }
+
+    private boolean isOnlyRotating(ChassisSpeeds speeds) {
+        return Math.abs(speeds.vxMetersPerSecond) < 0.01 && Math.abs(speeds.vyMetersPerSecond) < 0.01
+                && Math.abs(speeds.omegaRadiansPerSecond) > 0.01;
+    }
+
+    private SwerveModuleState[] onlyRotate(ChassisSpeeds speeds) {
+        SwerveModuleState[] rotationStates = new SwerveModuleState[4];
+        for (int i = 0; i < 4; i++) {
+            rotationStates[i] = new SwerveModuleState(
+                    speeds.omegaRadiansPerSecond * modulePositionOnTheRobot[i].getNorm(),
+                    modulePositionOnTheRobot[i].getAngle().plus(Rotation2d.kCW_90deg));
+        }
+        return rotationStates;
     }
 
     private ChassisSpeeds chassisFromRest(double currentV, double wantedV, ChassisSpeeds wantedSpeeds) {
@@ -114,14 +132,17 @@ public class DemaciaKinematics {
 
         if (Math.abs(velocityHeadingDiff) < MAX_FAST_TURN_ANGLE) { // small heading change
             // accelerate to target v
-            targetVelocity = MathUtil.clamp(targetVelocity, currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
-        } else if (Math.abs(velocityHeadingDiff) > MIN_REVERSE_ANGLE) { // optimization - deaccdelerate and turn the other way
+            targetVelocity = MathUtil.clamp(targetVelocity, currentVelocity - MAX_DELTA_V,
+                    currentVelocity + MAX_DELTA_V);
+        } else if (Math.abs(velocityHeadingDiff) > MIN_REVERSE_ANGLE) { // optimization - deaccdelerate and turn the
+                                                                        // other way
 
             targetVelocity = currentVelocity - MAX_DELTA_V;
             velocityHeadingDiff = optimizeAngleChange(velocityHeadingDiff);
 
         } else {
-            targetVelocity = MathUtil.clamp(Math.min(MAX_ROTATION_VELOCITY, targetVelocity), currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
+            targetVelocity = MathUtil.clamp(Math.min(MAX_ROTATION_VELOCITY, targetVelocity),
+                    currentVelocity - MAX_DELTA_V, currentVelocity + MAX_DELTA_V);
         }
 
         if (targetVelocity < MIN_VELOCITY) {
@@ -135,7 +156,8 @@ public class DemaciaKinematics {
         targetVelocityHeading = currentVelocityHeading + velocityHeadingDiff;
 
         // return the speeds - using target velocity and target angle
-        return new ChassisSpeeds(targetVelocity * Math.cos(targetVelocityHeading), targetVelocity * Math.sin(targetVelocityHeading),
+        return new ChassisSpeeds(targetVelocity * Math.cos(targetVelocityHeading),
+                targetVelocity * Math.sin(targetVelocityHeading),
                 wantedSpeeds.omegaRadiansPerSecond);
     }
 

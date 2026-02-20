@@ -45,6 +45,7 @@ import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
+import frc.robot.Shooter.utils.ShooterUtils;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -473,6 +474,7 @@ public class Chassis extends SubsystemBase {
 
         RobotPose.getInstance().update(observation, getVelocityAsVector());
         field.setRobotPose(getPose());
+        field.getObject("estimation").setPose(ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.currentRobotPose, 0.1));
 
     }
 

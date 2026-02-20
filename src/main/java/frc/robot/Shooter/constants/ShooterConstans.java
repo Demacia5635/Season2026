@@ -101,8 +101,8 @@ public class ShooterConstans {
                         .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
                         .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
-        public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
-        public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
+        public static final double MAX_ANGLE_HOOD = Math.toRadians(90d);
+        public static final double MIN_ANGLE_HOOD = Math.toRadians(50d);
 
         public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
@@ -123,6 +123,7 @@ public class ShooterConstans {
         public enum ShooterState {
                 IDLE,
                 SHOOTING,
+                SHOOTING_WITH_MOVEMENT,
                 DELIVERY,
                 TRENCH,
                 TEST;

@@ -69,7 +69,7 @@ public class TagPose {
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
     latency = 0;
     field = new Field2d();
-    LogManager.addEntry("dist", this::GetDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     SmartDashboard.putData("field-tag" + camera.getName(), field);
 
   }
@@ -95,7 +95,7 @@ public class TagPose {
         pose = new Pose2d(getOriginToRobot(), RobotCommon.robotAngle);
         field.setRobotPose(pose);
         confidence = getConfidence();
-        wantedPip = GetDistFromCamera() > 1 ? 0 : 0;
+        wantedPip = getDistFromCamera() > 1 ? 0 : 0;
       }
     } else {
       cropStop();
@@ -135,7 +135,7 @@ public class TagPose {
    */
   public Translation2d getRobotToTagFieldRel() {
     if (camera.getIsOnTurret()) {
-      cameraToTag = new Translation2d(GetDistFromCamera(),
+      cameraToTag = new Translation2d(getDistFromCamera(),
           Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
 
       turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
@@ -147,7 +147,7 @@ public class TagPose {
       return robotToTag;
     }
     // Convert camera measurements to vector
-    cameraToTag = new Translation2d(GetDistFromCamera(),
+    cameraToTag = new Translation2d(getDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
     // LogManager.log("cameraToTag :" +cameraToTag);
     // LogManager.log("Camera to Tag Yaw :" + camToTagYaw);
@@ -158,7 +158,7 @@ public class TagPose {
     return robotToTag;
   }
 
-  public double GetDistFromCamera() {
+  public double getDistFromCamera() {
 
     alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
@@ -176,7 +176,7 @@ public class TagPose {
   }
 
   private double getCropOfset() {
-    double crop = GetDistFromCamera() * CROP_CONSTAT;
+    double crop = getDistFromCamera() * CROP_CONSTAT;
     return MathUtil.clamp(crop, MIN_CROP, MAX_CROP);
   }
 
@@ -198,7 +198,7 @@ public class TagPose {
 
   private double getConfidence() {
     // Get the current distance to tag
-    double currentDist = GetDistFromCamera();
+    double currentDist = getDistFromCamera();
 
     // If we're within reliable range, give high confidence
     if (currentDist <= BEST_RELIABLE_DISTANCE) {
@@ -251,7 +251,7 @@ public class TagPose {
   }
 
   public Translation2d getCameraToTag() {
-    return cameraToTag = new Translation2d(GetDistFromCamera(),
+    return cameraToTag = new Translation2d(getDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
   }
 

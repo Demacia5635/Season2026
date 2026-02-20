@@ -29,6 +29,7 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.RobotCommon.robotStates;
 import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
@@ -155,19 +156,24 @@ public class RobotContainer implements Sendable {
     // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
       shooter.setFeederPower(0.8);
     }, () -> {
       shooter.setFeederPower(0);
     }));
+
+    
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController)); 
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretCommand(turret));
+
+
+    driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithoutIntake));
+    driverController.upButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.Drive));
+    
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
-    SmartDashboard.putData("Set 0", new RunCommand(() -> chassis.setSteerPositions(0), chassis));
-    SmartDashboard.putData("Set 90", new RunCommand(() -> chassis.setSteerPositions(Math.toRadians(90)), chassis));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
