@@ -3,6 +3,7 @@ package frc.demacia.utils;
 import static edu.wpi.first.units.Units.Hertz;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -26,7 +27,8 @@ public class Data<T> {
     /**
      * Static array of all signals to refresh them all at once (CTRE optimization)
      */
-    private static BaseStatusSignal[] signals = new BaseStatusSignal[0];
+    private static ArrayList<BaseStatusSignal> rioSignals = new ArrayList<>();
+    private static ArrayList<BaseStatusSignal> canivoreSignals = new ArrayList<>();
     /** List of all Data instances based on Signals */
     private static final ArrayList<Data<?>> signalInstances = new ArrayList<>();
     /** List of all Data instances based on Suppliers */
@@ -84,23 +86,22 @@ public class Data<T> {
 
     /** Registers this instance's signals to the static master list */
     private void registerSignal() {
-        registerSignal(signal);
         signalInstances.add(this);
     }
 
-    /**
-     * Adds new signals to the static master array.
-     * 
-     * @param newSignals The signals to add
-     */
-    private void registerSignal(BaseStatusSignal[] newSignals) {
-        int oldLength = signals.length;
-        int newLength = oldLength + newSignals.length;
-        BaseStatusSignal[] combined = new BaseStatusSignal[newLength];
-        System.arraycopy(signals, 0, combined, 0, oldLength);
-        System.arraycopy(newSignals, 0, combined, oldLength, newSignals.length);
-        signals = combined;
-    }
+    // /**
+    //  * Adds new signals to the static master array.
+    //  * 
+    //  * @param newSignals The signals to add
+    //  */
+    // private void registerSignal(BaseStatusSignal[] newSignals) {
+    //     int oldLength = signals.length;
+    //     int newLength = oldLength + newSignals.length;
+    //     BaseStatusSignal[] combined = new BaseStatusSignal[newLength];
+    //     System.arraycopy(signals, 0, combined, 0, oldLength);
+    //     System.arraycopy(newSignals, 0, combined, oldLength, newSignals.length);
+    //     signals = combined;
+    // }
 
     /** Registers this instance to the static supplier list */
     private void registerSupplier() {
@@ -261,7 +262,8 @@ public class Data<T> {
     }
 
     public static void setFrequancyAll() {
-        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), signals);
+        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), rioSignals);
+        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), canivoreSignals);
     }
 
     /**
@@ -269,8 +271,11 @@ public class Data<T> {
      * First refreshes all Phoenix signals, then updates local values.
      */
     public static void refreshAll() {
-        if (signals.length > 0) {
-            // BaseStatusSignal.refreshAll(signals);
+        if (rioSignals.size() > 0) {
+            BaseStatusSignal.refreshAll(rioSignals);
+        }
+        if (canivoreSignals.size() > 0) {
+            BaseStatusSignal.refreshAll(canivoreSignals);
         }
 
         for (int i = 0; i < signalInstances.size(); i++) {
@@ -462,60 +467,61 @@ public class Data<T> {
         return isArray;
     }
 
-    /**
-     * Removes this instance from the static management lists.
-     * Also rebuilds the static signal array to remove these signals.
-     */
-    public void cleanup() {
-        signalInstances.remove(this);
-        supplierInstances.remove(this);
+    // /**
+    //  * Removes this instance from the static management lists.
+    //  * Also rebuilds the static signal array to remove these signals.
+    //  */
+    // public void cleanup() {
+    //     signalInstances.remove(this);
+    //     supplierInstances.remove(this);
 
-        if (signal != null) {
-            int count = 0;
-            for (BaseStatusSignal s : signals) {
-                boolean isMine = false;
-                for (StatusSignal<T> mySignal : signal) {
-                    if (s == mySignal) {
-                        isMine = true;
-                        break;
-                    }
-                }
-                if (!isMine)
-                    count++;
-            }
+    //     if (signal != null) {
+    //         int count = 0;
+    //         for (BaseStatusSignal s : rioSignals) {
+    //             boolean isMine = false;
+    //             for (StatusSignal<T> mySignal : signal) {
+    //                 if (s == mySignal) {
+    //                     isMine = true;
+    //                     break;
+    //                 }
+    //             }
+    //             if (!isMine)
+    //                 count++;
+    //         }
 
-            BaseStatusSignal[] newSignalsArray = new BaseStatusSignal[count];
-            int index = 0;
+    //         BaseStatusSignal[] newSignalsArray = new BaseStatusSignal[count];
+    //         int index = 0;
 
-            for (BaseStatusSignal s : signals) {
-                boolean isMine = false;
-                for (StatusSignal<T> mySignal : signal) {
-                    if (s == mySignal) {
-                        isMine = true;
-                        break;
-                    }
-                }
-                if (!isMine) {
-                    newSignalsArray[index++] = s;
-                }
-            }
+    //         for (BaseStatusSignal s : rioSignals) {
+    //             boolean isMine = false;
+    //             for (StatusSignal<T> mySignal : signal) {
+    //                 if (s == mySignal) {
+    //                     isMine = true;
+    //                     break;
+    //                 }
+    //             }
+    //             if (!isMine) {
+    //                 newSignalsArray[index++] = s;
+    //             }
+    //         }
 
-            signals = newSignalsArray;
-        }
+    //         rioSignals = newSignalsArray;
+    //     }
 
-        signal = null;
-        supplier = null;
-        doubleArrayValues = null;
-        floatArrayValues = null;
-        booleanArrayValues = null;
-        stringArrayValues = null;
-    }
+    //     signal = null;
+    //     supplier = null;
+    //     doubleArrayValues = null;
+    //     floatArrayValues = null;
+    //     booleanArrayValues = null;
+    //     stringArrayValues = null;
+    // }
 
     /**
      * Clears all static references and signals.
      */
     public static void clearAllSignals() {
-        signals = new BaseStatusSignal[0];
+        rioSignals = new ArrayList<>();
+        canivoreSignals = new ArrayList<>();
         signalInstances.clear();
         supplierInstances.clear();
     }
@@ -526,7 +532,7 @@ public class Data<T> {
      * @param newSignals The new signals to append
      */
     @SuppressWarnings("unchecked")
-    public void expandWithSignals(StatusSignal<T>[] newSignals) {
+    public void expandWithSignals(StatusSignal<T>[] newSignals, boolean isRio) {
         if (newSignals == null || newSignals.length == 0)
             return;
 
@@ -546,9 +552,15 @@ public class Data<T> {
         detectTypeFromSignal();
         allocateCachedArrays();
 
-        registerSignal(newSignals);
+        if (isRio) {
+            rioSignals.addAll(Arrays.asList(newSignals));
+        } else {
+            canivoreSignals.addAll(Arrays.asList(newSignals));
+        }
         refresh();
     }
+
+    public void expandWithSignals(StatusSignal<T>[] newSignals) {expandWithSignals(newSignals, true);}
 
     /**
      * Expands the current Data object by adding more Suppliers.

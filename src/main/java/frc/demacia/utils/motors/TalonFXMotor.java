@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.utils.Data;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 
 /**
  * Wrapper class for the TalonFX motor controller using Phoenix 6.
@@ -194,7 +195,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
             closedLoopErrorSignal.getSignal(),
             closedLoopSPSignal.getSignal(),
             }).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP)
-            .withIsMotor().build();
+            .withIsMotor(config.canbus.equals(Canbus.Rio)).build();
         LogManager.addEntry(name + ": ControlMode", 
             () -> getCurrentControlMode())
             .withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP).build();

@@ -41,7 +41,7 @@ public class Vision {
     public boolean isSeeTagWithDistance() {
 
         for (TagPose tag : tags) {
-            if (tag.isSeeTag() && tag.GetDistFromCamera() < 2.5)
+            if (tag.isSeeTag() && tag.GetDistFromCamera() < 3.5)
                 return true;
         }
         return false;

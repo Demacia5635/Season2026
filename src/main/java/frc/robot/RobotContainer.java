@@ -166,6 +166,9 @@ public class RobotContainer implements Sendable {
     // turret.setDefaultCommand(new TurretCommand(turret));
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
+    SmartDashboard.putData("Set 0", new RunCommand(() -> chassis.setSteerPositions(0), chassis));
+    SmartDashboard.putData("Set 90", new RunCommand(() -> chassis.setSteerPositions(Math.toRadians(90)), chassis));
+    SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
   private void setUserButton() {
