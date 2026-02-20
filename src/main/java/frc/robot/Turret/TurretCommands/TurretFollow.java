@@ -19,7 +19,7 @@ public class TurretFollow extends Command {
 
     @Override
     public void execute() {
-        turret.setPositionMotion(target.minus(chassis.getPose().getTranslation()).getAngle().minus(chassis.getPose().getRotation()).getRadians());
+        turret.setPositionPID(target.minus(chassis.getPoseWithVelocity(0.04).getTranslation()).getAngle().minus(chassis.getPose().getRotation()).getRadians());
     }
 
     @Override

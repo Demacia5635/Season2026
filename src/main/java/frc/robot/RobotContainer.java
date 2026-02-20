@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -95,6 +96,7 @@ public class RobotContainer implements Sendable {
     
 
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
+
     turret = Turret.getInstance();
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -102,7 +104,7 @@ public class RobotContainer implements Sendable {
     configureBindings();
     setUserButton();
 
-    Data.setFrequancyAll();
+    // Data.setFrequancyAll();
   }
 
   public void addStatesToElasticForTesting() {

@@ -22,7 +22,7 @@ public final class RobotAChassisConstants {
     /** The name of the Chasssi */
     public static final String NAME = "Robot A Chassis";
     /** The canbus that is used in the chassis, the chassis only contains the rio canbus */
-    public static final Canbus CANBUS = Canbus.Rio;
+    public static final Canbus CANBUS = Canbus.CANIvore;
 
     /** Drive Motor Constant */
     private static final class DriveMotor {

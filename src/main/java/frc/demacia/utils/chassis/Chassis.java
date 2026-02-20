@@ -43,6 +43,8 @@ import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
+
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.demacia.vision.utils.VisionConstants.*;
 
 import java.lang.reflect.Array;
@@ -503,7 +505,7 @@ public class Chassis extends SubsystemBase {
      * @return Current velocities transformed to field frame
      */
     public ChassisSpeeds getChassisSpeedsFieldRel() {
-        return ChassisSpeeds.fromRobotRelativeSpeeds(wpilibKinematics.toChassisSpeeds(getModuleStates()),
+        return ChassisSpeeds.fromRobotRelativeSpeeds(demaciaKinematics.toChassisSpeeds(getModuleStates(), gyro.getAngularVelocityZWorld().getValue().in(RadiansPerSecond)),
                 getGyroAngle());
     }
 

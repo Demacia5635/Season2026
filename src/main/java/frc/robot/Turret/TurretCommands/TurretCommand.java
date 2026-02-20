@@ -42,7 +42,7 @@ public class TurretCommand extends Command{
             //     break;
 
             case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-                turret.setPositionMotion(RobotCommon.futureAngleFromTargetRobotRelative);
+                turret.setPositionPID(RobotCommon.futureAngleFromTargetRobotRelative);
                 // frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
                 break;
             case Test:

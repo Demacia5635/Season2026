@@ -50,7 +50,7 @@ public class IntakeConstants {
     //indexer on the top value
     public static final int INDEXER_ON_TOP_ID = 30;
     public static final String INDEXER_TOP_NAME  = "Shinua/Top";
-    public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, INTAKE_CANBUS, INDEXER_TOP_NAME)
+    public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, Canbus.CANIvore, INDEXER_TOP_NAME)
     .withBrake(true)
     .withInvert(true);
 
