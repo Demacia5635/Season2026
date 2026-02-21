@@ -275,7 +275,8 @@ public class ShooterCommand extends Command {
         hoodAngle = lut[1];
 
         shooter.setFeederPower(0.4);
-        setShootingAndHood(hoodAngle, vel, heading, robotSpeeds);
+        shooter.setVelocitiesAndAngle(lut[0], lut[1]);
+        // setShootingAndHood(hoodAngle, vel, heading, robotSpeeds);
 
         // setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
         break;
