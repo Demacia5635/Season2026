@@ -7,7 +7,7 @@ package frc.demacia.kinematics;
 /** Add your docs here. */
 public class KinematicsConstants {
 
-    public static final double MAX_ALLOWED_MODULE_VELOCITY = 4;
+    public static final double MAX_ALLOWED_MODULE_VELOCITY = 4.5;
     public static final double CYCLE_DT = 0.02;
     
     public static final double MIN_VELOCITY = 0.01; // slower is 0

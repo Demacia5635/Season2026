@@ -42,13 +42,13 @@ import frc.robot.Turret.Turret;
 public class ShooterCommand extends Command {
   Shooter shooter;
   Chassis chassis;
-  private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.45;
-  private double MAGNUS_CORRECTION = 0.15;
+  private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.51;
+  private double MAGNUS_CORRECTION = 0.2;
   private double wantedAngle;
   private double wantedVel;
-  private double velocityFromBattery = 0.96;
+  private double velocityFromBattery = 1;
 
-  private double HOOD_OFFSET = Math.toRadians(0);
+  private double HOOD_OFFSET = Math.toRadians(9);
   private double VELOCITY_CORRECTION = 1;
   private boolean shootVelocityWasOK = false;
 
@@ -69,76 +69,6 @@ public class ShooterCommand extends Command {
     builder.addDoubleProperty("wanted angle", () -> wantedAngle, (value) -> wantedAngle = value);
     builder.addDoubleProperty("wanted vel", () -> wantedVel, (value) -> wantedVel = value);
   }
-
-  /**
-   * this funcsan take get the whnnted angle and vel
-   * and return calcolit the angle and vel by driving
-   *
-   * and move the hud and the fly weel to this vel to angle
-   * 
-   * @param hoodAngle  this is the angle of the hood
-   * @param vel        this is the velof the fly weel
-   * @param heding     i aksily not shoor
-   * @param robotSpeed os the vurrent robot speed meter per secend
-   */
-
-  private void setShootingAndHood(double hoodAngle, double vel, Rotation2d heading, ChassisSpeeds robotSpeeds) {
-
-    // set the horizontal (xy) velocity and the vertical (z) velocity
-    double xyVel = vel * Math.cos(hoodAngle);
-    double zVel = vel * Math.sin(hoodAngle);
-
-    // calculate the x/y velocities correected by robot speeds
-    double xVel = xyVel * heading.getCos() - robotSpeeds.vxMetersPerSecond;
-    double yVel = xyVel * heading.getSin() - robotSpeeds.vyMetersPerSecond;
-
-    xyVel = Math.hypot(xVel, yVel);
-    // calculate the new ball velocity
-    double ballVelocity = Math.hypot(xyVel, zVel);
-
-    // LogManager.log("Distance from hub: " + distance + " heading to hub: " +
-    // heading + " LUT vel: " + lutVel + " LUT hood angle: " + lutHoodAngle + " LUT
-    // ball xyVel: " + xyVel
-    // + " Z vel: " + zVel + " x Vel: " + xVel + " yVel: " + yVel + " newVel: " +
-    // xyVel
-    // + " ball vel pre magnus: " + ballVelocity);
-    ballVelocity -= MAGNUS_CORRECTION * (ballVelocity - vel); // correct for Magnus (back spin) effect
-
-    // LogManager.log("ball vel after magnus: " + ballVelocity);
-    ballVelocity = ballVelocity / WHEEL_TO_BALL_VELOCITY_RATIO; // translate required ball velocity to
-                                                                // flywheel
-                                                                // velocity
-
-    // LogManager.log("flywheel vel: " + ballVelocity);
-    // calculate the hood angle
-    hoodAngle = Math.atan(zVel / xyVel); // with hood correction
-    // check for max angle
-    if (hoodAngle > ShooterConstans.MAX_ANGLE_HOOD) {
-      hoodAngle = ShooterConstans.MAX_ANGLE_HOOD;
-      ballVelocity = xyVel / Math.cos(hoodAngle);
-    }
-
-    // calculate the heading
-    Rotation2d ballHeading = new Rotation2d(xVel, yVel);
-
-    // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
-    // ballHeading);
-    // LogManager.log("Ball Heading" + (ballHeading.getDegrees() -
-    // chassis.getPose().getRotation().getDegrees()));
-    // if(Turret.getInstance().hasCalibrated())
-    // Turret.getInstance().setPositionMotion(ballHeading.getRadians() -
-    // chassis.getPose().getRotation().getRadians());
-    // LogManager.log("Chassis heading: " +
-    // chassis.getPose().getRotation().getRadians() + " robot to hub: " +
-    // ballHeading.getRadians());
-    RobotCommon.futureAngleFromTargetRobotRelative = chassis.getPose().getRotation().getRadians()
-        - ballHeading.getRadians();
-    shooter.setFlywheelVel(ballVelocity);
-    shooter.setHoodAngle(hoodAngle);
-    shooter.setFeederPower(0.4);
-
-  }
-
   @Override
   public void initialize() {
   }
@@ -182,13 +112,11 @@ public class ShooterCommand extends Command {
         // vel = 1.7 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         // heading = chassisToDelivery.getAngle();
 
-        setShootingAndHood(hoodAngle, vel, heading, RobotCommon.fieldRelativeSpeeds);
-
         break;
 
       case SHOOTING_WITH_MOVEMENT:
-        robotSpeeds = RobotCommon.robotRelativeSpeeds;
-        nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose, 0.1);
+        robotSpeeds = RobotCommon.fieldRelativeSpeeds;
+        nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose, 0.07);
         turretPos = nextPose.getTranslation()
             .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(chassis.getPose().getRotation()));
         toHub = Field.HUB(true).getCenter().getTranslation().minus(turretPos);
@@ -239,23 +167,12 @@ public class ShooterCommand extends Command {
 
         // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
         // ballHeading);
-        RobotCommon.futureAngleFromTargetRobotRelative = MathUtil.angleModulus(ballHeading.getRadians()
-            - chassis.getPose().getRotation().getRadians());
+        RobotCommon.futureAngleFromTargetRobotRelative = MathUtil.angleModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians());
         shooter.setFlywheelVel(ballVelocity);
         shooter.setHoodAngle(hoodAngle);
         shooter.setFeederPower(0.4);
 
-        // if (Math.abs(robotSpeeds.vxMetersPerSecond) > 0.1 || Math.abs(robotSpeeds.vyMetersPerSecond) > 0.1)
-          // LogManager.log(String.format(
-          //     "shoot-%3.1f/%3.1f/%3.0f %3.1f/%3.1f shooter %3.1f/%3.1f from-%3.1f/%3.1f/%3.0f to %3.1f/%3.0f/%3.1f/%3.0f - robot vel-%3.1f/%3.1f - %3.1f/%3.1f/%3.1f",
-          //     ballVelocity, Math.toDegrees(hoodAngle), ballHeading.getDegrees(),
-          //     lut[0], Math.toDegrees(lut[1]),
-          //     shooter.getShooterVelocity(), Math.toDegrees(shooter.getHoodAngle()),
-          //     nextPose.getTranslation().getX(), nextPose.getTranslation().getY(),
-          //     nextPose.getRotation().getDegrees(),
-          //     toHub.getX(), toHub.getY(), distance, heading.getDegrees(),
-          //     robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond,
-          //     xVel, yVel, zVel));
+      
         break;
 
       case SHOOTING:

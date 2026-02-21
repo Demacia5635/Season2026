@@ -124,8 +124,9 @@ public class RobotPose {
 
         if (hasVisionUpdated && quest.isConnected())
             addQuestMeasurement();
-        if (shouldUpdateVision())
+        if (shouldUpdateVision()) {
             addVisionMeasurement();
+        } 
     }
 
     private static Matrix<N3, N1> getSTD() {

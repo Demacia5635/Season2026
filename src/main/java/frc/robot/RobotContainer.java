@@ -166,8 +166,8 @@ public class RobotContainer implements Sendable {
     
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController)); 
-    // turret.setDefaultCommand(new TurretCommand(turret));
-    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    turret.setDefaultCommand(new TurretCommand(turret));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
 
 
     driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithoutIntake));
