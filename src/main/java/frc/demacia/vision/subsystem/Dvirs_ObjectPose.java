@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.demacia.vision.Camera;
+import frc.demacia.vision.CameraConfig;
 import frc.robot.RobotCommon;
 
 /** Add your docs here. */
@@ -18,7 +18,7 @@ public class Dvirs_ObjectPose {
 
     private NetworkTable Table;
 
-    private Camera objectCam;
+    private CameraConfig objectCam;
 
     private double camObjectYaw;
     private double camObjectPitch;
@@ -32,7 +32,7 @@ public class Dvirs_ObjectPose {
 
     
 
-    public Dvirs_ObjectPose(Camera objectCam){
+    public Dvirs_ObjectPose(CameraConfig objectCam){
         this.objectCam = objectCam;
         Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
 
@@ -55,14 +55,14 @@ public class Dvirs_ObjectPose {
         camObjectYaw = (-Table.getEntry("tx").getDouble(0.0));
     }
     public double getDistance(){
-        double alpha = Math.abs(camObjectPitch + objectCam.getPitch());
+        double alpha = Math.abs(camObjectPitch + objectCam.getPitchOffset());
         dist = (Math.abs(objectCam.getHeight())/ (Math.tan(Math.toRadians(alpha))));
         return dist;
     }
     public Translation2d getRobotToObjectFeildRel(){
         cameraToObject = new Translation2d(getDistance(),
-            Rotation2d.fromDegrees(camObjectYaw + objectCam.getYaw()));
-        robotToObject = (objectCam.getRobotToTurretPosition().toTranslation2d().plus(cameraToObject))
+            Rotation2d.fromDegrees(camObjectYaw + objectCam.getYawOffset()));
+        robotToObject = (objectCam.getRobotToCamPosition().toTranslation2d().plus(cameraToObject))
             .rotateBy(RobotCommon.robotAngle);
         return robotToObject;
     }

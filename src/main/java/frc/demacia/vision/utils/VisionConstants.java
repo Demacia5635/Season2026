@@ -16,13 +16,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.demacia.vision.CameraConfig;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.TagPose;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.demacia.vision.CameraConfig;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.TagPose;
 
 /**
  * Constants and configuration values for AprilTag vision processing.
@@ -231,8 +231,19 @@ public class VisionConstants {
                                         new double[] { 0.05, 0.05, 0.1 }));
 
         public static class Tags {
-                public static final TagPose[] TAGS_ARRAY = {
-                                new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)) };
+                public static final Camera[] TAGS_ARRAY = {
+                                // new Camera(new CameraConfig("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0,
+                                //                 false, new Translation2d(0.13, 0.152))) };
 
+                };
+                public static final AprilTagLayout APRIL_TAG_LAYOUT;
+
+                static {
+                try {
+                        APRIL_TAG_LAYOUT = new AprilTagLayout("/home/lvuser/deploy/apriltag_json/2026-rebuilt-welded.json");
+                } catch (Exception e) {
+                        throw new RuntimeException("Failed to load AprilTag layout", e);
+                }
+                }
         }
 }

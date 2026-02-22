@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
-import frc.demacia.vision.TagPose;
+import frc.demacia.vision.Camera;
 import frc.robot.Field;
 import frc.robot.Field.Red;
 
@@ -30,7 +30,7 @@ public class Turret extends SubsystemBase {
 
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
-  TagPose tag;
+  Camera tag;
 
 
   Field field;

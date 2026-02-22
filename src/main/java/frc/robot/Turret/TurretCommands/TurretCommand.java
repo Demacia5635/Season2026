@@ -5,7 +5,7 @@ import java.util.logging.LogManager;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.vision.TagPose;
+import frc.demacia.vision.Camera;
 import frc.robot.RobotCommon;
 import frc.robot.RobotCommon.robotStates;
 import frc.robot.Turret.Turret;

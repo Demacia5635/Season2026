@@ -13,7 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.demacia.vision.Camera;
+import frc.demacia.vision.CameraConfig;
 
 // Subsystem that tracks and calculates the position of a vision target (object) on the field
 public class ObjectPose{
@@ -35,7 +35,7 @@ public class ObjectPose{
   private Supplier<Rotation2d> getRobotAngle;
   private Supplier<Pose2d> robotCurrentPose;
 
-  private Camera camera;
+  private CameraConfig camera;
   private Pose2d objectPose;
 
   // Deadzone and tracking parameters
@@ -46,7 +46,7 @@ public class ObjectPose{
    * Constructor - Initializes the object tracker with camera configuration and robot position suppliers.
    * Sets up the NetworkTable connection to receive vision data from the camera.
    */
-  public ObjectPose(Camera camera, Supplier<Rotation2d> getRobotAngle, Supplier<Pose2d> robotCurrentPose) {
+  public ObjectPose(CameraConfig camera, Supplier<Rotation2d> getRobotAngle, Supplier<Pose2d> robotCurrentPose) {
     this.getRobotAngle = getRobotAngle;
     this.robotCurrentPose = robotCurrentPose;
     field = new Field2d();
@@ -71,8 +71,8 @@ public class ObjectPose{
    * @return The chosen Pose2d to use for object tracking
    */
   private Pose2d chooseObjectPose() {
-    double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
-    double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitchOffset();
+    double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYawOffset();
     boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
 
     // Case 1: No current target detected

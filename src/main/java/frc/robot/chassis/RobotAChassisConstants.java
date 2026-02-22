@@ -10,8 +10,8 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
+import frc.demacia.vision.CameraConfig;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.TagPose;
 
 /** 
  * Robot A Chasis
@@ -171,5 +171,5 @@ public final class RobotAChassisConstants {
         NAME, 
         MODULES, 
         PIGEON_CONFIG, 
-        new TagPose[] {});
+        new Camera[] {});
 }

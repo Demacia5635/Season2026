@@ -40,7 +40,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.demacia.utils.Utilities;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.ObjectPose;
-import frc.demacia.vision.TagPose;
+import frc.demacia.vision.Camera;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
@@ -112,7 +112,7 @@ public class Chassis extends SubsystemBase {
     private DemaciaPoseEstimator demaciaPoseEstimator;
     private Field2d field;
 
-    public TagPose[] tags;
+    public Camera[] tags;
     private Field2d tagsField;
     public Quest quest;
     private Field2d questField;
@@ -120,7 +120,7 @@ public class Chassis extends SubsystemBase {
 
     private StatusSignal<Angle> gyroYawStatus;
     // private TagPose limelight4;
-    private TagPose limelight3;
+    private Camera limelight3;
 
     private Rotation2d lastGyroYaw;
 
@@ -164,19 +164,19 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis", this);
 
         int c = 0;
-        for (int i = 0; i < chassisConfig.tags.length; i++) {
-            if (!chassisConfig.tags[i].getIsObjectCamera()) {
-                c++;
-            }
-        }
-        tags = new TagPose[c];
-        int count = 0;
-        for (int i = 0; i < chassisConfig.tags.length; i++) {
-            if (!chassisConfig.tags[i].getIsObjectCamera()) {
-                tags[count] = chassisConfig.tags[i];
-                count++;
-            }
-        }
+        // for (int i = 0; i < chassisConfig.tags.length; i++) {
+        //     if (!chassisConfig.tags[i].getIsObjectCamera()) {
+        //         c++;
+        //     }
+        // }
+        // tags = new Camera[c];
+        // int count = 0;
+        // for (int i = 0; i < chassisConfig.tags.length; i++) {
+        //     if (!chassisConfig.tags[i].getIsObjectCamera()) {
+        //         tags[count] = chassisConfig.tags[i];
+        //         count++;
+        //     }
+        // }
         RobotPose.initialize(modulePositions, new Matrix<>(
                 new SimpleMatrix(
                         new double[] { 0.01, 0.01, 0 })),

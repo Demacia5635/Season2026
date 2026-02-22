@@ -83,9 +83,8 @@ public class RobotPose {
     }
 
     public void addVisionMeasurement() {
-        vision.updateValues();
 
-        Pose2d visionPose = vision.getPoseEstimation();
+        Pose2d visionPose = vision.getPoseWithMaxConfidence();
         double timestamp = Timer.getFPGATimestamp() - 0.05;
         if (!hasVisionUpdated) {
             quest.setQuestPose(new Pose3d(visionPose));

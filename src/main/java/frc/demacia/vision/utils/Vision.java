@@ -9,24 +9,24 @@ package frc.demacia.vision.utils;
 import java.util.ArrayList;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.demacia.vision.TagPose;
+import frc.demacia.vision.Camera;
 import frc.robot.RobotCommon;
 // import frc.robot.RobotCommon.*;
 
 /** Add your docs here. */
 public class Vision {
 
-    private ArrayList<TagPose> tags;
+    private ArrayList<Camera> tags;
 
-    public Vision(TagPose[] poses) {
+    public Vision(Camera[] poses) {
 
         this.tags = new ArrayList<>();
-        for (TagPose p : poses) {
+        for (Camera p : poses) {
             tags.add(p);
         }
     }
 
-    public Vision(ArrayList<TagPose> tags) {
+    public Vision(ArrayList<Camera> tags) {
         this.tags = tags;
     }
 
@@ -34,7 +34,7 @@ public class Vision {
         this.tags = new ArrayList<>();
     }
 
-    public void addTag(TagPose tag) {
+    public void addTag(Camera tag) {
         tags.add(tag);
     }
 
@@ -48,39 +48,38 @@ public class Vision {
     }
 
     public boolean isSeeTag() {
+<<<<<<< Updated upstream
         for (TagPose tag : tags) {
+=======
+        for (Camera tag : tags) {
+
+>>>>>>> Stashed changes
             if (tag.isSeeTag())
                 return true;
         }
         return false;
     }
 
-    private double getCollectedConfidence() {
-        double confidence = 0;
-        for (TagPose tag : tags) {
-            if (tag.getRobotPose2d() != null) {
-                confidence += tag.getPoseEstemationConfidence();
+
+    
+
+    public Pose2d getPoseWithMaxConfidence(){
+        int maxIndex = 0;
+        double maxConfidence = 0;
+
+        for(int i = 0; i < tags.size(); i++){
+            if(!tags.get(i).isSeeTag()) continue;
+            if(tags.get(i).getConfidence() > maxConfidence){
+                maxConfidence = tags.get(i).getConfidence();
+                maxIndex = i;
             }
         }
-        return confidence;
+        return tags.get(maxIndex).getRobotPose2d();
     }
 
-    private double normalizeConfidence(double confidence) {
-        return getCollectedConfidence() == 0 ? 0 : confidence * (1d / getCollectedConfidence());
-    }
 
-    public Pose2d getPoseEstimation() {
-        double x = 0;
-        double y = 0;
-        double confidence = 0;
-        for (TagPose tag : tags) {
-            if (tag.getRobotPose2d() == null)
-                continue;
-            confidence = normalizeConfidence(tag.getPoseEstemationConfidence());
-            Pose2d pose2d = tag.getRobotPose2d();
-            x += pose2d.getX() * confidence;
-            y += pose2d.getY() * confidence;
 
+<<<<<<< Updated upstream
         }
         return new Pose2d(x, y,  RobotCommon.robotAngle);
     }
@@ -160,4 +159,6 @@ public class Vision {
     // Integer bestCamera = getBestCamera();
     // return bestCamera != null ? tags[bestCamera].getAngle() : 0;
     // }
+=======
+>>>>>>> Stashed changes
 }
