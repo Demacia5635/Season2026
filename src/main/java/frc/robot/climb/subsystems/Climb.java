@@ -19,16 +19,27 @@ public class Climb extends SubsystemBase {
   private TalonSRXMotor armsMotor;
   private TalonFXMotor leverMotor;
   private DigitalEncoder digitalEncoder;
+  private boolean hasClibaratedLever = false;
 
   /** Creates a new Climb. */
   public Climb() {
     armsMotor = new TalonSRXMotor(ClimbConstants.ARMS_MOTOR_CONFIG);
     leverMotor = new TalonFXMotor(ClimbConstants.LEVER_MOTOR_CONFIG);
     digitalEncoder = new DigitalEncoder(ClimbConstants.DIGITAL_ENCODER_CONFIG);
-    leverMotor.setPosition(0);
+    // leverMotor.setPosition(0);
     SmartDashboard.putData("reset motor position",
         new InstantCommand(() -> leverMotor.setPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Climb", this);
+  }
+
+  public boolean hasCalibratedLever() {
+    return hasClibaratedLever;
+  }
+  public void setCalibratedLever() {
+    this.hasClibaratedLever = true;
+  }
+  public void setLeverPosition(double position) {
+    leverMotor.setPosition(position);
   }
 
   public void checkElectronics() {
