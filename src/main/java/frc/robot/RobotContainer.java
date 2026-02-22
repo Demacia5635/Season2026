@@ -10,6 +10,7 @@ import static frc.robot.Constants.*;
 import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.FrequencyUnit;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
@@ -50,6 +51,7 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.climb.commands.CalibrateClimb;
 import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
@@ -150,7 +152,8 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-
+  
+    // shooter.setDefaultCommand(new ShooterTesting(shooter));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
@@ -170,9 +173,13 @@ public class RobotContainer implements Sendable {
     // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
 
 
-    driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithoutIntake));
-    driverController.upButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.Drive));
+    driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithIntake));
+    driverController.upButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.DriveWhileIntake));
     
+    SmartDashboard.putData("Auto Drive", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
+
+    SmartDashboard.putData("lever to zero", new InstantCommand(()->climb.setLeverAngle(0)));
+    SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
@@ -182,6 +189,8 @@ public class RobotContainer implements Sendable {
     new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton())
         .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
   }
+
+
 
   @Override
   public void initSendable(SendableBuilder builder) {

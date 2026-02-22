@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.demacia.utils.chassis.Chassis;
 
 import static frc.demacia.kinematics.KinematicsConstants.*;
 
@@ -72,10 +73,17 @@ public class DemaciaKinematics {
         if (isOnlyRotating(fieldRelWantedSpeeds)) {
             return onlyRotate(fieldRelWantedSpeeds);
         }
+        if (isTooFastForLimit(fieldRelWantedSpeeds))
+            return toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelCurrentSpeeds, currentGyroAngle));
         ChassisSpeeds limitedWantedVel = limitVelocities(fieldRelWantedSpeeds, fieldRelCurrentSpeeds);
         limitedWantedVel = ChassisSpeeds.fromFieldRelativeSpeeds(limitedWantedVel, currentGyroAngle);
         swerveStates = toSwerveModuleStates(limitedWantedVel);
         return swerveStates;
+    }
+
+    private boolean isTooFastForLimit(ChassisSpeeds wantedSpeeds) {
+        return ((Math.abs(wantedSpeeds.vxMetersPerSecond) > 1.5 || Math.abs(wantedSpeeds.vyMetersPerSecond) > 1.5)
+                && Math.abs(wantedSpeeds.omegaRadiansPerSecond) > Math.toRadians(40));
     }
 
     private boolean isOnlyRotating(ChassisSpeeds speeds) {

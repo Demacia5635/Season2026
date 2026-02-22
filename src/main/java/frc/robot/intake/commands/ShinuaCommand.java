@@ -55,7 +55,6 @@ public class ShinuaCommand extends Command {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-
         builder.addDoubleProperty("Batter Power", this::getBatteryPow, this::setBatteryPow);
         builder.addDoubleProperty("Left Power", this::getLeftPow, this::setLeftPow);
         builder.addDoubleProperty("Right Power", this::getRightPow, this::setRightPow);
@@ -79,29 +78,31 @@ public class ShinuaCommand extends Command {
             case ShootWithoutIntake:
                 timer.start();
                 // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+                shinua.setDutyIndexerRight(IntakeConstants.MAX_POWER);
+                shinua.setDutyIndexerLeft(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
-                shinua.setPowerBattery(0.4);
+                shinua.setPowerBattery(0.6);
+                
                 break;
 
             case DriveWhileIntake:
 
 
                 timer.start();
-                shinua.setDutyIndexerFar(-0.6);
+                shinua.setDutyIndexerLeft(0.0);
 
-                shinua.setDutyIndexerClose(0.5);
-                shinua.setDutyIndexerOnTop(-0.8);
+                shinua.setDutyIndexerRight(0.3);
+                shinua.setDutyIndexerOnTop(-0.6);
                 
-                shinua.setPowerBattery(0);
+                shinua.setPowerBattery(0.1);
                 break;
 
             case Test:
+
                 timer.stop();
                 timer.reset();
-                shinua.setDutyIndexerClose(rightPow);
-                shinua.setDutyIndexerFar(leftPow);
+                shinua.setDutyIndexerRight(rightPow);
+                shinua.setDutyIndexerLeft(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
                 shinua.setPowerBattery(batteryPow);
                 break;

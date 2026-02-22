@@ -67,7 +67,7 @@ public class IntakeCommand extends Command {
 
       case DriveWhileIntake:
         // intake
-        intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+        intakeSubsystem.setDutyIntake(0.8);
 
         break;
 
