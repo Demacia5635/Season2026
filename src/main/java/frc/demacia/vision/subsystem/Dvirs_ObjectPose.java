@@ -37,6 +37,7 @@ public class Dvirs_ObjectPose {
         Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
 
     }
+
     public Translation2d giveBestTranslation(){
         if(isObjectDetected()){
             updateValues();
@@ -44,8 +45,9 @@ public class Dvirs_ObjectPose {
             getRobotToObjectFeildRel();
             return getOriginToObject();
         }
-        return null;
+        return Translation2d.kZero;
     }
+
     public boolean isObjectDetected(){
         return Table.getEntry("tv").getDouble(0.0) != 0;
     }
@@ -54,11 +56,13 @@ public class Dvirs_ObjectPose {
         camObjectPitch = Table.getEntry("ty").getDouble(0.0);
         camObjectYaw = (-Table.getEntry("tx").getDouble(0.0));
     }
+
     public double getDistance(){
         double alpha = Math.abs(camObjectPitch + objectCam.getPitch());
         dist = (Math.abs(objectCam.getHeight())/ (Math.tan(Math.toRadians(alpha))));
         return dist;
     }
+
     public Translation2d getRobotToObjectFeildRel(){
         cameraToObject = new Translation2d(getDistance(),
             Rotation2d.fromDegrees(camObjectYaw + objectCam.getYaw()));
@@ -66,6 +70,7 @@ public class Dvirs_ObjectPose {
             .rotateBy(RobotCommon.robotAngle);
         return robotToObject;
     }
+    
     public Translation2d getOriginToObject(){
         
         if (robotToObject != null) {
