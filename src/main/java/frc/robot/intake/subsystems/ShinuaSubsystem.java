@@ -54,7 +54,7 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerOnTop.setNeutralMode(isBrake);
   }
 
-  public void setDutyIndexerRight(double pow) {
+  public void setDutyIndexerClose(double pow) {
     motorIndexerClose.setDuty(pow);
   }
 
@@ -62,7 +62,7 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerClose.stop();
   }
 
-  public void setDutyIndexerLeft(double pow) {
+  public void setDutyIndexerFar(double pow) {
     motorIndexerFar.setDuty(pow);
   }
 

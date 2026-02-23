@@ -13,7 +13,7 @@ import frc.robot.intake.subsystems.IntakeSubsystem;
 
 /**
  * This command activates the intake by the value of the
- * {@link RobotCommon.robotStates}
+ * {@link RobotCommon.RobotStates}
  */
 public class IntakeCommand extends Command {
 
@@ -48,9 +48,10 @@ public class IntakeCommand extends Command {
    */
   @Override
   public void execute() {
+
     switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
                                         // Climb, GetOffClimb
-      case ShootWithIntake:
+      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
         // intake
         intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
 
@@ -65,18 +66,11 @@ public class IntakeCommand extends Command {
         // shinuaSubsystem.setPowerBattery(batteryPower);
         break;
 
-      case DriveWhileIntake:
+      case DriveAutoIntake:
         // intake
         intakeSubsystem.setDutyIntake(0.8);
 
         break;
-
-      case ShootWithoutIntake:
-        // intake
-        intakeSubsystem.stopIntake();
-
-        break;
-
       case Test:
         intakeSubsystem.setDutyIntake(power);
         break;

@@ -49,7 +49,7 @@ public class ShooterCommand extends Command {
   private double wantedFeederPower;
   private double velocityFromBattery = 1;
 
-  private double HOOD_OFFSET = Math.toRadians(12);
+  private double HOOD_OFFSET = Math.toRadians(2);
   private double VELOCITY_CORRECTION = 1;
   private boolean shootVelocityWasOK = false;
 
@@ -137,17 +137,21 @@ public class ShooterCommand extends Command {
     double vel = 0;
     double hoodAngle = 0;
     Rotation2d heading = Rotation2d.kZero;
-    switch (shooter.getCurrentShooterState()) {
-      case DELIVERY:
-        Translation2d chassisToDelivery = RobotCommon.deliveryTarget
-            .minus(chassis.getPose().getTranslation());
+    
+    robotSpeeds = RobotCommon.fieldRelativeSpeeds;
+    nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
+        0.04);
+
+    switch (RobotCommon.currentState) {
+      case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake:
+        Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
         hoodAngle = Math.toRadians(45);
         vel = 1.7 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
         break;
 
-      case SHOOTING:
+      case HubWithAutoIntake, HubWithoutAutoIntake:
         robotSpeeds = RobotCommon.fieldRelativeSpeeds;
         nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
             0.04);
@@ -167,12 +171,12 @@ public class ShooterCommand extends Command {
 
         break;
 
-      case TRENCH:
+      case Trench:
         shooter.setHoodAngle(Math.toRadians(45));
         shooter.setFlywheelVel(10);
         break;
 
-      case TEST:
+      case Test:
         shooter.setHoodAngle(Math.toRadians(wantedAngle));
         shooter.setFlywheelVel(wantedVel);
         shooter.setFeederPower(wantedFeederPower);

@@ -55,16 +55,16 @@ public class IntakeConstants {
     .withInvert(true);
 
     //indexer close value
-    public static final int INDEXER_CLOSE_ID = 33;
+    public static final int INDEXER_CLOSE_ID = 32;
     public static final String INDEXER_CLOSE_NAME  = "Indexer Close motor";
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
-    .withBrake(true).withInvert(true).withCurrent(15);
+    .withBrake(true).withInvert(false).withCurrent(15);
 
     //indexer close value
-    public static final int INDEXER_FAR_ID = 32;
+    public static final int INDEXER_FAR_ID = 33;
     public static final String INDEXER_FAR_NAME  = "Indexer far motor";
     public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(INDEXER_FAR_ID, INDEXER_FAR_NAME)
     .withBrake(true)
     .withCurrent(15)
-    .withInvert(true);
+    .withInvert(false);
 }

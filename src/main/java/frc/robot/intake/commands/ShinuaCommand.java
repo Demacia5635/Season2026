@@ -11,7 +11,7 @@ import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
  * The Command that activates the {@link ShinuaSubsystem} based on the
- * {@link RobotCommon.robotStates}
+ * {@link RobotCommon.RobotStates}
  */
 public class ShinuaCommand extends Command {
 
@@ -74,25 +74,24 @@ public class ShinuaCommand extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
-            case ShootWithIntake:
-            case ShootWithoutIntake:
+            case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
                 timer.start();
                 // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerRight(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerLeft(IntakeConstants.MAX_POWER);
+                shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+                shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
                 shinua.setPowerBattery(0.6);
                 
                 break;
 
-            case DriveWhileIntake:
+            case DriveAutoIntake:
 
 
                 timer.start();
-                shinua.setDutyIndexerLeft(0.0);
+                shinua.setDutyIndexerFar(0.0);
 
-                shinua.setDutyIndexerRight(0.3);
-                shinua.setDutyIndexerOnTop(-0.6);
+                shinua.setDutyIndexerClose(1);
+                shinua.setDutyIndexerOnTop(-0.8);
                 
                 shinua.setPowerBattery(0.1);
                 break;
@@ -101,8 +100,8 @@ public class ShinuaCommand extends Command {
 
                 timer.stop();
                 timer.reset();
-                shinua.setDutyIndexerRight(rightPow);
-                shinua.setDutyIndexerLeft(leftPow);
+                shinua.setDutyIndexerClose(rightPow);
+                shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
                 shinua.setPowerBattery(batteryPow);
                 break;

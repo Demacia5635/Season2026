@@ -31,7 +31,7 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.log.LogManager;
-import frc.robot.RobotCommon.robotStates;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
@@ -96,7 +96,7 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
-    climb = new Climb();
+    // climb = new Climb();
     
 
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
@@ -110,9 +110,9 @@ public class RobotContainer implements Sendable {
       shinua.checkElectronics();
       turret.checkElectronics();
       shooter.checkElectronics();
-      climb.checkElectronics();
+      // climb.checkElectronics();
     }).ignoringDisable(true));
-    addStatesToElasticForTesting();
+    // addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
 
@@ -120,8 +120,8 @@ public class RobotContainer implements Sendable {
   }
 
   public void addStatesToElasticForTesting() {
-    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
-    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+    SendableChooser<RobotCommon.RobotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.RobotStates state : RobotCommon.RobotStates.class.getEnumConstants()) {
       robotStateChooser.addOption(state.name(), state);
     }
     robotStateChooser.onChange(state -> RobotCommon.currentState = state);
@@ -174,13 +174,20 @@ public class RobotContainer implements Sendable {
     // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
 
 
-    driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithIntake));
-    driverController.upButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.DriveWhileIntake));
+    driverController.downButton().onTrue(RobotCommon.changeState(RobotStates.HubWithAutoIntake));
+    driverController.upButton().onTrue(RobotCommon.changeState(RobotStates.DriveAutoIntake));
+    driverController.rightButton().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake));
+
+    driverController.povDown().onTrue(RobotCommon.changeState(RobotStates.HubWithoutAutoIntake));
+    driverController.povUp().onTrue(RobotCommon.changeState(RobotStates.Drive));
+    driverController.povRight().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake));
+
+    driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.IDLE));
     
     SmartDashboard.putData("Auto Drive", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
 
-    SmartDashboard.putData("lever to zero", new InstantCommand(()->climb.setLeverAngle(0)));
-    SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
+    // SmartDashboard.putData("lever to zero", new InstantCommand(()->climb.setLeverAngle(0)));
+    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));

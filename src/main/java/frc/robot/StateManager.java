@@ -22,27 +22,27 @@ public class StateManager extends SubsystemBase {
         return instance;
     }
 
-    private RobotCommon.robotStates lastState;
+    private RobotCommon.RobotStates lastState;
 
     private final EventLoop eventLoop;
 
     private StateManager() {
-        lastState = RobotCommon.robotStates.IDLE;
+        lastState = RobotCommon.RobotStates.IDLE;
         eventLoop = new EventLoop();
     }
 
-    public void setLastState(RobotCommon.robotStates lastState) {
+    public void setLastState(RobotCommon.RobotStates lastState) {
         this.lastState = lastState;
     }
 
-    public RobotCommon.robotStates getLastState() {
+    public RobotCommon.RobotStates getLastState() {
         return lastState;
     }
 
-    public void addTrigger(BooleanSupplier onTrue, RobotCommon.robotStates wantedState,
-            RobotCommon.robotStates... fromStates) {
+    public void addTrigger(BooleanSupplier onTrue, RobotCommon.RobotStates wantedState,
+            RobotCommon.RobotStates... fromStates) {
         new Trigger(eventLoop, onTrue).and(() -> {
-            for (RobotCommon.robotStates state : fromStates) {
+            for (RobotCommon.RobotStates state : fromStates) {
                 if (state.equals(lastState))
                     return true;
             }

@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.Utilities;
@@ -52,7 +53,7 @@ public class RobotPose {
 
         this.quest = new Quest();
         this.questSTD = questSTD;
-        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 999999 }));
+        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.1, 0.1, 999999 }));
         this.hasVisionUpdated = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
     }
@@ -113,10 +114,13 @@ public class RobotPose {
     }
 
     private boolean shouldUpdateVision() {
-        return Math.hypot(RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond,
-                RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
-                && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
-                && vision.isSeeTagWithDistance();
+        // return (Math.hypot(RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond,
+        //         RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
+        //         // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
+        //         && vision.isSeeTagWithDistance());
+
+        return vision.isSeeTag();
+
     }
 
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {

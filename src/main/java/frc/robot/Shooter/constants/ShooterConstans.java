@@ -26,12 +26,12 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(2.75, 13.5, Math.toRadians(63));
                 // SHOOTER_LOOKUP_TABLE.add(3.75, 15, Math.toRadians(60));
 
-                SHOOTER_LOOKUP_TABLE.add(1.3, 12.5, Math.toRadians(65));
-                SHOOTER_LOOKUP_TABLE.add(2.25, 13.2, Math.toRadians(58));
-                SHOOTER_LOOKUP_TABLE.add(2.75, 13.7, Math.toRadians(55));
-                SHOOTER_LOOKUP_TABLE.add(3.74, 14.6, Math.toRadians(52));
+                SHOOTER_LOOKUP_TABLE.add(1.3, 12.5, Math.toRadians(77));
+                SHOOTER_LOOKUP_TABLE.add(2.25, 13.2, Math.toRadians(70));
+                SHOOTER_LOOKUP_TABLE.add(2.75, 13.7, Math.toRadians(67));
+                SHOOTER_LOOKUP_TABLE.add(3.74, 14.6, Math.toRadians(64));
                 
-                SHOOTER_LOOKUP_TABLE.add(5, 16.8, Math.toRadians(50));
+                SHOOTER_LOOKUP_TABLE.add(5, 16.8, Math.toRadians(62));
                 
 
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
@@ -106,7 +106,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 2;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = (Math.PI*0.5) - -0.13603096190043784;
+        public static final double HOOD_OFFSET = (Math.PI*0.5) - -0.673478925113312;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);
