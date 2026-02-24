@@ -43,7 +43,8 @@ public class RobotPose {
 
     private Matrix<N3, N1> questSTD;
 
-    private boolean hasVisionUpdated;
+    private boolean hasUpdatedQuestIntialPose;
+    private int visionCounter;
 
     private Matrix<N3, N1> visionSTD;
 
@@ -53,8 +54,9 @@ public class RobotPose {
 
         this.quest = new Quest();
         this.questSTD = questSTD;
-        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.2, 0.2, 999999 }));
-        this.hasVisionUpdated = false;
+        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 999999 }));
+        this.hasUpdatedQuestIntialPose = false;
+        this.visionCounter = 0;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
     }
 
@@ -88,9 +90,10 @@ public class RobotPose {
 
         Pose2d visionPose = vision.getPoseEstimation();
         double timestamp = Timer.getFPGATimestamp() - 0.05;
-        if (!hasVisionUpdated) {
+
+        if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
+            hasUpdatedQuestIntialPose = true;
             quest.setQuestPose(new Pose3d(visionPose));
-            hasVisionUpdated = true;
         }
 
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
@@ -126,12 +129,15 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
-        if (hasVisionUpdated && quest.isConnected()) {
+        if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 
             addQuestMeasurement();
         }
         if (shouldUpdateVision()) {
+            visionCounter++;
             addVisionMeasurement();
+        } else {
+            visionCounter = 0;
         }
     }
 
