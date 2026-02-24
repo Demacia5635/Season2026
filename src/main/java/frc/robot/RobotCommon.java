@@ -35,10 +35,12 @@ public class RobotCommon {
     public static double currentWantedTurretAngle = 0;
     public static double futureWantedTurretAngle = 0;
     public static double currentTurrentAngle = 0;
-    public static boolean isRed = false;
+    public static boolean isRed = true;
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
     public static Shifts currentShift = Shifts.Auto;
+    public static Translation2d fuelPosition = null;
+    public static double fuelTime = 0;
 
     public static boolean isReady(){
         return true;

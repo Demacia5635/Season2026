@@ -11,6 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.vision.TagPose;
@@ -51,6 +52,7 @@ public class Turret extends SubsystemBase {
     turretMotor.configMotionMagic();
     turretMotor.configPidFf(0);
     SmartDashboard.putData("reset motor position", new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
+    LogManager.log("Turret Initalize");
   }
 
   public void checkElectronics() {

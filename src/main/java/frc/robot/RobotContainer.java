@@ -5,20 +5,13 @@
 // bft-pgmc-wgo
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Hertz;
 import static frc.robot.Constants.*;
-
-import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.FrequencyUnit;
-import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,35 +24,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.Camera;
-import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
 import frc.robot.RobotCommon.RobotStates;
-import frc.robot.Shooter.commands.FlywheelTesting;
-import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
-import frc.robot.Shooter.commands.ShooterTesting;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
-import frc.robot.Turret.TurretCommands.TurretCommand;
-import frc.robot.Turret.TurretCommands.TurretFollow;
-import frc.robot.Turret.TurretCommands.TurretPower;
-import frc.demacia.utils.Data;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.RobotAChassisConstants;
-import frc.robot.chassis.commands.DrivePower;
-import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
-import frc.robot.climb.commands.ControllerClimb;
-import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
-import frc.robot.intake.commands.BatteryTest;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
@@ -100,10 +76,10 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
-    // climb = new Climb();
+    // climb = new Climb();\
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-    // turret = Turret.getInstance();
-    ballCamera = new Dvirs_ObjectPose(new Camera("fuel", new Translation3d(0.298, -0.385, 0.26), -27, 4.6, true));
+    turret = Turret.getInstance();
+    ballCamera = new Dvirs_ObjectPose(new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false,true));
 
 
     SmartDashboard.putData("RC", this);
@@ -157,7 +133,7 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController, ballCamera));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
@@ -200,7 +176,7 @@ public class RobotContainer implements Sendable {
     // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     // SmartDashboard.putData("Reset Turret Position",
     //     new InstantCommand(() -> turret.setEncoderPosition(0)).ignoringDisable(true));
-    // SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
+    SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
