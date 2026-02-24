@@ -6,13 +6,11 @@ package frc.demacia.utils.log;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
-
-import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
+import com.ctre.phoenix6.StatusSignal;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;

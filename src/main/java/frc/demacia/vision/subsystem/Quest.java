@@ -30,11 +30,6 @@ public class Quest extends SubsystemBase {
   private double timestamp;
 
 
-
-  
-
-
-
   
   public Quest() {
     timestamp = 0;
