@@ -33,6 +33,13 @@ public class ShinuaSubsystem extends SubsystemBase {
     SmartDashboard.putData("Shinua/Battery/set brake", new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
   }
 
+  public void checkElectronics() {
+    motorIndexerClose.checkElectronics();
+    motorIndexerFar.checkElectronics();
+    motorIndexerOnTop.checkElectronics();
+    motorBattery.checkElectronics();
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
       super.initSendable(builder);

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.robot.RobotCommon;
-import frc.robot.RobotCommon.robotStates;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
@@ -40,7 +40,7 @@ public class StateBasedClimb extends Command {
         this.timer = new Timer();
         this.krakenPow = 0;
         this.armsAngle = climb.getArmEncoderAngle();
-        addRequirements(climb, chassis);
+        addRequirements(climb);
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -82,7 +82,7 @@ public class StateBasedClimb extends Command {
                 difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
                 headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
                 speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
-                chassis.setVelocities(speed);
+                // chassis.setVelocities(speed);
                 if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
                     chassis.stop();
                 }
@@ -109,7 +109,7 @@ public class StateBasedClimb extends Command {
 
                 if (IS_AT_GROUND) {
                     timer.start();
-                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
+                    // chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
                     climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
                     if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
                         timer.stop();
@@ -119,7 +119,7 @@ public class StateBasedClimb extends Command {
                     }
                     if(afterClimb){
                      timer.start();
-                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb,0,0));
+                    // chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb,0,0));
                     }
                     if(timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)){
                      timer.stop();
@@ -127,7 +127,7 @@ public class StateBasedClimb extends Command {
                      chassis.stop();
                     }  
 
-                 RobotCommon.currentState = robotStates.Drive;
+                 RobotCommon.currentState = RobotStates.Drive;
 
                 }
                 break;

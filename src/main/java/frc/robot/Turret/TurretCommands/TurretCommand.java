@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
-import frc.robot.RobotCommon.robotStates;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Turret.Turret;
 
 
@@ -40,10 +40,14 @@ public class TurretCommand extends Command{
             // case ShootWithIntake,ShootWithoutIntake :
             //     turret.setPositionMotion(turret.getTurretToHubAngle());
             //     break;
-
-            case ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive:
-                turret.setPositionMotion(RobotCommon.futureAngleFromTargetRobotRelative);
+            
+            case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
+                turret.setPositionPID(RobotCommon.futureAngleFromTargetRobotRelative);
                 // frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
+                break;
+
+            case Drive, DriveAutoIntake:
+                turret.setPositionPID(0);
                 break;
             case Test:
                 turret.setPositionPID(Math.toRadians(wantedAngle));

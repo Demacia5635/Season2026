@@ -11,7 +11,7 @@ import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
  * The Command that activates the {@link ShinuaSubsystem} based on the
- * {@link RobotCommon.robotStates}
+ * {@link RobotCommon.RobotStates}
  */
 public class ShinuaCommand extends Command {
 
@@ -55,7 +55,6 @@ public class ShinuaCommand extends Command {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-
         builder.addDoubleProperty("Batter Power", this::getBatteryPow, this::setBatteryPow);
         builder.addDoubleProperty("Left Power", this::getLeftPow, this::setLeftPow);
         builder.addDoubleProperty("Right Power", this::getRightPow, this::setRightPow);
@@ -75,29 +74,30 @@ public class ShinuaCommand extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
-            case ShootWithIntake:
-            case ShootWithoutIntake:
+            case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
                 timer.start();
                 // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                 shinua.setDutyIndexerOnTop(1);
-                shinua.setPowerBattery(0.4);
+                shinua.setPowerBattery(0.6);
+                
                 break;
 
-            case DriveWhileIntake:
+            case DriveAutoIntake:
 
 
                 timer.start();
-                shinua.setDutyIndexerFar(-0.6);
+                shinua.setDutyIndexerFar(0.0);
 
-                shinua.setDutyIndexerClose(0.5);
+                shinua.setDutyIndexerClose(1);
                 shinua.setDutyIndexerOnTop(-0.8);
                 
-                shinua.setPowerBattery(0);
+                shinua.setPowerBattery(0.1);
                 break;
 
             case Test:
+
                 timer.stop();
                 timer.reset();
                 shinua.setDutyIndexerClose(rightPow);

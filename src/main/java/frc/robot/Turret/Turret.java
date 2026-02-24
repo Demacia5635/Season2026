@@ -51,6 +51,12 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putData("reset motor position", new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
   }
 
+  public void checkElectronics() {
+    turretMotor.checkElectronics();
+    limitSwitchMax.checkElectronics();
+    limitSwitchMin.checkElectronics();
+  }
+
   public void setNeutralMode(boolean isBrake) {
     turretMotor.setNeutralMode(isBrake);
   }
@@ -98,6 +104,8 @@ public class Turret extends SubsystemBase {
     // }
     turretMotor.set(power);
   }
+
+  
 
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();

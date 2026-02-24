@@ -14,7 +14,7 @@ public class IntakeConstants {
     public static final Canbus INTAKE_CANBUS = Canbus.Rio;
 
     //the motors max power
-    public static final double MAX_POWER = 1;
+    public static final double MAX_POWER = 0.8;
 
     //the motors max pose
     public static final double MAX_POSITION = 6;
@@ -50,21 +50,21 @@ public class IntakeConstants {
     //indexer on the top value
     public static final int INDEXER_ON_TOP_ID = 30;
     public static final String INDEXER_TOP_NAME  = "Shinua/Top";
-    public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, INTAKE_CANBUS, INDEXER_TOP_NAME)
+    public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, Canbus.CANIvore, INDEXER_TOP_NAME)
     .withBrake(true)
     .withInvert(true);
 
     //indexer close value
-    public static final int INDEXER_CLOSE_ID = 33;
+    public static final int INDEXER_CLOSE_ID = 32;
     public static final String INDEXER_CLOSE_NAME  = "Indexer Close motor";
     public static final TalonSRXConfig INDEXER_CLOSE_CONFIG = new TalonSRXConfig(INDEXER_CLOSE_ID, INDEXER_CLOSE_NAME)
-    .withBrake(true).withInvert(true).withCurrent(15);
+    .withBrake(true).withInvert(false).withCurrent(15);
 
     //indexer close value
-    public static final int INDEXER_FAR_ID = 32;
+    public static final int INDEXER_FAR_ID = 33;
     public static final String INDEXER_FAR_NAME  = "Indexer far motor";
     public static final TalonSRXConfig INDEXER_FAR_CONFIG = new TalonSRXConfig(INDEXER_FAR_ID, INDEXER_FAR_NAME)
     .withBrake(true)
     .withCurrent(15)
-    .withInvert(true);
+    .withInvert(false);
 }

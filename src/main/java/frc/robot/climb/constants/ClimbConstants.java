@@ -35,7 +35,7 @@ public class ClimbConstants {
         public static final double LEVER_KS = 0;
         public static final double LEVER_KV = 0;
         public static final double LEVER_KA = 0;
-        public static final double LEVER_KP = 2;
+        public static final double LEVER_KP = 4.5;
         public static final double LEVER_KG = 0;
         public static final double LEVER_KD = 0;
         public static final double LEVER_KI = 0;
@@ -91,5 +91,14 @@ public class ClimbConstants {
         public static Pose2d targetLeftSideRed = new Pose2d(15.43, 4.720, new Rotation2d());
         public static Pose2d targetLeftSideBlue = new Pose2d(1, 1, new Rotation2d(180));
         public static Pose2d targetRightSideBlue = new Pose2d(1, 1, new Rotation2d(180));
+
+
+        public static class Calibration {
+                public static final double POWER = 0.3;
+                public static final double CURRENT_FOR_CALIBRATE = 12; //need to test
+                public static final double TIME_TO_CONFIRM_CALIBRATION = 0.15; // seconds
+                public static final double POSITION_AFTER_CALIBRATION = Math.toRadians(110); //need to check
+                
+        }
 
 }

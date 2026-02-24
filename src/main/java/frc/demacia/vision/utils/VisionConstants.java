@@ -206,7 +206,7 @@ public class VisionConstants {
 
         // Quest VR headset mounting configuration
         // TODO: Find the right offsets for your robot's Quest mounting position
-        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(0, 0, 180);
+        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(0, 0, 0);
         public static final double Y_OFFSET_QUEST = 0.2896;
         public static final double X_OFFSET_QUEST = 0.1462;
         public static final double Z_OFFSET_QUEST = 0.460;

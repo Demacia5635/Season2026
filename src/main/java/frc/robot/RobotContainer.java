@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// bft-pgmc-wgo
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Hertz;
@@ -10,6 +11,7 @@ import static frc.robot.Constants.*;
 import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.FrequencyUnit;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +31,7 @@ import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.log.LogManager;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.FlywheelTesting;
 import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
@@ -48,6 +52,7 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.climb.commands.CalibrateClimb;
 import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
@@ -91,23 +96,32 @@ public class RobotContainer implements Sendable {
     shooter = new Shooter();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
-    climb = new Climb();
+    // climb = new Climb();
     
 
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
+
     turret = Turret.getInstance();
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    addStatesToElasticForTesting();
+    SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
+      chassis.checkElectronics();
+      intake.checkElectronics();
+      shinua.checkElectronics();
+      turret.checkElectronics();
+      shooter.checkElectronics();
+      // climb.checkElectronics();
+    }).ignoringDisable(true));
+    // addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
 
-    Data.setFrequancyAll();
+    // Data.setFrequancyAll();
   }
 
   public void addStatesToElasticForTesting() {
-    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
-    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
+    SendableChooser<RobotCommon.RobotStates> robotStateChooser = new SendableChooser<>();
+    for (RobotCommon.RobotStates state : RobotCommon.RobotStates.class.getEnumConstants()) {
       robotStateChooser.addOption(state.name(), state);
     }
     robotStateChooser.onChange(state -> RobotCommon.currentState = state);
@@ -139,29 +153,52 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-
+  
+    // shooter.setDefaultCommand(new ShooterTesting(shooter));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
       shooter.setFeederPower(0.8);
     }, () -> {
       shooter.setFeederPower(0);
     }));
+
+    
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController)); 
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretCommand(turret));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+
+
+    driverController.downButton().onTrue(RobotCommon.changeState(RobotStates.HubWithAutoIntake));
+    driverController.upButton().onTrue(RobotCommon.changeState(RobotStates.DriveAutoIntake));
+    driverController.rightButton().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake));
+
+    driverController.povDown().onTrue(RobotCommon.changeState(RobotStates.HubWithoutAutoIntake));
+    driverController.povUp().onTrue(RobotCommon.changeState(RobotStates.Drive));
+    driverController.povRight().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake));
+
+    driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.IDLE));
+    
+    SmartDashboard.putData("Auto Drive", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
+
+    // SmartDashboard.putData("lever to zero", new InstantCommand(()->climb.setLeverAngle(0)));
+    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
+    SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
   private void setUserButton() {
     new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton())
         .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
   }
+
+
 
   @Override
   public void initSendable(SendableBuilder builder) {
