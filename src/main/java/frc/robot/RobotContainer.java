@@ -105,6 +105,7 @@ public class RobotContainer implements Sendable {
     // turret = Turret.getInstance();
     ballCamera = new Dvirs_ObjectPose(new Camera("fuel", new Translation3d(0.298, -0.385, 0.26), -27, 4.6, true));
 
+
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
@@ -118,6 +119,8 @@ public class RobotContainer implements Sendable {
     addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
+    // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
+    // SmartDashboard.putNumber("ball dist", ballCamera.getDistance());
 
     // Data.setFrequancyAll();
   }
@@ -243,4 +246,5 @@ public class RobotContainer implements Sendable {
     // An example command will be run in autonomous
     return null;
   }
+
 }

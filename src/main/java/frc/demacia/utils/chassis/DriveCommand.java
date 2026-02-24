@@ -9,6 +9,7 @@ import java.util.logging.LogManager;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.vision.ObjectPose;
@@ -32,6 +33,7 @@ public class DriveCommand extends Command {
     this.controller = controller;
     precisionMode = false;
     this.objectPose = objectPose;
+    SmartDashboard.putData("drive command", this);
     addRequirements(chassis);
   }
 
@@ -59,8 +61,12 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // System.out.println("Yaw"+objectPose.getYaw());
+    // System.out.println("dist:"+objectPose.getDistance());
+    frc.demacia.utils.log.LogManager.log("Yaw"+objectPose.getYaw());
+    frc.demacia.utils.log.LogManager.log("dist:"+objectPose.getDistance());
     switch (RobotCommon.currentState) {
-      case HubWithAutoIntake, DeliveryWithAutoIntake:// , DriveAutoIntake:
+      case HubWithAutoIntake, DeliveryWithAutoIntake , DriveAutoIntake:
         Translation2d driverVelocityVectorRobotRel = new Translation2d(controller.getLeftY(), controller.getLeftX())
             .rotateBy(chassis.getGyroAngle().unaryMinus());
         double wantedVxRobotRel = (Math.min(
@@ -69,7 +75,6 @@ public class DriveCommand extends Command {
         Translation2d intakeToTarget = objectPose.giveBestTranslation().minus(chassisToIntakeOffset);
         double angleToFix = Math.min(Math.abs(intakeToTarget.getAngle().getRadians() * 2), Math.PI * 0.5)
             * Math.signum(intakeToTarget.getAngle().getRadians());
-
         ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel, -wantedVxRobotRel * Math.tan(angleToFix),
             0);
 

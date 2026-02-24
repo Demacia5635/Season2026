@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.Camera;
 import frc.robot.RobotCommon;
 
@@ -27,14 +29,15 @@ public class Dvirs_ObjectPose {
     private Translation2d cameraToObject;
     private Translation2d robotToObject;
     private Translation2d fieldToObject;
+    private Translation2d previousPose;
 
-
-
-    
 
     public Dvirs_ObjectPose(Camera objectCam){
         this.objectCam = objectCam;
         Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
+        SmartDashboard.putString("objectCam.getTableName()", objectCam.getTableName());
+        LogManager.log("fuel_dist"+getDistance());
+        LogManager.log("fuel_yaw"+getYaw());
 
     }
 
@@ -42,9 +45,17 @@ public class Dvirs_ObjectPose {
         if(isObjectDetected()){
             updateValues();
             getRobotToObjectFeildRel();
-            return getOriginToObject();
+            getOriginToObject();
+            if(previousPose != null && isPoseElegable(previousPose)){
+                return previousPose;
+            }
+            previousPose =fieldToObject;
+            return fieldToObject;
         }
-        // else if()
+        else if(previousPose != null && isPoseElegable(previousPose)){
+            return previousPose;
+        }
+
         return Translation2d.kZero;
     }
 
@@ -81,11 +92,19 @@ public class Dvirs_ObjectPose {
         }
         return new Translation2d();
     }
-    public boolean isPreviousPositionBetter(){
-        return true;
-        // if (fieldToObject != null && RobotCommon.currentRobotPose.getTranslation().minus(fieldToObject).getNorm()){
-        //     return true;
-        // }
-        // return false;
+
+    public boolean isPoseElegable(Translation2d pose){
+        double dist = Math.sqrt((Math.pow(pose.getX()-RobotCommon.currentRobotPose.getX(),2)+Math.pow(pose.getY()-RobotCommon.currentRobotPose.getY(),2)));
+        if(robotToObject != null){
+            double distFromCurretTarget = Math.sqrt((Math.pow(pose.getX()-fieldToObject.getX(),2)+Math.pow(pose.getY()-fieldToObject.getY(),2)));
+            return dist <0.2 && dist <3.3 && distFromCurretTarget> 7;
+        }
+        return dist <0.2 && dist <3.3;
+    }
+    public double getYaw(){
+        return (-Table.getEntry("tx").getDouble(0.0));
+    }
+    public double getPitch(){
+        return (Table.getEntry("ty").getDouble(0.0));
     }
 }
