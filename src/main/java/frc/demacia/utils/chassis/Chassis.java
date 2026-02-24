@@ -180,7 +180,7 @@ public class Chassis extends SubsystemBase {
         }
         RobotPose.initialize(modulePositions, new Matrix<>(
                 new SimpleMatrix(
-                        new double[] { 0.01, 0.01, 0 })),
+                        new double[] { 0.03, 0.03, 99999999 })),
                 QUEST_STD);
     }
 

@@ -27,7 +27,7 @@ public class StateManager extends SubsystemBase {
     private final EventLoop eventLoop;
 
     private StateManager() {
-        lastState = RobotCommon.RobotStates.IDLE;
+        lastState = RobotCommon.RobotStates.Idle;
         eventLoop = new EventLoop();
     }
 

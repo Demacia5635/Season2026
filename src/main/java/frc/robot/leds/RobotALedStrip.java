@@ -31,7 +31,7 @@ public class RobotALedStrip extends LedStrip {
                 return Color.kBlue;
             case HubWithoutAutoIntake:
                 return Color.kAliceBlue;
-            case IDLE:
+            case Idle:
                 return Color.kPurple;
             case PrepareClimb:
                 return Color.kBeige;

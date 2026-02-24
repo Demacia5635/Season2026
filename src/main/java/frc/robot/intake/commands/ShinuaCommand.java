@@ -61,6 +61,15 @@ public class ShinuaCommand extends Command {
         builder.addDoubleProperty("Top Power", this::getTopPow, this::setTopPow);
     }
 
+    public void driveWithIntakePowers() {
+        shinua.setDutyIndexerFar(0.0);
+
+        shinua.setDutyIndexerClose(1);
+        // shinua.setDutyIndexerOnTop(-0.8);
+
+        // shinua.setPowerBattery(0.1);
+    }
+
     @Override
     public void initialize() {
         isDirectionUp = true;
@@ -75,25 +84,21 @@ public class ShinuaCommand extends Command {
     public void execute() {
         switch (RobotCommon.currentState) {
             case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
-                timer.start();
-                // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerOnTop(1);
-                shinua.setPowerBattery(0.6);
-                
+                if (RobotCommon.isReady()) {
+
+                    shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+                    shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+                    // shinua.setDutyIndexerOnTop(1);
+                    shinua.setPowerBattery(0.6);
+                } else {
+                    driveWithIntakePowers();
+                }
+
                 break;
 
             case DriveAutoIntake:
 
-
-                timer.start();
-                shinua.setDutyIndexerFar(0.0);
-
-                shinua.setDutyIndexerClose(1);
-                shinua.setDutyIndexerOnTop(-0.8);
-                
-                shinua.setPowerBattery(0.1);
+                driveWithIntakePowers();
                 break;
 
             case Test:

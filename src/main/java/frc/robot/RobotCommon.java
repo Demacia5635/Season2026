@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Turret.Turret;
 
 public class RobotCommon {
     public enum Shifts {
@@ -13,8 +14,8 @@ public class RobotCommon {
     }
 
     public enum RobotStates {
-        HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake,
-        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, IDLE;
+        Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake,
+        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test;
     }
 
     public static RobotStates currentState = RobotStates.Drive;
@@ -38,6 +39,11 @@ public class RobotCommon {
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
     public static Shifts currentShift = Shifts.Auto;
+
+    public static boolean isReady(){
+        return true;
+        // return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+    }
 
     public static Command changeState(RobotStates newState) {
         RobotContainer.leds.changeColor(newState);

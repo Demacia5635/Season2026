@@ -137,7 +137,7 @@ public class ShooterCommand extends Command {
     double vel = 0;
     double hoodAngle = 0;
     Rotation2d heading = Rotation2d.kZero;
-    
+
     robotSpeeds = RobotCommon.fieldRelativeSpeeds;
     nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
         0.04);
@@ -146,7 +146,7 @@ public class ShooterCommand extends Command {
       case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake:
         Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
         hoodAngle = Math.toRadians(45);
-        vel = 1.7 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
+        vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
         break;

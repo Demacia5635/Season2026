@@ -37,6 +37,8 @@ public class Turret extends SubsystemBase {
 
   Red redSide;
 
+  private double wantedAngle = 0;
+
   private boolean hasCalibrated = false;
 
   private Turret() {
@@ -81,12 +83,14 @@ public class Turret extends SubsystemBase {
 
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated) return;
+    this.wantedAngle = wantedPosition;
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     turretMotor.setPositionVoltage(pos);
   }
 
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated) return;
+    this.wantedAngle = wantedPosition;
     
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     turretMotor.setMotion(pos);
@@ -105,7 +109,9 @@ public class Turret extends SubsystemBase {
     turretMotor.set(power);
   }
 
-  
+  public boolean isReady() {
+    return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(2);
+  }
 
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();

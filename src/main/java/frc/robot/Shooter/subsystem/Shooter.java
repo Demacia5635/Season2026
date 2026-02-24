@@ -75,27 +75,9 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setNeutralMode(isBrake);
   }
 
-  /**
-   * this funcsan is to get if the fly weel is at the velwe sood be in error of 0.03
-   */
-  public boolean shooterCloseLoppCanShoote() {
-    if (shooterMotor.getClosedLoopError().getValueAsDouble() < 0.3) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   * this funcsan is to see if the hood isnin the angle is siid be in error of 0.5 degrey
-   */
-  public boolean HoodCloseLoopError() {
-    if (hoodMotor.getClosedLoopError().getValueAsDouble() < Math.toRadians(0.5)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  public boolean isReady() {
+    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(2) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.7;
+  }  
 
   // public boolean chassisSpeedCeack(){
   // // return RobotContainer.chassis.getVelocityAsVector().getNorm() < 1.7;
@@ -105,8 +87,6 @@ public class Shooter extends SubsystemBase {
     super.initSendable(builder);
     builder.addDoubleProperty("get angle", () -> Math.toDegrees(getHoodAngle()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
-    builder.addBooleanProperty("Shooter close loop", () -> shooterCloseLoppCanShoote(), null);
-    builder.addBooleanProperty("hoodClose loop", () -> HoodCloseLoopError(), null);
     
     // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
     // null);

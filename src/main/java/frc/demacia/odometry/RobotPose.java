@@ -53,7 +53,7 @@ public class RobotPose {
 
         this.quest = new Quest();
         this.questSTD = questSTD;
-        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.1, 0.1, 999999 }));
+        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.2, 0.2, 999999 }));
         this.hasVisionUpdated = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
     }
@@ -93,7 +93,7 @@ public class RobotPose {
             hasVisionUpdated = true;
         }
 
-        poseEstimator.setVisionMeasurementStdDevs(getSTD());
+        poseEstimator.setVisionMeasurementStdDevs(visionSTD);
         poseEstimator.addVisionMeasurement(visionPose, timestamp);
     }
 
@@ -119,15 +119,17 @@ public class RobotPose {
         //         // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
         //         && vision.isSeeTagWithDistance());
 
-        return vision.isSeeTag();
+        return vision.isSeeTagWithDistance();
 
     }
 
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
-        if (hasVisionUpdated && quest.isConnected())
+        if (hasVisionUpdated && quest.isConnected()){
+            
             addQuestMeasurement();
+        }
         if (shouldUpdateVision()) {
             addVisionMeasurement();
         } 

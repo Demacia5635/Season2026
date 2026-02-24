@@ -28,7 +28,7 @@ public class Dvirs_ObjectPose {
     private Translation2d robotToObject;
     private Translation2d fieldToObject;
 
-    private double tempsize =0;
+
 
     
 
@@ -41,10 +41,10 @@ public class Dvirs_ObjectPose {
     public Translation2d giveBestTranslation(){
         if(isObjectDetected()){
             updateValues();
-            getDistance();
             getRobotToObjectFeildRel();
             return getOriginToObject();
         }
+        // else if()
         return Translation2d.kZero;
     }
 
@@ -80,5 +80,12 @@ public class Dvirs_ObjectPose {
             return fieldToObject;
         }
         return new Translation2d();
+    }
+    public boolean isPreviousPositionBetter(){
+        return true;
+        // if (fieldToObject != null && RobotCommon.currentRobotPose.getTranslation().minus(fieldToObject).getNorm()){
+        //     return true;
+        // }
+        // return false;
     }
 }
