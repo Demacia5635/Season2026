@@ -87,10 +87,10 @@ public class ClimbConstants {
         public static final double LEVER_COLLISION_CURRENT_THRESHOLD = 15.0;
 
         // climb pose
-        public static Pose2d targetRightSideRed = new Pose2d(15.439, 3.863, new Rotation2d());
-        public static Pose2d targetLeftSideRed = new Pose2d(15.43, 4.720, new Rotation2d());
-        public static Pose2d targetLeftSideBlue = new Pose2d(1, 1, new Rotation2d(180));
-        public static Pose2d targetRightSideBlue = new Pose2d(1, 1, new Rotation2d(180));
+        public static Pose2d targetRightSideRed = new Pose2d(15.431738, 3.860737, new Rotation2d());
+        public static Pose2d targetLeftSideRed = new Pose2d(15.431484, 4.717987, new Rotation2d());
+        public static Pose2d targetLeftSideBlue = new Pose2d(1.103916, 3.283395, new Rotation2d(180));
+        public static Pose2d targetRightSideBlue = new Pose2d(1.103662, 4.140645, new Rotation2d(180));
 
 
         public static class Calibration {
