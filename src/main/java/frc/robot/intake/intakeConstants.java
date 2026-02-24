@@ -10,6 +10,8 @@ import frc.demacia.utils.motors.TalonSRXConfig;
 
 /** Add your docs here. */
 public class IntakeConstants {
+    public static final String NAME = "Intake";
+
     //the all intake canbus
     public static final Canbus INTAKE_CANBUS = Canbus.Rio;
 

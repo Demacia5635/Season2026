@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 import frc.robot.climb.subsystems.Climb;
 
+import static frc.robot.climb.constants.ClimbConstants.*;
+
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ControllerClimb extends Command {
   CommandController contoller;
@@ -33,17 +35,16 @@ public class ControllerClimb extends Command {
   @Override
   public void execute() {
     joyright = contoller.getRightY();
-    climb.setLeverDuty(joyright);
+    climb.setPower(LEVER_MOTOR_NAME, joyright);
 
     joyleft = contoller.getLeftY() * 0.2;
-    climb.setArmsDuty(joyleft);
+    climb.setPower(ARM_MOTOR_NAME, joyleft);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climb.stopArms();
-    climb.stopLever();
+    climb.stop();
   }
 
   // Returns true when the command should end.

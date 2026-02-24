@@ -41,11 +41,6 @@ import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTesting;
 import frc.robot.Shooter.subsystem.Shooter;
-import frc.robot.Turret.Turret;
-import frc.robot.Turret.TurretCommands.TurretCalibration;
-import frc.robot.Turret.TurretCommands.TurretCommand;
-import frc.robot.Turret.TurretCommands.TurretFollow;
-import frc.robot.Turret.TurretCommands.TurretPower;
 import frc.demacia.utils.Data;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
@@ -65,6 +60,11 @@ import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 import frc.robot.leds.RobotALedStrip;
+import frc.robot.turret.TurretCommands.TurretCalibration;
+import frc.robot.turret.TurretCommands.TurretCommand;
+import frc.robot.turret.TurretCommands.TurretFollow;
+import frc.robot.turret.TurretCommands.TurretPower;
+import frc.robot.turret.subsystems.Turret;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

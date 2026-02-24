@@ -1,11 +1,11 @@
-package frc.robot.Turret.TurretCommands;
+package frc.robot.turret.TurretCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.chassis.Chassis;
-import frc.robot.Turret.Turret;
+import frc.robot.turret.subsystems.Turret;
 
 public class TurretFollow extends Command {
     private final Turret turret;

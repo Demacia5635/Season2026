@@ -16,6 +16,8 @@ import frc.robot.RobotCommon.RobotStates;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
+import static frc.robot.climb.constants.ClimbConstants.*;
+
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StateBasedClimb extends Command {
     /** Creates a new StateBasedClimb. */
@@ -96,7 +98,7 @@ public class StateBasedClimb extends Command {
                 }
 
                 if (IS_AT_BAR) {
-                    climb.setArmsDuty(0.1);
+                    climb.setPower(ARM_MOTOR_NAME, 0.1);
                     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
                 }
                 break;
@@ -110,11 +112,11 @@ public class StateBasedClimb extends Command {
                 if (IS_AT_GROUND) {
                     timer.start();
                     // chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
-                    climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
+                    climb.setPower(ARM_MOTOR_NAME, ClimbConstants.powerToRaiseArmsAfterClimb);
                     if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
                         timer.stop();
                         timer.reset();
-                        climb.stopArms();
+                        climb.stop(ARM_MOTOR_NAME);
                         afterClimb = true;
                     }
                     if(afterClimb){
@@ -133,7 +135,7 @@ public class StateBasedClimb extends Command {
                 break;
             case Test:
                 climb.setArmsAngle(armsAngle);
-                climb.setLeverDuty(krakenPow);
+                climb.setPower(LEVER_MOTOR_NAME, krakenPow);
                 break;
             default:
                 climb.stateClose();

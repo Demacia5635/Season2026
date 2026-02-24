@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
+import static frc.robot.climb.constants.ClimbConstants.*;
+
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CalibrateClimb extends Command {
   private Climb climb;
@@ -16,6 +18,7 @@ public class CalibrateClimb extends Command {
   private boolean hasStartedTimer;
 
   public CalibrateClimb(Climb climb) {
+
     this.climb = climb;
     this.timer = new Timer();
     this.hasStartedTimer = false;
@@ -31,7 +34,7 @@ public class CalibrateClimb extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climb.setLeverDuty(ClimbConstants.Calibration.POWER);
+    climb.setPower(LEVER_MOTOR_NAME, ClimbConstants.Calibration.POWER);
     if (climb.getCurrentAmpersLever() > ClimbConstants.Calibration.CURRENT_FOR_CALIBRATE) {
       if (!hasStartedTimer) {
         timer.start();
@@ -48,7 +51,7 @@ public class CalibrateClimb extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climb.setLeverDuty(0);
+    climb.setPower(LEVER_MOTOR_NAME, 0);
     climb.setLeverPosition(ClimbConstants.Calibration.POSITION_AFTER_CALIBRATION);
     climb.setCalibratedLever();
 

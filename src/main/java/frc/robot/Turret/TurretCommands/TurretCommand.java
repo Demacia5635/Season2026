@@ -1,4 +1,4 @@
-package frc.robot.Turret.TurretCommands;
+package frc.robot.turret.TurretCommands;
 
 import java.util.logging.LogManager;
 
@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
 import frc.robot.RobotCommon.RobotStates;
-import frc.robot.Turret.Turret;
+import frc.robot.turret.subsystems.Turret;
 
 
 public class TurretCommand extends Command{

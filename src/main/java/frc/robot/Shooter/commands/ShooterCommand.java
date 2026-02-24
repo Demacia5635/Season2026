@@ -19,7 +19,7 @@ import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
-import frc.robot.Turret.Turret;
+import frc.robot.turret.subsystems.Turret;
 
 /**
  * this is the main shooter command

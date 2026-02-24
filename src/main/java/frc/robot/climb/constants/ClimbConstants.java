@@ -8,6 +8,8 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonSRXConfig;
 
 public class ClimbConstants {
+        public static final String NAME = "Climb";
+
         public static final Canbus CANBUS_CLIMB = Canbus.Rio;
 
         // arm constans
@@ -25,8 +27,9 @@ public class ClimbConstants {
 
         public static final double ARMS_KP = 3;
 
+        public static final String ARM_MOTOR_NAME = "arms motor";
         // climb arms motor
-        public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, "arms motor")
+        public static final TalonSRXConfig ARMS_MOTOR_CONFIG = new TalonSRXConfig(MOTOR_ID_ARMS, ARM_MOTOR_NAME)
                         .withBrake(WITH_BRAKE_ARMS)
                         .withCurrent(MAX_CURRENT)
                         .withInvert(WITH_INVERT_ARMS);
@@ -51,17 +54,19 @@ public class ClimbConstants {
         public static final double powerOpen = 0.8;
         public static final double powerMid = 0.2;
 
+        public static final String LEVER_MOTOR_NAME = "lever motor";
         // lever climb motor config
         public static final TalonFXConfig LEVER_MOTOR_CONFIG = new TalonFXConfig(MOTOR_ID_LEVER, CANBUS_CLIMB,
-                        "motor lever")
+                        LEVER_MOTOR_NAME)
                         .withPID(LEVER_KP, LEVER_KI, LEVER_KD, LEVER_KS, LEVER_KV, LEVER_KA, LEVER_KG)
                         .withBrake(WITH_BRAKE_LEVER)
                         .withCurrent(MAX_CURRENT)
                         .withInvert(WITH_INVERT_LEVER)
                         .withRadiansMotor(LEVER_GEAR_RATIO);
 
+        public static final String CLIMB_ENCODER_NAME = "climb encoder";
         // the climb arm encoder
-        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(3, "climb encoder")
+        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(3, CLIMB_ENCODER_NAME)
                         .withInvert(true);
 
         // constans to auto drive to tower

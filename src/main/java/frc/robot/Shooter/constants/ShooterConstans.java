@@ -17,6 +17,8 @@ import frc.demacia.utils.sensors.DigitalEncoderConfig;
 
 public class ShooterConstans {
 
+        public static final String NAME = "Shooter";
+
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
                 // SHOOTER_LOOKUP_TABLE.add(1, 0, Math.toRadians(85));

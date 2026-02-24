@@ -1,4 +1,4 @@
-package frc.robot.Turret;
+package frc.robot.turret;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.demacia.utils.motors.TalonFXConfig;
