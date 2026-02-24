@@ -56,7 +56,6 @@ import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.commands.DrivePower;
 import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
-import frc.robot.climb.commands.CalibrateClimb;
 import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
