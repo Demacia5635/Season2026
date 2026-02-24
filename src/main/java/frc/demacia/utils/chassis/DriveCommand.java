@@ -96,21 +96,23 @@ public class DriveCommand extends Command {
           double wantedVxRobotRel = (Math.min(
               Math.abs(driverVelocityVectorRobotRel.getX() * chassis.getConfig().maxDriveVelocity),
               maxVelocityAutoIntake));
-          Translation2d intakePosition = chassis.getPose().getTranslation().plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
-          frc.demacia.utils.log.LogManager.log("intakePosition: " + intakePosition + " fuel pos: " + RobotCommon.fuelPosition);
-          
-          SmartDashboard.putNumber("intakePositionX: ", intakePosition.getX());
-          SmartDashboard.putNumber("intakePositionY: ", intakePosition.getY());
-          SmartDashboard.putNumber("intakePfuelX: ", RobotCommon.fuelPosition.getX());
-          SmartDashboard.putNumber("intakePfuelY: ", RobotCommon.fuelPosition.getY());
+          Translation2d intakePosition = chassis.getPose().getTranslation()
+              .plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
+          // frc.demacia.utils.log.LogManager.log("intakePosition: " + intakePosition + "
+          // fuel pos: " + RobotCommon.fuelPosition);
+
+          // SmartDashboard.putNumber("intakePositionX: ", intakePosition.getX());
+          // SmartDashboard.putNumber("intakePositionY: ", intakePosition.getY());
+          // SmartDashboard.putNumber("intakePfuelX: ", RobotCommon.fuelPosition.getX());
+          // SmartDashboard.putNumber("intakePfuelY: ", RobotCommon.fuelPosition.getY());
           Translation2d intakeToTarget = RobotCommon.fuelPosition.minus(intakePosition);
           double fuelDir = intakeToTarget.getAngle().minus(RobotCommon.robotAngle).getRadians();
           SmartDashboard.putNumber("FuelDir: ", Math.toDegrees(fuelDir));
-          if(Math.abs(fuelDir) > Math.PI/4){
+          if (Math.abs(fuelDir) > Math.PI / 4) {
             fuelDir = 0;
           }
           ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
-              wantedVxRobotRel * Math.tan(2*fuelDir),
+              wantedVxRobotRel * Math.tan(2 * fuelDir),
               0);
           frc.demacia.utils.log.LogManager.log("Angle to fix: " + fuelDir + " intake to target " + intakeToTarget
               + " wanted Vx robot rel " + wantedVxRobotRel + " angle to fix Abs wthout limit: "
