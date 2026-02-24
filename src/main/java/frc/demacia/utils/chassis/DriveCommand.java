@@ -4,8 +4,6 @@
 
 package frc.demacia.utils.chassis;
 
-import java.util.logging.LogManager;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,9 +11,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
 import frc.robot.RobotCommon;
+import frc.robot.intake.IntakeConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -84,8 +84,8 @@ public class DriveCommand extends Command {
   public void execute() {
     // System.out.println("Yaw"+objectPose.getYaw());
     // System.out.println("dist:"+objectPose.getDistance());
-    // frc.demacia.utils.log.LogManager.log("Yaw"+objectPose.getYaw());
-    // frc.demacia.utils.log.LogManager.log("dist:"+objectPose.getDistance());
+    // LogManager.log("Yaw"+objectPose.getYaw());
+    // LogManager.log("dist:"+objectPose.getDistance());
 
     switch (RobotCommon.currentState) {
       case HubWithAutoIntake, DeliveryWithAutoIntake, DriveAutoIntake:
@@ -98,9 +98,6 @@ public class DriveCommand extends Command {
               maxVelocityAutoIntake));
           Translation2d intakePosition = chassis.getPose().getTranslation()
               .plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
-          // frc.demacia.utils.log.LogManager.log("intakePosition: " + intakePosition + "
-          // fuel pos: " + RobotCommon.fuelPosition);
-
           // SmartDashboard.putNumber("intakePositionX: ", intakePosition.getX());
           // SmartDashboard.putNumber("intakePositionY: ", intakePosition.getY());
           // SmartDashboard.putNumber("intakePfuelX: ", RobotCommon.fuelPosition.getX());
@@ -108,21 +105,20 @@ public class DriveCommand extends Command {
           Translation2d intakeToTarget = RobotCommon.fuelPosition.minus(intakePosition);
           double fuelDir = intakeToTarget.getAngle().minus(RobotCommon.robotAngle).getRadians();
           SmartDashboard.putNumber("FuelDir: ", Math.toDegrees(fuelDir));
-          if (Math.abs(fuelDir) > Math.PI / 4) {
+          LogManager.log("fuelDir " + fuelDir);
+          if (Math.abs(fuelDir * IntakeConstants.KP_ANGLE_ROBOT_ERROR) > Math.PI / 2) {
             fuelDir = 0;
           }
+          LogManager.log("driverVelocityVectorRobotRel " + driverVelocityVectorRobotRel + " wantedVxRobotRel " + wantedVxRobotRel + " intakeToTarget " + intakeToTarget + " fuelDir " + fuelDir);
           ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
-              wantedVxRobotRel * Math.tan(2 * fuelDir),
+              wantedVxRobotRel * Math.tan(IntakeConstants.KP_ANGLE_ROBOT_ERROR * fuelDir),
               0);
-          frc.demacia.utils.log.LogManager.log("Angle to fix: " + fuelDir + " intake to target " + intakeToTarget
-              + " wanted Vx robot rel " + wantedVxRobotRel + " angle to fix Abs wthout limit: "
-              + (Math.abs(intakeToTarget.getAngle().getRadians() * 2)));
           SmartDashboard.putNumber("intakepAngletofix: ", fuelDir);
           SmartDashboard.putNumber("intakepttargetx: ", intakeToTarget.getX());
           SmartDashboard.putNumber("intakeptotargety: ", intakeToTarget.getY());
           // -1.5707963267948966 Translation2d(X: -1.16, Y: -1.56) 0.3934561183461096P6
           chassis.setRobotRelVelocities(chassisWantSpeeds);
-          frc.demacia.utils.log.LogManager
+          LogManager
               .log("DIs: " + intakeToTarget.getNorm() + " angle: " + intakeToTarget.getAngle());
         } else {
           driveByJoystick();

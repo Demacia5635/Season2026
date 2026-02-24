@@ -67,4 +67,7 @@ public class IntakeConstants {
     .withBrake(true)
     .withCurrent(15)
     .withInvert(false);
+
+    //auto intake
+    public static final double KP_ANGLE_ROBOT_ERROR = 2.1;
 }

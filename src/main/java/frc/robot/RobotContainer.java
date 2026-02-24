@@ -31,6 +31,7 @@ import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
+import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
@@ -88,7 +89,7 @@ public class RobotContainer implements Sendable {
       chassis.checkElectronics();
       intake.checkElectronics();
       shinua.checkElectronics();
-      // turret.checkElectronics();
+      turret.checkElectronics();
       shooter.checkElectronics();
       // climb.checkElectronics();
     }).ignoringDisable(true));
@@ -154,7 +155,7 @@ public class RobotContainer implements Sendable {
 
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController));
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretCommand(turret));
     // turret.setDefaultCommand(new TurretFollow(turret,
     // Field.HUB(true).getCenter().getTranslation(), chassis));
 

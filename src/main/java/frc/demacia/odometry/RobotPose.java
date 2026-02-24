@@ -115,9 +115,9 @@ public class RobotPose {
 
     private boolean shouldUpdateVision() {
         // return (Math.hypot(RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond,
-        //         RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
-        //         // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
-        //         && vision.isSeeTagWithDistance());
+        // RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
+        // // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
+        // && vision.isSeeTagWithDistance());
 
         return vision.isSeeTag();
 
@@ -126,13 +126,13 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
-        if (hasVisionUpdated && quest.isConnected()){
-            
+        if (hasVisionUpdated && quest.isConnected()) {
+
             addQuestMeasurement();
         }
         if (shouldUpdateVision()) {
             addVisionMeasurement();
-        } 
+        }
     }
 
     private static Matrix<N3, N1> getSTD() {
