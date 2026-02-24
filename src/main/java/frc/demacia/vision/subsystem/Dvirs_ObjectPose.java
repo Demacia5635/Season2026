@@ -27,10 +27,8 @@ public class Dvirs_ObjectPose {
     private Translation2d cameraToObject;
     private Translation2d robotToObject;
     private Translation2d fieldToObject;
+    private Translation2d previousPose;
 
-    private double tempsize =0;
-
-    
 
     public Dvirs_ObjectPose(Camera objectCam){
         this.objectCam = objectCam;
@@ -41,10 +39,18 @@ public class Dvirs_ObjectPose {
     public Translation2d giveBestTranslation(){
         if(isObjectDetected()){
             updateValues();
-            getDistance();
             getRobotToObjectFeildRel();
-            return getOriginToObject();
+            getOriginToObject();
+            if(previousPose != null && isPoseElegable(previousPose)){
+                return previousPose;
+            }
+            previousPose =fieldToObject;
+            return fieldToObject;
         }
+        else if(previousPose != null && isPoseElegable(previousPose)){
+            return previousPose;
+        }
+
         return Translation2d.kZero;
     }
 
@@ -80,5 +86,14 @@ public class Dvirs_ObjectPose {
             return fieldToObject;
         }
         return new Translation2d();
+    }
+
+    public boolean isPoseElegable(Translation2d pose){
+        double dist = Math.sqrt((Math.pow(pose.getX()-RobotCommon.currentRobotPose.getX(),2)+Math.pow(pose.getY()-RobotCommon.currentRobotPose.getY(),2)));
+        if(robotToObject != null){
+            double distFromCurretTarget = Math.sqrt((Math.pow(pose.getX()-fieldToObject.getX(),2)+Math.pow(pose.getY()-fieldToObject.getY(),2)));
+            return dist <0.2 && dist <3.3 && distFromCurretTarget> 7;
+        }
+        return dist <0.2 && dist <3.3;
     }
 }
