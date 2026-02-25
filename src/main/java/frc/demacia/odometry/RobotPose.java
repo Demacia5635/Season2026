@@ -88,25 +88,18 @@ public class RobotPose {
     public void addVisionMeasurement() {
         vision.updateValues();
 
-        Pose2d visionPose = vision.getPoseEstimation();
-        double timestamp = Timer.getFPGATimestamp() - 0.05;
-
         if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
             hasUpdatedQuestIntialPose = true;
-            quest.setQuestPose(new Pose3d(visionPose));
+            quest.setQuestPose(new Pose3d(vision.getPoseEstimation()));
         }
 
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
-        poseEstimator.addVisionMeasurement(visionPose, timestamp);
+        poseEstimator.addVisionMeasurement(vision.getPoseEstimation(), Timer.getFPGATimestamp() - 0.05);
     }
 
     public void addQuestMeasurement() {
-
-        Pose2d questPose = quest.getRobotPose2d();
-        double timestamp = Timer.getFPGATimestamp() - 0.05;
-
         poseEstimator.setVisionMeasurementStdDevs(questSTD);
-        poseEstimator.addVisionMeasurement(questPose, timestamp);
+        poseEstimator.addVisionMeasurement(quest.getRobotPose2d(), Timer.getFPGATimestamp() - 0.05);
 
     }
 

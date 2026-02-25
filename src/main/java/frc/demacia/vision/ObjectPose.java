@@ -175,9 +175,9 @@ public class ObjectPose{
    */
   public Translation2d getRobotToObject() {
     cameraToObject = new Translation2d(getDistcameraToObject(), Rotation2d.fromDegrees(camToObjectYaw));
-    ; LogManager.log(cameraToObject + " camera to object");
+    // LogManager.log(cameraToObject + " camera to object");
     robotToObject = new Translation2d(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
-     LogManager.log(robotToObject + "robot to object");
+    // LogManager.log(robotToObject + "robot to object");
     return robotToObject;
   }
 

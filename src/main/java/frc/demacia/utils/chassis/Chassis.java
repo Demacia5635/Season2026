@@ -446,6 +446,8 @@ public class Chassis extends SubsystemBase {
 
     private boolean hasVisionUpdated = false;
 
+    OdometryObservation observation;
+
     @Override
     public void periodic() {
         // visionFusePoseEstimation = visionFuse.getPoseEstimation();
@@ -477,7 +479,7 @@ public class Chassis extends SubsystemBase {
 
         updateCommon();
 
-        OdometryObservation observation = new OdometryObservation(
+        observation = new OdometryObservation(
                 Timer.getFPGATimestamp(),
                 getGyroAngle(),
                 getModulePositions());

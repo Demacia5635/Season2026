@@ -199,7 +199,7 @@ public class RobotContainer implements Sendable {
         (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
   }
 
-  static public void updateCommon() {
+  public static void updateCommon() {
     Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
     RobotCommon.currentAngleFromTarget = currentPoseFromHub.getAngle().getRadians();

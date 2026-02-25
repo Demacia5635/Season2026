@@ -25,7 +25,7 @@ public class DriveCommand extends Command {
   private ChassisSpeeds speeds;
   private boolean precisionMode;
   private double maxVelocityAutoIntake = 3;
-  private final Translation2d chassisToIntakeOffset = new Translation2d(0.25, 0);
+  private final Translation2d chassisToIntakeOffset = new Translation2d(0.25, -0.08);
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
@@ -98,29 +98,18 @@ public class DriveCommand extends Command {
               maxVelocityAutoIntake));
           Translation2d intakePosition = chassis.getPose().getTranslation()
               .plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
-          // SmartDashboard.putNumber("intakePositionX: ", intakePosition.getX());
-          // SmartDashboard.putNumber("intakePositionY: ", intakePosition.getY());
-          // SmartDashboard.putNumber("intakePfuelX: ", RobotCommon.fuelPosition.getX());
-          // SmartDashboard.putNumber("intakePfuelY: ", RobotCommon.fuelPosition.getY());
           Translation2d intakeToTarget = RobotCommon.fuelPosition.minus(intakePosition);
           double fuelDir = intakeToTarget.getAngle().minus(RobotCommon.robotAngle).getRadians();
-          SmartDashboard.putNumber("FuelDir: ", Math.toDegrees(fuelDir));
-          LogManager.log("fuelDir " + fuelDir);
+
           if (Math.abs(fuelDir * IntakeConstants.KP_ANGLE_ROBOT_ERROR) > Math.PI / 2) {
             fuelDir = 0;
           }
-          LogManager.log("driverVelocityVectorRobotRel " + driverVelocityVectorRobotRel + " wantedVxRobotRel " + wantedVxRobotRel + " intakeToTarget " + intakeToTarget + " fuelDir " + fuelDir);
           ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
               wantedVxRobotRel * Math.tan(IntakeConstants.KP_ANGLE_ROBOT_ERROR * fuelDir),
               0);
-          SmartDashboard.putNumber("yyyy", Math.tan(fuelDir) * intakeToTarget.getX());
-          SmartDashboard.putNumber("intakepAngletofix: ", fuelDir);
-          SmartDashboard.putNumber("intakepttargetx: ", intakeToTarget.getX());
-          SmartDashboard.putNumber("intakeptotargety: ", intakeToTarget.getY());
-          // -1.5707963267948966 Translation2d(X: -1.16, Y: -1.56) 0.3934561183461096P6
+
           chassis.setRobotRelVelocities(chassisWantSpeeds);
-          LogManager
-              .log("DIs: " + intakeToTarget.getNorm() + " angle: " + intakeToTarget.getAngle());
+
         } else {
           driveByJoystick();
         }

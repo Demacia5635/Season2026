@@ -122,7 +122,7 @@ public class ShooterCommand extends Command {
         .angleModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians());
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
-    shooter.setFeederPower(0.4);
+   if(RobotCommon.isReady()) shooter.setFeederPower(0.4);
   }
 
   ChassisSpeeds robotSpeeds;

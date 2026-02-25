@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isReady() {
-    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(2) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.7;
+    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.3;
   }  
 
   // public boolean chassisSpeedCeack(){

@@ -43,8 +43,7 @@ public class RobotCommon {
     public static double fuelTime = 0;
 
     public static boolean isReady(){
-        return true;
-        // return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+        return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
     }
 
     public static Command changeState(RobotStates newState) {
