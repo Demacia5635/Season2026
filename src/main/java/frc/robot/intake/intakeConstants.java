@@ -69,5 +69,5 @@ public class IntakeConstants {
     .withInvert(false);
 
     //auto intake
-    public static final double KP_ANGLE_ROBOT_ERROR = 1;
+    public static final double KP_ANGLE_ROBOT_ERROR = 1.2;
 }
