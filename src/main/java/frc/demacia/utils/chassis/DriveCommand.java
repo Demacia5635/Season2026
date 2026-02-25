@@ -25,7 +25,7 @@ public class DriveCommand extends Command {
   private ChassisSpeeds speeds;
   private boolean precisionMode;
   private double maxVelocityAutoIntake = 3;
-  private final Translation2d chassisToIntakeOffset = new Translation2d(0.3, 0);
+  private final Translation2d chassisToIntakeOffset = new Translation2d(0.25, 0);
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
@@ -113,6 +113,7 @@ public class DriveCommand extends Command {
           ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
               wantedVxRobotRel * Math.tan(IntakeConstants.KP_ANGLE_ROBOT_ERROR * fuelDir),
               0);
+          SmartDashboard.putNumber("yyyy", Math.tan(fuelDir) * intakeToTarget.getX());
           SmartDashboard.putNumber("intakepAngletofix: ", fuelDir);
           SmartDashboard.putNumber("intakepttargetx: ", intakeToTarget.getX());
           SmartDashboard.putNumber("intakeptotargety: ", intakeToTarget.getY());
