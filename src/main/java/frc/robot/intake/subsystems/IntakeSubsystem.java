@@ -37,6 +37,10 @@ public class IntakeSubsystem extends SubsystemBase {
     motorIntake.setDuty(pow);
   }
 
+  public boolean isCanIntake(){
+    return motorIntake.getCurrentCurrent() < 20;
+  }
+
   public void stopIntake() {
     motorIntake.stop();
   }

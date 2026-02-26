@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,6 +12,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.leds.LedStrip;
 import frc.robot.RobotCommon.RobotStates;
+import frc.robot.RobotCommon.Shifts;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.intake.subsystems.IntakeSubsystem;
@@ -18,18 +21,22 @@ import frc.robot.intake.subsystems.ShinuaSubsystem;
 public class StateManager extends SubsystemBase {
 
     private static StateManager instance;
+
     public static void initalize(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem,
             Turret turret,
             Shooter shooter, CommandController driverController, LedStrip leds) {
         if (instance == null)
             instance = new StateManager(chassis, intake, shinuaSubsystem, turret, shooter, driverController, leds);
     }
+
     public static StateManager getInstance() {
         return instance;
     }
+
     public static void setInstance(StateManager instance) {
         StateManager.instance = instance;
     }
+
     private final Chassis chassis;
 
     private final IntakeSubsystem intake;
@@ -41,9 +48,12 @@ public class StateManager extends SubsystemBase {
 
     private final LedStrip leds;
 
-    public boolean isActivated;
+    public boolean isStateChangeActivated;
 
     public boolean isAutoIntakeManual;
+    private Timer timer;
+    private boolean isRedWonAuto;
+    private int shiftNum;
 
     private StateManager(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem, Turret turret,
             Shooter shooter, CommandController driverController, LedStrip ledStrip) {
@@ -56,8 +66,13 @@ public class StateManager extends SubsystemBase {
         this.driverController = driverController;
         this.leds = ledStrip;
 
-        this.isActivated = false;
+        this.isStateChangeActivated = false;
         this.isAutoIntakeManual = false;
+
+        RobotCommon.currentShift = Shifts.Disable;
+        this.isRedWonAuto = true;
+        this.timer = new Timer();
+        this.shiftNum = 0;
 
         setName("State Manager");
         SmartDashboard.putData(this);
@@ -81,18 +96,71 @@ public class StateManager extends SubsystemBase {
         }
         chooser.onChange(this::onChange);
         chooser.initSendable(builder);
-        builder.addBooleanProperty("Is Activated", this::isActivated, this::setActivated);
+        builder.addBooleanProperty("Is Activated", this::isStateChangeActivated, this::setStateChangeActivated);
         builder.addBooleanProperty("Is Auto Intake Activated", this::isAutoIntake, this::setAutoIntakeManual);
+        builder.addDoubleProperty("Time left", this::getTimeLeft, null);
+    }
+
+    private double getTimeLeft() {
+        switch (shiftNum) {
+            case 0:
+                return 20 - timer.get();
+            case 1:
+                return 10 - timer.get();
+            case 6:
+                return 30 - timer.get();
+        
+            default:
+                return 25 - timer.get();
+
+        }
+    }
+
+    private void updateShift() {
+        if (RobotCommon.currentShift == Shifts.Disable && RobotState.isEnabled() && RobotState.isAutonomous()) {
+            RobotCommon.changeShift(Shifts.Auto);
+            timer.start();
+            shiftNum = 0;
+        } else if (RobotCommon.currentShift == Shifts.Auto && RobotState.isTeleop()) {
+            RobotCommon.changeShift(Shifts.Transition);
+            shiftNum = 1;
+            timer.reset();
+            timer.start();
+        } else if (RobotCommon.currentShift == Shifts.Transition && timer.hasElapsed(10)) {
+            RobotCommon.changeShift(isRedWonAuto && RobotCommon.isRed ? Shifts.Active : Shifts.Inactive);
+            timer.reset();
+            shiftNum = 2;
+        } else if (RobotCommon.currentShift == Shifts.Active && timer.hasElapsed(25) && shiftNum != 5) {
+            RobotCommon.currentShift = Shifts.Inactive;
+            timer.reset();
+            shiftNum++;
+        } else if (RobotCommon.currentShift == Shifts.Inactive && timer.hasElapsed(25) && shiftNum != 5) {
+            RobotCommon.currentShift = Shifts.Active;
+            timer.reset();
+            shiftNum++;
+        } else if (shiftNum == 5 && timer.hasElapsed(25)) {
+            RobotCommon.currentShift = Shifts.Endgame;
+            shiftNum = 6;
+            timer.reset();
+        }
+    }
+
+
+    public boolean isCanIntake(){
+        return intake.isCanIntake();
     }
 
     @Override
     public void periodic() {
-        if (isActivated) {
+        updateShift();
+
+        if (isStateChangeActivated) {
             if (isOnTrench())
                 RobotCommon.changeState(RobotStates.Trench);
             else if (isClimb())
                 RobotCommon.changeState(RobotStates.Climb);
             else if (isAutoIntakeManual && isAutoIntake())
+                if(isCanIntake())
                 if (isHub())
                     RobotCommon.changeState(RobotStates.HubWithAutoIntake);
                 else if (isDelivery())
@@ -105,9 +173,18 @@ public class StateManager extends SubsystemBase {
                 RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
             else
                 RobotCommon.changeState(RobotStates.DriveWithIntake);
+            else
+                if(isHub())
+                    RobotCommon.changeState(RobotStates.Hub);
+                else if(isDelivery())
+                    RobotCommon.changeState(RobotStates.Delivery);
+                else
+                    RobotCommon.changeState(RobotStates.Drive);
+                }
+            }
 
-        }
-    }
+    
+
 
     public Chassis getChassis() {
         return chassis;
@@ -137,17 +214,17 @@ public class StateManager extends SubsystemBase {
         return leds;
     }
 
-    public boolean isActivated() {
-        return isActivated;
+    public boolean isStateChangeActivated() {
+        return isStateChangeActivated;
     }
 
-    public void setActivated(boolean isActivated) {
-        this.isActivated = isActivated;
+    public void setStateChangeActivated(boolean isActivated) {
+        this.isStateChangeActivated = isActivated;
     }
 
     private void onChange(RobotStates state) {
         RobotCommon.changeState(state);
-        isActivated = false;
+        isStateChangeActivated = false;
     }
 
     private boolean isOnTrench() {

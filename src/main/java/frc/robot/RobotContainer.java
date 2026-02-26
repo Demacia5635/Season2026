@@ -160,13 +160,13 @@ public class RobotContainer implements Sendable {
     // turret.setDefaultCommand(new TurretFollow(turret,
     // Field.HUB(true).getCenter().getTranslation(), chassis));
 
-    driverController.downButton().onTrue(RobotCommon.changeState(RobotStates.HubWithAutoIntake));
-    driverController.upButton().onTrue(RobotCommon.changeState(RobotStates.DriveAutoIntake));
-    driverController.rightButton().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake));
+    driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithAutoIntake));
+    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveAutoIntake));
+    driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithAutoIntake));
 
-    driverController.povDown().onTrue(RobotCommon.changeState(RobotStates.HubWithoutAutoIntake));
-    driverController.povUp().onTrue(RobotCommon.changeState(RobotStates.Drive));
-    driverController.povRight().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake));
+    driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithoutAutoIntake));
+    driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
+    driverController.povRight().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithoutAutoIntake));
     // new Trigger(() -> driverController.rightBumper().getAsBoolean() || driverController.getRightTrigger(0.2).getAsBoolean() || driverController.getLeftTrigger(0.2).getAsBoolean())
     //     .onTrue(new InstantCommand(() -> {
     //       switch (RobotCommon.currentState) {
@@ -192,7 +192,7 @@ public class RobotContainer implements Sendable {
     //           break;
     //       }
     //     }).ignoringDisable(true));
-    driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.Idle));
+    driverController.rightBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
 
     SmartDashboard.putData("Auto Drive",
         new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
