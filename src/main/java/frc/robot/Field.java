@@ -7,47 +7,47 @@ public final class Field {
     public static final double FIELD_LENGTH = 16.533114; // 54 feet
     public static final double FIELD_WIDTH = 8.069263; // 27 feet
 
-    public Rectangle2d HUMAN_PLAYER_STATION(boolean isRed){
+    public static Rectangle2d HUMAN_PLAYER_STATION(boolean isRed){
         if(isRed) return Red.HUMAN_PLAYER_STATION;
         return Blue.HUMAN_PLAYER_STATION;
     }
 
-    public Rectangle2d CLIMB(boolean isRed){
+    public static Rectangle2d CLIMB(boolean isRed){
         if(isRed) return Red.CLIMB;
         return Blue.CLIMB;
     }
 
-    public Rectangle2d DEPOT_OUTLINE(boolean isRed){
+    public static Rectangle2d DEPOT_OUTLINE(boolean isRed){
         if(isRed) return Red.DEPOT_OUTLINE;
         return Blue.DEPOT_OUTLINE;
     }
 
-    public Rectangle2d DEPOT_INNER(boolean isRed){
+    public static Rectangle2d DEPOT_INNER(boolean isRed){
         if(isRed) return Red.DEPOT_INNER;
         return Blue.DEPOT_INNER;
     }
 
-    public Rectangle2d ALLIANCE_LINE(boolean isRed){
+    public static Rectangle2d ALLIANCE_LINE(boolean isRed){
         if(isRed) return Red.ALLIANCE_LINE;
         return Blue.ALLIANCE_LINE;
     }
 
-    public Rectangle2d UPPER_TRENCH(boolean isRed){
+    public static Rectangle2d UPPER_TRENCH(boolean isRed){
         if(isRed) return Red.UPPER_TRENCH;
         return Blue.UPPER_TRENCH;
     }
 
-    public Rectangle2d LOWER_TRENCH(boolean isRed){
+    public static Rectangle2d LOWER_TRENCH(boolean isRed){
         if(isRed) return Red.LOWER_TRENCH;
         return Blue.LOWER_TRENCH;
     }
 
-    public Rectangle2d UPPER_BUMP(boolean isRed){
+    public static Rectangle2d UPPER_BUMP(boolean isRed){
         if(isRed) return Red.UPPER_BUMP;
         return Blue.UPPER_BUMP_LOWER_RIGHT;
     }
 
-    public Rectangle2d LOWER_BUMP(boolean isRed){
+    public static Rectangle2d LOWER_BUMP(boolean isRed){
         if(isRed) return Red.LOWER_BUMP;
         return Blue.LOWER_BUMP;
     }

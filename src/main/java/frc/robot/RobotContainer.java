@@ -82,6 +82,7 @@ public class RobotContainer implements Sendable {
     turret = Turret.getInstance();
     ballCamera = new Dvirs_ObjectPose(
         new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
+    StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
