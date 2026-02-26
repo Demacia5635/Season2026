@@ -161,25 +161,25 @@ public class StateManager extends SubsystemBase {
                 RobotCommon.changeState(RobotStates.Climb);
             else if (isAutoIntakeManual && isAutoIntake())
                 if(isCanIntake())
-                if (isHub())
-                    RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+                    if (isHub())
+                        RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+                    else if (isDelivery())
+                        RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+                    else
+                        RobotCommon.changeState(RobotStates.DriveAutoIntake);
+                else if (isHub())
+                    RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
                 else if (isDelivery())
-                    RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+                    RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
                 else
-                    RobotCommon.changeState(RobotStates.DriveAutoIntake);
-            else if (isHub())
-                RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
-            else if (isDelivery())
-                RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
-            else
-                RobotCommon.changeState(RobotStates.DriveWithIntake);
-            else
-                if(isHub())
-                    RobotCommon.changeState(RobotStates.Hub);
-                else if(isDelivery())
-                    RobotCommon.changeState(RobotStates.Delivery);
+                    RobotCommon.changeState(RobotStates.DriveWithIntake);
                 else
-                    RobotCommon.changeState(RobotStates.Drive);
+                    if(isHub())
+                        RobotCommon.changeState(RobotStates.Hub);
+                    else if(isDelivery())
+                        RobotCommon.changeState(RobotStates.Delivery);
+                    else
+                        RobotCommon.changeState(RobotStates.Drive);
                 }
             }
 
