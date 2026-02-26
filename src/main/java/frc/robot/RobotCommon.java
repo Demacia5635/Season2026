@@ -14,7 +14,7 @@ public class RobotCommon {
     }
 
     public enum RobotStates {
-        Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake,
+        Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake, DriveWithIntake,
         Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test;
     }
 

@@ -115,7 +115,7 @@ public class RobotPose {
         // // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
         // && vision.isSeeTagWithDistance());
 
-        return vision.isSeeTag();
+        return vision.isSeeTag() && Turret.getInstance().hasCalibrated();
 
     }
 

@@ -80,8 +80,8 @@ public class RobotContainer implements Sendable {
     // climb = new Climb();\
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
-    ballCamera = new Dvirs_ObjectPose(new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false,true));
-
+    ballCamera = new Dvirs_ObjectPose(
+        new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -166,7 +166,31 @@ public class RobotContainer implements Sendable {
     driverController.povDown().onTrue(RobotCommon.changeState(RobotStates.HubWithoutAutoIntake));
     driverController.povUp().onTrue(RobotCommon.changeState(RobotStates.Drive));
     driverController.povRight().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake));
-
+    // new Trigger(() -> driverController.rightBumper().getAsBoolean() || driverController.getRightTrigger(0.2).getAsBoolean() || driverController.getLeftTrigger(0.2).getAsBoolean())
+    //     .onTrue(new InstantCommand(() -> {
+    //       switch (RobotCommon.currentState) {
+    //         case DeliveryWithAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
+    //           break;
+    //         case DeliveryWithoutAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+    //           break;
+    //         case DriveAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DriveWithIntake);
+    //           break;
+    //         case DriveWithIntake:
+    //           RobotCommon.changeState(RobotStates.DriveAutoIntake);
+    //           break;
+    //         case HubWithAutoIntake:
+    //           RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
+    //           break;
+    //         case HubWithoutAutoIntake:
+    //           RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //     }).ignoringDisable(true));
     driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.Idle));
 
     SmartDashboard.putData("Auto Drive",
@@ -176,14 +200,17 @@ public class RobotContainer implements Sendable {
     // InstantCommand(()->climb.setLeverAngle(0)));
     // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     // SmartDashboard.putData("Reset Turret Position",
-    //     new InstantCommand(() -> turret.setEncoderPosition(0)).ignoringDisable(true));
+    // new InstantCommand(() ->
+    // turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
   private void setUserButton() {
-    // new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton())
-    //     .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
+    // new Trigger(() -> !DriverStation.isEnabled() &&
+    // RobotController.getUserButton())
+    // .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret,
+    // shooter).ignoringDisable(true));
   }
 
   @Override

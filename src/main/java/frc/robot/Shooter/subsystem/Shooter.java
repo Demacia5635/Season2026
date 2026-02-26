@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isReady() {
-    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.3;
+    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4;
   }  
 
   // public boolean chassisSpeedCeack(){
@@ -87,6 +87,8 @@ public class Shooter extends SubsystemBase {
     super.initSendable(builder);
     builder.addDoubleProperty("get angle", () -> Math.toDegrees(getHoodAngle()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
+    builder.addBooleanProperty("Is hood ready", ()->(Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1) ),null);
+    builder.addBooleanProperty("Is shooter ready", ()->(Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.5),null);
     
     // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
     // null);
@@ -184,31 +186,6 @@ public class Shooter extends SubsystemBase {
   /*this is set the feeder power */
   public void setFeederPower(double power) {
     feederMotor.set(power);
-  }
-
-  // public void setIndexerVel(double vel) {
-  // feederMotor.setVelocity(vel);
-  // }
-  /**this funcsan is to see if the shooter can shoot*/
-  public boolean canShoot() {
-    // double norm = RobotContainer.chassis.getVelocityAsVector().getNorm();
-    // if (norm > 0.3)
-
-    // LogManager.log("norm: " + norm + " is hood ready: "
-    // + (Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 0.3)
-    // + " is flywheel ready: " +
-    // (Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math
-    // .toRadians(0.5))
-    // + " is pointing at target: " + RobotContainer.chassis.isPointingAtTarget());
-    return isShooterReady();
-    // norm < 2 &&
-    // && RobotContainer.chassis.i
-  }
-
-  /**this funcsan is to see if the shooter ready */
-  public boolean isShooterReady() {
-    return Math.abs(shooterMotor.getClosedLoopError().getValueAsDouble()) < 1 &&
-        Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < Math.toRadians(1);
   }
 
   /**this funcsan is to stop the shooter */

@@ -122,7 +122,10 @@ public class ShooterCommand extends Command {
         .angleModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians());
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
-   if(RobotCommon.isReady()) shooter.setFeederPower(0.4);
+   if(RobotCommon.isReady()) shooter.setFeederPower(0.6);
+   else{
+    shooter.setFeederPower(0);
+   }
   }
 
   ChassisSpeeds robotSpeeds;
@@ -145,7 +148,7 @@ public class ShooterCommand extends Command {
     switch (RobotCommon.currentState) {
       case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake:
         Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
-        hoodAngle = Math.toRadians(45);
+        hoodAngle = Math.toRadians(47);
         vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);

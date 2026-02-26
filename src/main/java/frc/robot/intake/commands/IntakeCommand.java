@@ -51,7 +51,7 @@ public class IntakeCommand extends Command {
 
     switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
                                         // Climb, GetOffClimb
-      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
+      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveWithIntake:
         // intake
         intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
 
