@@ -61,15 +61,6 @@ public class ShinuaCommand extends Command {
         builder.addDoubleProperty("Top Power", this::getTopPow, this::setTopPow);
     }
 
-    public void driveWithIntakePowers() {
-        shinua.setDutyIndexerFar(0.0);
-
-        shinua.setDutyIndexerClose(1);
-        // shinua.setDutyIndexerOnTop(-0.8);
-
-        // shinua.setPowerBattery(0.1);
-    }
-
     @Override
     public void initialize() {
         isDirectionUp = true;
@@ -89,16 +80,22 @@ public class ShinuaCommand extends Command {
                     shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                     shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                     shinua.setDutyIndexerOnTop(1);
-                    shinua.setPowerBattery(0.6);
+                    shinua.setPowerBattery(0.4);
                 } else {
-                    driveWithIntakePowers();
+                    shinua.setDutyIndexerClose(0.8);
+                    shinua.setDutyIndexerFar(0);
+                    shinua.setDutyIndexerOnTop(0);
+                    shinua.setPowerBattery(0);
                 }
 
                 break;
 
             case DriveAutoIntake:
+                shinua.setDutyIndexerClose(0.8);
+                shinua.setDutyIndexerFar(0);
+                shinua.setDutyIndexerOnTop(0);
+                shinua.setPowerBattery(0);
 
-                driveWithIntakePowers();
                 break;
 
             case Test:

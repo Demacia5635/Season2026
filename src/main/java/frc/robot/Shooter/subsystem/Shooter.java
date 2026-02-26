@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
+import frc.robot.RobotCommon;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.constants.ShooterConstans.ShooterState;
 
@@ -76,6 +78,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isReady() {
+    if (RobotCommon.currentState == RobotStates.DeliveryNotReady
+        || RobotCommon.currentState == RobotStates.DeliveryWithAutoIntake
+        || RobotCommon.currentState == RobotStates.DeliveryWithoutAutoIntake)
+      return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.8;
     return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4;
   }  
 

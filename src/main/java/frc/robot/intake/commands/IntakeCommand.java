@@ -51,9 +51,10 @@ public class IntakeCommand extends Command {
 
     switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
                                         // Climb, GetOffClimb
-      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveWithIntake:
+      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveWithIntake, DriveAutoIntake:
         // intake
-        intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+        if (!RobotCommon.hasDisabledIntake)
+          intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
 
         // indexers
 
@@ -64,12 +65,6 @@ public class IntakeCommand extends Command {
         // batteryPower = IntakeConstants.MAX_POWER;
         // }
         // shinuaSubsystem.setPowerBattery(batteryPower);
-        break;
-
-      case DriveAutoIntake:
-        // intake
-        intakeSubsystem.setDutyIntake(0.8);
-
         break;
       case Test:
         intakeSubsystem.setDutyIntake(power);

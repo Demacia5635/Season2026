@@ -15,7 +15,7 @@ public class RobotCommon {
 
     public enum RobotStates {
         Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake, DriveWithIntake,
-        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, Hub, Delivery;
+        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, HubNotReady, DeliveryNotReady;
     }
 
     public static RobotStates currentState = RobotStates.Drive;
@@ -41,6 +41,7 @@ public class RobotCommon {
     public static Shifts currentShift = Shifts.Auto;
     public static Translation2d fuelPosition = null;
     public static double fuelTime = 0;
+    public static boolean hasDisabledIntake = false;
 
     public static boolean isReady(){
         return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();

@@ -16,6 +16,7 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
@@ -122,10 +123,6 @@ public class ShooterCommand extends Command {
         .angleModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians());
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
-   if(RobotCommon.isReady()) shooter.setFeederPower(0.6);
-   else{
-    shooter.setFeederPower(0);
-   }
   }
 
   ChassisSpeeds robotSpeeds;
@@ -146,21 +143,22 @@ public class ShooterCommand extends Command {
         0.04);
 
     switch (RobotCommon.currentState) {
-      case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake:
+      case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryNotReady:
         Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
         hoodAngle = Math.toRadians(47);
         vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
+        if (RobotCommon.isReady()) shooter.setFeederPower(0.4);
         break;
 
-      case HubWithAutoIntake, HubWithoutAutoIntake:
+      case HubWithAutoIntake, HubWithoutAutoIntake, HubNotReady:
         robotSpeeds = RobotCommon.fieldRelativeSpeeds;
         nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
             0.04);
         turretPos = nextPose.getTranslation()
             .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(chassis.getPose().getRotation()));
-        toHub = Field.HUB(true).getCenter().getTranslation().minus(turretPos);
+        toHub = Field.HubRed.CENTER.minus(turretPos);
 
         // get the distance, heading and LUT valuse
         distance = toHub.getNorm();
@@ -170,12 +168,12 @@ public class ShooterCommand extends Command {
         double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
         double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
+        if (RobotCommon.isReady()) shooter.setFeederPower(0.7);
         setFlywheelAndHood(lutVel, lutHoodAngle, heading);
-
         break;
 
       case Trench:
-        shooter.setHoodAngle(Math.toRadians(45));
+        shooter.setHoodAngle(Math.toRadians(90));
         shooter.setFlywheelVel(10);
         break;
 

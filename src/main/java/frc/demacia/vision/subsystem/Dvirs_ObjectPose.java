@@ -84,25 +84,9 @@ public class Dvirs_ObjectPose extends SubsystemBase {
             SmartDashboard.putNumber("robotToCam.getY()", robotToCam.getY());
             SmartDashboard.putNumber("robotToFuelx", robotToFuel.getX());
             SmartDashboard.putNumber("robotToFuely", robotToFuel.getY());
-            Translation2d fuelPos = RobotCommon.currentRobotPose.getTranslation().
-                plus(robotToFuel.rotateBy(RobotCommon.robotAngle));
-            SmartDashboard.putNumber("FuelPosx", fuelPos.getX());
-            SmartDashboard.putNumber("FuelPosy", fuelPos.getY());
-            double x = fuelPos.getX();
-            double y = fuelPos.getY();
-            double n = 1;
-            for(int i = 3; i < previousPos.length; i++) {
-                previousPos[i-1] = previousPos[i];
-                if(previousPos[i] != null) {
-                    x += previousPos[i].getX();
-                    y += previousPos[i].getY();
-                    n += 1;
-                }
-            }
-            previousPos[previousPos.length-1] = fuelPos;
-            RobotCommon.fuelPosition = new Translation2d(x/n, y/n);
-            RobotCommon.fuelTime = Timer.getFPGATimestamp();
-            fuleField.setRobotPose(new Pose2d(fuelPos, Rotation2d.kZero));
+            RobotCommon.fuelPosition = robotToFuel;
+            // Translation2d fuelPos = RobotCommon.currentRobotPose.getTranslation().
+            //     plus(robotToFuel.rotateBy(RobotCommon.robotAngle));
         } else if(Timer.getFPGATimestamp() - RobotCommon.fuelTime > 0.1) {
             RobotCommon.fuelPosition = null;
         }

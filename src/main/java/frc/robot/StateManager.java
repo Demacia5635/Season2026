@@ -55,6 +55,8 @@ public class StateManager extends SubsystemBase {
     private boolean isRedWonAuto;
     private int shiftNum;
 
+    private Timer intakeCurrentTimer;
+
     private StateManager(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem, Turret turret,
             Shooter shooter, CommandController driverController, LedStrip ledStrip) {
         this.chassis = chassis;
@@ -74,6 +76,8 @@ public class StateManager extends SubsystemBase {
         this.timer = new Timer();
         this.shiftNum = 0;
 
+        this.intakeCurrentTimer = new Timer();
+
         setName("State Manager");
         SmartDashboard.putData(this);
     }
@@ -90,101 +94,71 @@ public class StateManager extends SubsystemBase {
     @SuppressWarnings("resource")
     public void initSendable(SendableBuilder builder) {
         SendableChooser<RobotStates> chooser = new SendableChooser<>();
-        chooser.setDefaultOption("Idle", RobotStates.Idle);
-        for (int i = 1; i < RobotStates.values().length; i++) {
+        chooser.setDefaultOption("Idle2", RobotStates.Idle);
+        for (int i = 0; i < RobotStates.values().length; i++) {
             chooser.addOption(RobotStates.values()[i].name(), RobotStates.values()[i]);
         }
         chooser.onChange(this::onChange);
         chooser.initSendable(builder);
         builder.addBooleanProperty("Is Activated", this::isStateChangeActivated, this::setStateChangeActivated);
-        builder.addBooleanProperty("Is Auto Intake Activated", this::isAutoIntake, this::setAutoIntakeManual);
+        builder.addBooleanProperty("Is Auto Intake Activated", this::isAutoIntakeManual, this::setAutoIntakeManual);
         builder.addDoubleProperty("Time left", this::getTimeLeft, null);
+        builder.addStringProperty("current state", () -> RobotCommon.currentState.name(), null);
     }
 
-    private double getTimeLeft() {
-        switch (shiftNum) {
-            case 0:
-                return 20 - timer.get();
-            case 1:
-                return 10 - timer.get();
-            case 6:
-                return 30 - timer.get();
-        
-            default:
-                return 25 - timer.get();
-
-        }
-    }
-
-    private void updateShift() {
-        if (RobotCommon.currentShift == Shifts.Disable && RobotState.isEnabled() && RobotState.isAutonomous()) {
-            RobotCommon.changeShift(Shifts.Auto);
-            timer.start();
-            shiftNum = 0;
-        } else if (RobotCommon.currentShift == Shifts.Auto && RobotState.isTeleop()) {
-            RobotCommon.changeShift(Shifts.Transition);
-            shiftNum = 1;
-            timer.reset();
-            timer.start();
-        } else if (RobotCommon.currentShift == Shifts.Transition && timer.hasElapsed(10)) {
-            RobotCommon.changeShift(isRedWonAuto && RobotCommon.isRed ? Shifts.Active : Shifts.Inactive);
-            timer.reset();
-            shiftNum = 2;
-        } else if (RobotCommon.currentShift == Shifts.Active && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.currentShift = Shifts.Inactive;
-            timer.reset();
-            shiftNum++;
-        } else if (RobotCommon.currentShift == Shifts.Inactive && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.currentShift = Shifts.Active;
-            timer.reset();
-            shiftNum++;
-        } else if (shiftNum == 5 && timer.hasElapsed(25)) {
-            RobotCommon.currentShift = Shifts.Endgame;
-            shiftNum = 6;
-            timer.reset();
-        }
-    }
-
-
-    public boolean isCanIntake(){
+    public boolean isCanIntake() {
+        intakeCurrentTimer.start();
         return intake.isCanIntake();
+    }
+
+    public void checkGameData() {
+        if (DriverStation.getGameSpecificMessage() != "") {
+            switch (DriverStation.getGameSpecificMessage()) {
+                case "R":
+                    isRedWonAuto = true;
+                    break;
+
+                case "B":
+                    isRedWonAuto = false;
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     @Override
     public void periodic() {
+        checkGameData();
         updateShift();
 
         if (isStateChangeActivated) {
             if (isOnTrench())
                 RobotCommon.changeState(RobotStates.Trench);
-            else if (isClimb())
-                RobotCommon.changeState(RobotStates.Climb);
-            else if (isAutoIntakeManual && isAutoIntake())
-                if(isCanIntake())
-                    if (isHub())
-                        RobotCommon.changeState(RobotStates.HubWithAutoIntake);
-                    else if (isDelivery())
-                        RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
-                    else
-                        RobotCommon.changeState(RobotStates.DriveAutoIntake);
-                else if (isHub())
-                    RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
-                else if (isDelivery())
-                    RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
-                else
-                    RobotCommon.changeState(RobotStates.DriveWithIntake);
-                else
-                    if(isHub())
-                        RobotCommon.changeState(RobotStates.Hub);
-                    else if(isDelivery())
-                        RobotCommon.changeState(RobotStates.Delivery);
-                    else
-                        RobotCommon.changeState(RobotStates.Drive);
-                }
-            }
-
-    
-
+            // else if (isClimb())
+            // RobotCommon.changeState(RobotStates.Climb);
+            if (!isCanIntake() && intakeCurrentTimer.hasElapsed(0.3))
+                RobotCommon.hasDisabledIntake = true;
+            if (isAutoIntakeManual && isAutoIntake())
+                if (isHub()) {
+                    RobotCommon.hasDisabledIntake = false;
+                    RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+                } else if (isDelivery()) {
+                    RobotCommon.hasDisabledIntake = false;
+                    RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+                } else
+                    RobotCommon.changeState(RobotStates.DriveAutoIntake);
+            else if (isHub()) {
+                RobotCommon.hasDisabledIntake = false;
+                RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
+            } else if (isDelivery()) {
+                RobotCommon.hasDisabledIntake = false;
+                RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
+            } else
+                RobotCommon.changeState(RobotStates.DriveWithIntake);
+        }
+    }
 
     public Chassis getChassis() {
         return chassis;
@@ -222,47 +196,127 @@ public class StateManager extends SubsystemBase {
         this.isStateChangeActivated = isActivated;
     }
 
+    private double getTimeLeft() {
+        switch (shiftNum) {
+            case 0:
+                return 20 - timer.get();
+            case 1:
+                return 10 - timer.get();
+            case 6:
+                return 30 - timer.get();
+
+            default:
+                return 25 - timer.get();
+
+        }
+    }
+
+    private void updateShift() {
+        if (RobotCommon.currentShift == Shifts.Disable && RobotState.isEnabled() && RobotState.isAutonomous()) {
+            RobotCommon.changeShift(Shifts.Auto);
+            timer.start();
+            shiftNum = 0;
+        } else if (RobotCommon.currentShift == Shifts.Auto && RobotState.isTeleop()) {
+            RobotCommon.changeShift(Shifts.Transition);
+            shiftNum = 1;
+            timer.reset();
+            timer.start();
+        } else if (RobotCommon.currentShift == Shifts.Transition && timer.hasElapsed(10)) {
+            RobotCommon.changeShift(isRedWonAuto && RobotCommon.isRed ? Shifts.Active : Shifts.Inactive);
+            timer.reset();
+            shiftNum = 2;
+        } else if (RobotCommon.currentShift == Shifts.Active && timer.hasElapsed(25) && shiftNum != 5) {
+            RobotCommon.currentShift = Shifts.Inactive;
+            timer.reset();
+            shiftNum++;
+        } else if (RobotCommon.currentShift == Shifts.Inactive && timer.hasElapsed(25) && shiftNum != 5) {
+            RobotCommon.currentShift = Shifts.Active;
+            timer.reset();
+            shiftNum++;
+        } else if (shiftNum == 5 && timer.hasElapsed(25)) {
+            RobotCommon.currentShift = Shifts.Endgame;
+            shiftNum = 6;
+            timer.reset();
+        }
+    }
+
     private void onChange(RobotStates state) {
         RobotCommon.changeState(state);
         isStateChangeActivated = false;
     }
 
     private boolean isOnTrench() {
-        return Field.LOWER_TRENCH(true).contains(RobotCommon.futureRobotPose.getTranslation())
-                || Field.UPPER_TRENCH(true).contains(RobotCommon.futureRobotPose.getTranslation())
-                || Field.LOWER_TRENCH(false).contains(RobotCommon.futureRobotPose.getTranslation())
-                || Field.UPPER_TRENCH(false).contains(RobotCommon.futureRobotPose.getTranslation());
-
+        return (RobotCommon.futureRobotPose.getX() > Field.TrenchRedAudience.X_FRONT
+                && RobotCommon.futureRobotPose.getX() < Field.TrenchRedAudience.X_BACK)
+                || (RobotCommon.currentRobotPose.getX() > Field.TrenchRedAudience.X_FRONT
+                        && RobotCommon.currentRobotPose.getX() < Field.TrenchRedAudience.X_BACK)
+                || (RobotCommon.futureRobotPose.getX() < Field.TrenchBlueAudience.X_FRONT
+                        && RobotCommon.futureRobotPose.getX() > Field.TrenchBlueAudience.X_BACK)
+                || (RobotCommon.currentRobotPose.getX() < Field.TrenchBlueAudience.X_FRONT
+                        && RobotCommon.currentRobotPose.getX() > Field.TrenchBlueAudience.X_BACK);
     }
 
     private boolean isAutoIntake() {
-        if (RobotCommon.fuelPosition == null)
+        if (RobotCommon.fuelPosition == null || (driverController.getLeftX() == 0 && driverController.getLeftY() == 0))
             return false;
-        Translation2d robotToFuel = RobotCommon.fuelPosition.minus(RobotCommon.currentRobotPose.getTranslation());
         Translation2d controllerDirection = new Translation2d(driverController.getLeftX(),
                 -driverController.getLeftY());
-        return Math.abs(robotToFuel.getAngle().getRadians() - controllerDirection.getAngle().getRadians()) < Math
-                .toRadians(30);
+        return Math.abs(
+                RobotCommon.fuelPosition.rotateBy(RobotCommon.robotAngle).getAngle().getRadians()
+                        - controllerDirection.getAngle().getRadians()) < Math
+                                .toRadians(27)
+                && driverController.getLeftTrigger() < 0.2 && driverController.getRightTrigger() < 0.2;
     }
 
     private boolean isClimb() {
-        return !DriverStation.isAutonomous()
-                && Field.CLIMB(RobotCommon.isRed).contains(RobotCommon.futureRobotPose.getTranslation());
+        /* TODO: need to check climb position */
+        return !DriverStation.isAutonomous();
     }
 
     private boolean isHub() {
         if (RobotCommon.isRed)
-            return Field.ALLIANCE_LINE(true).getCenter().getX() < RobotCommon.currentRobotPose.getX();
+            return Field.HubRed.X_BACK < RobotCommon.currentRobotPose.getX();
         else
-            return Field.ALLIANCE_LINE(false).getCenter().getX() > RobotCommon.currentRobotPose.getX();
+            return Field.HubBlue.X_BACK > RobotCommon.currentRobotPose.getX();
     }
 
     private boolean isDelivery() {
         if (RobotCommon.isRed)
-            return Field.HUB(true).getCenter().getX() - Field.HUB(true).getXWidth() / 2 >= RobotCommon.currentRobotPose
+            return Field.HubRed.X_FRONT >= RobotCommon.currentRobotPose
                     .getX();
         else
-            return Field.HUB(false).getCenter().getX()
-                    + Field.HUB(false).getXWidth() / 2 <= RobotCommon.currentRobotPose.getX();
+            return Field.HubBlue.X_FRONT <= RobotCommon.currentRobotPose.getX();
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public boolean isRedWonAuto() {
+        return isRedWonAuto;
+    }
+
+    public void setRedWonAuto(boolean isRedWonAuto) {
+        this.isRedWonAuto = isRedWonAuto;
+    }
+
+    public int getShiftNum() {
+        return shiftNum;
+    }
+
+    public void setShiftNum(int shiftNum) {
+        this.shiftNum = shiftNum;
+    }
+
+    public Timer getIntakeCurrentTimer() {
+        return intakeCurrentTimer;
+    }
+
+    public void setIntakeCurrentTimer(Timer intakeCurrentTimer) {
+        this.intakeCurrentTimer = intakeCurrentTimer;
     }
 }

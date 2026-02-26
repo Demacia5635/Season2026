@@ -98,15 +98,18 @@ public class DriveCommand extends Command {
               maxVelocityAutoIntake));
           Translation2d intakePosition = chassis.getPose().getTranslation()
               .plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
-          Translation2d intakeToTarget = RobotCommon.fuelPosition.minus(intakePosition);
+          Translation2d intakeToTarget = RobotCommon.currentRobotPose.getTranslation().plus(RobotCommon.fuelPosition.rotateBy(RobotCommon.robotAngle)).minus(intakePosition);
           double fuelDir = intakeToTarget.getAngle().minus(RobotCommon.robotAngle).getRadians();
 
           if (Math.abs(fuelDir * IntakeConstants.KP_ANGLE_ROBOT_ERROR) > Math.PI / 2) {
             fuelDir = 0;
           }
+          double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+          double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
+
           ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
               wantedVxRobotRel * Math.tan(IntakeConstants.KP_ANGLE_ROBOT_ERROR * fuelDir),
-              0);
+              -velRot);
 
           chassis.setRobotRelVelocities(chassisWantSpeeds);
 
