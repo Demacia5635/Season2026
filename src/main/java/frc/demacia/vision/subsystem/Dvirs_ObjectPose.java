@@ -6,15 +6,25 @@ package frc.demacia.vision.subsystem;
 
 
 
+import java.time.Period;
+import java.util.Arrays;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.Camera;
 import frc.robot.RobotCommon;
 
 /** Add your docs here. */
-public class Dvirs_ObjectPose {
+public class Dvirs_ObjectPose extends SubsystemBase {
 
     private NetworkTable Table;
 
@@ -24,76 +34,77 @@ public class Dvirs_ObjectPose {
     private double camObjectPitch;
     private double dist;
 
-    private Translation2d cameraToObject;
-    private Translation2d robotToObject;
-    private Translation2d fieldToObject;
-    private Translation2d previousPose;
+    private Translation2d robotToCam;
+    private Translation2d[] previousPos = new Translation2d[3];
+    private boolean tv = false;
+    private Field2d fuleField = new Field2d();
+
+    private InterpolatingDoubleTreeMap lut = new InterpolatingDoubleTreeMap();
 
 
     public Dvirs_ObjectPose(Camera objectCam){
-        this.objectCam = objectCam;
-        Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
+        super();
+        lut.put(-8.0,1.30);
+        lut.put(-44.0,0.22);
+        lut.put(-26.0, 0.47);
+        lut.put(-16.67, 0.78);
+        lut.put(-12.0, 1.1);
+        lut.put(-30.0, 0.4);
+        lut.put(-25.0, 0.5);
+        lut.put(-20.0, 0.6);
+        // lut.put(-46.0 , 0.22);
+        // lut.put(-37.0 , 0.33);
+        // lut.put(-30.0 , 0.47);
+        // lut.put(-21.5 , 0.7);
+        // lut.put(-15.0 , 1.05);
+        // lut.put(-11.75 , 1.32);
 
+        Arrays.fill(previousPos, null);
+        this.objectCam = objectCam;
+          robotToCam = objectCam.getRobotToCamPosition().toTranslation2d();
+      
+        Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
+        SmartDashboard.putString("objectCam.getTableName()", objectCam.getTableName());
+        SmartDashboard.putData("Fuel", fuleField);
+       
     }
 
-    public Translation2d giveBestTranslation(){
-        if(isObjectDetected()){
-            updateValues();
-            getRobotToObjectFeildRel();
-            getOriginToObject();
-            if(previousPose != null && isPoseElegable(previousPose)){
-                return previousPose;
-            }
-            previousPose =fieldToObject;
-            return fieldToObject;
+    public void periodic() {
+        updateValues();
+        if(tv) {
+            double yaw = Math.toRadians(camObjectYaw);
+            double alpha = (camObjectPitch + objectCam.getPitch()) * Math.cos(yaw);
+            yaw += Math.toRadians(objectCam.getYaw());
+            // double alpha = Math.atan(Math.tan(Math.toRadians(camObjectPitch + objectCam.getPitch()))/Math.cos(yaw));
+            dist = lut.get(alpha);
+            SmartDashboard.putNumberArray("FuleCam", new Double[]{Math.toDegrees(yaw), alpha, dist});
+            SmartDashboard.putNumber("Fuel distance", dist);
+            Translation2d robotToFuel = new Translation2d(robotToCam.getX() + dist*Math.cos(yaw),
+                    robotToCam.getY() + dist * Math.sin(yaw));
+            SmartDashboard.putNumber("robotToCam.getY()", robotToCam.getY());
+            SmartDashboard.putNumber("robotToFuelx", robotToFuel.getX());
+            SmartDashboard.putNumber("robotToFuely", robotToFuel.getY());
+            RobotCommon.fuelPosition = robotToFuel;
+            // Translation2d fuelPos = RobotCommon.currentRobotPose.getTranslation().
+            //     plus(robotToFuel.rotateBy(RobotCommon.robotAngle));
+        } else if(Timer.getFPGATimestamp() - RobotCommon.fuelTime > 0.1) {
+            RobotCommon.fuelPosition = null;
         }
-        else if(previousPose != null && isPoseElegable(previousPose)){
-            return previousPose;
-        }
-
-        return Translation2d.kZero;
     }
 
     public boolean isObjectDetected(){
-        return Table.getEntry("tv").getDouble(0.0) != 0;
+        return tv;
     }
 
     public void updateValues(){
-        camObjectPitch = Table.getEntry("ty").getDouble(0.0);
-        camObjectYaw = (-Table.getEntry("tx").getDouble(0.0));
-    }
-
-    public double getDistance(){
-        double alpha = Math.abs(camObjectPitch + objectCam.getPitch());
-        dist = (Math.abs(objectCam.getHeight())/ (Math.tan(Math.toRadians(alpha))));
-        return dist;
-    }
-
-    public Translation2d getRobotToObjectFeildRel(){
-        cameraToObject = new Translation2d(getDistance(),
-            Rotation2d.fromDegrees(camObjectYaw + objectCam.getYaw()));
-        robotToObject = (objectCam.getRobotToTurretPosition().toTranslation2d().plus(cameraToObject))
-            .rotateBy(RobotCommon.robotAngle);
-        return robotToObject;
-    }
-    
-    public Translation2d getOriginToObject(){
-        
-        if (robotToObject != null) {
-
-            fieldToObject = RobotCommon.currentRobotPose.getTranslation().minus(getRobotToObjectFeildRel());
-
-            return fieldToObject;
+        tv = Table.getEntry("tv").getDouble(0.0) != 0;
+        if(tv) {
+            camObjectPitch = Table.getEntry("ty").getDouble(0.0);
+            camObjectYaw = (-Table.getEntry("tx").getDouble(0.0));
+        } else {
+            camObjectPitch = 0;
+            camObjectYaw = 0;
         }
-        return new Translation2d();
     }
 
-    public boolean isPoseElegable(Translation2d pose){
-        double dist = Math.sqrt((Math.pow(pose.getX()-RobotCommon.currentRobotPose.getX(),2)+Math.pow(pose.getY()-RobotCommon.currentRobotPose.getY(),2)));
-        if(robotToObject != null){
-            double distFromCurretTarget = Math.sqrt((Math.pow(pose.getX()-fieldToObject.getX(),2)+Math.pow(pose.getY()-fieldToObject.getY(),2)));
-            return dist <0.2 && dist <3.3 && distFromCurretTarget> 7;
-        }
-        return dist <0.2 && dist <3.3;
-    }
 }

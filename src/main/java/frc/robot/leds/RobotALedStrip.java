@@ -8,7 +8,7 @@ import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
 
 public class RobotALedStrip extends LedStrip {
-    
+
     public RobotALedStrip() {
         super("Robot A Strip", 14, RobotContainer.ledManager);
     }
@@ -31,7 +31,7 @@ public class RobotALedStrip extends LedStrip {
                 return Color.kBlue;
             case HubWithoutAutoIntake:
                 return Color.kAliceBlue;
-            case IDLE:
+            case Idle:
                 return Color.kPurple;
             case PrepareClimb:
                 return Color.kBeige;
@@ -45,6 +45,9 @@ public class RobotALedStrip extends LedStrip {
     }
 
     public void changeColor(RobotCommon.RobotStates state) {
-        CommandScheduler.getInstance().schedule(new RunCommand(() -> setBlink(getColorBasedOnState(state)), this).ignoringDisable(true).withTimeout(2).andThen(new RunCommand(() -> setColor(getColorBasedOnState(state)), this)));
+        // CommandScheduler.getInstance()
+        //         .schedule(new RunCommand(() -> setBlink(getColorBasedOnState(state)), this).ignoringDisable(true)
+        //                 .withTimeout(2).andThen(new RunCommand(() -> setColor(getColorBasedOnState(state)), this))
+        //                 .ignoringDisable(true));
     }
 }

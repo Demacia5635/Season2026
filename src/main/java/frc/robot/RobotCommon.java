@@ -6,17 +6,20 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+<<<<<<< HEAD
 import frc.robot.Shooter.subsystem.Shooter;
+=======
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 import frc.robot.Turret.Turret;
 
 public class RobotCommon {
     public enum Shifts {
-        Auto, Transition, Active, Inactive, Endgame
+        Auto, Transition, Active, Inactive, Endgame, Disable
     }
 
     public enum RobotStates {
-        HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake,
-        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, IDLE;
+        Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake, DriveWithIntake,
+        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, HubNotReady, DeliveryNotReady;
     }
 
     public static RobotStates currentState = RobotStates.Drive;
@@ -36,16 +39,38 @@ public class RobotCommon {
     public static double currentWantedTurretAngle = 0;
     public static double futureWantedTurretAngle = 0;
     public static double currentTurrentAngle = 0;
-    public static boolean isRed = false;
+    public static boolean isRed = true;
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
     public static Shifts currentShift = Shifts.Auto;
+    public static Translation2d fuelPosition = null;
+    public static double fuelTime = 0;
+    public static boolean hasDisabledIntake = false;
 
-    public static Command changeState(RobotStates newState) {
+    public static boolean isReady(){
+        return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+    }
+
+
+    public static void changeState(RobotStates newState) {
+        RobotContainer.leds.changeColor(newState);
+        currentState = newState;
+    }
+
+    public static void changeShift(Shifts newShift) {
+        currentShift = newShift;
+    }
+
+    public static Command changeStateCommand(RobotStates newState) {
         RobotContainer.leds.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
     }
+<<<<<<< HEAD
     public static boolean isReadyToShoot() {
         return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
+=======
+
+
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 }

@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
+import frc.robot.RobotCommon;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 
 /**
@@ -81,6 +83,7 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setNeutralMode(isBrake);
   }
 
+<<<<<<< HEAD
   private boolean isFlywheelReady() {
     return Math.abs(shooterMotor.getCurrentClosedLoopError()) < ShooterConstans.MAX_FLYWHEEL_VELOCITY_ERROR;
   }
@@ -88,6 +91,15 @@ public class Shooter extends SubsystemBase {
   private boolean isHoodReady() {
     return Math.abs(hoodMotor.getClosedLoopError().getValueAsDouble()) < ShooterConstans.MAX_HOOD_ANGLE_ERROR;
   }
+=======
+  public boolean isReady() {
+    if (RobotCommon.currentState == RobotStates.DeliveryNotReady
+        || RobotCommon.currentState == RobotStates.DeliveryWithAutoIntake
+        || RobotCommon.currentState == RobotStates.DeliveryWithoutAutoIntake)
+      return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.8;
+    return Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5) && Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4;
+  }  
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
   public boolean isReady(){
     return isFlywheelReady() && isHoodReady();
@@ -96,7 +108,16 @@ public class Shooter extends SubsystemBase {
     super.initSendable(builder);
     builder.addDoubleProperty("get angle", () -> Math.toDegrees(getHoodAngleAbsEncoder()), null);
     builder.addDoubleProperty("get Vel", () -> getShooterVelocity(), null);
+<<<<<<< HEAD
     builder.addDoubleProperty("hood angle", () -> getHoodAngleAbsEncoder(), null);
+=======
+    builder.addBooleanProperty("Is hood ready", ()->(Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1) ),null);
+    builder.addBooleanProperty("Is shooter ready", ()->(Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.5),null);
+    
+    // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
+    // null);
+    builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
     builder.addDoubleProperty("abs encoder", () -> (MathUtil.angleModulus(hoodEncoder.get()) * 0.5), null);
   }
@@ -195,7 +216,11 @@ public class Shooter extends SubsystemBase {
     feederMotor.set(power);
   }
 
+<<<<<<< HEAD
   /** this function is to stop the shooter */
+=======
+  /**this funcsan is to stop the shooter */
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   public void stop() {
     shooterMotor.stopMotor();
     hoodMotor.stopMotor();

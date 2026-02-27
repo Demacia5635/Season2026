@@ -4,11 +4,18 @@
 
 package frc.demacia.utils.chassis;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.log.LogManager;
+import frc.demacia.vision.ObjectPose;
+import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
 import frc.robot.RobotCommon;
+import frc.robot.intake.IntakeConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCommand extends Command {
@@ -17,14 +24,38 @@ public class DriveCommand extends Command {
   private double direction;
   private ChassisSpeeds speeds;
   private boolean precisionMode;
-  public PIDController pidController = new PIDController(1.5, 0.15, 0);
+  private double maxVelocityAutoIntake = 3;
+  private final Translation2d chassisToIntakeOffset = new Translation2d(0.25, -0.08);
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
     this.chassis = chassis;
     this.controller = controller;
     precisionMode = false;
+    SmartDashboard.putData("drive command", this);
     addRequirements(chassis);
+  }
+
+  private void driveByJoystick() {
+    direction = RobotCommon.isRed ? 1 : -1;
+    double joyX = controller.getLeftY() * direction;
+    double joyY = controller.getLeftX() * direction;
+
+    // Calculate r]otation from trigger axes
+    double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+
+    double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
+    double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
+    double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
+    if (precisionMode) {
+      velX /= 4;
+      velY /= 4;
+      velRot /= 4;
+    }
+
+    speeds = new ChassisSpeeds(velX, velY, -velRot);
+
+    chassis.setVelocities(speeds);
   }
 
   public void invertPrecisionMode() {
@@ -51,25 +82,46 @@ public class DriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    direction = RobotCommon.isRed ? 1 : -1;
-    double joyX = controller.getLeftY() * direction;
-    double joyY = controller.getLeftX() * direction;
+    // System.out.println("Yaw"+objectPose.getYaw());
+    // System.out.println("dist:"+objectPose.getDistance());
+    // LogManager.log("Yaw"+objectPose.getYaw());
+    // LogManager.log("dist:"+objectPose.getDistance());
 
-    // Calculate r]otation from trigger axes
-    double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+    switch (RobotCommon.currentState) {
+      case HubWithAutoIntake, DeliveryWithAutoIntake, DriveAutoIntake:
+        if (RobotCommon.fuelPosition != null) {
 
-    double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
-    double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
-    double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
-    if (precisionMode) {
-      velX /= 4;
-      velY /= 4;
-      velRot /= 4;
+          Translation2d driverVelocityVectorRobotRel = new Translation2d(controller.getLeftY(), controller.getLeftX())
+              .rotateBy(chassis.getGyroAngle().unaryMinus());
+          double wantedVxRobotRel = (Math.min(
+              Math.abs(driverVelocityVectorRobotRel.getX() * chassis.getConfig().maxDriveVelocity),
+              maxVelocityAutoIntake));
+          Translation2d intakePosition = chassis.getPose().getTranslation()
+              .plus(chassisToIntakeOffset.rotateBy(chassis.getGyroAngle()));
+          Translation2d intakeToTarget = RobotCommon.currentRobotPose.getTranslation().plus(RobotCommon.fuelPosition.rotateBy(RobotCommon.robotAngle)).minus(intakePosition);
+          double fuelDir = intakeToTarget.getAngle().minus(RobotCommon.robotAngle).getRadians();
+
+          if (Math.abs(fuelDir * IntakeConstants.KP_ANGLE_ROBOT_ERROR) > Math.PI / 2) {
+            fuelDir = 0;
+          }
+          double rot = controller.getLeftTrigger() - controller.getRightTrigger();
+          double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
+
+          ChassisSpeeds chassisWantSpeeds = new ChassisSpeeds(wantedVxRobotRel,
+              wantedVxRobotRel * Math.tan(IntakeConstants.KP_ANGLE_ROBOT_ERROR * fuelDir),
+              -velRot);
+
+          chassis.setRobotRelVelocities(chassisWantSpeeds);
+
+        } else {
+          driveByJoystick();
+        }
+        break;
+      default:
+        driveByJoystick();
+        break;
+
     }
-
-    speeds = new ChassisSpeeds(velX, velY, -velRot);
-
-    chassis.setVelocities(speeds);
   }
 
   // Called once the command ends or is interrupted.

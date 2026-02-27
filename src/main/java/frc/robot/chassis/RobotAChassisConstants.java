@@ -96,6 +96,7 @@ public final class RobotAChassisConstants {
                     .withBrake(IS_BRAKE)
                     .withInvert(IS_INVERT)
                     .withRampTime(RAMP_TIME)
+                    .withVolts(8)
                     .withPID(KP, KI, KD, KS, KV, KA, KG)
                     .withRadiansMotor(GEAR_RATIO);
         }

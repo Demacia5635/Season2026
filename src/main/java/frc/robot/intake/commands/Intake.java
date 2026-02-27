@@ -39,6 +39,8 @@ public class Intake {
     return new ChassisSpeeds(-wantedVxRobotRel, -wantedVxRobotRel * Math.tan(angleToFix), 0);
   }
 
+
+
   public boolean isSeeFuel() {
     return objectPose.getRobotToObject().minus(chassisToIntakeOffset).getNorm() > 0.03
         && objectPose.getDistcameraToObject() > 0.01;

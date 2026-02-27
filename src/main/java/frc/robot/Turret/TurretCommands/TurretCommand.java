@@ -41,7 +41,7 @@ public class TurretCommand extends Command{
             //     turret.setPositionMotion(turret.getTurretToHubAngle());
             //     break;
             
-            case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
+            case HubWithAutoIntake, HubWithoutAutoIntake, HubNotReady, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DeliveryNotReady:
                 turret.setPositionPID(RobotCommon.futureAngleFromTargetRobotRelative);
                 // frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
                 break;

@@ -85,16 +85,39 @@ public class ShinuaCommand extends Command {
     public void execute() {
         switch (RobotCommon.currentState) {
             case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
+<<<<<<< HEAD
                 if (RobotCommon.isReadyToShoot()) {
                     applyShootingValues();
                 } else {
                     applyIntakeValues();
                 }
+=======
+                if (RobotCommon.isReady()) {
+
+                    shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+                    shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+                    shinua.setDutyIndexerOnTop(1);
+                    shinua.setPowerBattery(0.4);
+                } else {
+                    shinua.setDutyIndexerClose(0.8);
+                    shinua.setDutyIndexerFar(0);
+                    shinua.setDutyIndexerOnTop(0);
+                    shinua.setPowerBattery(0);
+                }
+
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
                 break;
 
             case DriveAutoIntake:
+                shinua.setDutyIndexerClose(0.8);
+                shinua.setDutyIndexerFar(0);
+                shinua.setDutyIndexerOnTop(0);
+                shinua.setPowerBattery(0);
 
+<<<<<<< HEAD
                 applyIntakeValues();
+=======
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
                 break;
 
             case Test:

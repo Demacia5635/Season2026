@@ -11,11 +11,12 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.vision.TagPose;
-import frc.robot.Field;
-import frc.robot.Field.Red;
+import frc.robot.RobotCommon;
+import frc.robot.RobotCommon.RobotStates;
 
 import static frc.robot.Turret.TurretConstants.*;
 
@@ -34,9 +35,13 @@ public class Turret extends SubsystemBase {
   private LimitSwitch limitSwitchMax;
   TagPose tag;
 
+<<<<<<< HEAD
   Field field;
 
   Red redSide;
+=======
+  private double wantedAngle = 0;
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
   private boolean hasCalibrated = false;
 
@@ -53,6 +58,10 @@ public class Turret extends SubsystemBase {
     turretMotor.configPidFf(0);
     SmartDashboard.putData("reset motor position",
         new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
+<<<<<<< HEAD
+=======
+    LogManager.log("Turret Initalize");
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   }
 
   public void checkElectronics() {
@@ -72,6 +81,7 @@ public class Turret extends SubsystemBase {
     builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
     builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
+<<<<<<< HEAD
   }
 
   public double getTurretVelocity() {
@@ -81,19 +91,35 @@ public class Turret extends SubsystemBase {
   public boolean isReady() {
     return hasCalibrated && Math.abs(getTurretVelocity()) < Math.toRadians(5)
         && Math.abs(turretMotor.getCurrentClosedLoopError()) < MAX_ALLOWED_ANGLE_ERROR;
+=======
+    builder.addBooleanProperty("is turret ready", () -> isReady(), null);
+  }
+
+  public Translation2d getTurretPoseOnTheRobot() {
+    return TurretConstants.TURRET_POS;
+  }
+
+  public double getTurretVelocity() {
+    return turretMotor.getVelocity().getValueAsDouble();
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   }
 
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
+<<<<<<< HEAD
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
     }
+=======
+    this.wantedAngle = wantedPosition;
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     turretMotor.setPositionVoltage(pos);
   }
 
+<<<<<<< HEAD
   // public void setPositionMotion(double wantedPosition) {
   // if (!hasCalibrated) return;
   // if(Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
@@ -108,6 +134,39 @@ public class Turret extends SubsystemBase {
     turretMotor.set(power);
   }
 
+=======
+  public void setPositionMotion(double wantedPosition) {
+    if (!hasCalibrated)
+      return;
+    this.wantedAngle = wantedPosition;
+
+    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    turretMotor.setMotion(pos);
+  }
+
+  public double getTurretPose() {
+    return turretMotor.getCurrentPosition();
+  }
+
+  public void setPower(double power) {
+    // if (!hasCalibrated) return;
+    // if(getTurretPose() > Math.toRadians(110) || getTurretPose() <
+    // -Math.toRadians(110)) {
+    // turretMotor.stop();
+    // return;
+    // }
+    turretMotor.set(power);
+  }
+
+  public boolean isReady() {
+    if (RobotCommon.currentState == RobotStates.DeliveryNotReady
+        || RobotCommon.currentState == RobotStates.DeliveryWithAutoIntake
+        || RobotCommon.currentState == RobotStates.DeliveryWithoutAutoIntake)
+      return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
+    return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(2);
+  }
+
+>>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();
   }
