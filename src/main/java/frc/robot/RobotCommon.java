@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Shooter.subsystem.Shooter;
+import frc.robot.Turret.Turret;
 
 public class RobotCommon {
     public enum Shifts {
@@ -42,5 +44,8 @@ public class RobotCommon {
     public static Command changeState(RobotStates newState) {
         RobotContainer.leds.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
+    }
+    public static boolean isReadyToShoot() {
+        return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
 }

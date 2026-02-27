@@ -27,9 +27,6 @@ public class ShinuaCommand extends Command {
     /** Test power for battery */
     private double batteryPow;
 
-    private boolean isDirectionUp;
-    private Timer timer;
-
     /**
      * Creates a new ShinuaCommand
      * 
@@ -42,10 +39,6 @@ public class ShinuaCommand extends Command {
         leftPow = 0;
         rightPow = 0;
         batteryPow = 0;
-
-        isDirectionUp = true;
-
-        this.timer = new Timer();
 
         addRequirements(shinua);
 
@@ -63,9 +56,26 @@ public class ShinuaCommand extends Command {
 
     @Override
     public void initialize() {
-        isDirectionUp = true;
-        timer.stop();
-        timer.reset();
+    }
+
+    private void applyShootingValues() {
+
+        shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
+        shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+        shinua.setDutyIndexerOnTop(1);
+        shinua.setPowerBattery(0.6);
+
+    }
+
+    private void applyIntakeValues() {
+
+        shinua.setDutyIndexerFar(0.0);
+
+        shinua.setDutyIndexerClose(1);
+        shinua.setDutyIndexerOnTop(-0.8);
+
+        shinua.setPowerBattery(0.1);
+
     }
 
     /**
@@ -75,31 +85,20 @@ public class ShinuaCommand extends Command {
     public void execute() {
         switch (RobotCommon.currentState) {
             case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
-                timer.start();
-                // shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerOnTop(1);
-                shinua.setPowerBattery(0.6);
-                
+                if (RobotCommon.isReadyToShoot()) {
+                    applyShootingValues();
+                } else {
+                    applyIntakeValues();
+                }
                 break;
 
             case DriveAutoIntake:
 
-
-                timer.start();
-                shinua.setDutyIndexerFar(0.0);
-
-                shinua.setDutyIndexerClose(1);
-                shinua.setDutyIndexerOnTop(-0.8);
-                
-                shinua.setPowerBattery(0.1);
+                applyIntakeValues();
                 break;
 
             case Test:
 
-                timer.stop();
-                timer.reset();
                 shinua.setDutyIndexerClose(rightPow);
                 shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);
@@ -107,8 +106,6 @@ public class ShinuaCommand extends Command {
                 break;
 
             default:
-                timer.stop();
-                timer.reset();
                 shinua.stop();
                 break;
         }
@@ -117,8 +114,6 @@ public class ShinuaCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         shinua.stop();
-        timer.stop();
-        timer.reset();
     }
 
     @Override

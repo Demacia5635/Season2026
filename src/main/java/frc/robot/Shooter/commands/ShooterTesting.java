@@ -33,7 +33,7 @@ public class ShooterTesting extends Command {
   public ShooterTesting(Shooter shooter) {
     this.shooter = shooter;
     
-    wantedAngle = Math.toDegrees(shooter.getHoodAngleMotor());
+    wantedAngle = Math.toDegrees(shooter.getHoodAngle());
 
     addRequirements(shooter);
     SmartDashboard.putData("Shooter Testing Command", this);

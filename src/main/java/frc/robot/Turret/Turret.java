@@ -21,17 +21,18 @@ import static frc.robot.Turret.TurretConstants.*;
 
 public class Turret extends SubsystemBase {
   private static Turret instance;
+
   public static Turret getInstance() {
     if (instance == null)
       instance = new Turret();
     return instance;
   }
+
   private TalonFXMotor turretMotor;
 
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
   TagPose tag;
-
 
   Field field;
 
@@ -43,12 +44,15 @@ public class Turret extends SubsystemBase {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
     limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
-    SmartDashboard.putData("Turret",this);
-    SmartDashboard.putData("Turret/Motor/set coast", new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Turret/Motor/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Turret", this);
+    SmartDashboard.putData("Turret/Motor/set coast",
+        new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Turret/Motor/set brake",
+        new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
     turretMotor.configMotionMagic();
     turretMotor.configPidFf(0);
-    SmartDashboard.putData("reset motor position", new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
+    SmartDashboard.putData("reset motor position",
+        new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
   }
 
   public void checkElectronics() {
@@ -63,49 +67,46 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      super.initSendable(builder);
-      
-      builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
-      builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
-      builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
+    super.initSendable(builder);
+
+    builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
+    builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
+    builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
   }
 
-  public Translation2d getTurretPoseOnTheRobot(){
-    return TurretConstants.TURRET_POS;
+  public double getTurretVelocity() {
+    return turretMotor.getCurrentVelocity();
   }
 
-
-  public double getTurretVelocity(){
-    return turretMotor.getVelocity().getValueAsDouble();
+  public boolean isReady() {
+    return hasCalibrated && Math.abs(getTurretVelocity()) < Math.toRadians(5)
+        && Math.abs(turretMotor.getCurrentClosedLoopError()) < MAX_ALLOWED_ANGLE_ERROR;
   }
 
   public void setPositionPID(double wantedPosition) {
-    if (!hasCalibrated) return;
+    if (!hasCalibrated)
+      return;
+    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+      turretMotor.stop();
+      return;
+    }
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     turretMotor.setPositionVoltage(pos);
   }
 
-  public void setPositionMotion(double wantedPosition) {
-    if (!hasCalibrated) return;
-    
-    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
-    turretMotor.setMotion(pos);
-  }
-
-  public double getTurretPose(){
-    return turretMotor.getCurrentPosition();
-  }
-
+  // public void setPositionMotion(double wantedPosition) {
+  // if (!hasCalibrated) return;
+  // if(Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+  // turretMotor.stop();
+  // return;
+  // }
+  // double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE,
+  // MAX_TURRET_ANGLE);
+  // turretMotor.setMotion(pos);
+  // }
   public void setPower(double power) {
-    // if (!hasCalibrated) return;
-    // if(getTurretPose() > Math.toRadians(110) || getTurretPose() < -Math.toRadians(110)) {
-    //   turretMotor.stop();
-    //   return;
-    // }
     turretMotor.set(power);
   }
-
-  
 
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();

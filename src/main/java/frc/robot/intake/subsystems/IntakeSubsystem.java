@@ -12,17 +12,25 @@ import frc.robot.intake.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  //the motor value
+  // the motor value
   private TalonFXMotor motorIntake;
-  
+  private static IntakeSubsystem instance;
 
-  public IntakeSubsystem() {
+  private IntakeSubsystem() {
     motorIntake = new TalonFXMotor(IntakeConstants.INTAKE_CONFIG);
 
     SmartDashboard.putData("Intkae", this);
 
-    SmartDashboard.putData("Intake/Motor/set coast", new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Intake/Motor/set brake", new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Intake/Motor/set coast",
+        new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Intake/Motor/set brake",
+        new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+  }
+
+  public static IntakeSubsystem getInstance() {
+    if (instance == null)
+      instance = new IntakeSubsystem();
+    return instance;
   }
 
   public void checkElectronics() {

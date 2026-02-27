@@ -56,7 +56,7 @@ public class ShooterCommand extends Command {
   public ShooterCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
     this.shooter = shooter;
-    this.wantedAngle = Math.toDegrees(shooter.getHoodAngle());
+    this.wantedAngle = Math.toDegrees(shooter.getHoodAngleAbsEncoder());
     this.wantedVel = 0;
     this.wantedFeederPower = 0;
 

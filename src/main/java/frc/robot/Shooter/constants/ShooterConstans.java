@@ -118,16 +118,9 @@ public class ShooterConstans {
         public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.8619, 1.5023);
         public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.8619, 6.523);
 
-        public static final double shooterDistensFromChassis = 0; // in meters
-
-        public enum ShooterState {
-                IDLE,
-                SHOOTING,
-                SHOOTING_WITH_MOVEMENT,
-                DELIVERY,
-                TRENCH,
-                TEST;
-        }
 
         public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(0.165,  0.195);
+        public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; //m/s
+        public static final double MAX_HOOD_ANGLE_ERROR = Math.toRadians(0.8); //radians
+        
 }
