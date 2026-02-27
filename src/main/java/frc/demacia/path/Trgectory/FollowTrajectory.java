@@ -28,7 +28,7 @@ public class FollowTrajectory extends Command {
 
   @Override
   public void initialize() {
-    this.trajectory = new DemaciaTrajectory(points, RobotCommon.isRed, wantedAngle, chassis.getPose());
+    this.trajectory = new DemaciaTrajectory(points, false, wantedAngle, chassis.getPose());
 
   }
 
