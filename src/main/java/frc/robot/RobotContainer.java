@@ -34,6 +34,7 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
+import frc.robot.auto.DuchToBalls;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
@@ -251,7 +252,7 @@ public class RobotContainer implements Sendable {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
   }
 
 }
