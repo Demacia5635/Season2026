@@ -8,9 +8,11 @@ package frc.demacia.utils.chassis;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 // import edu.wpi.first.math.geometry.Pose3d;
@@ -182,6 +184,24 @@ public class Chassis extends SubsystemBase {
                 new SimpleMatrix(
                         new double[] { 0.03, 0.03, 99999999 })),
                 QUEST_STD);
+        
+        headingController.enableContinuousInput(-Math.PI, Math.PI);
+    }
+
+    private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
+    private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+
+    public void followTrajectory(SwerveSample sample) {
+        Pose2d pose = getPose();
+
+        ChassisSpeeds speeds = new ChassisSpeeds(
+            sample.vx + xController.calculate(pose.getX(), sample.x),
+            sample.vy + yController.calculate(pose.getY(), sample.y),
+            sample.heading + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+        );
+
+        setVelocities(speeds);
     }
 
     private void addStatus() {

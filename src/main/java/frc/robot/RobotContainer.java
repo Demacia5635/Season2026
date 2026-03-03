@@ -7,6 +7,7 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -104,6 +105,16 @@ public class RobotContainer implements Sendable {
     // SmartDashboard.putNumber("ball dist", ballCamera.getDistance());
 
     // Data.setFrequancyAll();
+
+    configureAuto();
+  }
+
+  private AutoFactory autoFactory;
+
+  private void configureAuto() {
+    /* TODO: Change alliace flipped to actual alliance */
+    autoFactory = new AutoFactory(() -> RobotCommon.currentRobotPose, chassis::resetPose, chassis::followTrajectory,
+        false, chassis);
   }
 
   public void addStatesToElasticForTesting() {
@@ -170,31 +181,33 @@ public class RobotContainer implements Sendable {
     driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithoutAutoIntake));
     driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
     driverController.povRight().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithoutAutoIntake));
-    // new Trigger(() -> driverController.rightBumper().getAsBoolean() || driverController.getRightTrigger(0.2).getAsBoolean() || driverController.getLeftTrigger(0.2).getAsBoolean())
-    //     .onTrue(new InstantCommand(() -> {
-    //       switch (RobotCommon.currentState) {
-    //         case DeliveryWithAutoIntake:
-    //           RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
-    //           break;
-    //         case DeliveryWithoutAutoIntake:
-    //           RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
-    //           break;
-    //         case DriveAutoIntake:
-    //           RobotCommon.changeState(RobotStates.DriveWithIntake);
-    //           break;
-    //         case DriveWithIntake:
-    //           RobotCommon.changeState(RobotStates.DriveAutoIntake);
-    //           break;
-    //         case HubWithAutoIntake:
-    //           RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
-    //           break;
-    //         case HubWithoutAutoIntake:
-    //           RobotCommon.changeState(RobotStates.HubWithAutoIntake);
-    //           break;
-    //         default:
-    //           break;
-    //       }
-    //     }).ignoringDisable(true));
+    // new Trigger(() -> driverController.rightBumper().getAsBoolean() ||
+    // driverController.getRightTrigger(0.2).getAsBoolean() ||
+    // driverController.getLeftTrigger(0.2).getAsBoolean())
+    // .onTrue(new InstantCommand(() -> {
+    // switch (RobotCommon.currentState) {
+    // case DeliveryWithAutoIntake:
+    // RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
+    // break;
+    // case DeliveryWithoutAutoIntake:
+    // RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+    // break;
+    // case DriveAutoIntake:
+    // RobotCommon.changeState(RobotStates.DriveWithIntake);
+    // break;
+    // case DriveWithIntake:
+    // RobotCommon.changeState(RobotStates.DriveAutoIntake);
+    // break;
+    // case HubWithAutoIntake:
+    // RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
+    // break;
+    // case HubWithoutAutoIntake:
+    // RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+    // break;
+    // default:
+    // break;
+    // }
+    // }).ignoringDisable(true));
     driverController.rightBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
 
     SmartDashboard.putData("Auto Drive",
@@ -212,9 +225,9 @@ public class RobotContainer implements Sendable {
 
   private void setUserButton() {
     new Trigger(() -> !DriverStation.isEnabled() &&
-    RobotController.getUserButton())
-    .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret,
-    shooter).ignoringDisable(true));
+        RobotController.getUserButton())
+        .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret,
+            shooter).ignoringDisable(true));
   }
 
   @Override
@@ -252,7 +265,8 @@ public class RobotContainer implements Sendable {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
+    return autoFactory.trajectoryCmd("test");
+    // return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
   }
 
 }
