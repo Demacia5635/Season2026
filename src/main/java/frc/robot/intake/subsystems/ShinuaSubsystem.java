@@ -4,20 +4,21 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.motors.SparkMaxMotor;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
 import frc.robot.intake.IntakeConstants;
 
 public class ShinuaSubsystem extends SubsystemBase {
-  private TalonSRXMotor motorIndexerClose;
-  private TalonSRXMotor motorIndexerFar;
+  private SparkMaxMotor motorIndexerClose;
+  private SparkMaxMotor motorIndexerFar;
   private TalonFXMotor motorBattery;
   private TalonFXMotor motorIndexerOnTop;
   private static ShinuaSubsystem instance;
 
   private ShinuaSubsystem() {
-    motorIndexerClose = new TalonSRXMotor(IntakeConstants.INDEXER_CLOSE_CONFIG);
-    motorIndexerFar = new TalonSRXMotor(IntakeConstants.INDEXER_FAR_CONFIG);
+    motorIndexerClose = new SparkMaxMotor(IntakeConstants.INDEXER_CLOSE_CONFIG);
+    motorIndexerFar = new SparkMaxMotor(IntakeConstants.INDEXER_FAR_CONFIG);
     motorIndexerOnTop = new TalonFXMotor(IntakeConstants.INDEXER_ON_TOP_CONFIG);
     motorBattery = new TalonFXMotor(IntakeConstants.BATTERY_CONFIG);
     setEncoderPositionBattery(IntakeConstants.MIN_POSITION);
