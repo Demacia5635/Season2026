@@ -6,10 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-<<<<<<< HEAD
 import frc.robot.Shooter.subsystem.Shooter;
-=======
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 import frc.robot.Turret.Turret;
 
 public class RobotCommon {
@@ -65,12 +62,7 @@ public class RobotCommon {
         RobotContainer.leds.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
     }
-<<<<<<< HEAD
     public static boolean isReadyToShoot() {
         return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
-=======
-
-
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 }

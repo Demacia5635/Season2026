@@ -1,15 +1,6 @@
 package frc.robot;
 
-<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.function.BiConsumer;
-import java.util.function.BooleanSupplier;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
-=======
 import edu.wpi.first.math.geometry.Translation2d;
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
@@ -17,13 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-<<<<<<< HEAD
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.demacia.utils.chassis.Chassis;
-import frc.robot.RobotCommon.RobotStates;
-import frc.robot.Shooter.subsystem.Shooter;
-import frc.robot.Turret.Turret;
-=======
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.leds.LedStrip;
@@ -33,18 +17,10 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
 public class StateManager extends SubsystemBase {
 
     private static StateManager instance;
-<<<<<<< HEAD
-    private boolean wantToAutoIntake = true;
-    private Chassis chassis;
-    private Shooter shooter;
-    private Turret turret;
-    private Rectangle2d trenchArea;
-=======
 
     public static void initalize(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem,
             Turret turret,
@@ -52,26 +28,11 @@ public class StateManager extends SubsystemBase {
         if (instance == null)
             instance = new StateManager(chassis, intake, shinuaSubsystem, turret, shooter, driverController, leds);
     }
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
     public static StateManager getInstance() {
         return instance;
     }
 
-<<<<<<< HEAD
-    public void setWantToAutoIntake() {
-        this.wantToAutoIntake = !wantToAutoIntake;
-    }
-
-    private RobotCommon.RobotStates lastState;
-
-    private StateManager() {
-        lastState = RobotCommon.RobotStates.IDLE;
-        this.shooter = Shooter.getInstance();
-        this.turret = Turret.getInstance();
-        this.trenchArea = RobotCommon.isRed ? .getRedTrenchArea() : Field.getInstance().getBlueTrenchArea();
-    
-=======
     public static void setInstance(StateManager instance) {
         StateManager.instance = instance;
     }
@@ -119,31 +80,12 @@ public class StateManager extends SubsystemBase {
 
         setName("State Manager");
         SmartDashboard.putData(this);
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     }
 
     public boolean isAutoIntakeManual() {
         return isAutoIntakeManual;
     }
 
-<<<<<<< HEAD
-    private void setWantedState(RobotCommon.RobotStates newState) {
-        RobotCommon.changeState(newState);
-    }
-
-    private boolean isInCenter(){
-
-        return RobotCommon.isRed ? chassis.getPose().getTranslation().getX() > trenchArea.getCenter().getTranslation().
-    }
-
-    private boolean isGoingToTrench() {
-        return trenchArea.contains(chassis.getPoseWithVelocity(0.5).getTranslation());
-    }
-
-    private boolean isAtAlliance(){
-        return RobotCommon.isRed ? chassis.getPose().getTranslation().getX() < Field.Red.ALLIANCE_LINE.getCenter().getTranslation().getX()
-        : chassis.getPose().getTranslation().getX() > Field.Blue.ALLIANCE_LINE.getCenter().getTranslation().getX();
-=======
     public void setAutoIntakeManual(boolean isAutoIntakeManual) {
         this.isAutoIntakeManual = isAutoIntakeManual;
     }
@@ -184,18 +126,10 @@ public class StateManager extends SubsystemBase {
                     break;
             }
         }
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     }
 
     @Override
     public void periodic() {
-<<<<<<< HEAD
-        if (lastState != RobotStates.Trench && isGoingToTrench()) {
-            setWantedState(RobotStates.Trench);
-            lastState = RobotStates.Trench;
-            return;
-        }
-=======
         checkGameData();
         updateShift();
 
@@ -384,6 +318,5 @@ public class StateManager extends SubsystemBase {
 
     public void setIntakeCurrentTimer(Timer intakeCurrentTimer) {
         this.intakeCurrentTimer = intakeCurrentTimer;
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     }
 }

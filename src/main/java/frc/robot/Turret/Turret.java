@@ -35,13 +35,7 @@ public class Turret extends SubsystemBase {
   private LimitSwitch limitSwitchMax;
   TagPose tag;
 
-<<<<<<< HEAD
-  Field field;
-
-  Red redSide;
-=======
   private double wantedAngle = 0;
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
   private boolean hasCalibrated = false;
 
@@ -58,10 +52,7 @@ public class Turret extends SubsystemBase {
     turretMotor.configPidFf(0);
     SmartDashboard.putData("reset motor position",
         new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
-<<<<<<< HEAD
-=======
     LogManager.log("Turret Initalize");
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   }
 
   public void checkElectronics() {
@@ -81,60 +72,24 @@ public class Turret extends SubsystemBase {
     builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
     builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
-<<<<<<< HEAD
   }
 
   public double getTurretVelocity() {
     return turretMotor.getCurrentVelocity();
   }
 
-  public boolean isReady() {
-    return hasCalibrated && Math.abs(getTurretVelocity()) < Math.toRadians(5)
-        && Math.abs(turretMotor.getCurrentClosedLoopError()) < MAX_ALLOWED_ANGLE_ERROR;
-=======
-    builder.addBooleanProperty("is turret ready", () -> isReady(), null);
-  }
-
-  public Translation2d getTurretPoseOnTheRobot() {
-    return TurretConstants.TURRET_POS;
-  }
-
-  public double getTurretVelocity() {
-    return turretMotor.getVelocity().getValueAsDouble();
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
-  }
-
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
-<<<<<<< HEAD
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
     }
-=======
     this.wantedAngle = wantedPosition;
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
     turretMotor.setPositionVoltage(pos);
   }
 
-<<<<<<< HEAD
-  // public void setPositionMotion(double wantedPosition) {
-  // if (!hasCalibrated) return;
-  // if(Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
-  // turretMotor.stop();
-  // return;
-  // }
-  // double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE,
-  // MAX_TURRET_ANGLE);
-  // turretMotor.setMotion(pos);
-  // }
-  public void setPower(double power) {
-    turretMotor.set(power);
-  }
-
-=======
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated)
       return;
@@ -166,7 +121,6 @@ public class Turret extends SubsystemBase {
     return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(2);
   }
 
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();
   }

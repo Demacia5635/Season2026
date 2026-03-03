@@ -80,12 +80,7 @@ public class RobotContainer implements Sendable {
     shooter = Shooter.getInstance();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
-<<<<<<< HEAD
-    // climb = new Climb();
-
-=======
-    // climb = new Climb();\
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
+    climb = new Climb();
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
     ballCamera = new Dvirs_ObjectPose(
@@ -167,13 +162,10 @@ public class RobotContainer implements Sendable {
     turret.setDefaultCommand(new TurretCommand(turret));
     // turret.setDefaultCommand(new TurretFollow(turret,
     // Field.HUB(true).getCenter().getTranslation(), chassis));
-<<<<<<< HEAD
-=======
 
     driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithAutoIntake));
     driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveAutoIntake));
     driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithAutoIntake));
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
 
     driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithoutAutoIntake));
     driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
@@ -208,25 +200,12 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("Auto Drive",
         new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
 
-<<<<<<< HEAD
-    driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.IDLE));
-
-    SmartDashboard.putData("Auto Drive",
-        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
-
-    // SmartDashboard.putData("lever to zero", new
-    // InstantCommand(()->climb.setLeverAngle(0)));
-    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
-    SmartDashboard.putData("Reset Turret Position",
-        new InstantCommand(() -> turret.setEncoderPosition(0)).ignoringDisable(true));
-=======
     // SmartDashboard.putData("lever to zero", new
     // InstantCommand(()->climb.setLeverAngle(0)));
     // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
     // SmartDashboard.putData("Reset Turret Position",
     // new InstantCommand(() ->
     // turret.setEncoderPosition(0)).ignoringDisable(true));
->>>>>>> 8ff21cabe5c5ee54e6c4b85728e09fcc6406e660
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
