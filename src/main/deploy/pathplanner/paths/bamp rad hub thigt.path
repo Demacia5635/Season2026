@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 10.677038461538462,
+        "y": 5.500153846153847
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 11.397987179487181,
+        "y": 5.546666666666668
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 13.409666666666666,
+        "y": 5.6862051282051285
+      },
+      "prevControl": {
+        "x": 12.525923076923076,
+        "y": 5.593179487179486
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "bamp",
+      "minWaypointRelativePos": 0.21532091097308576,
+      "maxWaypointRelativePos": 0.7267080745341626,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 0.4,
+        "y": 5.5
+      },
+      "rotationOffset": 45.0,
+      "minWaypointRelativePos": 0.2836438923395445,
+      "maxWaypointRelativePos": 0.7101449275362337,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -133.09084756700358
+  },
+  "reversed": false,
+  "folder": "rad rhgit",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -176.3086140135486
+  },
+  "useDefaultConstraints": true
+}
