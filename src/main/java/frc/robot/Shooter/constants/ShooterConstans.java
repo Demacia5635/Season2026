@@ -53,7 +53,7 @@ public class ShooterConstans {
 
         public static final Canbus SHOOTER_CANBUS = Canbus.Rio;
 
-        public static final int SHOOTER_MOTOR_ID = 51;
+        public static final int SHOOTER_MOTOR_ID = 50;
         public static final String SHOOTER_MOTOR_NAME = "Shooter/Flywheel";
 
         public static final double SHOOTER_KP = 2;
@@ -72,7 +72,7 @@ public class ShooterConstans {
                         .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
                         .withMeterMotor(1, 3 * 0.0254);
 
-        public static final int FEEDER_ID = 50;
+        public static final int FEEDER_ID = 52;
         public static final String FEEDER_NAME = "Shooter/Feeder";
 
         public static final double FEEDER_GEAR_RATIO = 1;
@@ -85,7 +85,7 @@ public class ShooterConstans {
                         .withVolts(8)
                         .withInvert(true);
 
-        public static final int HOOD_ID = 52;
+        public static final int HOOD_ID = 51;
         public static final String HOOD_NAME = "Shooter/Hood";
 
         public static final double HOOD_KP = 20;//0.65;
