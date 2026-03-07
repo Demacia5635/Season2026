@@ -111,9 +111,9 @@ public class ShooterConstans {
         public static final double MAX_ANGLE_HOOD = Math.toRadians(90d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(50d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 2;
+        public static final int HOOD_ENCODER_CHANNEL = 7;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = (Math.PI*0.5) - -0.673478925113312;
+        public static final double HOOD_OFFSET = 0;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

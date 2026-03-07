@@ -46,7 +46,7 @@ public class ShooterTesting extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    // TODO Auto-generated method stub
+    
     super.initSendable(builder);
     builder.addDoubleProperty("Wanted angle", () -> wantedAngle, (x) -> wantedAngle = x);
     builder.addDoubleProperty("Wanted flywheel vel", () -> wantedFlywheelVel, (x) -> wantedFlywheelVel = x);

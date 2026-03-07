@@ -102,7 +102,7 @@ public class Shooter extends SubsystemBase {
     // null);
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
-    builder.addDoubleProperty("abs encoder", () -> (MathUtil.angleModulus(hoodEncoder.get()) * 0.5), null);
+    builder.addDoubleProperty("abs encoder", () -> hoodEncoder.get(), null);
   }
 
   /**
