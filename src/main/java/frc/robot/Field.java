@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
  *
  * Perimeter type: WELDED
  *
- * ┌─────────────────────────────────────────────────────────────────────┐
  * │  COORDINATE SYSTEM (Welded Perimeter — matches field drawing origin) │
  * │                                                                      │
  * │  Origin: corner where Blue Alliance Wall meets Scoring Table rail    │
