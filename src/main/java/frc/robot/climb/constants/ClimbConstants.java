@@ -61,7 +61,7 @@ public class ClimbConstants {
                         .withRadiansMotor(LEVER_GEAR_RATIO);
 
         // the climb arm encoder
-        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(3, "climb encoder")
+        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(9, "climb encoder")
                         .withInvert(true);
 
         // constans to auto drive to tower
