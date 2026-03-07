@@ -15,7 +15,7 @@ public class IntakeConstants {
         public static final Canbus INTAKE_CANBUS = Canbus.Rio;
 
         // the motors max power
-        public static final double MAX_POWER = 0.8;
+        public static final double MAX_POWER = 1;
 
         // the motors max pose
         public static final double MAX_POSITION = 6;
@@ -64,7 +64,8 @@ public class IntakeConstants {
         public static final String INDEXER_CLOSE_NAME = "Indexer Close motor";
         public static final SparkMaxConfig INDEXER_CLOSE_CONFIG = new SparkMaxConfig(INDEXER_CLOSE_ID,
                         INDEXER_CLOSE_NAME)
-                        .withBrake(true).withInvert(false).withCurrent(15).withVolts(8);
+                        .withBrake(true).withInvert(true).withCurrent(15).withVolts(8);
+
 
         // indexer close value
         public static final int INDEXER_FAR_ID = 32;
