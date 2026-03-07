@@ -6,6 +6,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -121,6 +122,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         cfg.MotionMagic.MotionMagicAcceleration = config.maxAcceleration;
         cfg.MotionMagic.MotionMagicCruiseVelocity = config.maxVelocity;
         cfg.MotionMagic.MotionMagicJerk = config.maxJerk;
+        
         if(apply) {
             getConfigurator().apply(cfg.MotionMagic);
         }
@@ -261,6 +263,16 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     @Override
     public void setMotion(double position, double feedForward) {
         setControl(motionMagicVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
+        controlMode = ControlMode.MOTION;  
+    }
+
+    public void setMotionExpo(double position){
+        setMotionExpo(position, 0);
+    }
+
+    MotionMagicExpoVoltage motionMagicExpoVoltage = new MotionMagicExpoVoltage(0).withSlot(slot);
+    public void setMotionExpo(double position, double feedForward) {
+        setControl(motionMagicExpoVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
         controlMode = ControlMode.MOTION;  
     }
 
