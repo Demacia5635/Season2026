@@ -16,12 +16,10 @@ import frc.robot.Shooter.subsystem.Shooter;
 */
 public class FlywheelTesting extends Command {
   Shooter shooter;
-  CommandController controller;
   double wantedVel = 0;
 
-  public FlywheelTesting(Shooter shooter, CommandController controller) {
+  public FlywheelTesting(Shooter shooter) {
     this.shooter = shooter;
-    this.controller = controller;
     addRequirements(shooter);
     SmartDashboard.putData("Flywheel testing", this);
 
