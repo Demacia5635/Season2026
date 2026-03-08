@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.robot.RobotCommon;
-import frc.robot.RobotCommon.robotStates;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.climb.constants.ClimbConstants;
 import frc.robot.climb.subsystems.Climb;
 
@@ -127,7 +127,7 @@ public class StateBasedClimb extends Command {
                      chassis.stop();
                     }  
 
-                 RobotCommon.currentState = robotStates.Drive;
+                 RobotCommon.currentState = RobotStates.Drive;
 
                 }
                 break;

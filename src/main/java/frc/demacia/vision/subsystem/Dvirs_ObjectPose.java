@@ -6,15 +6,25 @@ package frc.demacia.vision.subsystem;
 
 
 
+import java.time.Period;
+import java.util.Arrays;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.Camera;
 import frc.robot.RobotCommon;
 
 /** Add your docs here. */
-public class Dvirs_ObjectPose {
+public class Dvirs_ObjectPose extends SubsystemBase {
 
     private NetworkTable Table;
 
@@ -24,18 +34,39 @@ public class Dvirs_ObjectPose {
     private double camObjectPitch;
     private double dist;
 
-    private Translation2d cameraToObject;
-    private Translation2d robotToObject;
-    private Translation2d fieldToObject;
+    private Translation2d robotToCam;
+    private Translation2d[] previousPos = new Translation2d[3];
+    private boolean tv = false;
+    private Field2d fuleField = new Field2d();
 
-    private double tempsize =0;
+    private InterpolatingDoubleTreeMap lut = new InterpolatingDoubleTreeMap();
 
-    
 
     public Dvirs_ObjectPose(Camera objectCam){
-        this.objectCam = objectCam;
-        Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
+        super();
+        lut.put(-8.0,1.30);
+        lut.put(-44.0,0.22);
+        lut.put(-26.0, 0.47);
+        lut.put(-16.67, 0.78);
+        lut.put(-12.0, 1.1);
+        lut.put(-30.0, 0.4);
+        lut.put(-25.0, 0.5);
+        lut.put(-20.0, 0.6);
+        // lut.put(-46.0 , 0.22);
+        // lut.put(-37.0 , 0.33);
+        // lut.put(-30.0 , 0.47);
+        // lut.put(-21.5 , 0.7);
+        // lut.put(-15.0 , 1.05);
+        // lut.put(-11.75 , 1.32);
 
+        Arrays.fill(previousPos, null);
+        this.objectCam = objectCam;
+          robotToCam = objectCam.getRobotToCamPosition().toTranslation2d();
+      
+        Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
+        SmartDashboard.putString("objectCam.getTableName()", objectCam.getTableName());
+        SmartDashboard.putData("Fuel", fuleField);
+       
     }
 
     public Translation2d giveBestTranslation(){
@@ -47,7 +78,7 @@ public class Dvirs_ObjectPose {
     }
 
     public boolean isObjectDetected(){
-        return Table.getEntry("tv").getDouble(0.0) != 0;
+        return tv;
     }
 
     public void updateValues(){

@@ -5,15 +5,11 @@
 // bft-pgmc-wgo
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Hertz;
 import static frc.robot.Constants.*;
 
-import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.FrequencyUnit;
-import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,33 +26,20 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
-import frc.demacia.utils.log.LogManager;
-import frc.robot.RobotCommon.robotStates;
-import frc.robot.Shooter.commands.FlywheelTesting;
-import frc.robot.Shooter.commands.HoodTesting;
+import frc.demacia.vision.Camera;
+import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.ShooterCommand;
-import frc.robot.Shooter.commands.ShooterTesting;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
-import frc.robot.Turret.TurretCommands.TurretFollow;
-import frc.robot.Turret.TurretCommands.TurretPower;
-import frc.demacia.utils.Data;
+import frc.robot.auto.DuchToBalls;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.robot.chassis.MK4iChassisConstants;
 import frc.robot.chassis.RobotAChassisConstants;
-import frc.robot.chassis.commands.DrivePower;
-import frc.robot.chassis.commands.DriveVelocity;
 import frc.robot.chassis.commands.SetModuleAngle;
-import frc.robot.climb.commands.CalibrateClimb;
-import frc.robot.climb.commands.ControllerClimb;
-import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
-import frc.robot.intake.commands.BatteryTest;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
@@ -83,6 +66,7 @@ public class RobotContainer implements Sendable {
   public static LedManager ledManager;
   public static RobotALedStrip leds;
   public static Climb climb;
+  private Dvirs_ObjectPose ballCamera;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -91,17 +75,18 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    intake = new IntakeSubsystem();
-    shinua = new ShinuaSubsystem();
-    shooter = new Shooter();
+    intake = IntakeSubsystem.getInstance();
+    shinua = ShinuaSubsystem.getInstance();
+    shooter = Shooter.getInstance();
     ledManager = new LedManager();
     leds = new RobotALedStrip();
     climb = new Climb();
-    
-
     chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-
     turret = Turret.getInstance();
+    ballCamera = new Dvirs_ObjectPose(
+        new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
+    StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
+
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
@@ -110,19 +95,22 @@ public class RobotContainer implements Sendable {
       shinua.checkElectronics();
       turret.checkElectronics();
       shooter.checkElectronics();
-      climb.checkElectronics();
+      // climb.checkElectronics();
     }).ignoringDisable(true));
     addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
+    // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
+    // SmartDashboard.putNumber("ball dist", ballCamera.getDistance());
 
     // Data.setFrequancyAll();
   }
 
   public void addStatesToElasticForTesting() {
-    SendableChooser<RobotCommon.robotStates> robotStateChooser = new SendableChooser<>();
-    for (RobotCommon.robotStates state : RobotCommon.robotStates.class.getEnumConstants()) {
-      robotStateChooser.addOption(state.name(), state);
+    SendableChooser<RobotCommon.RobotStates> robotStateChooser = new SendableChooser<>();
+    robotStateChooser.setDefaultOption("Idle", RobotCommon.RobotStates.Idle);
+    for (int i = 1; i < RobotCommon.RobotStates.values().length; i++) {
+      robotStateChooser.addOption(RobotCommon.RobotStates.values()[i].name(), RobotCommon.RobotStates.values()[i]);
     }
     robotStateChooser.onChange(state -> RobotCommon.currentState = state);
     SmartDashboard.putData("Robot State Chooser", robotStateChooser);
@@ -153,51 +141,88 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-  
+
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
-    // driverController.rightButton().onTrue(new ControllerClimb(driverController, climb));
+    // driverController.rightButton().onTrue(new ControllerClimb(driverController,
+    // climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    // turret.setDefaultCommand(new TurretFollow(turret,
+    // Field.HUB(true).getCenter().getTranslation(), chassis));
     SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
       shooter.setFeederPower(0.8);
     }, () -> {
       shooter.setFeederPower(0);
     }));
 
-    
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // turret.setDefaultCommand(new TurretPower(driverController)); 
+    // turret.setDefaultCommand(new TurretPower(driverController));
     turret.setDefaultCommand(new TurretCommand(turret));
-    // turret.setDefaultCommand(new TurretFollow(turret, Field.HUB(true).getCenter().getTranslation(), chassis));
+    // turret.setDefaultCommand(new TurretFollow(turret,
+    // Field.HUB(true).getCenter().getTranslation(), chassis));
 
+    driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithAutoIntake));
+    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveAutoIntake));
+    driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithAutoIntake));
 
-    driverController.downButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.ShootWithIntake));
-    driverController.upButton().onTrue(new InstantCommand(()->RobotCommon.currentState = robotStates.DriveWhileIntake));
-    
-    SmartDashboard.putData("Auto Drive", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
+    driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithoutAutoIntake));
+    driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
+    driverController.povRight().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithoutAutoIntake));
+    // new Trigger(() -> driverController.rightBumper().getAsBoolean() || driverController.getRightTrigger(0.2).getAsBoolean() || driverController.getLeftTrigger(0.2).getAsBoolean())
+    //     .onTrue(new InstantCommand(() -> {
+    //       switch (RobotCommon.currentState) {
+    //         case DeliveryWithAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
+    //           break;
+    //         case DeliveryWithoutAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
+    //           break;
+    //         case DriveAutoIntake:
+    //           RobotCommon.changeState(RobotStates.DriveWithIntake);
+    //           break;
+    //         case DriveWithIntake:
+    //           RobotCommon.changeState(RobotStates.DriveAutoIntake);
+    //           break;
+    //         case HubWithAutoIntake:
+    //           RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
+    //           break;
+    //         case HubWithoutAutoIntake:
+    //           RobotCommon.changeState(RobotStates.HubWithAutoIntake);
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //     }).ignoringDisable(true));
+    driverController.rightBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
 
-    SmartDashboard.putData("lever to zero", new InstantCommand(()->climb.setLeverAngle(0)));
-    SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
-    SmartDashboard.putData("Reset Turret Position", new InstantCommand(()->turret.setEncoderPosition(0)).ignoringDisable(true));
+    SmartDashboard.putData("Auto Drive",
+        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
+
+    // SmartDashboard.putData("lever to zero", new
+    // InstantCommand(()->climb.setLeverAngle(0)));
+    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
+    // SmartDashboard.putData("Reset Turret Position",
+    // new InstantCommand(() ->
+    // turret.setEncoderPosition(0)).ignoringDisable(true));
     SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
     SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
   private void setUserButton() {
-    new Trigger(() -> !DriverStation.isEnabled() && RobotController.getUserButton())
-        .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret, shooter).ignoringDisable(true));
+    new Trigger(() -> !DriverStation.isEnabled() &&
+    RobotController.getUserButton())
+    .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret,
+    shooter).ignoringDisable(true));
   }
-
-
 
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
-    builder.addDoubleProperty("maxDriveVelocity", () -> chassis.getConfig().maxDriveVelocity, (max) -> chassis.getConfig().withMaxDriveVelocity(max));
+    builder.addDoubleProperty("maxDriveVelocity", () -> chassis.getConfig().maxDriveVelocity,
+        (max) -> chassis.getConfig().withMaxDriveVelocity(max));
 
     builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
         (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
@@ -205,7 +230,7 @@ public class RobotContainer implements Sendable {
         (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
   }
 
-  static public void updateCommon() {
+  public static void updateCommon() {
     Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
     RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
     RobotCommon.currentAngleFromTarget = currentPoseFromHub.getAngle().getRadians();
@@ -227,6 +252,7 @@ public class RobotContainer implements Sendable {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
   }
+
 }

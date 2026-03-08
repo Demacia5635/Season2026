@@ -30,11 +30,6 @@ public class Quest extends SubsystemBase {
   private double timestamp;
 
 
-
-  
-
-
-
   
   public Quest() {
     timestamp = 0;
@@ -74,7 +69,7 @@ public class Quest extends SubsystemBase {
    */
   public Pose2d getRobotPose2d() {
     // return new Pose2d(currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse()).toPose2d().getTranslation(),gyroAngle.get().rotateBy(Rotation2d.fromDegrees(90)));// the transformBy is to switch x & y
-    return (currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse())).toPose2d();
+    return currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse()).toPose2d();
   }
 
 

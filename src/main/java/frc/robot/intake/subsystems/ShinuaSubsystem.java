@@ -13,8 +13,9 @@ public class ShinuaSubsystem extends SubsystemBase {
   private TalonSRXMotor motorIndexerFar;
   private TalonFXMotor motorBattery;
   private TalonFXMotor motorIndexerOnTop;
+  private static ShinuaSubsystem instance;
 
-  public ShinuaSubsystem() {
+  private ShinuaSubsystem() {
     motorIndexerClose = new TalonSRXMotor(IntakeConstants.INDEXER_CLOSE_CONFIG);
     motorIndexerFar = new TalonSRXMotor(IntakeConstants.INDEXER_FAR_CONFIG);
     motorIndexerOnTop = new TalonFXMotor(IntakeConstants.INDEXER_ON_TOP_CONFIG);
@@ -31,6 +32,12 @@ public class ShinuaSubsystem extends SubsystemBase {
     SmartDashboard.putData("Shinua/Right/set brake", new InstantCommand(() -> motorIndexerClose.setNeutralMode(true)).ignoringDisable(true));
     SmartDashboard.putData("Shinua/Battery/set coast", new InstantCommand(() -> motorBattery.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shinua/Battery/set brake", new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
+  }
+
+  public static ShinuaSubsystem getInstance() {
+    if (instance == null)
+      instance = new ShinuaSubsystem();
+    return instance;
   }
 
   public void checkElectronics() {
@@ -54,7 +61,7 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerOnTop.setNeutralMode(isBrake);
   }
 
-  public void setDutyIndexerRight(double pow) {
+  public void setDutyIndexerClose(double pow) {
     motorIndexerClose.setDuty(pow);
   }
 
@@ -62,7 +69,7 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerClose.stop();
   }
 
-  public void setDutyIndexerLeft(double pow) {
+  public void setDutyIndexerFar(double pow) {
     motorIndexerFar.setDuty(pow);
   }
 

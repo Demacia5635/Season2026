@@ -14,7 +14,7 @@ public class TurretConstants {
     private static final Canbus CANBUS = Canbus.Rio;
     private static final double GEAR_RATIO = ((48d*112d)/27d);
     
-    private static final double kP = 24;
+    private static final double kP = 32;
     private static final double kI = 0;
     private static final double kD = 0;
     private static final double kS = 0.05979;
@@ -35,6 +35,6 @@ public class TurretConstants {
     public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(1, "Min Limit Switch"); 
     public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(0, "Max Limit Switch"); 
 
-    public static final Translation2d TURRET_POS = Translation2d.kZero;
+    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.5);
 
 }
