@@ -56,7 +56,7 @@ public class Data<T> {
      * @param signal Variable arguments of StatusSignals
      */
     @SuppressWarnings("unchecked")
-    public Data(StatusSignal<T>... signal) {
+    public Data(StatusSignal<T>[] signal, boolean isRio) {
         this.signal = signal;
         length = signal.length;
 
@@ -64,6 +64,11 @@ public class Data<T> {
         allocateCachedArrays();
 
         registerSignal();
+        if (isRio) {
+            rioSignals.addAll(Arrays.asList(signal));
+        } else {
+            canivoreSignals.addAll(Arrays.asList(signal));
+        }
         refresh();
     }
 
@@ -190,10 +195,10 @@ public class Data<T> {
                     changed = true;
                     doubleArrayValues[i] = signal[i].getValueAsDouble();
                 }
-                // if (floatArrayValues[i] != (float) signal[i].getValueAsDouble()) {
-                //     changed = true;
-                //     floatArrayValues[i] = (float) signal[i].getValueAsDouble();
-                // }
+                if (floatArrayValues[i] != (float) signal[i].getValueAsDouble()) {
+                    changed = true;
+                    floatArrayValues[i] = (float) signal[i].getValueAsDouble();
+                }
             }
         } else if (isBoolean) {
             if (booleanArrayValues == null)
@@ -232,11 +237,11 @@ public class Data<T> {
                     changed = true;
                     doubleArrayValues[i] = newVal;
                 }
-                // float newFloatVal = ((Number) supplier[i].get()).floatValue();
-                // if (floatArrayValues[i] != newFloatVal) {
-                //     changed = true;
-                //     floatArrayValues[i] = newFloatVal;
-                // }
+                float newFloatVal = ((Number) supplier[i].get()).floatValue();
+                if (floatArrayValues[i] != newFloatVal) {
+                    changed = true;
+                    floatArrayValues[i] = newFloatVal;
+                }
             }
         } else if (isBoolean) {
             if (booleanArrayValues == null)
@@ -272,6 +277,7 @@ public class Data<T> {
      */
     public static void refreshAll() {
         if (rioSignals.size() > 0) {
+            System.out.println("rio signals:" + rioSignals.toString());
             BaseStatusSignal.refreshAll(rioSignals);
         }
         if (canivoreSignals.size() > 0) {

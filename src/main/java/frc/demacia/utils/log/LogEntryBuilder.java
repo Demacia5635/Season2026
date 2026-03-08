@@ -43,7 +43,7 @@ public class LogEntryBuilder<T> {
     @SafeVarargs
     LogEntryBuilder(String name, StatusSignal<T>... statusSignals) {
         this.name = name;
-        this.data = new Data<>(statusSignals);
+        this.data = new Data<>(statusSignals, withIsMotor().isRio);
     }
     
     /**
@@ -114,7 +114,7 @@ public class LogEntryBuilder<T> {
             LogManager.log("Log level cannot be null");
             return null;
         }
-        
+
         LogEntry<T> entry = LogManager.add(name, data, logLevel, metadata, isSeparated, isRio);
         return entry;
     }

@@ -17,19 +17,26 @@ import org.ejml.simple.SimpleMatrix;
 public class LogReader {
 
     private static final double VOLTAGE_THRESHOLD = 0.5;
-    private static final int SMOOTH_WINDOW = 3;
-    private static final double OUTLIER_PERCENTAGE = 0.15;
+    private static final int SMOOTH_WINDOW =  3;
+    private static final double OUTLIER_PERCENTAGE = 0;//0.15;
+
+    private static double minTimestamp;
+    private static double maxTimestamp;
 
     private static Map<Integer, List<EntryDescription>> entries;
 
     private static class EntryDescription {
         String name;
         String type;
+        boolean isFloat;
+        boolean isDouble;
         List<DataPoint> data = new ArrayList<>();
 
         EntryDescription(String name, String type) {
             this.name = name;
             this.type = type;
+            isDouble = type.equals("double") || type.equals("double[]");
+            isFloat = type.equals("float") || type.equals("float[]");
         }
     }
 
@@ -47,6 +54,7 @@ public class LogReader {
         entries = new HashMap<>();
         try {
             wpilogReader(fileName);
+            System.out.println("Performing analysis...");
             return performAnalysis();
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,9 +70,14 @@ public class LogReader {
             if (!Arrays.equals(signature, "WPILOG".getBytes())) {
                 throw new IOException("Invalid WPILOG");
             }
+            minTimestamp = Double.MAX_VALUE;
+            maxTimestamp = 0;
             
             skipHeaderExtra(dataInputStream);
+            System.out.println("Header read successfully. Starting to read records...");
             readRecords(dataInputStream);
+            System.out.println("File Read Successfully. Total entries: " + entries.size());
+            System.out.println("Timestamp range: " + minTimestamp + "s to " + maxTimestamp + "s");
         }
     }
 
@@ -81,11 +94,15 @@ public class LogReader {
             dataInputStream.skipBytes(extraLength);
         }
     }
-
     private static void readRecords(DataInputStream dataInputStream) throws IOException {
+        int n = 0;
         while (true) {
             try {
                 readRecord(dataInputStream);
+                n++;
+                if(n%100 == 0) {
+                    System.out.println("Read " + n + " records...");
+                }
             } catch (EOFException e) {
                 break;
             }
@@ -97,10 +114,12 @@ public class LogReader {
         int idLength = (headerByte & 0x3) + 1;
         int payloadLength = (headerByte >> 2 & 0x3) + 1;
         int timestampLength = (headerByte >> 4 & 0x7) + 1;
-
         int recordId = readLittleEndianInt(dataInputStream, idLength);
         int payloadSize = readLittleEndianInt(dataInputStream, payloadLength);
         long timestamp = readLittleEndianLong(dataInputStream, timestampLength);
+        double time = timestamp / 1000.0;
+            if (time < minTimestamp) minTimestamp = time;
+            if (time > maxTimestamp) maxTimestamp = time;
 
         if (recordId == 0) {
             addEntryFromControlRecord(dataInputStream, payloadSize);
@@ -108,9 +127,9 @@ public class LogReader {
         } else {
             List<EntryDescription> entryList = entries.get(recordId);
             if (entryList != null && !entryList.isEmpty()) {
-                String type = entryList.get(0).type.trim();
-                boolean isFloat = type.equals("float") || type.equals("float[]");
-                boolean isDouble = type.equals("double") || type.equals("double[]");
+                EntryDescription e = entryList.get(0);
+                boolean isFloat = e.isFloat;
+                boolean isDouble = e.isDouble;
 
                 if (isFloat || isDouble) {
                     double[] value = null;
@@ -171,7 +190,7 @@ public class LogReader {
             int nameLength = Integer.reverseBytes(dataInputStream.readInt());
             String name = readString(dataInputStream, nameLength);
             int typeLength = Integer.reverseBytes(dataInputStream.readInt());
-            String type = readString(dataInputStream, typeLength);
+            String type = readString(dataInputStream, typeLength).trim();
             int metaLength = Integer.reverseBytes(dataInputStream.readInt());
             String metadata = readString(dataInputStream, metaLength);
 
@@ -181,7 +200,7 @@ public class LogReader {
             for (int i = 0; i < names.length; i++) {
                 String currentName = names[i].trim().split("\\: ")[0];
                 String currentMeta = (i < metas.length) ? metas[i].trim() : "";
-
+            
                 if (currentMeta.contains("motor")) {
                     entries.putIfAbsent(entryId, new ArrayList<>());
                     entries.get(entryId).add(new EntryDescription(currentName, type));
@@ -221,11 +240,14 @@ public class LogReader {
         Set<String> groups = findGroups();
         
         for (String group : groups) {
+            System.out.println("Analyzing group: " + group);
             BucketResult result = analyzeGroup(group);
             if (result != null) {
+                System.out.println("Group: " + group + " | ks: " + result.ks + ", kv: " + result.kv + ", ka: " + result.ka + ", kg: " + result.kg + ", ksin: " + result.ksin + ", kv2: " + result.kv2);
                 results.put(group, result);
             }
         }
+        System.out.println("Analysis complete. Results for " + results.size() + " groups.");
         return results;
     }
 
@@ -249,11 +271,13 @@ public class LogReader {
             }
         }
 
+        System.out.println("Group: " + name + " | Total data points: " + allData.size());
         if (allData.isEmpty()) return null;
 
         allData.sort((p1, p2) -> Long.compare(p1.timestamp, p2.timestamp));
         List<SyncedDataPoint> syncedData = synchronizeData(allData);
         
+        System.out.println("Group: " + name + " | Synced data points: " + syncedData.size());
         return calculateResult(syncedData, name);
     }
 
@@ -286,13 +310,15 @@ public class LogReader {
         List<SyncedDataPoint> cleanData = filterAndSmooth(rawData, VOLTAGE_THRESHOLD, SMOOTH_WINDOW);
         if (cleanData.size() < 10) return null;
 
-        BucketResult initialResult = solveOLS(cleanData);
-        if (initialResult == null) return null;
+        // BucketResult initialResult = solveOLS(cleanData);
+        // if (initialResult == null) return null;
 
-        List<SyncedDataPoint> refinedData = removeOutliers(cleanData, initialResult, OUTLIER_PERCENTAGE);
-        if (refinedData.size() < 10) return null;
+        // List<SyncedDataPoint> refinedData = removeOutliers(cleanData, initialResult, OUTLIER_PERCENTAGE);
+        // if (refinedData.size() < 10) return null;
+        System.out.println("Group: " + name + " | Data points after outlier removal: " + cleanData.size());
 
-        BucketResult finalModel = solveOLS(refinedData);
+        BucketResult finalModel = solveOLS(cleanData);
+        System.out.println("soleved");
         
         if (finalModel != null) {
             double sumErr = 0;
@@ -333,7 +359,9 @@ public class LogReader {
                 count++;
             }
             current.acceleration = sumAccel / count;
-
+            
+            if (current.voltage != 0)
+            System.out.println(current.voltage);
             if (Math.abs(current.voltage) > voltageThresh) {
                 filtered.add(current);
             }
@@ -379,6 +407,7 @@ public class LogReader {
         int numParams = 0;
         for(boolean f : flags) if(f) numParams++;
 
+        System.out.println("Solving OLS for " + n + " data points and " + numParams + " parameters.");
         if(numParams == 0) return null;
 
         SimpleMatrix A = new SimpleMatrix(n, numParams);
@@ -398,6 +427,7 @@ public class LogReader {
         }
 
         SimpleMatrix x;
+        System.out.println("Matrix A size: " + A.numRows() + "x" + A.numCols());
         try {
             x = A.solve(b);
         } catch(Exception e) {
@@ -429,6 +459,7 @@ public class LogReader {
 
         double r2 = 1 - (ssRes / ssTot);
 
+        System.out.println("1111111111111111111111111111");
         return new BucketResult(k[0], k[1], k[5], k[2], k[3], k[4], 0, 0, n, r2);
     }
 

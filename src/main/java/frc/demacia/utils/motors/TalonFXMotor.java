@@ -167,6 +167,10 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         }
     }
 
+    public boolean isRio(){
+      return config.getCunbus() == Canbus.Rio;
+    }
+
     @Override
     public void setName(String name) {
         MotorInterface.super.setName(name);
@@ -176,13 +180,13 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     /** Initializes the data signals for telemetry */
     @SuppressWarnings("unchecked")
     private void setSignals() {
-        closedLoopSPSignal = new Data<>(getClosedLoopReference());
-        closedLoopErrorSignal = new Data<>(getClosedLoopError());
-        positionSignal = new Data<>(getPosition());
-        velocitySignal = new Data<>(getVelocity());
-        accelerationSignal = new Data<>(getAcceleration());
-        voltageSignal = new Data<>(getMotorVoltage());
-        currentSignal = new Data<>(getStatorCurrent());
+        closedLoopSPSignal = new Data<>(new StatusSignal[]{getClosedLoopReference()},isRio());
+        closedLoopErrorSignal = new Data<>(new StatusSignal[]{getClosedLoopError()},isRio());
+        positionSignal = new Data<>(new StatusSignal[]{getPosition()},isRio());
+        velocitySignal = new Data<>(new StatusSignal[] {getVelocity()},isRio());
+        accelerationSignal = new Data<>(new StatusSignal[]{getAcceleration()},isRio());
+        voltageSignal = new Data<>(new StatusSignal[]{getMotorVoltage()}, isRio());
+        currentSignal = new Data<>(new StatusSignal[]{getStatorCurrent()},isRio());
     }
 
     /** Registers the motor's signals with the LogManager */
