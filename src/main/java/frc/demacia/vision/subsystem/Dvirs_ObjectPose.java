@@ -41,8 +41,6 @@ public class Dvirs_ObjectPose {
     public Translation2d giveBestTranslation(){
         if(isObjectDetected()){
             updateValues();
-            getDistance();
-            getRobotToObjectFeildRel();
             return getOriginToObject();
         }
         return Translation2d.kZero;
@@ -80,5 +78,12 @@ public class Dvirs_ObjectPose {
             return fieldToObject;
         }
         return new Translation2d();
+    }
+
+    public boolean checkIfInValeble(Translation2d translation2d){
+        double x = translation2d.getX();
+        double y = translation2d.getY();
+        
+        return RobotCommon.currentRobotPose.getX()+RobotCommon.currentRobotPose.getRotation().getCos()*800 < x;
     }
 }
