@@ -251,7 +251,6 @@ public class LogManager extends SubsystemBase {
   private <T> LogEntry<T> addToEntryArray(int i, String name, LogLevel logLevel, Data<T> data, String metaData,
       boolean isRio) {
 
-    LogManager.log("111111111111111111111");
     if (categoryLogEntries[i] != null && categoryLogEntries[i].getData() != null) {
       if ((categoryLogEntries[i].getData().getSignalArray() != null) != (data.getSignalArray() != null)) {
         LogManager.log("Log Type Mismatch in '" + name + "'. Creating separate entry.", AlertType.kWarning);
@@ -259,13 +258,11 @@ public class LogManager extends SubsystemBase {
       }
     }
 
-    LogManager.log("2222222222222222222222");
     if (categoryLogEntries[i] == null) {
       categoryLogEntries[i] = new LogEntry<>(name, data, logLevel, metaData);
     } else {
       try {
 
-        LogManager.log("3333333333333333333333333");
         ((LogEntry<T>) categoryLogEntries[i]).addData(name, data, metaData, isRio);
       } catch (Exception e) {
         LogManager.log("Error combining log entries: " + e.getMessage(), AlertType.kError);

@@ -277,7 +277,6 @@ public class Data<T> {
      */
     public static void refreshAll() {
         if (rioSignals.size() > 0) {
-            System.out.println("rio signals:" + rioSignals.toString());
             BaseStatusSignal.refreshAll(rioSignals);
         }
         if (canivoreSignals.size() > 0) {

@@ -103,7 +103,7 @@ public class ShinuaCommand extends Command {
             case DriveAutoIntake:
                 shinua.setDutyIndexerClose(0.8);
                 shinua.setDutyIndexerFar(0);
-                shinua.setDutyIndexerOnTop(0);
+                shinua.setDutyIndexerOnTop(0.05);
                 shinua.setPowerBattery(0);
 
                 break;

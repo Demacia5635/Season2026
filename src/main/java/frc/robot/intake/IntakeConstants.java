@@ -57,7 +57,7 @@ public class IntakeConstants {
                         INDEXER_TOP_NAME)
                         .withBrake(true)
                         .withVolts(8)
-                        .withInvert(true);
+                        .withInvert(false);
 
         // indexer close value
         public static final int INDEXER_CLOSE_ID = 31;

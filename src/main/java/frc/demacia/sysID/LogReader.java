@@ -459,7 +459,6 @@ public class LogReader {
 
         double r2 = 1 - (ssRes / ssTot);
 
-        System.out.println("1111111111111111111111111111");
         return new BucketResult(k[0], k[1], k[5], k[2], k[3], k[4], 0, 0, n, r2);
     }
 

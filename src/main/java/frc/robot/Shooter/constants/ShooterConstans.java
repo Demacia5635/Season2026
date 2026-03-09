@@ -88,7 +88,7 @@ public class ShooterConstans {
         public static final int HOOD_ID = 51;
         public static final String HOOD_NAME = "Shooter/Hood";
 
-        public static final double HOOD_KP = 20;//0.65;
+        public static final double HOOD_KP = 11.2;//0.65;
         public static final double HOOD_KI = 0;
         public static final double HOOD_KD = 0;
         public static final double HOOD_KS = 0.08699;
@@ -98,7 +98,7 @@ public class ShooterConstans {
         public static final double HOOD_MAX_VELOCITY = 2.5;
         public static final double HOOD_MAX_ACCEL =  Math.PI;
         public static final double HOOD_MAX_JERK = 0;
-        public static final double HOOD_GEAR_RATIO = 128;
+        public static final double HOOD_GEAR_RATIO = 2 * 36;
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)
                         .withBrake(true)
@@ -111,9 +111,9 @@ public class ShooterConstans {
         public static final double MAX_ANGLE_HOOD = Math.toRadians(90d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(50d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 7;
+        public static final int HOOD_ENCODER_CHANNEL = 9;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = 0;
+        public static final double HOOD_OFFSET = Math.toRadians(85) - -0.658949059090459;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

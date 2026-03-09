@@ -48,9 +48,9 @@ public class Shooter extends SubsystemBase {
         new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Hood/set brake",
         new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/FlyWheel/set coast",
+    SmartDashboard.putData("Shooter/Flywheel/set coast",
         new InstantCommand(() -> shooterMotor.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/FlyWheel/set brake",
+    SmartDashboard.putData("Shooter/Flywheel/set brake",
         new InstantCommand(() -> shooterMotor.setNeutralMode(true)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Feeder/set coast",
         new InstantCommand(() -> feederMotor.setNeutralMode(false)).ignoringDisable(true));
@@ -103,6 +103,7 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
     builder.addDoubleProperty("abs encoder", () -> hoodEncoder.get(), null);
+    builder.addDoubleProperty("abs encoder after gear", ()->MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5)), null);
   }
 
   /**
