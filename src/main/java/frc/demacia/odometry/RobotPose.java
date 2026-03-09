@@ -30,6 +30,7 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
+import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
 import frc.robot.RobotCommon;
 import frc.robot.Turret.Turret;
 
@@ -69,6 +70,13 @@ public class RobotPose {
 
         if (instance == null)
             instance = new RobotPose(modulePositions, stateSTD, questSTD);
+    }
+
+    public void resetPose(){
+        resetPose(Pose2d.kZero);
+    }
+    public void resetPose(Pose2d pose){
+        poseEstimator.resetPose(pose);
     }
 
     public static RobotPose getInstance() {

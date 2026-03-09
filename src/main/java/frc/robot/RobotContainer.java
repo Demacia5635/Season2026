@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
@@ -123,11 +124,19 @@ public class RobotContainer implements Sendable {
   }
 
   private AutoFactory autoFactory;
+  private Command autoCommand;
 
   private void configureAuto() {
     /* TODO: Change alliace flipped to actual alliance */
-    autoFactory = new AutoFactory(() -> RobotCommon.currentRobotPose, chassis::resetPose, chassis::followTrajectory,
+    autoFactory = new AutoFactory(chassis::getPose, chassis::resetPose, chassis::followTrajectory,
         false, chassis);
+    
+    autoFactory.
+
+    // autoFactory.bind("Intake", RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    // autoFactory.bind("Stop Intake", RobotCommon.changeStateCommand(RobotStates.Drive));
+    // autoFactory.bind("Print", new InstantCommand(() -> LogManager.log("Print")));
+    autoCommand = autoFactory.trajectoryCmd("test");
   }
 
   /**
@@ -263,7 +272,7 @@ public class RobotContainer implements Sendable {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return null;
-    return autoFactory.trajectoryCmd("test");
+    return autoCommand;
     // return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
   }
 

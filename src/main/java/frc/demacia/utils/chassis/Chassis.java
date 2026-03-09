@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 // import frc.demacia.utils.Utilities;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.ObjectPose;
@@ -185,26 +186,26 @@ public class Chassis extends SubsystemBase {
                 new SimpleMatrix(
                         new double[] { 0.03, 0.03, 99999999 })),
                 QUEST_STD);
-        
+
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
-    private final PIDController xController = new PIDController(1.5, 0.0, 0.0);
-    private final PIDController yController = new PIDController(1.5, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(3, 0.0, 0.0);
+    private final PIDController xController = new PIDController(0.5, 0.0, 0.0);
+    private final PIDController yController = new PIDController(0.5, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(0.3, 0.0, 0.0);
 
     private int index = 0;
-    
+
     public void followTrajectory(SwerveSample sample) {
         Pose2d pose = getPose();
 
         ChassisSpeeds speeds = new ChassisSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.heading + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
-        );
+                sample.vx + xController.calculate(pose.getX(), sample.x),
+                sample.vy + yController.calculate(pose.getY(), sample.y),
+                sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
 
-        field.getObject("trajectory point #" + index).setPose(new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading)));
+        field.getObject("trajectory point #" + index)
+                .setPose(new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading)));
         index++;
 
         setVelocities(speeds);
@@ -245,7 +246,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
-        demaciaPoseEstimator.resetPose(pose);
+        RobotPose.getInstance().resetPose(pose);
     }
 
     /**
@@ -588,7 +589,7 @@ public class Chassis extends SubsystemBase {
         if (angle != null) {
             gyro.setYaw(angle.getDegrees());
             quest.questResetfromRobotToQuest(angle);
-            demaciaPoseEstimator
+            RobotPose.getInstance()
                     .resetPose(
                             new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
         }
