@@ -91,9 +91,9 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
 
     motor = new TalonFXMotor(new TalonFXConfig(4, Canbus.Rio, "Test Motor").withBrake(true));
-    CommandScheduler.getInstance().setDefaultCommand(subsystem ,new RunCommand(() -> {
-      motor.setDuty(driverController.getLeftY());
-    }, subsystem));
+    // CommandScheduler.getInstance().setDefaultCommand(subsystem ,new RunCommand(() -> {
+    //   motor.setDuty(driverController.getLeftY());
+    // }, subsystem));
     intake = IntakeSubsystem.getInstance();
     shinua = ShinuaSubsystem.getInstance();
     shooter = Shooter.getInstance();
@@ -116,7 +116,7 @@ public class RobotContainer implements Sendable {
       shooter.checkElectronics();
       // climb.checkElectronics();
     }).ignoringDisable(true));
-    addStatesToElasticForTesting();
+    // addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
     // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
@@ -135,12 +135,12 @@ public class RobotContainer implements Sendable {
     autoFactory = new AutoFactory(chassis::getPose, chassis::resetPose, chassis::followTrajectory,
         false, chassis);
     
-    autoFactory.
+    // autoFactory.
 
     // autoFactory.bind("Intake", RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
     // autoFactory.bind("Stop Intake", RobotCommon.changeStateCommand(RobotStates.Drive));
     // autoFactory.bind("Print", new InstantCommand(() -> LogManager.log("Print")));
-    autoCommand = autoFactory.trajectoryCmd("test");
+    // autoCommand = autoFactory.trajectoryCmd("test");
   }
 
   /**
