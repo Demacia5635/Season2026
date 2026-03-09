@@ -43,7 +43,6 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
-import frc.robot.auto.DuchToBalls;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
@@ -55,8 +54,6 @@ import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 import frc.robot.leds.RobotALedStrip;
-import frc.robot.logMotor.logMotorCommnad;
-import frc.robot.logMotor.logSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -78,7 +75,6 @@ public class RobotContainer implements Sendable {
   public static LedManager ledManager;
   public static RobotALedStrip leds;
   public static Climb climb;
-  public static logSubsystem logMotor;
   private Dvirs_ObjectPose ballCamera;
 
   TalonFXMotor motor;
@@ -99,37 +95,37 @@ public class RobotContainer implements Sendable {
     CommandScheduler.getInstance().setDefaultCommand(subsystem ,new RunCommand(() -> {
       motor.setDuty(driverController.getLeftY());
     }, subsystem));
-    // intake = IntakeSubsystem.getInstance();
-    // shinua = ShinuaSubsystem.getInstance();
-    // shooter = Shooter.getInstance();
-    // ledManager = new LedManager();
-    // leds = new RobotALedStrip();
-    // climb = new Climb();
-    // chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
-    // turret = Turret.getInstance();
-    // ballCamera = new Dvirs_ObjectPose(
-    //     new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
-    // StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
+    intake = IntakeSubsystem.getInstance();
+    shinua = ShinuaSubsystem.getInstance();
+    shooter = Shooter.getInstance();
+    ledManager = new LedManager();
+    leds = new RobotALedStrip();
+    climb = new Climb();
+    chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
+    turret = Turret.getInstance();
+    ballCamera = new Dvirs_ObjectPose(
+        new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
+    StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
-    // SmartDashboard.putData("RC", this);
-    // SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    // SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
-    //   chassis.checkElectronics();
-    //   intake.checkElectronics();
-    //   shinua.checkElectronics();
-    //   turret.checkElectronics();
-    //   shooter.checkElectronics();
-    //   // climb.checkElectronics();
-    // }).ignoringDisable(true));
-    // addStatesToElasticForTesting();
-    // configureBindings();
-    // setUserButton();
-    // // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
-    // // SmartDashboard.putNumber("ball dist", ballCamera.getDistance());
+    SmartDashboard.putData("RC", this);
+    SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
+    SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
+      chassis.checkElectronics();
+      intake.checkElectronics();
+      shinua.checkElectronics();
+      turret.checkElectronics();
+      shooter.checkElectronics();
+      // climb.checkElectronics();
+    }).ignoringDisable(true));
+    addStatesToElasticForTesting();
+    configureBindings();
+    setUserButton();
+    // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
+    // SmartDashboard.putNumber("ball dist", ballCamera.getDistance());
 
-    // // Data.setFrequancyAll();
+    // Data.setFrequancyAll();
 
-    // configureAuto();
+    configureAuto();
   }
 
   private AutoFactory autoFactory;
@@ -172,13 +168,12 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    logMotor.setDefaultCommand(new logMotorCommnad());
-    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    // intake.setDefaultCommand(new IntakeCommand(intake));
-    // shinua.setDefaultCommand(new ShinuaCommand(shinua));
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    intake.setDefaultCommand(new IntakeCommand(intake));
+    shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
-    // shooter.setDefaultCommand(new FlywheelTesting(shooter));
-    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    shooter.setDefaultCommand(new FlywheelTesting(shooter));
+    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController,
     // climb));
