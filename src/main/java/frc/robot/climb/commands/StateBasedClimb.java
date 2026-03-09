@@ -22,7 +22,6 @@ public class StateBasedClimb extends Command {
     Chassis chassis;
     Climb climb;
     Timer timer;
-    private boolean IS_AT_BAR;
     private boolean IS_RIGHT_CLIMB;
     private Pose2d chassisPose;
     private Translation2d difference;
@@ -54,7 +53,6 @@ public class StateBasedClimb extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        IS_AT_BAR = false;
         IS_RIGHT_CLIMB = true; // need to set based on strategy
         timer.stop();
         timer.reset();
@@ -88,10 +86,6 @@ public class StateBasedClimb extends Command {
             case Climb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
                 if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
-                    IS_AT_BAR = true;
-                }
-
-                if (IS_AT_BAR) {
                     climb.setArmsDuty(0.1);
                     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
                 }
@@ -112,7 +106,7 @@ public class StateBasedClimb extends Command {
                     timer.start();
                     chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb, 0, 0));
                 }
-                    
+
                 if (timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)) {
                     timer.stop();
                     timer.reset();
