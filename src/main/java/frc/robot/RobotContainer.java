@@ -8,6 +8,7 @@ package frc.robot;
 import static frc.robot.Constants.*;
 
 import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -89,11 +90,6 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
-    motor = new TalonFXMotor(new TalonFXConfig(4, Canbus.Rio, "Test Motor").withBrake(true));
-    CommandScheduler.getInstance().setDefaultCommand(subsystem ,new RunCommand(() -> {
-      motor.setDuty(driverController.getLeftY());
-    }, subsystem));
     intake = IntakeSubsystem.getInstance();
     shinua = ShinuaSubsystem.getInstance();
     shooter = Shooter.getInstance();
@@ -103,7 +99,7 @@ public class RobotContainer implements Sendable {
     chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
     ballCamera = new Dvirs_ObjectPose(
-        new Camera("intake", new Translation3d(0.298, -0.23, 0.33), -27, 4.6, false, true));
+        new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false, true));
     StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
     SmartDashboard.putData("RC", this);
@@ -116,7 +112,6 @@ public class RobotContainer implements Sendable {
       shooter.checkElectronics();
       // climb.checkElectronics();
     }).ignoringDisable(true));
-    addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
     // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
@@ -134,12 +129,11 @@ public class RobotContainer implements Sendable {
     /* TODO: Change alliace flipped to actual alliance */
     autoFactory = new AutoFactory(chassis::getPose, chassis::resetPose, chassis::followTrajectory,
         false, chassis);
-    
-    autoFactory.
 
-    // autoFactory.bind("Intake", RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    // autoFactory.bind("Stop Intake", RobotCommon.changeStateCommand(RobotStates.Drive));
-    // autoFactory.bind("Print", new InstantCommand(() -> LogManager.log("Print")));
+    
+    AutoRoutine routine = autoFactory.newRoutine("FullEverything");
+    
+
     autoCommand = autoFactory.trajectoryCmd("test");
   }
 

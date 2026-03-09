@@ -53,7 +53,6 @@ public class Climb extends SubsystemBase {
     builder.addDoubleProperty("Arms Current", this::getCurrentAmpersArms, null);
     builder.addDoubleProperty("Lever Angle", this::getAngleLever, null);
     builder.addDoubleProperty("Encoder Angle", this::getArmEncoderAngle, null);
-    builder.addDoubleProperty("", null, null);
   }
 
   public void leverClimb() {

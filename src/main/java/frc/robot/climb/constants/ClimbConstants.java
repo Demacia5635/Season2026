@@ -21,7 +21,7 @@ public class ClimbConstants {
         public static final double powerToRaiseArmsAfterClimb = -0.2;
         public static final double ANGLE_ARMS_LOWERED = Math.toRadians(22.86102);
         public static final double ARMS_ANGLE_CLOSED = Math.toRadians(160);
-        public static final double ARMS_OFFSET = 1.6465087097464108;
+        public static final double ARMS_OFFSET = 0.47846456114172575;
 
         public static final double ARMS_KP = 3;
 
@@ -61,8 +61,8 @@ public class ClimbConstants {
                         .withRadiansMotor(LEVER_GEAR_RATIO);
 
         // the climb arm encoder
-        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(1, "climb encoder")
-                        .withInvert(true);
+        public static final DigitalEncoderConfig DIGITAL_ENCODER_CONFIG = new DigitalEncoderConfig(7, "climb encoder")
+                        .withInvert(false);
 
         // constans to auto drive to tower
         public static final double velocityToGoBackAfterClimb = 0.3;
