@@ -17,8 +17,8 @@ import org.ejml.simple.SimpleMatrix;
 public class LogReader {
 
     private static final double VOLTAGE_THRESHOLD = 0.5;
-    private static final int SMOOTH_WINDOW =  3;
-    private static final double OUTLIER_PERCENTAGE = 0;//0.15;
+    private static final int SMOOTH_WINDOW = 3;
+    private static final double OUTLIER_PERCENTAGE = 0.15;
 
     private static double minTimestamp;
     private static double maxTimestamp;
@@ -243,7 +243,6 @@ public class LogReader {
             System.out.println("Analyzing group: " + group);
             BucketResult result = analyzeGroup(group);
             if (result != null) {
-                System.out.println("Group: " + group + " | ks: " + result.ks + ", kv: " + result.kv + ", ka: " + result.ka + ", kg: " + result.kg + ", ksin: " + result.ksin + ", kv2: " + result.kv2);
                 results.put(group, result);
             }
         }
@@ -277,7 +276,6 @@ public class LogReader {
         allData.sort((p1, p2) -> Long.compare(p1.timestamp, p2.timestamp));
         List<SyncedDataPoint> syncedData = synchronizeData(allData);
         
-        System.out.println("Group: " + name + " | Synced data points: " + syncedData.size());
         return calculateResult(syncedData, name);
     }
 
@@ -310,15 +308,13 @@ public class LogReader {
         List<SyncedDataPoint> cleanData = filterAndSmooth(rawData, VOLTAGE_THRESHOLD, SMOOTH_WINDOW);
         if (cleanData.size() < 10) return null;
 
-        // BucketResult initialResult = solveOLS(cleanData);
-        // if (initialResult == null) return null;
+        BucketResult initialResult = solveOLS(cleanData);
+        if (initialResult == null) return null;
 
-        // List<SyncedDataPoint> refinedData = removeOutliers(cleanData, initialResult, OUTLIER_PERCENTAGE);
-        // if (refinedData.size() < 10) return null;
-        System.out.println("Group: " + name + " | Data points after outlier removal: " + cleanData.size());
+        List<SyncedDataPoint> refinedData = removeOutliers(cleanData, initialResult, OUTLIER_PERCENTAGE);
+        if (refinedData.size() < 10) return null;
 
-        BucketResult finalModel = solveOLS(cleanData);
-        System.out.println("soleved");
+        BucketResult finalModel = solveOLS(refinedData);
         
         if (finalModel != null) {
             double sumErr = 0;
@@ -360,8 +356,6 @@ public class LogReader {
             }
             current.acceleration = sumAccel / count;
             
-            if (current.voltage != 0)
-            System.out.println(current.voltage);
             if (Math.abs(current.voltage) > voltageThresh) {
                 filtered.add(current);
             }
@@ -407,7 +401,6 @@ public class LogReader {
         int numParams = 0;
         for(boolean f : flags) if(f) numParams++;
 
-        System.out.println("Solving OLS for " + n + " data points and " + numParams + " parameters.");
         if(numParams == 0) return null;
 
         SimpleMatrix A = new SimpleMatrix(n, numParams);
@@ -427,7 +420,6 @@ public class LogReader {
         }
 
         SimpleMatrix x;
-        System.out.println("Matrix A size: " + A.numRows() + "x" + A.numCols());
         try {
             x = A.solve(b);
         } catch(Exception e) {

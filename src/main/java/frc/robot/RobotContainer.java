@@ -45,7 +45,6 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
-import frc.robot.auto.DuchToBalls;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
@@ -91,6 +90,10 @@ public class RobotContainer implements Sendable {
    */
   public RobotContainer() {
 
+    motor = new TalonFXMotor(new TalonFXConfig(4, Canbus.Rio, "Test Motor").withBrake(true));
+    CommandScheduler.getInstance().setDefaultCommand(subsystem ,new RunCommand(() -> {
+      motor.setDuty(driverController.getLeftY());
+    }, subsystem));
     intake = IntakeSubsystem.getInstance();
     shinua = ShinuaSubsystem.getInstance();
     shooter = Shooter.getInstance();
@@ -111,8 +114,9 @@ public class RobotContainer implements Sendable {
       shinua.checkElectronics();
       turret.checkElectronics();
       shooter.checkElectronics();
-      climb.checkElectronics();
+      // climb.checkElectronics();
     }).ignoringDisable(true));
+    addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
     // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
@@ -157,9 +161,9 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-    // shooter.setDefaultCommand(new FlywheelTesting(shooter));
+
+    shooter.setDefaultCommand(new FlywheelTesting(shooter));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    turret.setDefaultCommand(new TurretCommand(turret));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController,
     // climb));

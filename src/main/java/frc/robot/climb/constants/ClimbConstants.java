@@ -18,7 +18,7 @@ public class ClimbConstants {
         public static final double GEAR_RATIO_ARMS = 24;
         public static final boolean WITH_INVERT_ARMS = false;
         public static final double ANGLE_ARMS_RAISED = 0.3232698840543895; // radians
-        public static final double powerToRaiseArmsAfterClimb = 0.2;
+        public static final double powerToRaiseArmsAfterClimb = -0.2;
         public static final double ANGLE_ARMS_LOWERED = Math.toRadians(22.86102);
         public static final double ARMS_ANGLE_CLOSED = Math.toRadians(160);
         public static final double ARMS_OFFSET = 1.6465087097464108;

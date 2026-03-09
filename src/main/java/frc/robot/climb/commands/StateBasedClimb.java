@@ -4,6 +4,7 @@
 
 package frc.robot.climb.commands;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,12 +19,9 @@ import frc.robot.climb.subsystems.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StateBasedClimb extends Command {
-    /** Creates a new StateBasedClimb. */
     Chassis chassis;
     Climb climb;
     Timer timer;
-    private boolean IS_AT_BAR;
-    private boolean IS_AT_GROUND;
     private boolean IS_RIGHT_CLIMB;
     private Pose2d chassisPose;
     private Translation2d difference;
@@ -32,8 +30,8 @@ public class StateBasedClimb extends Command {
     private Pose2d targetPose;
     private double krakenPow;
     private double armsAngle;
-    private boolean afterClimb;
 
+    
     public StateBasedClimb(Climb climb, Chassis chassis) {
         this.climb = climb;
         this.chassis = chassis;
@@ -41,8 +39,8 @@ public class StateBasedClimb extends Command {
         this.krakenPow = 0;
         this.armsAngle = climb.getArmEncoderAngle();
         addRequirements(climb);
-        // Use addRequirements() here to declare subsystem dependencies.
     }
+
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -56,17 +54,25 @@ public class StateBasedClimb extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        IS_AT_BAR = false;
-        IS_AT_GROUND = false;
-        afterClimb = false;
-
         IS_RIGHT_CLIMB = true; // need to set based on strategy
         timer.stop();
         timer.reset();
-
         krakenPow = 0;
         armsAngle = climb.getArmEncoderAngle();
+    }
 
+    public void getToTower(){
+        targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
+        chassisPose = chassis.getPose();
+        difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
+        headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
+        speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
+                difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
+        chassis.setVelocities(speed);
+        if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
+            && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+            chassis.stop();
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -76,26 +82,12 @@ public class StateBasedClimb extends Command {
             case PrepareClimb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
-
-                targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
-                chassisPose = chassis.getPose();
-                difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
-                headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
-                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp, difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
-                // chassis.setVelocities(speed);
-                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
-                    chassis.stop();
-                }
+                getToTower();
                 break;
 
             case Climb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
-
                 if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
-                    IS_AT_BAR = true;
-                }
-
-                if (IS_AT_BAR) {
                     climb.setArmsDuty(0.1);
                     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
                 }
@@ -104,32 +96,27 @@ public class StateBasedClimb extends Command {
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
 
                 if (climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSED) {
-                    IS_AT_GROUND = true;
-                }
-
-                if (IS_AT_GROUND) {
                     timer.start();
-                    // chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
+                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
                     climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
-                    if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
-                        timer.stop();
-                        timer.reset();
-                        climb.stopArms();
-                        afterClimb = true;
-                    }
-                    if(afterClimb){
-                     timer.start();
-                    // chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb,0,0));
-                    }
-                    if(timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)){
-                     timer.stop();
-                     timer.reset();
-                     chassis.stop();
-                    }  
-
-                 RobotCommon.currentState = RobotStates.Drive;
-
                 }
+
+                if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
+                    timer.stop();
+                    timer.reset();
+                    climb.stopArms();
+                    timer.start();
+                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb, 0, 0));
+                }
+
+                if (timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)) {
+                    timer.stop();
+                    timer.reset();
+                    chassis.stop();
+                }
+
+                RobotCommon.currentState = RobotStates.Drive;
+
                 break;
             case Test:
                 climb.setArmsAngle(armsAngle);
@@ -144,6 +131,8 @@ public class StateBasedClimb extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        climb.stopArms();
+        climb.stopLever();
     }
 
     // Returns true when the command should end.
