@@ -19,7 +19,6 @@ import frc.robot.climb.subsystems.Climb;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class StateBasedClimb extends Command {
-    /** Creates a new StateBasedClimb. */
     Chassis chassis;
     Climb climb;
     Timer timer;
@@ -32,6 +31,7 @@ public class StateBasedClimb extends Command {
     private double krakenPow;
     private double armsAngle;
 
+    
     public StateBasedClimb(Climb climb, Chassis chassis) {
         this.climb = climb;
         this.chassis = chassis;
@@ -39,8 +39,8 @@ public class StateBasedClimb extends Command {
         this.krakenPow = 0;
         this.armsAngle = climb.getArmEncoderAngle();
         addRequirements(climb);
-        // Use addRequirements() here to declare subsystem dependencies.
     }
+
 
     @Override
     public void initSendable(SendableBuilder builder) {
