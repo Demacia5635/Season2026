@@ -112,6 +112,7 @@ public class RobotContainer implements Sendable {
       shooter.checkElectronics();
       // climb.checkElectronics();
     }).ignoringDisable(true));
+    // addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
     // SmartDashboard.putNumber("ball angle", ballCamera.getYaw());
@@ -129,12 +130,13 @@ public class RobotContainer implements Sendable {
     /* TODO: Change alliace flipped to actual alliance */
     autoFactory = new AutoFactory(chassis::getPose, chassis::resetPose, chassis::followTrajectory,
         false, chassis);
-
     
-    AutoRoutine routine = autoFactory.newRoutine("FullEverything");
-    
+    // autoFactory.
 
-    autoCommand = autoFactory.trajectoryCmd("test");
+    // autoFactory.bind("Intake", RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    // autoFactory.bind("Stop Intake", RobotCommon.changeStateCommand(RobotStates.Drive));
+    // autoFactory.bind("Print", new InstantCommand(() -> LogManager.log("Print")));
+    // autoCommand = autoFactory.trajectoryCmd("test");
   }
 
   /**
