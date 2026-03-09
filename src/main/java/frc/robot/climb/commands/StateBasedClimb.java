@@ -4,6 +4,7 @@
 
 package frc.robot.climb.commands;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -56,10 +57,22 @@ public class StateBasedClimb extends Command {
         IS_RIGHT_CLIMB = true; // need to set based on strategy
         timer.stop();
         timer.reset();
-
         krakenPow = 0;
         armsAngle = climb.getArmEncoderAngle();
+    }
 
+    public void getToTower(){
+        targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
+        chassisPose = chassis.getPose();
+        difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
+        headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
+        speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
+                difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
+        chassis.setVelocities(speed);
+        if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
+            && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
+            chassis.stop();
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -69,18 +82,7 @@ public class StateBasedClimb extends Command {
             case PrepareClimb:
                 climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
                 climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
-
-                targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
-                chassisPose = chassis.getPose();
-                difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
-                headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
-                speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
-                        difference.getY() * ClimbConstants.driveKp, headingDiff * ClimbConstants.rotationKp);
-                chassis.setVelocities(speed);
-                if (difference.getNorm() < ClimbConstants.CHASSIS_TOLERANCE
-                        && Math.abs(headingDiff) <= ClimbConstants.CHASSIS_TOLERANCE) {
-                    chassis.stop();
-                }
+                getToTower();
                 break;
 
             case Climb:
@@ -129,6 +131,8 @@ public class StateBasedClimb extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        climb.stopArms();
+        climb.stopLever();
     }
 
     // Returns true when the command should end.
