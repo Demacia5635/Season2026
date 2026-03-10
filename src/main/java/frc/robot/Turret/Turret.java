@@ -78,6 +78,15 @@ public class Turret extends SubsystemBase {
     return turretMotor.getCurrentVelocity();
   }
 
+  private double checkIfInRange(double wanted) {
+    if (wanted < MIN_TURRET_ANGLE && wanted > 0) {
+      return MIN_TURRET_ANGLE;
+    } else if(wanted > MAX_TURRET_ANGLE && wanted < 0) {
+      return MAX_TURRET_ANGLE;
+    }
+    return wanted;
+  }
+
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
@@ -86,7 +95,7 @@ public class Turret extends SubsystemBase {
       return;
     }
     this.wantedAngle = wantedPosition;
-    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    double pos = checkIfInRange(wantedPosition);
     turretMotor.setPositionVoltage(pos);
   }
 
@@ -95,7 +104,7 @@ public class Turret extends SubsystemBase {
       return;
     this.wantedAngle = wantedPosition;
 
-    double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    double pos = checkIfInRange(wantedPosition);
     turretMotor.setMotion(pos);
   }
 
@@ -148,9 +157,9 @@ public class Turret extends SubsystemBase {
 
   public void updatePositionByLimit() {
     if (isAtMinLimit())
-      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(MIN_SENSOR_POSITION);
     if (isAtMaxLimit())
-      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(MAX_SENSOR_POSITION);
   }
 
   public void stop() {
