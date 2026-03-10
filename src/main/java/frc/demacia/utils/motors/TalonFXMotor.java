@@ -168,7 +168,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     }
 
     public boolean isRio(){
-      return config.getCunbus() == Canbus.Rio;
+      return config.canbus.equals(Canbus.Rio);
     }
 
     @Override
@@ -200,8 +200,8 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
             currentSignal.getSignal(),
             closedLoopErrorSignal.getSignal(),
             closedLoopSPSignal.getSignal(),
-            }).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP)
-            .withIsMotor(config.canbus.equals(Canbus.Rio)).build();
+            }, isRio()).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP)
+            .withIsMotor().build();
         LogManager.addEntry(name + ": ControlMode", 
             () -> getCurrentControlMode())
             .withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP).build();

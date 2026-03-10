@@ -40,10 +40,9 @@ public class LogEntryBuilder<T> {
      * @param name The name of the log entry
      * @param statusSignals Variable arguments of StatusSignals
      */
-    @SafeVarargs
-    LogEntryBuilder(String name, StatusSignal<T>... statusSignals) {
+    LogEntryBuilder(String name, StatusSignal<T>[] statusSignals, boolean isRio) {
         this.name = name;
-        this.data = new Data<>(statusSignals, withIsMotor().isRio);
+        this.data = new Data<>(statusSignals, isRio);
     }
     
     /**
@@ -81,14 +80,9 @@ public class LogEntryBuilder<T> {
      * Convenience method to set metadata to "motor".
      * @return The builder instance
      */
-    public LogEntryBuilder<T> withIsMotor(boolean isRio) {
-        this.metadata = "motor";
-        this.isRio = isRio;
-        return this;
-    }
-
     public LogEntryBuilder<T> withIsMotor() {
-        return withIsMotor(true);
+        this.metadata = "motor";
+        return this;
     }
 
     /**

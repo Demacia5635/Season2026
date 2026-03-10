@@ -55,7 +55,6 @@ public class Data<T> {
      * 
      * @param signal Variable arguments of StatusSignals
      */
-    @SuppressWarnings("unchecked")
     public Data(StatusSignal<T>[] signal, boolean isRio) {
         this.signal = signal;
         length = signal.length;
@@ -557,11 +556,6 @@ public class Data<T> {
         detectTypeFromSignal();
         allocateCachedArrays();
 
-        if (isRio) {
-            rioSignals.addAll(Arrays.asList(newSignals));
-        } else {
-            canivoreSignals.addAll(Arrays.asList(newSignals));
-        }
         refresh();
     }
 
