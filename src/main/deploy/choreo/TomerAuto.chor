@@ -5,105 +5,63 @@
  "variables":{
   "expressions":{},
   "poses":{
-   "backFirst":{
+   "Balls1":{
+    "x":{
+     "exp":"7.75 m",
+     "val":7.75
+    },
+    "y":{
+     "exp":"5 m",
+     "val":5.0
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
+   "Balls2":{
     "x":{
      "exp":"8 m",
      "val":8.0
     },
     "y":{
-     "exp":"6.6 m",
-     "val":6.6
+     "exp":"3.8 m",
+     "val":3.8
     },
     "heading":{
      "exp":"-90 deg",
      "val":-1.5707963267948966
     }
    },
-   "backSecond":{
+   "Balls3":{
     "x":{
-     "exp":"7 m",
-     "val":7.0
+     "exp":"6 m",
+     "val":6.0
     },
     "y":{
-     "exp":"7.2 m",
-     "val":7.2
+     "exp":"4 m",
+     "val":4.0
     },
     "heading":{
-     "exp":"-135 deg",
-     "val":-2.356194490192345
+     "exp":"-100 deg",
+     "val":-1.7453292519943295
     }
    },
-   "firstBall":{
+   "Depot":{
     "x":{
-     "exp":"trenchStart.x + 2 m",
-     "val":5.6
+     "exp":"1.2 m",
+     "val":1.2
     },
     "y":{
-     "exp":"trenchStart.y",
-     "val":7.4
+     "exp":"4.75 m",
+     "val":4.75
     },
     "heading":{
-     "exp":"0 rad",
-     "val":0.0
+     "exp":"-100 deg",
+     "val":-1.7453292519943295
     }
    },
-   "fourthBall":{
-    "x":{
-     "exp":"8.217238426208496 m",
-     "val":8.217238426208496
-    },
-    "y":{
-     "exp":"4.475301265716553 m",
-     "val":4.475301265716553
-    },
-    "heading":{
-     "exp":"-90 deg",
-     "val":-1.5707963267948966
-    }
-   },
-   "secondBall":{
-    "x":{
-     "exp":"6.745664596557617 m",
-     "val":6.745664596557617
-    },
-    "y":{
-     "exp":"6.854135036468506 m",
-     "val":6.854135036468506
-    },
-    "heading":{
-     "exp":"-35 deg",
-     "val":-0.6108652381980153
-    }
-   },
-   "thirdBall":{
-    "x":{
-     "exp":"7.784936428070068 m",
-     "val":7.784936428070068
-    },
-    "y":{
-     "exp":"5.662774562835693 m",
-     "val":5.662774562835693
-    },
-    "heading":{
-     "exp":"-45 deg",
-     "val":-0.7853981633974483
-    }
-   },
-   "trenchEnd":{
-    "x":{
-     "exp":"trenchStart.x",
-     "val":3.6
-    },
-    "y":{
-     "exp":"trenchStart.y",
-     "val":7.4
-    },
-    "heading":{
-     "exp":"pi rad",
-     "val":3.141592653589793
-    }
-   },
-   "trenchStart":{
+   "Shoot":{
     "x":{
      "exp":"3.6 m",
      "val":3.6
@@ -113,8 +71,36 @@
      "val":7.4
     },
     "heading":{
-     "exp":"0 rad",
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "Start":{
+    "x":{
+     "exp":"4.4 m",
+     "val":4.4
+    },
+    "y":{
+     "exp":"7.4 m",
+     "val":7.4
+    },
+    "heading":{
+     "exp":"0 deg",
      "val":0.0
+    }
+   },
+   "Tower":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"4.175 m",
+     "val":4.175
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
     }
    }
   }

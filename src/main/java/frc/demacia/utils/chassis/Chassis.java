@@ -211,6 +211,13 @@ public class Chassis extends SubsystemBase {
         setVelocities(speeds);
     }
 
+    public void resetTrajectory() {
+        for (int i = index; i >= 0; i--) {
+            field.getObject("trajectory point #" + i).setPose(Pose2d.kZero);
+        }
+        index = 0;
+    }
+
     private void addStatus() {
         gyroYawStatus = gyro.getYaw();
         lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
@@ -390,6 +397,10 @@ public class Chassis extends SubsystemBase {
             arr[i] = modules[i].getModulePosition();
         }
         return arr;
+    }
+
+    public void setModuleState(SwerveModuleState state) {
+        setModuleStates(new SwerveModuleState[]{state, state, state, state});
     }
 
     public void setModuleStates(SwerveModuleState[] states) {

@@ -9,22 +9,28 @@ import static frc.robot.Constants.*;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
@@ -46,6 +52,7 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
+import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
@@ -121,22 +128,91 @@ public class RobotContainer implements Sendable {
     // Data.setFrequancyAll();
 
     configureAuto();
+    SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
   }
 
   private AutoFactory autoFactory;
   private Command autoCommand;
+  private Timer autoTimer = new Timer();
 
   private void configureAuto() {
-    /* TODO: Change alliace flipped to actual alliance */
-    autoFactory = new AutoFactory(chassis::getPose, chassis::resetPose, chassis::followTrajectory,
-        false, chassis);
-    
-    // autoFactory.
+    autoFactory = new AutoFactory(chassis::getPose, RobotPose.getInstance()::resetPose, chassis::followTrajectory,
+        RobotCommon.isRed, chassis);
 
-    // autoFactory.bind("Intake", RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    // autoFactory.bind("Stop Intake", RobotCommon.changeStateCommand(RobotStates.Drive));
-    // autoFactory.bind("Print", new InstantCommand(() -> LogManager.log("Print")));
-    // autoCommand = autoFactory.trajectoryCmd("test");
+    AutoRoutine autoRoutine = autoFactory.newRoutine("Balls");
+
+    AutoTrajectory startToBalls = autoRoutine.trajectory("startToBalls");
+    AutoTrajectory ballsToDepot = autoRoutine.trajectory("ballsToDepot");
+    AutoTrajectory ballsToShoot = autoRoutine.trajectory("ballsToShoot");
+    AutoTrajectory shootToBalls2 = autoRoutine.trajectory("shootToBalls2");
+    AutoTrajectory balls2ToShoot = autoRoutine.trajectory("balls2ToShoot");
+    AutoTrajectory balls2ToDepot = autoRoutine.trajectory("balls2ToDepot");
+    AutoTrajectory shootToBalls3 = autoRoutine.trajectory("shootToBalls3");
+    AutoTrajectory balls3ToShoot = autoRoutine.trajectory("balls3ToShoot");
+    AutoTrajectory balls3ToDepot = autoRoutine.trajectory("balls3ToDepot");
+    AutoTrajectory shootToDepot = autoRoutine.trajectory("shootToDepot");
+    AutoTrajectory depotToTower = autoRoutine.trajectory("depotToTower");
+    AutoTrajectory shootToTower = autoRoutine.trajectory("shootToTower");
+
+    Trigger timeToDepot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls2 = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls2FromShoot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls1DepotFromShoot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls3 = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls2Depot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls3FromShoot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToDepotFromShoot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+    Trigger timeToBalls3Depot = new Trigger(() -> DriverStation.getMatchTime() != 0);
+
+    double timeToWaitForShooting = 1.3;
+
+    autoRoutine.active().onTrue(
+        Commands.sequence(
+            new InstantCommand(() -> {
+              autoTimer.reset();
+              autoTimer.start();
+              chassis.resetTrajectory();
+              CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+              CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+              CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+              CommandScheduler.getInstance().schedule(new ShooterCommand(shooter, chassis));
+              CommandScheduler.getInstance().schedule(new StateBasedClimb(climb, chassis));
+            }),
+            new WaitCommand(1.1),
+            startToBalls.resetOdometry(),
+            startToBalls.cmd()));
+
+    startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
+    startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
+    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
+    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls1DepotFromShoot.and(timeToBalls2.negate()))
+        .onTrue(shootToDepot.cmd());
+    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot.negate()
+        .and(timeToBalls1DepotFromShoot.negate()))
+        .onTrue(shootToTower.cmd());
+    shootToBalls2.done().and(timeToBalls3.or(timeToBalls2Depot.negate())).onTrue(balls2ToShoot.cmd());
+    shootToBalls2.done().and(timeToBalls2Depot.and(timeToBalls3.negate())).onTrue(balls2ToDepot.cmd());
+    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot).onTrue(shootToBalls3.cmd());
+    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToDepotFromShoot.and(timeToBalls2FromShoot.negate()))
+        .onTrue(shootToDepot.cmd());
+    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot.negate()
+        .and(timeToDepotFromShoot.negate())).onTrue(shootToTower.cmd());
+    shootToBalls3.done().and(timeToBalls3Depot).onTrue(balls3ToDepot.cmd());
+    shootToBalls3.done().and(timeToBalls3Depot.negate()).onTrue(balls3ToShoot.cmd());
+    balls3ToDepot.done().onTrue(depotToTower.cmd());
+    balls3ToShoot.doneDelayed(timeToWaitForShooting).onTrue(shootToTower.cmd());
+    shootToDepot.done().onTrue(depotToTower.cmd());
+    balls2ToDepot.done().onTrue(depotToTower.cmd());
+
+    autoRoutine.anyDone(shootToTower, depotToTower).onTrue(
+      Commands.sequence(
+        new WaitCommand(3),
+        new InstantCommand(() -> autoTimer.stop()),
+          new RunCommand(() -> chassis.setModuleState(new SwerveModuleState(0d, Rotation2d.kZero)), chassis)
+      )
+    );
+
+    autoCommand = autoRoutine.cmd();
   }
 
   /**
@@ -218,7 +294,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("Auto Drive",
         new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
 
-    SmartDashboard.putData("Reset pose", new InstantCommand(()->chassis.resetPose(Pose2d.kZero)));
+    SmartDashboard.putData("Reset pose", new InstantCommand(() -> chassis.resetPose(Pose2d.kZero)));
     // SmartDashboard.putData("lever to zero", new
     // InstantCommand(()->climb.setLeverAngle(0)));
     // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
@@ -247,6 +323,8 @@ public class RobotContainer implements Sendable {
         (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
     builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
         (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
+
+    builder.addDoubleProperty("Auto Timer", () -> 20 - autoTimer.get(), null);
   }
 
   public static void updateCommon() {
