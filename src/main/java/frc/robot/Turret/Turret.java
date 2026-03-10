@@ -148,9 +148,9 @@ public class Turret extends SubsystemBase {
 
   public void updatePositionByLimit() {
     if (isAtMinLimit())
-      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE + Math.toRadians(180));
     if (isAtMaxLimit())
-      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE - Math.toRadians(180));
   }
 
   public void stop() {
