@@ -78,9 +78,15 @@ public class Turret extends SubsystemBase {
     return turretMotor.getCurrentVelocity();
   }
 
+  private double moduloAngleToTurret(double angle) {
+    return MathUtil.inputModulus(angle, 0, Math.PI * 2);
+  }
+
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
+
+    wantedPosition = moduloAngleToTurret(wantedPosition);
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
@@ -93,6 +99,8 @@ public class Turret extends SubsystemBase {
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated)
       return;
+
+    wantedPosition = moduloAngleToTurret(wantedPosition);
     this.wantedAngle = wantedPosition;
 
     double pos = MathUtil.clamp(wantedPosition, MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
