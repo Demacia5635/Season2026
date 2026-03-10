@@ -47,7 +47,7 @@ public class TurretCommand extends Command{
                 break;
 
             case Drive, DriveAutoIntake:
-                turret.setPositionPID(0);
+                turret.setPositionPID(Math.PI);
                 break;
             case Test:
                 turret.setPositionPID(Math.toRadians(wantedAngle));

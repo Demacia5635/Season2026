@@ -162,6 +162,7 @@ public class TagPose {
 
     alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
+    System.out.println(dist);
     // dist = dist / Math.abs(Math.cos(Math.abs(Math.toRadians(camToTagYaw))))
 
     return dist;

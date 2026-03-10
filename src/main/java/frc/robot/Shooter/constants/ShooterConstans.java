@@ -67,7 +67,7 @@ public class ShooterConstans {
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(SHOOTER_MOTOR_ID, SHOOTER_CANBUS,
                         SHOOTER_MOTOR_NAME)
                         .withFeedForward(SHHOTER_KV2, 0)
-                        .withInvert(true)
+                        .withInvert(false)
                         .withBrake(false)
                         .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
                         .withMeterMotor(1, 3 * 0.0254);
@@ -83,7 +83,8 @@ public class ShooterConstans {
                         .withRadiansMotor(FEEDER_GEAR_RATIO)
                         .withBrake(false)
                         .withVolts(8)
-                        .withInvert(true);
+                        .withInvert(false)
+                        .withCurrent(20);
 
         public static final int HOOD_ID = 51;
         public static final String HOOD_NAME = "Shooter/Hood";
@@ -98,13 +99,13 @@ public class ShooterConstans {
         public static final double HOOD_MAX_VELOCITY = 2.5;
         public static final double HOOD_MAX_ACCEL =  Math.PI;
         public static final double HOOD_MAX_JERK = 0;
-        public static final double HOOD_GEAR_RATIO = 2 * 36;
+        public static final double HOOD_GEAR_RATIO = 2 * 64;
 
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)
                         .withBrake(true)
                         .withRadiansMotor(HOOD_GEAR_RATIO)
                         .withCurrent(15)
-                        .withInvert(false)
+                        .withInvert(true)
                         .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
                         .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
@@ -113,7 +114,7 @@ public class ShooterConstans {
 
         public static final int HOOD_ENCODER_CHANNEL = 8;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(85) - -0.658949059090459;
+        public static final double HOOD_OFFSET = Math.toRadians(85) - -1.4481171336722152;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(true);

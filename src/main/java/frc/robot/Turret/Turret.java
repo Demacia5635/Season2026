@@ -81,30 +81,30 @@ public class Turret extends SubsystemBase {
   private double moduloAngleToTurret(double angle) {
     return MathUtil.inputModulus(angle, 0, Math.PI * 2);
   }
+  private double clampAngle(double angle){
+    return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE,TurretConstants.MAX_TURRET_ANGLE);
+  }
 
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
 
-    wantedPosition = moduloAngleToTurret(wantedPosition);
+    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
     }
     this.wantedAngle = wantedPosition;
-    double pos = checkIfInRange(wantedPosition);
-    turretMotor.setPositionVoltage(pos);
+    turretMotor.setPositionVoltage(wantedPosition);
   }
 
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated)
       return;
 
-    wantedPosition = moduloAngleToTurret(wantedPosition);
+    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
     this.wantedAngle = wantedPosition;
-
-    double pos = checkIfInRange(wantedPosition);
-    turretMotor.setMotion(pos);
+    turretMotor.setMotion(wantedPosition);
   }
 
   public double getTurretPose() {
@@ -156,9 +156,9 @@ public class Turret extends SubsystemBase {
 
   public void updatePositionByLimit() {
     if (isAtMinLimit())
-      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE + Math.toRadians(180));
+      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE);
     if (isAtMaxLimit())
-      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE - Math.toRadians(180));
+      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
   }
 
   public void stop() {

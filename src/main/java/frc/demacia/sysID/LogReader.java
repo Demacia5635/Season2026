@@ -356,6 +356,8 @@ public class LogReader {
             }
             current.acceleration = sumAccel / count;
             
+            if (current.voltage != 0)
+            System.out.println(current.voltage);
             if (Math.abs(current.voltage) > voltageThresh) {
                 filtered.add(current);
             }

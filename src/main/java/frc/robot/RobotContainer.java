@@ -230,12 +230,12 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
-    shooter.setDefaultCommand(new FlywheelTesting(shooter));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    shooter.setDefaultCommand(new FlywheelPower(driverController,shooter));
+    // shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController,
     // climb));
@@ -251,7 +251,7 @@ public class RobotContainer implements Sendable {
 
     // shooter.setDefaultCommand(new ShooterTesting(shooter));
     // turret.setDefaultCommand(new TurretPower(driverController));
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretCommand(turret));
     // turret.setDefaultCommand(new TurretFollow(turret,
     // Field.HUB(true).getCenter().getTranslation(), chassis));
 
