@@ -47,7 +47,6 @@ public class ShinuaCommand extends Command {
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
         builder.addDoubleProperty("Batter Power", this::getBatteryPow, this::setBatteryPow);
         builder.addDoubleProperty("Left Power", this::getLeftPow, this::setLeftPow);
         builder.addDoubleProperty("Right Power", this::getRightPow, this::setRightPow);
@@ -84,7 +83,7 @@ public class ShinuaCommand extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
-            case HubWithoutAutoIntake, HubWithAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake:
+            case Hub, Delivery:
                 if (RobotCommon.isReady()) {
 
                     shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
@@ -97,14 +96,6 @@ public class ShinuaCommand extends Command {
                     shinua.setDutyIndexerOnTop(0);
                     shinua.setPowerBattery(0);
                 }
-
-                break;
-
-            case DriveAutoIntake:
-                shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                shinua.setDutyIndexerFar(0);
-                shinua.setDutyIndexerOnTop(0);
-                shinua.setPowerBattery(0);
 
                 break;
 

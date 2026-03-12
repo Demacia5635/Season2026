@@ -50,8 +50,6 @@ public class Turret extends SubsystemBase {
         new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
     turretMotor.configMotionMagic();
     turretMotor.configPidFf(0);
-    SmartDashboard.putData("reset motor position",
-        new InstantCommand(() -> turretMotor.setPosition(0)).ignoringDisable(true));
     LogManager.log("Turret Initalize");
   }
 
@@ -67,11 +65,10 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
-
     builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
     builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
+    builder.addBooleanProperty("is ready", this::isReady, null);
   }
 
   public double getTurretVelocity() {
@@ -81,8 +78,9 @@ public class Turret extends SubsystemBase {
   private double moduloAngleToTurret(double angle) {
     return MathUtil.inputModulus(angle, 0, Math.PI * 2);
   }
-  private double clampAngle(double angle){
-    return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE,TurretConstants.MAX_TURRET_ANGLE);
+
+  private double clampAngle(double angle) {
+    return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
   }
 
   public void setPositionPID(double wantedPosition) {
@@ -104,7 +102,7 @@ public class Turret extends SubsystemBase {
 
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
     this.wantedAngle = wantedPosition;
-    turretMotor.setMotion(wantedPosition);
+    turretMotor.setMotionExpo(wantedPosition);
   }
 
   public double getTurretPose() {
@@ -122,9 +120,7 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isReady() {
-    if (RobotCommon.currentState == RobotStates.DeliveryNotReady
-        || RobotCommon.currentState == RobotStates.DeliveryWithAutoIntake
-        || RobotCommon.currentState == RobotStates.DeliveryWithoutAutoIntake)
+    if (RobotCommon.currentState == RobotStates.Delivery)
       return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
     return Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(2);
   }

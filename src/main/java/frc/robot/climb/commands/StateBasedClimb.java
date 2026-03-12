@@ -63,7 +63,7 @@ public class StateBasedClimb extends Command {
 
     public void getToTower(){
         targetPose = climb.getTargetClimbPose(RobotCommon.isRed, IS_RIGHT_CLIMB);
-        chassisPose = chassis.getPose();
+        chassisPose = RobotCommon.currentRobotPose;
         difference = targetPose.getTranslation().minus(chassisPose.getTranslation());
         headingDiff = targetPose.getRotation().minus(chassisPose.getRotation()).getRadians();
         speed = new ChassisSpeeds(difference.getX() * ClimbConstants.driveKp,
@@ -79,45 +79,45 @@ public class StateBasedClimb extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
-            case PrepareClimb:
-                climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
-                climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
-                getToTower();
-                break;
+            // case PrepareClimb:
+            //     climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_RAISED);
+            //     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
+            //     getToTower();
+            //     break;
 
-            case Climb:
-                climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
-                if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
-                    climb.setArmsDuty(0.1);
-                    climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
-                }
-                break;
-            case GetOffClimb:
-                climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
+            // case Climb:
+            //     climb.setArmsAngle(ClimbConstants.ANGLE_ARMS_LOWERED);
+            //     if (climb.getArmEncoderAngle() >= ClimbConstants.ANGLE_ARMS_LOWERED) {
+            //         climb.setArmsDuty(0.1);
+            //         climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_OPEN);
+            //     }
+            //     break;
+            // case GetOffClimb:
+            //     climb.setLeverAngle(ClimbConstants.ANGLE_LEVER_CLOSED);
 
-                if (climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSED) {
-                    timer.start();
-                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
-                    climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
-                }
+            //     if (climb.getAngleLever() <= ClimbConstants.ANGLE_LEVER_CLOSED) {
+            //         timer.start();
+            //         chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToRaiseArmsAfterClimb, 0, 0));
+            //         climb.setArmsDuty(ClimbConstants.powerToRaiseArmsAfterClimb);
+            //     }
 
-                if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
-                    timer.stop();
-                    timer.reset();
-                    climb.stopArms();
-                    timer.start();
-                    chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb, 0, 0));
-                }
+            //     if (timer.hasElapsed(ClimbConstants.timeToRaiseArmsAfterClimb)) {
+            //         timer.stop();
+            //         timer.reset();
+            //         climb.stopArms();
+            //         timer.start();
+            //         chassis.setVelocities(new ChassisSpeeds(ClimbConstants.velocityToGoBackAfterClimb, 0, 0));
+            //     }
 
-                if (timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)) {
-                    timer.stop();
-                    timer.reset();
-                    chassis.stop();
-                }
+            //     if (timer.hasElapsed(ClimbConstants.timeToGoBackAfterClimb)) {
+            //         timer.stop();
+            //         timer.reset();
+            //         chassis.stop();
+            //     }
 
-                RobotCommon.currentState = RobotStates.Drive;
+            //     RobotCommon.currentState = RobotStates.Drive;
 
-                break;
+            //     break;
             case Test:
                 climb.setArmsAngle(armsAngle);
                 climb.setLeverDuty(krakenPow);

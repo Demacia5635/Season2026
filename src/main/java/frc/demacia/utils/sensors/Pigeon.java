@@ -7,8 +7,10 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.demacia.utils.Data;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 
 import com.ctre.phoenix6.StatusSignal;
 
@@ -142,21 +144,13 @@ public class Pigeon extends Pigeon2 implements SensorInterface{
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unlikely-arg-type" })
     private void addLog() {
-        LogManager.addEntry(name + ": yaw, pitch, roll, x velocity, y velocity, z velocity, x acceleration, y acceleration, z acceleration, x angular acceleration, y angular acceleration, z angular acceleration",
-            () -> getCurrentYaw(),
-            () -> getCurrentPitch(),
-            () -> getCurrentRoll(),
-            () -> getXVelocity(),
-            () -> getYVelocity(),
-            () -> getZVelocity(),
-            () -> getXAcceleration(),
-            () -> getYAcceleration(),
-            () -> getZAcceleration(),
-            () -> getXAngularAcceleration(),
-            () -> getYAngularAcceleration(),
-            () -> getZAngularAcceleration()
+        Data.addSignals(config.canbus.equals(Canbus.Rio), yawSignal, pitchSignal, rollSignal);
+        LogManager.addEntry(name + ": yaw, pitch, roll",
+            () -> yawSignal.getValueAsDouble() * 2 * Math.PI,
+            () -> pitchSignal.getValueAsDouble() * 2 * Math.PI,
+            () -> rollSignal.getValueAsDouble() * 2 * Math.PI
         ).withLogLevel(LogLevel.LOG_ONLY_NOT_IN_COMP).build();
     }
 

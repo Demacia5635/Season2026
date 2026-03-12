@@ -7,34 +7,18 @@ import frc.demacia.utils.leds.LedStrip;
 import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
 
-public class RobotALedStrip extends LedStrip {
+public class RobotBLedStrip extends LedStrip {
 
-    public RobotALedStrip() {
-        super("Robot A Strip", 14, RobotContainer.ledManager);
+    public RobotBLedStrip() {
+        super("Robot B Strip", 14, RobotContainer.ledManager);
     }
 
     private Color getColorBasedOnState(RobotCommon.RobotStates state) {
         switch (RobotCommon.currentState) {
-            case Climb:
-                return Color.kOrangeRed;
-            case DeliveryWithAutoIntake:
-                return Color.kRed;
-            case DeliveryWithoutAutoIntake:
-                return Color.kDarkRed;
             case Drive:
                 return Color.kWhiteSmoke;
-            case DriveAutoIntake:
-                return Color.kWhite;
-            case GetOffClimb:
-                return Color.kDarkOrange;
-            case HubWithAutoIntake:
-                return Color.kBlue;
-            case HubWithoutAutoIntake:
-                return Color.kAliceBlue;
             case Idle:
                 return Color.kPurple;
-            case PrepareClimb:
-                return Color.kBeige;
             case Test:
                 return Color.kDeepPink;
             case Trench:

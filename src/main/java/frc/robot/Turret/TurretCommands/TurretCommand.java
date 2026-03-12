@@ -23,7 +23,6 @@ public class TurretCommand extends Command{
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
         builder.addDoubleProperty("Wanted Turret Angle", ()->wantedAngle, (x)->wantedAngle = x);
     }
 
@@ -41,16 +40,16 @@ public class TurretCommand extends Command{
             //     turret.setPositionMotion(turret.getTurretToHubAngle());
             //     break;
             
-            case HubWithAutoIntake, HubWithoutAutoIntake, HubNotReady, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DeliveryNotReady:
+            case Hub, Delivery:
                 turret.setPositionPID(RobotCommon.futureAngleFromTargetRobotRelative);
                 // frc.demacia.utils.log.LogManager.log("Turret angle: " + RobotCommon.futureAngleFromTargetRobotRelative);
                 break;
 
-            case Drive, DriveAutoIntake:
+            case Drive:
                 turret.setPositionPID(Math.PI);
                 break;
             case Test:
-                turret.setPositionPID(Math.toRadians(wantedAngle));
+                turret.setPositionMotion((Math.toRadians(wantedAngle)));
                 break;
 
             default:

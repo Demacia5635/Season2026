@@ -14,13 +14,13 @@ import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
 /** 
- * Robot A Chasis
+ * Robot B Chasis
  * the chassis that currenty contains the intake and the shinua
  */
 public final class RobotBChassisConstants {
 
     /** The name of the Chasssi */
-    public static final String NAME = "Robot A Chassis";
+    public static final String NAME = "Robot B Chassis";
     /** The canbus that is used in the chassis, the chassis only contains the rio canbus */
     public static final Canbus CANBUS = Canbus.CANIvore;
 
@@ -54,7 +54,7 @@ public final class RobotBChassisConstants {
          * @return the config of the drive motor with all the constants
          */
         private static TalonFXConfig getDriveMotor(int id, String moduleName) {
-            return new TalonFXConfig(id, CANBUS, RobotAChassisConstants.NAME + "/" + moduleName + "/" + NAME)
+            return new TalonFXConfig(id, CANBUS, RobotBChassisConstants.NAME + "/" + moduleName + "/" + NAME)
                     .withBrake(IS_BRAKE)
                     .withInvert(IS_INVERT)
                     .withPID(KP, KI, KD, KS, KV, KA, KG)
@@ -92,7 +92,7 @@ public final class RobotBChassisConstants {
          * @return the config of the steer motor with all the constants
          */
         private static TalonFXConfig getSteerMotor(int id, String moduleName) {
-            return new TalonFXConfig(id, CANBUS, RobotAChassisConstants.NAME + "/" + moduleName + "/" + NAME)
+            return new TalonFXConfig(id, CANBUS, RobotBChassisConstants.NAME + "/" + moduleName + "/" + NAME)
                     .withBrake(IS_BRAKE)
                     .withInvert(IS_INVERT)
                     .withRampTime(RAMP_TIME)

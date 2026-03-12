@@ -11,12 +11,12 @@ import frc.robot.Turret.Turret;
 
 public class RobotCommon {
     public enum Shifts {
-        Auto, Transition, Active, Inactive, Endgame, Disable
+        Auto, Transition, Active, Inactive, Endgame, Disable;
     }
 
     public enum RobotStates {
-        Idle, HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveAutoIntake, DriveWithIntake,
-        Drive, Trench, PrepareClimb, Climb, GetOffClimb, Test, HubNotReady, DeliveryNotReady;
+        Idle, Hub, Delivery, DriveWithIntake,
+        Drive, Trench, Test;
     }
 
     public static RobotStates currentState = RobotStates.Drive;
@@ -44,10 +44,9 @@ public class RobotCommon {
     public static double fuelTime = 0;
     public static boolean hasDisabledIntake = false;
 
-    public static boolean isReady(){
-       return true; // return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+    public static boolean isReady() {
+        return Turret.getInstance().isReady(); // && RobotContainer.shooter.isReady();
     }
-
 
     public static void changeState(RobotStates newState) {
         RobotContainer.leds.changeColor(newState);
@@ -62,6 +61,7 @@ public class RobotCommon {
         RobotContainer.leds.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
     }
+
     public static boolean isReadyToShoot() {
         return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }

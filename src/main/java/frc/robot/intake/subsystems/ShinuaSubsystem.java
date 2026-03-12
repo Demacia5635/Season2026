@@ -24,7 +24,6 @@ public class ShinuaSubsystem extends SubsystemBase {
     setEncoderPositionBattery(IntakeConstants.MIN_POSITION);
     motorBattery.configPidFf(0);
 
-    SmartDashboard.putData("Shinua", this);
     SmartDashboard.putData("Shinua/Top/set coast", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shinua/Top/set brake", new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(true)).ignoringDisable(true));
     SmartDashboard.putData("Shinua/Left/set coast", new InstantCommand(() -> motorIndexerFar.setNeutralMode(false)).ignoringDisable(true));
@@ -46,13 +45,6 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerFar.checkElectronics();
     motorIndexerOnTop.checkElectronics();
     motorBattery.checkElectronics();
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      super.initSendable(builder);
-    
-      builder.addDoubleProperty("Batter Position", () -> motorBattery.getCurrentPosition(), null);
   }
 
   public void setNeutralMode(boolean isBrake) {

@@ -122,6 +122,9 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         cfg.MotionMagic.MotionMagicAcceleration = config.maxAcceleration;
         cfg.MotionMagic.MotionMagicCruiseVelocity = config.maxVelocity;
         cfg.MotionMagic.MotionMagicJerk = config.maxJerk;
+        cfg.MotionMagic.MotionMagicExpo_kA = config.pid[0].kA();
+        cfg.MotionMagic.MotionMagicExpo_kV = config.pid[0].kV();
+        
         
         if(apply) {
             getConfigurator().apply(cfg.MotionMagic);

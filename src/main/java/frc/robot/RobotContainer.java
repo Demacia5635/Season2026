@@ -19,8 +19,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,19 +54,22 @@ import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
+import frc.robot.Turret.TurretCommands.TurretFollow;
+import frc.robot.Turret.TurretCommands.TurretPower;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.RobotBChassisConstants;
 import frc.robot.chassis.commands.SetModuleAngle;
+import frc.robot.climb.commands.ControllerClimb;
 import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
-import frc.robot.leds.RobotALedStrip;
+import frc.robot.leds.RobotBLedStrip;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -84,8 +89,9 @@ public class RobotContainer implements Sendable {
   public static ShinuaSubsystem shinua;
   public static Shooter shooter;
   public static LedManager ledManager;
-  public static RobotALedStrip leds;
+  public static RobotBLedStrip leds;
   public static Climb climb;
+  CommandController climbController = new CommandController(1, ControllerType.kXbox);
   private Dvirs_ObjectPose ballCamera;
 
   TalonFXMotor motor;
@@ -101,12 +107,13 @@ public class RobotContainer implements Sendable {
     shinua = ShinuaSubsystem.getInstance();
     shooter = Shooter.getInstance();
     ledManager = new LedManager();
-    leds = new RobotALedStrip();
+    leds = new RobotBLedStrip();
     climb = new Climb();
     chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
-    ballCamera = new Dvirs_ObjectPose(
-        new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false, true));
+    // ballCamera = new Dvirs_ObjectPose(
+    // new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false,
+    // true));
     StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
     SmartDashboard.putData("RC", this);
@@ -129,6 +136,7 @@ public class RobotContainer implements Sendable {
 
     configureAuto();
     SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
+    SmartDashboard.putData("PDH", new PowerDistribution(16, ModuleType.kRev));
   }
 
   private AutoFactory autoFactory;
@@ -136,7 +144,8 @@ public class RobotContainer implements Sendable {
   private Timer autoTimer = new Timer();
 
   private void configureAuto() {
-    autoFactory = new AutoFactory(chassis::getPose, RobotPose.getInstance()::resetPose, chassis::followTrajectory,
+    autoFactory = new AutoFactory(() -> RobotCommon.currentRobotPose, RobotPose.getInstance()::resetPose,
+        chassis::followTrajectory,
         RobotCommon.isRed, chassis);
 
     AutoRoutine autoRoutine = autoFactory.newRoutine("Balls");
@@ -176,7 +185,7 @@ public class RobotContainer implements Sendable {
               CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
               CommandScheduler.getInstance().schedule(new TurretCommand(turret));
               CommandScheduler.getInstance().schedule(new ShooterCommand(shooter, chassis));
-              CommandScheduler.getInstance().schedule(new StateBasedClimb(climb, chassis));
+              // CommandScheduler.getInstance().schedule(new StateBasedClimb(climb, chassis));
             }),
             new WaitCommand(1.1),
             startToBalls.resetOdometry(),
@@ -205,12 +214,10 @@ public class RobotContainer implements Sendable {
     balls2ToDepot.done().onTrue(depotToTower.cmd());
 
     autoRoutine.anyDone(shootToTower, depotToTower).onTrue(
-      Commands.sequence(
-        new WaitCommand(3),
-        new InstantCommand(() -> autoTimer.stop()),
-          new RunCommand(() -> chassis.setModuleState(new SwerveModuleState(0d, Rotation2d.kZero)), chassis)
-      )
-    );
+        Commands.sequence(
+            new WaitCommand(3),
+            new InstantCommand(() -> autoTimer.stop()),
+            new RunCommand(() -> chassis.setModuleState(new SwerveModuleState(0d, Rotation2d.kZero)), chassis)));
 
     autoCommand = autoRoutine.cmd();
   }
@@ -235,32 +242,21 @@ public class RobotContainer implements Sendable {
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    climb.setDefaultCommand(new ControllerClimb(climbController, climb));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController,
     // climb));
     // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
-    // turret.setDefaultCommand(new TurretFollow(turret,
-    // Field.HUB(true).getCenter().getTranslation(), chassis));
-    SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
-      shooter.setFeederPower(0.8);
-    }, () -> {
-      shooter.setFeederPower(0);
-    }));
+    // turret.setDefaultCommand(new TurretFollow(turret, Field.HubRed.CENTER,
+    // chassis));
 
-    // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // turret.setDefaultCommand(new TurretPower(driverController));
     turret.setDefaultCommand(new TurretCommand(turret));
-    // turret.setDefaultCommand(new TurretFollow(turret,
-    // Field.HUB(true).getCenter().getTranslation(), chassis));
 
-    driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithAutoIntake));
-    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveAutoIntake));
-    driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithAutoIntake));
+    driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
 
-    driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.HubWithoutAutoIntake));
+    driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
     driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
-    driverController.povRight().onTrue(RobotCommon.changeStateCommand(RobotStates.DeliveryWithoutAutoIntake));
     // new Trigger(() -> driverController.rightBumper().getAsBoolean() ||
     // driverController.getRightTrigger(0.2).getAsBoolean() ||
     // driverController.getLeftTrigger(0.2).getAsBoolean())
@@ -288,20 +284,18 @@ public class RobotContainer implements Sendable {
     // break;
     // }
     // }).ignoringDisable(true));
-    driverController.rightBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
+    driverController.rightBumper().onTrue(new InstantCommand(() -> {
+      if (StateManager.getInstance().isStateChangeActivated()) {
+        StateManager.getInstance().setStateChangeActivated(false);
+        RobotCommon.changeState(RobotStates.DriveWithIntake);
+      } else {
+        StateManager.getInstance().setStateChangeActivated(true);
+      }
+    }));
+    driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle).ignoringDisable(true).andThen(
+        new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(false)).ignoringDisable(true)).ignoringDisable(true));
 
-    SmartDashboard.putData("Auto Drive",
-        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
-
-    SmartDashboard.putData("Reset pose", new InstantCommand(() -> chassis.resetPose(Pose2d.kZero)));
-    // SmartDashboard.putData("lever to zero", new
-    // InstantCommand(()->climb.setLeverAngle(0)));
-    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
-    // SmartDashboard.putData("Reset Turret Position",
-    // new InstantCommand(() ->
-    // turret.setEncoderPosition(0)).ignoringDisable(true));
-    SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
-    SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
+    SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
 
   private void setUserButton() {

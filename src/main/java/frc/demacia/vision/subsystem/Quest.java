@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
@@ -53,6 +55,7 @@ public class Quest extends SubsystemBase {
     LogManager.addEntry("Quest/Battery", questNav::getBatteryPercent).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
     LogManager.addEntry("Quest/LibVersion", questNav::getLibVersion).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
 
+    SmartDashboard.putData("Quest/Reset Quest Pose", new InstantCommand(()->RobotPose.getInstance().setQuestPose()).ignoringDisable(true));
     // SmartDashboard.putData("Quest/Field", field);
     SmartDashboard.putData("Quest/robotField", robotField);
 

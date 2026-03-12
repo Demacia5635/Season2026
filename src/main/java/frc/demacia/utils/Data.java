@@ -180,6 +180,12 @@ public class Data<T> {
         }
     }
 
+    public static void addSignals(boolean isRio, StatusSignal<?>... signals) {
+        if (isRio) 
+            rioSignals.addAll(Arrays.asList(signals));
+        canivoreSignals.addAll(Arrays.asList(signals));
+    }
+
     /**
      * Updates the internal primitive arrays from the signals.
      * Sets the 'changed' flag if values have changed.

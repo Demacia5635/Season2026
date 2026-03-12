@@ -5,6 +5,7 @@
 package frc.robot.intake.commands;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotCommon;
@@ -19,6 +20,7 @@ public class IntakeCommand extends Command {
 
   /** The Intake Subsystem */
   private IntakeSubsystem intakeSubsystem;
+  private Timer timer;
 
   private double power;
 
@@ -30,7 +32,7 @@ public class IntakeCommand extends Command {
   public IntakeCommand(IntakeSubsystem intakeSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     addRequirements(intakeSubsystem);
-
+    timer = new Timer();
     power = 0;
 
     SmartDashboard.putData("Intake Command", this);
@@ -38,8 +40,6 @@ public class IntakeCommand extends Command {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
-
     builder.addDoubleProperty("Intake Power", this::getPower, this::setPower);
   }
 
@@ -51,10 +51,16 @@ public class IntakeCommand extends Command {
 
     switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
                                         // Climb, GetOffClimb
-      case HubWithAutoIntake, HubWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryWithoutAutoIntake, DriveWithIntake, DriveAutoIntake:
+      case Hub, Delivery, DriveWithIntake:
         // intake
-        if (!RobotCommon.hasDisabledIntake)
+        // if (intakeSubsystem.canIntake() && !timer.isRunning() && !timer.hasElapsed(0.6)) {
           intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+          timer.stop();
+          timer.reset();
+        // } else {
+          // timer.start();
+          // intakeSubsystem.setDutyIntake(-1);
+        // }
 
         // indexers
 
@@ -81,6 +87,8 @@ public class IntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intakeSubsystem.stopIntake();
+    timer.reset();
+    timer.stop();
   }
 
   /**

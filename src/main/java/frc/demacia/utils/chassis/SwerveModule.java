@@ -39,7 +39,6 @@ public class SwerveModule {
         name = config.name;
 
         steerMotor.setEncoderPosition(getAbsoluteAngle() - config.steerOffset);
-        ((TalonFXMotor)steerMotor).configPidFf(0);
     }
 
     public MotorInterface getSteerMotor() {

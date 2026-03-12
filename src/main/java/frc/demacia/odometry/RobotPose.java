@@ -92,14 +92,24 @@ public class RobotPose {
         addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions),
                 currentVelocity);
     }
+    public void setQuestPose(){
+        if(vision.isSeeTag()){
+            setQuestPose(vision.getPoseEstimation());
+        }
+    }
+
+    public void setQuestPose(Pose2d pose){
+        hasUpdatedQuestIntialPose = true;
+        quest.setQuestPose(new Pose3d(pose));
+    }
 
     public void addVisionMeasurement() {
         vision.updateValues();
 
-        if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
-            hasUpdatedQuestIntialPose = true;
-            quest.setQuestPose(new Pose3d(vision.getPoseEstimation()));
-        }
+        // if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
+        //     hasUpdatedQuestIntialPose = true;
+        //     setQuestPose();    
+        // }
 
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
         poseEstimator.addVisionMeasurement(vision.getPoseEstimation(), Timer.getFPGATimestamp() - 0.05);
@@ -123,7 +133,7 @@ public class RobotPose {
         // // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
         // && vision.isSeeTagWithDistance());
 
-        return vision.isSeeTag();// && Turret.getInstance().hasCalibrated();
+        return vision.isSeeTag() && !hasUpdatedQuestIntialPose;// && Turret.getInstance().hasCalibrated();
 
     }
 

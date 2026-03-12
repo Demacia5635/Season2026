@@ -160,13 +160,12 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putData("chassis/reset gyro 180",
                 new InstantCommand(() -> setYaw(Rotation2d.kPi)).ignoringDisable(true));
         SmartDashboard.putData("chassis/field", field);
-        SmartDashboard.putData("chassis/quest field", questField);
-        SmartDashboard.putData("chassis/tags field", tagsField);
+        // SmartDashboard.putData("chassis/quest field", questField);
+        // SmartDashboard.putData("chassis/tags field", tagsField);
         SmartDashboard.putData("chassis/set coast",
                 new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
         SmartDashboard.putData("chassis/set brake",
                 new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
-        SmartDashboard.putData("chassis", this);
 
         int c = 0;
         for (int i = 0; i < chassisConfig.tags.length; i++) {
@@ -197,7 +196,7 @@ public class Chassis extends SubsystemBase {
     private int index = 0;
 
     public void followTrajectory(SwerveSample sample) {
-        Pose2d pose = getPose();
+        Pose2d pose = RobotCommon.currentRobotPose;
 
         ChassisSpeeds speeds = new ChassisSpeeds(
                 sample.vx + xController.calculate(pose.getX(), sample.x),
@@ -266,7 +265,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public Pose2d getPoseWithVelocity(double dt) {
-        Pose2d currentPose = getPose();
+        Pose2d currentPose = RobotCommon.currentRobotPose;
         ChassisSpeeds currentSpeeds = getChassisSpeedsFieldRel();
         return new Pose2d(currentPose.getX() + (currentSpeeds.vxMetersPerSecond * dt),
                 currentPose.getY() + (currentSpeeds.vyMetersPerSecond * dt),
@@ -307,12 +306,12 @@ public class Chassis extends SubsystemBase {
     public void setVelocities(ChassisSpeeds speeds) {
         if (isRotateToHub) {
             speeds.omegaRadiansPerSecond = -1.5
-                    * MathUtil.angleModulus(targetAngle - getPose().getRotation().getRadians());
+                    * MathUtil.angleModulus(targetAngle - RobotCommon.robotAngle.getRadians());
 
         }
 
         SwerveModuleState[] states = demaciaKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getGyroAngle()));
+                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.robotAngle));
         // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
         // speeds,
         // getChassisSpeedsFieldRel(),
@@ -338,7 +337,7 @@ public class Chassis extends SubsystemBase {
      * @param speeds Desired chassis speeds (robot-relative)
      */
     public void setRobotRelSpeedsWithAccel(ChassisSpeeds speeds) {
-        ChassisSpeeds fieldSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds, getGyroAngle());
+        ChassisSpeeds fieldSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds, RobotCommon.robotAngle);
         setVelocities(fieldSpeeds);
     }
 
@@ -365,7 +364,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public ChassisSpeeds getRobotRelVelocities() {
-        return ChassisSpeeds.fromFieldRelativeSpeeds(getChassisSpeedsRobotRel(), getGyroAngle());
+        return ChassisSpeeds.fromFieldRelativeSpeeds(RobotCommon.robotRelativeSpeeds, RobotCommon.robotAngle);
     }
 
     public void setRobotRelVelocities(ChassisSpeeds speeds) {
@@ -519,30 +518,28 @@ public class Chassis extends SubsystemBase {
 
         observation = new OdometryObservation(
                 Timer.getFPGATimestamp(),
-                getGyroAngle(),
+                RobotCommon.robotAngle,
                 getModulePositions());
 
         RobotPose.getInstance().update(observation, getVelocityAsVector());
-        field.setRobotPose(getPose());
+        field.setRobotPose(RobotCommon.currentRobotPose);
         field.getObject("estimation").setPose(
                 ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.currentRobotPose, 0.1));
-
     }
 
     public void updateCommon() {
+        RobotCommon.robotAngle = getGyroAngle();
         RobotCommon.currentRobotPose = getPose();
-        RobotCommon.futureRobotPose = getFuturePose(0.04);
         RobotCommon.fieldRelativeSpeeds = getChassisSpeedsFieldRel();
         RobotCommon.robotRelativeSpeeds = getRobotRelVelocities();
-        RobotCommon.robotAngle = getGyroAngle();
+        RobotCommon.futureRobotPose = getFuturePose(0.2);
     }
 
     public Pose2d getFuturePose(double dtSeconds) {
-        Pose2d poseAtTime = getPose().exp(new Twist2d(
-                (getChassisSpeedsFieldRel().vxMetersPerSecond * dtSeconds),
-                (getChassisSpeedsFieldRel().vyMetersPerSecond * dtSeconds),
-                getChassisSpeedsFieldRel().omegaRadiansPerSecond * dtSeconds));
-        return poseAtTime;
+        return RobotCommon.currentRobotPose.exp(new Twist2d(
+                (RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond * dtSeconds),
+                (RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond * dtSeconds),
+                RobotCommon.fieldRelativeSpeeds.omegaRadiansPerSecond * dtSeconds));
     }
 
     /**
@@ -565,7 +562,7 @@ public class Chassis extends SubsystemBase {
         return ChassisSpeeds.fromRobotRelativeSpeeds(
                 demaciaKinematics.toChassisSpeeds(getModuleStates(),
                         gyro.getAngularVelocityZWorld().getValue().in(RadiansPerSecond)),
-                getGyroAngle());
+                RobotCommon.robotAngle);
     }
 
     public Translation2d getChassisSpeedsVector() {

@@ -101,14 +101,13 @@ public class StateManager extends SubsystemBase {
         chooser.onChange(this::onChange);
         chooser.initSendable(builder);
         builder.addBooleanProperty("Is Activated", this::isStateChangeActivated, this::setStateChangeActivated);
-        builder.addBooleanProperty("Is Auto Intake Activated", this::isAutoIntakeManual, this::setAutoIntakeManual);
         builder.addDoubleProperty("Time left", this::getTimeLeft, null);
         builder.addStringProperty("current state", () -> RobotCommon.currentState.name(), null);
     }
 
     public boolean isCanIntake() {
         intakeCurrentTimer.start();
-        return intake.isCanIntake();
+        return intake.canIntake();
     }
 
     public void checkGameData() {
@@ -136,27 +135,13 @@ public class StateManager extends SubsystemBase {
         if (isStateChangeActivated) {
             if (isOnTrench())
                 RobotCommon.changeState(RobotStates.Trench);
-            // else if (isClimb())
-            // RobotCommon.changeState(RobotStates.Climb);
-            if (!isCanIntake() && intakeCurrentTimer.hasElapsed(0.3))
-                RobotCommon.hasDisabledIntake = true;
-            if (isAutoIntakeManual && isAutoIntake())
-                if (isHub()) {
-                    RobotCommon.hasDisabledIntake = false;
-                    RobotCommon.changeState(RobotStates.HubWithAutoIntake);
-                } else if (isDelivery()) {
-                    RobotCommon.hasDisabledIntake = false;
-                    RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
-                } else
-                    RobotCommon.changeState(RobotStates.DriveAutoIntake);
-            else if (isHub()) {
-                RobotCommon.hasDisabledIntake = false;
-                RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
+            else if (isHub() && !RobotCommon.currentShift.equals(RobotCommon.Shifts.Inactive)) {
+                RobotCommon.changeState(RobotStates.Hub);
             } else if (isDelivery()) {
-                RobotCommon.hasDisabledIntake = false;
-                RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
-            } else
+                RobotCommon.changeState(RobotStates.Delivery);
+            } else {
                 RobotCommon.changeState(RobotStates.DriveWithIntake);
+            }
         }
     }
 
@@ -245,15 +230,15 @@ public class StateManager extends SubsystemBase {
         isStateChangeActivated = false;
     }
 
+    private final double TRENCH_OFFSET = 0.5;
+
     private boolean isOnTrench() {
-        return (RobotCommon.futureRobotPose.getX() > Field.TrenchRedAudience.X_FRONT
-                && RobotCommon.futureRobotPose.getX() < Field.TrenchRedAudience.X_BACK)
-                || (RobotCommon.currentRobotPose.getX() > Field.TrenchRedAudience.X_FRONT
-                        && RobotCommon.currentRobotPose.getX() < Field.TrenchRedAudience.X_BACK)
-                || (RobotCommon.futureRobotPose.getX() < Field.TrenchBlueAudience.X_FRONT
-                        && RobotCommon.futureRobotPose.getX() > Field.TrenchBlueAudience.X_BACK)
-                || (RobotCommon.currentRobotPose.getX() < Field.TrenchBlueAudience.X_FRONT
-                        && RobotCommon.currentRobotPose.getX() > Field.TrenchBlueAudience.X_BACK);
+        return (RobotCommon.futureRobotPose.getY() > Field.TrenchRedAudience.Y_FRONT - 0.4
+                || RobotCommon.futureRobotPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.4)
+                && ((RobotCommon.futureRobotPose.getX() < Field.HubRed.X_BACK + TRENCH_OFFSET
+                        && RobotCommon.futureRobotPose.getX() > Field.HubRed.X_FRONT - TRENCH_OFFSET)
+                        || (RobotCommon.futureRobotPose.getX() < Field.HubBlue.X_FRONT + TRENCH_OFFSET
+                                && RobotCommon.futureRobotPose.getX() > Field.HubBlue.X_BACK - TRENCH_OFFSET));
     }
 
     private boolean isAutoIntake() {
@@ -269,8 +254,9 @@ public class StateManager extends SubsystemBase {
     }
 
     private boolean isClimb() {
-        /* TODO: need to check climb position */
-        return !DriverStation.isAutonomous();
+        return !DriverStation.isAutonomous()
+                && ((RobotCommon.currentRobotPose.getX() < 10 && RobotCommon.currentRobotPose.getX() > 10)
+                        && (RobotCommon.currentRobotPose.getY() < 10 && RobotCommon.currentRobotPose.getY() > 10));
     }
 
     private boolean isHub() {

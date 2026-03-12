@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.vision.ObjectPose;
+import frc.robot.RobotCommon;
 
 /**
  * Autonomous intake command that drives toward a game piece while automatically
@@ -44,7 +45,7 @@ public class AutonamusIntakeCommand extends Command {
   @Override
   public void execute() {
     // Get current robot pose and object pose
-    Pose2d robotPose = chassis.getPose();
+    Pose2d robotPose = RobotCommon.currentRobotPose;
     Pose2d targetPose = objectPose.getPose2d();
     
     // Check if we have a valid target
@@ -124,7 +125,7 @@ public class AutonamusIntakeCommand extends Command {
       return false;
     }
     
-    Pose2d robotPose = chassis.getPose();
+    Pose2d robotPose = RobotCommon.currentRobotPose;
     Pose2d targetPose = objectPose.getPose2d();
     
     if (targetPose.equals(Pose2d.kZero)) {

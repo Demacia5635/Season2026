@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.robot.RobotCommon;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class goToFinish extends Command {
@@ -33,8 +34,8 @@ public class goToFinish extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d vectorError = target.getTranslation().minus(chassis.getPose().getTranslation());
-    double rotationError = target.getRotation().minus(chassis.getPose().getRotation()).getRadians();
+    Translation2d vectorError = target.getTranslation().minus(RobotCommon.currentRobotPose.getTranslation());
+    double rotationError = target.getRotation().minus(RobotCommon.currentRobotPose.getRotation()).getRadians();
     double vX = drivePID.calculate(-vectorError.getX(), 0);
     double vY = drivePID.calculate(-vectorError.getY(), 0);
     double omega = rotationPID.calculate(-rotationError, 0);
@@ -50,6 +51,6 @@ public class goToFinish extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return target.getTranslation().minus(chassis.getPose().getTranslation()).getNorm() <= 0.03;
+    return target.getTranslation().minus(RobotCommon.currentRobotPose.getTranslation()).getNorm() <= 0.03;
   }
 }

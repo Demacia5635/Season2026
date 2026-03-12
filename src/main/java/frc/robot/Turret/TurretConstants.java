@@ -7,7 +7,7 @@ import frc.demacia.utils.sensors.LimitSwitchConfig;
 
 public class TurretConstants {
 
-    public static final double MAX_TURRET_ANGLE = Math.toRadians(290);
+    public static final double MAX_TURRET_ANGLE = 1.950369 + Math.PI;
     public static final double MIN_TURRET_ANGLE = Math.toRadians(70);
 
     private static final int TURRET_MOTOR_ID = 40;
@@ -17,13 +17,13 @@ public class TurretConstants {
     private static final double kP = 20;
     private static final double kI = 0;
     private static final double kD = 0;
-    private static final double kS = 0.05979;
-    private static final double kV = 3.4;
-    private static final double kA = 0.248;
+    private static final double kS = 0.03737;
+    private static final double kV = 2.75556;
+    private static final double kA = 0.12839;
 
-    private static final double MAX_VELOCITY = Math.toRadians(160);
-    private static final double MAX_ACCEL = Math.toRadians(300);
-    private static final double MAX_JERK = Math.toRadians(2000);
+    private static final double MAX_VELOCITY = Math.toRadians(300);
+    private static final double MAX_ACCEL = Math.toRadians(850);
+    private static final double MAX_JERK = Math.toRadians(0);
 
     public static final TalonFXConfig TURRET_MOTOR_CONFIG = new TalonFXConfig(TURRET_MOTOR_ID, CANBUS, "Turret/Motor")
             .withBrake(true)

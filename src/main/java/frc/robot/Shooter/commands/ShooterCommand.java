@@ -20,7 +20,6 @@ import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
-import frc.robot.Turret.Turret;
 
 /**
  * this is the main shooter command
@@ -62,16 +61,14 @@ public class ShooterCommand extends Command {
     this.wantedFeederPower = 0;
 
     addRequirements(shooter);
-    SmartDashboard.putData(this);
+    SmartDashboard.putData("Shooter Command", this);
 
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
     builder.addDoubleProperty("wanted angle", () -> wantedAngle, (value) -> wantedAngle = value);
     builder.addDoubleProperty("wanted vel", () -> wantedVel, (value) -> wantedVel = value);
-
     builder.addDoubleProperty("wanted feeder power", () -> wantedFeederPower, (value) -> wantedFeederPower = value);
   }
 
@@ -120,7 +117,7 @@ public class ShooterCommand extends Command {
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
     RobotCommon.futureAngleFromTargetRobotRelative = MathUtil
-        .angleModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians());
+        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2* Math.PI);
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
   }
@@ -143,21 +140,21 @@ public class ShooterCommand extends Command {
         0.04);
 
     switch (RobotCommon.currentState) {
-      case DeliveryWithoutAutoIntake, DeliveryWithAutoIntake, DeliveryNotReady:
+      case Delivery:
         Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
         hoodAngle = Math.toRadians(47);
         vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
-        if (RobotCommon.isReady()) shooter.setFeederPower(0.4);
+        if (RobotCommon.isReady()) shooter.setFeederPower(0.6);
         break;
 
-      case HubWithAutoIntake, HubWithoutAutoIntake, HubNotReady:
+      case Hub:
         robotSpeeds = RobotCommon.fieldRelativeSpeeds;
         nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
             0.04);
         turretPos = nextPose.getTranslation()
-            .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(chassis.getPose().getRotation()));
+            .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle));
         toHub = Field.HubRed.CENTER.minus(turretPos);
 
         // get the distance, heading and LUT valuse
@@ -175,6 +172,12 @@ public class ShooterCommand extends Command {
       case Trench:
         shooter.setHoodAngle(Math.toRadians(90));
         shooter.setFlywheelVel(10);
+        break;
+
+      case DriveWithIntake:
+        shooter.setHoodAngle(Math.toRadians(90));
+        shooter.setFlywheelPower(0);
+        shooter.setFeederPower(0);
         break;
 
       case Test:

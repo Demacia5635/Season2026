@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.chassis.Chassis;
+import frc.robot.RobotCommon;
 import frc.robot.Turret.Turret;
 
 public class TurretFollow extends Command {
@@ -21,13 +22,14 @@ public class TurretFollow extends Command {
 
     @Override
     public void execute() {
-        
-        turret.setPositionPID(MathUtil.angleModulus(target.minus(chassis.getPoseWithVelocity(0.04).getTranslation()).getAngle().minus(chassis.getPose().getRotation()).getRadians()));
+
+        turret.setPositionPID(MathUtil.angleModulus(target.minus(chassis.getPoseWithVelocity(0.04).getTranslation())
+                .getAngle().minus(RobotCommon.robotAngle).getRadians()));
     }
 
     @Override
     public void end(boolean interrupted) {
         turret.stop();
     }
-    
+
 }

@@ -70,7 +70,7 @@ public class TagPose {
     latency = 0;
     field = new Field2d();
     LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
-    SmartDashboard.putData("field-tag" + camera.getName(), field);
+    SmartDashboard.putData("field-tag " + camera.getName(), field);
 
   }
 

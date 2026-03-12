@@ -19,8 +19,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private IntakeSubsystem() {
     motorIntake = new TalonFXMotor(IntakeConstants.INTAKE_CONFIG);
 
-    SmartDashboard.putData("Intkae", this);
-
     SmartDashboard.putData("Intake/Motor/set coast",
         new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Intake/Motor/set brake",
@@ -45,8 +43,8 @@ public class IntakeSubsystem extends SubsystemBase {
     motorIntake.setDuty(pow);
   }
 
-  public boolean isCanIntake(){
-    return motorIntake.getCurrentCurrent() < 24;
+  public boolean canIntake(){
+    return motorIntake.getCurrentCurrent() < 18;
   }
 
   public void stopIntake() {
