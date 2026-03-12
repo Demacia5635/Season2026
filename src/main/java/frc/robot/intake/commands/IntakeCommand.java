@@ -51,16 +51,25 @@ public class IntakeCommand extends Command {
 
     switch (RobotCommon.currentState) { // ShootWithIntake, ShootWithoutIntake, DriveWhileIntake, Drive, PrepareClimb,
                                         // Climb, GetOffClimb
-      case Hub, Delivery, DriveWithIntake:
+      case Hub, Delivery, DriveWithIntake, Trench:
         // intake
-        // if (intakeSubsystem.canIntake() && !timer.isRunning() && !timer.hasElapsed(0.6)) {
+        if (timer.hasElapsed(0.6)) {
+          timer.stop();
+          timer.reset();
+          intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
+        }
+
+        if (!intakeSubsystem.canIntake()) {
+          timer.reset();
+          timer.start();
+          intakeSubsystem.setDutyIntake(-IntakeConstants.MAX_POWER);
+        } else if (!timer.isRunning()){
           intakeSubsystem.setDutyIntake(IntakeConstants.MAX_POWER);
           timer.stop();
           timer.reset();
-        // } else {
-          // timer.start();
-          // intakeSubsystem.setDutyIntake(-1);
-        // }
+        } else {
+          intakeSubsystem.setDutyIntake(-IntakeConstants.MAX_POWER);
+        }
 
         // indexers
 

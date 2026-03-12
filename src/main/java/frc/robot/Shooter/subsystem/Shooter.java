@@ -77,8 +77,8 @@ public class Shooter extends SubsystemBase {
    * this function is to set all the shooter to const or brake
    */
   public void setNeutralMode(boolean isBrake) {
-    feederMotor.setNeutralMode(isBrake);
-    shooterMotor.setNeutralMode(isBrake);
+    feederMotor.setNeutralMode(false);
+    shooterMotor.setNeutralMode(false);
     hoodMotor.setNeutralMode(isBrake);
   }
 
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private boolean isHoodReady() {
-    return RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
+    return !isHoodMotorLock && hoodEncoder.isConnected() && RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
         ? Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3)
         : Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5);
 

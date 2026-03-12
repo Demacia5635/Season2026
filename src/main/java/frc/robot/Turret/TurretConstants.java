@@ -35,6 +35,6 @@ public class TurretConstants {
     public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(9, "Max Limit Switch");
     public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(0, "Min Limit Switch");
 
-    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.5);
+    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(0.5);
 
 }

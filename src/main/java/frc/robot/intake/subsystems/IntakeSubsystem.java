@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void setNeutralMode(boolean isBrake) {
-    motorIntake.setNeutralMode(isBrake);
+    motorIntake.setNeutralMode(false);
   }
 
   public void setDutyIntake(double pow) {
