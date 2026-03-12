@@ -104,8 +104,7 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get Vel", this::getShooterVelocity, null);
     builder.addBooleanProperty("flywheel Ready", this::isFlywheelReady, null);
     builder.addBooleanProperty("hood Ready", this::isHoodReady, null);
-    // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),
-    // null);
+    // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),null);
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
     builder.addDoubleProperty("abs encoder", () -> hoodEncoder.get(), null);
@@ -188,6 +187,7 @@ public class Shooter extends SubsystemBase {
     }
     hoodMotor.setPositionVoltage(angle);
   }
+
 
   /**
    * this function is to get the hood motor angle

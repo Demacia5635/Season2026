@@ -49,7 +49,8 @@ public class Vision {
 
     public boolean isSeeTag() {
         for (TagPose tag : tags) {
-            if (tag.isSeeTag())
+            if (tag.isSeeTag() && tag.getTagId() != 15 && tag.getTagId() != 12 && tag.getTagId() != 7
+                    && tag.getTagId() != 1 && tag.getTagId() != 6)
                 return true;
         }
         return false;
@@ -82,10 +83,8 @@ public class Vision {
             y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y,  RobotCommon.robotAngle);
+        return new Pose2d(x, y, RobotCommon.robotAngle);
     }
-
-      
 
     public void updateValues() {
         for (TagPose tag : tags) {

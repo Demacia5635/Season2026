@@ -67,6 +67,7 @@ import frc.robot.climb.commands.StateBasedClimb;
 import frc.robot.climb.subsystems.Climb;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
+import frc.robot.intake.commands.getBallOutCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 import frc.robot.leds.RobotBLedStrip;
@@ -240,7 +241,7 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-
+    driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     climb.setDefaultCommand(new ControllerClimb(climbController, climb));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));

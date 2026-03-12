@@ -35,6 +35,8 @@ public class Turret extends SubsystemBase {
   private LimitSwitch limitSwitchMax;
   TagPose tag;
 
+  private boolean isTurretLock;
+
   private double wantedAngle = 0;
 
   private boolean hasCalibrated = false;
@@ -65,6 +67,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("turret lock", this::getTurretLock, this::setTurretLock);
     builder.addBooleanProperty("Min limit", this::isAtMinLimit, null);
     builder.addBooleanProperty("Max limit", this::isAtMaxLimit, null);
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
@@ -74,6 +77,14 @@ public class Turret extends SubsystemBase {
 
   public double getTurretVelocity() {
     return turretMotor.getCurrentVelocity();
+  }
+
+  public boolean getTurretLock(){
+    return isTurretLock;
+  }
+
+  public void setTurretLock(boolean lock){
+    this.isTurretLock = lock;
   }
 
   private double moduloAngleToTurret(double angle) {
@@ -88,6 +99,10 @@ public class Turret extends SubsystemBase {
     if (!hasCalibrated)
       return;
 
+    if(getTurretLock()){
+      return;
+    }
+
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
@@ -101,9 +116,13 @@ public class Turret extends SubsystemBase {
     if (!hasCalibrated)
       return;
 
-    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+    if(getTurretLock()){
+      return;
+    }
+
     this.wantedAngle = wantedPosition;
-    turretMotor.setMotionExpo(wantedPosition);
+    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+    turretMotor.setMotion(wantedPosition);
   }
 
   public double getTurretPose() {
@@ -123,12 +142,19 @@ public class Turret extends SubsystemBase {
   public boolean isReady() {
     return hasCalibrated() && (RobotCommon.currentState == RobotStates.Delivery)
         ? Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5)
-        : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(2);
+        : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(3);
+  }
+
+  @Override
+  public void periodic(){
+    if(turretMotor.getCurrentCurrent() > 25) setTurretLock(true); 
   }
 
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();
   }
+
+  
 
   public boolean isAtMaxLimit() {
     return !limitSwitchMax.get();

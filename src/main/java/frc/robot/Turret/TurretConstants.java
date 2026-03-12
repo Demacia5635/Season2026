@@ -37,4 +37,7 @@ public class TurretConstants {
 
     public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(0.5);
 
+    public static final double CURRENT_FOR_LIMIT = 30; //need to test
+    public static final double TIME_UNDER_CURRENT_FOR_LIMIT = 0.3; //seconds, need to test
+
 }

@@ -29,6 +29,7 @@ public class RobotBLedStrip extends LedStrip {
     }
 
     public void changeColor(RobotCommon.RobotStates state) {
+        setSolidGay();
         // CommandScheduler.getInstance()
         //         .schedule(new RunCommand(() -> setBlink(getColorBasedOnState(state)), this).ignoringDisable(true)
         //                 .withTimeout(2).andThen(new RunCommand(() -> setColor(getColorBasedOnState(state)), this))
