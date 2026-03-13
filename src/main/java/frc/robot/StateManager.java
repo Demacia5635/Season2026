@@ -22,7 +22,7 @@ public class StateManager extends SubsystemBase {
 
     private static StateManager instance;
 
-    public static void initalize(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem,
+    public static void initialize(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinuaSubsystem,
             Turret turret,
             Shooter shooter, CommandController driverController, LedStrip leds) {
         if (instance == null)

@@ -116,7 +116,7 @@ public class RobotContainer implements Sendable {
     // ballCamera = new Dvirs_ObjectPose(
     // new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false,
     // true));
-    StateManager.initalize(chassis, intake, shinua, turret, shooter, driverController, leds);
+    StateManager.initialize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
