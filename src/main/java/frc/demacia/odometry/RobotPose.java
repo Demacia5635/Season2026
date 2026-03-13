@@ -76,6 +76,7 @@ public class RobotPose {
         resetPose(Pose2d.kZero);
     }
     public void resetPose(Pose2d pose){
+        System.out.println(pose);
         poseEstimator.resetPose(pose);
     }
 

@@ -185,13 +185,14 @@ public class Chassis extends SubsystemBase {
                 new SimpleMatrix(
                         new double[] { 0.03, 0.03, 99999999 })),
                 QUEST_STD);
-
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     private final PIDController xController = new PIDController(0.5, 0.0, 0.0);
     private final PIDController yController = new PIDController(0.5, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(0.3, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(0.01, 0.0, 0) {{
+        enableContinuousInput(-Math.PI, Math.PI);
+    }};
 
     private int index = 0;
 
@@ -201,11 +202,14 @@ public class Chassis extends SubsystemBase {
         ChassisSpeeds speeds = new ChassisSpeeds(
                 sample.vx + xController.calculate(pose.getX(), sample.x),
                 sample.vy + yController.calculate(pose.getY(), sample.y),
-                sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
+                -sample.omega + headingController.calculate(pose.getRotation().getRadians(), -sample.heading));
 
-        field.getObject("trajectory point #" + index)
-                .setPose(new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading)));
-        index++;
+
+        SmartDashboard.putNumber("traj/current heading", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("traj/heading error", sample.heading - pose.getRotation().getRadians());
+        SmartDashboard.putNumber("traj/speeds omega", speeds.omegaRadiansPerSecond);
+        SmartDashboard.putNumber("traj/sample time", sample.getTimestamp());
+        
 
         setVelocities(speeds);
     }
@@ -304,11 +308,6 @@ public class Chassis extends SubsystemBase {
      */
 
     public void setVelocities(ChassisSpeeds speeds) {
-        if (isRotateToHub) {
-            speeds.omegaRadiansPerSecond = -1.5
-                    * MathUtil.angleModulus(targetAngle - RobotCommon.robotAngle.getRadians());
-
-        }
 
         SwerveModuleState[] states = demaciaKinematics
                 .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.robotAngle));
@@ -399,7 +398,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public void setModuleState(SwerveModuleState state) {
-        setModuleStates(new SwerveModuleState[]{state, state, state, state});
+        setModuleStates(new SwerveModuleState[] { state, state, state, state });
     }
 
     public void setModuleStates(SwerveModuleState[] states) {

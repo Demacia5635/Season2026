@@ -122,6 +122,11 @@ public class Turret extends SubsystemBase {
 
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+      turretMotor.stop();
+      return;
+    }
+
     turretMotor.setMotion(wantedPosition);
   }
 

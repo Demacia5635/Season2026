@@ -91,8 +91,9 @@ public class RobotContainer implements Sendable {
   public static Shooter shooter;
   public static LedManager ledManager;
   public static RobotBLedStrip leds;
-  public static Climb climb;
-  CommandController climbController = new CommandController(1, ControllerType.kXbox);
+  // public static Climb climb;
+  // CommandController climbController = new CommandController(1,
+  // ControllerType.kXbox);
   private Dvirs_ObjectPose ballCamera;
 
   TalonFXMotor motor;
@@ -109,7 +110,7 @@ public class RobotContainer implements Sendable {
     shooter = Shooter.getInstance();
     ledManager = new LedManager();
     leds = new RobotBLedStrip();
-    climb = new Climb();
+    // climb = new Climb();
     chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
     // ballCamera = new Dvirs_ObjectPose(
@@ -145,24 +146,24 @@ public class RobotContainer implements Sendable {
   private Timer autoTimer = new Timer();
 
   private void configureAuto() {
-    autoFactory = new AutoFactory(() -> RobotCommon.currentRobotPose, RobotPose.getInstance()::resetPose,
+    autoFactory = new AutoFactory(() -> RobotCommon.currentRobotPose, (pose) -> RobotPose.getInstance().resetPose(pose),
         chassis::followTrajectory,
         RobotCommon.isRed, chassis);
 
     AutoRoutine autoRoutine = autoFactory.newRoutine("Balls");
 
-    AutoTrajectory startToBalls = autoRoutine.trajectory("startToBalls");
-    AutoTrajectory ballsToDepot = autoRoutine.trajectory("ballsToDepot");
-    AutoTrajectory ballsToShoot = autoRoutine.trajectory("ballsToShoot");
-    AutoTrajectory shootToBalls2 = autoRoutine.trajectory("shootToBalls2");
-    AutoTrajectory balls2ToShoot = autoRoutine.trajectory("balls2ToShoot");
-    AutoTrajectory balls2ToDepot = autoRoutine.trajectory("balls2ToDepot");
-    AutoTrajectory shootToBalls3 = autoRoutine.trajectory("shootToBalls3");
-    AutoTrajectory balls3ToShoot = autoRoutine.trajectory("balls3ToShoot");
-    AutoTrajectory balls3ToDepot = autoRoutine.trajectory("balls3ToDepot");
-    AutoTrajectory shootToDepot = autoRoutine.trajectory("shootToDepot");
-    AutoTrajectory depotToTower = autoRoutine.trajectory("depotToTower");
-    AutoTrajectory shootToTower = autoRoutine.trajectory("shootToTower");
+    AutoTrajectory startToBalls = autoRoutine.trajectory("StartToBalls");
+    AutoTrajectory ballsToDepot = autoRoutine.trajectory("BallsToDepot");
+    AutoTrajectory ballsToShoot = autoRoutine.trajectory("BallsToShoot");
+    AutoTrajectory shootToBalls2 = autoRoutine.trajectory("ShootToBalls2");
+    AutoTrajectory balls2ToShoot = autoRoutine.trajectory("Balls2ToShoot");
+    AutoTrajectory balls2ToDepot = autoRoutine.trajectory("Balls2ToDepot");
+    AutoTrajectory shootToBalls3 = autoRoutine.trajectory("ShootToBalls3");
+    AutoTrajectory balls3ToShoot = autoRoutine.trajectory("Balls3ToShoot");
+    AutoTrajectory balls3ToDepot = autoRoutine.trajectory("Balls3ToDepot");
+    AutoTrajectory shootToDepot = autoRoutine.trajectory("ShootToDepot");
+    AutoTrajectory depotToTower = autoRoutine.trajectory("DepotToTower");
+    AutoTrajectory shootToTower = autoRoutine.trajectory("ShootToTower");
 
     Trigger timeToDepot = new Trigger(() -> DriverStation.getMatchTime() != 0);
     Trigger timeToBalls2 = new Trigger(() -> DriverStation.getMatchTime() != 0);
@@ -182,37 +183,42 @@ public class RobotContainer implements Sendable {
               autoTimer.reset();
               autoTimer.start();
               chassis.resetTrajectory();
-              CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
-              CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-              CommandScheduler.getInstance().schedule(new TurretCommand(turret));
-              CommandScheduler.getInstance().schedule(new ShooterCommand(shooter, chassis));
+              StateManager.getInstance().setStateChangeActivated(false);
+              RobotCommon.changeState(RobotStates.Drive);
+              // CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+              // CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+              // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+              // CommandScheduler.getInstance().schedule(new ShooterCommand(shooter,
+              // chassis));
               // CommandScheduler.getInstance().schedule(new StateBasedClimb(climb, chassis));
-            }),
-            new WaitCommand(1.1),
+            }, chassis),
+            // new WaitCommand(1.1),
             startToBalls.resetOdometry(),
-            startToBalls.cmd()));
+            startToBalls.cmd(),
+            new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)
+        ));
 
-    startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
-    startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
-    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
-    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls1DepotFromShoot.and(timeToBalls2.negate()))
-        .onTrue(shootToDepot.cmd());
-    ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot.negate()
-        .and(timeToBalls1DepotFromShoot.negate()))
-        .onTrue(shootToTower.cmd());
-    shootToBalls2.done().and(timeToBalls3.or(timeToBalls2Depot.negate())).onTrue(balls2ToShoot.cmd());
-    shootToBalls2.done().and(timeToBalls2Depot.and(timeToBalls3.negate())).onTrue(balls2ToDepot.cmd());
-    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot).onTrue(shootToBalls3.cmd());
-    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToDepotFromShoot.and(timeToBalls2FromShoot.negate()))
-        .onTrue(shootToDepot.cmd());
-    balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot.negate()
-        .and(timeToDepotFromShoot.negate())).onTrue(shootToTower.cmd());
-    shootToBalls3.done().and(timeToBalls3Depot).onTrue(balls3ToDepot.cmd());
-    shootToBalls3.done().and(timeToBalls3Depot.negate()).onTrue(balls3ToShoot.cmd());
-    balls3ToDepot.done().onTrue(depotToTower.cmd());
-    balls3ToShoot.doneDelayed(timeToWaitForShooting).onTrue(shootToTower.cmd());
-    shootToDepot.done().onTrue(depotToTower.cmd());
-    balls2ToDepot.done().onTrue(depotToTower.cmd());
+    // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
+    // startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
+    // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
+    // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls1DepotFromShoot.and(timeToBalls2.negate()))
+    // .onTrue(shootToDepot.cmd());
+    // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot.negate()
+    // .and(timeToBalls1DepotFromShoot.negate()))
+    // .onTrue(shootToTower.cmd());
+    // shootToBalls2.done().and(timeToBalls3.or(timeToBalls2Depot.negate())).onTrue(balls2ToShoot.cmd());
+    // shootToBalls2.done().and(timeToBalls2Depot.and(timeToBalls3.negate())).onTrue(balls2ToDepot.cmd());
+    // balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot).onTrue(shootToBalls3.cmd());
+    // balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToDepotFromShoot.and(timeToBalls2FromShoot.negate()))
+    // .onTrue(shootToDepot.cmd());
+    // balls2ToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls3FromShoot.negate()
+    // .and(timeToDepotFromShoot.negate())).onTrue(shootToTower.cmd());
+    // shootToBalls3.done().and(timeToBalls3Depot).onTrue(balls3ToDepot.cmd());
+    // shootToBalls3.done().and(timeToBalls3Depot.negate()).onTrue(balls3ToShoot.cmd());
+    // balls3ToDepot.done().onTrue(depotToTower.cmd());
+    // balls3ToShoot.doneDelayed(timeToWaitForShooting).onTrue(shootToTower.cmd());
+    // shootToDepot.done().onTrue(depotToTower.cmd());
+    // balls2ToDepot.done().onTrue(depotToTower.cmd());
 
     autoRoutine.anyDone(shootToTower, depotToTower).onTrue(
         Commands.sequence(
@@ -243,7 +249,7 @@ public class RobotContainer implements Sendable {
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    climb.setDefaultCommand(new ControllerClimb(climbController, climb));
+    // climb.setDefaultCommand(new ControllerClimb(climbController, climb));
     // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
     // driverController.rightButton().onTrue(new ControllerClimb(driverController,
     // climb));
@@ -294,7 +300,8 @@ public class RobotContainer implements Sendable {
       }
     }));
     driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle).ignoringDisable(true).andThen(
-        new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(false)).ignoringDisable(true)).ignoringDisable(true));
+        new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(false)).ignoringDisable(true))
+        .ignoringDisable(true));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
