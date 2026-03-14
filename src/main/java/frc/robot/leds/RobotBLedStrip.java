@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 public class RobotBLedStrip extends LedStrip {
 
     public RobotBLedStrip() {
-        super("Robot B Strip", 100, RobotContainer.ledManager);
+        super("Robot B Strip", 300, RobotContainer.ledManager);
     }
 
     private Color getColorBasedOnState(RobotCommon.RobotStates state) {
