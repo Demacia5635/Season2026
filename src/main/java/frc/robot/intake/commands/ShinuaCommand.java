@@ -89,7 +89,7 @@ public class ShinuaCommand extends Command {
                     shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
                     shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
                     shinua.setDutyIndexerOnTop(1);
-                    shinua.setPowerBattery(0.3);
+                    shinua.setPowerBattery(0.5);
                 } else {
                     shinua.setDutyIndexerClose(0.8);
                     shinua.setDutyIndexerFar(0);
