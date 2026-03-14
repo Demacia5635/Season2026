@@ -62,9 +62,6 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.robot.chassis.RobotAChassisConstants;
 import frc.robot.chassis.RobotBChassisConstants;
 import frc.robot.chassis.commands.SetModuleAngle;
-import frc.robot.climb.commands.ControllerClimb;
-import frc.robot.climb.commands.StateBasedClimb;
-import frc.robot.climb.subsystems.Climb;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.commands.getBallOutCommand;
@@ -91,9 +88,6 @@ public class RobotContainer implements Sendable {
   public static Shooter shooter;
   public static LedManager ledManager;
   public static RobotBLedStrip leds;
-  // public static Climb climb;
-  // CommandController climbController = new CommandController(1,
-  // ControllerType.kXbox);
   private Dvirs_ObjectPose ballCamera;
 
   TalonFXMotor motor;
@@ -110,7 +104,6 @@ public class RobotContainer implements Sendable {
     shooter = Shooter.getInstance();
     ledManager = new LedManager();
     leds = new RobotBLedStrip();
-    // climb = new Climb();
     chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
     turret = Turret.getInstance();
     // ballCamera = new Dvirs_ObjectPose(
@@ -126,7 +119,6 @@ public class RobotContainer implements Sendable {
       shinua.checkElectronics();
       turret.checkElectronics();
       shooter.checkElectronics();
-      // climb.checkElectronics();
     }).ignoringDisable(true));
     // addStatesToElasticForTesting();
     configureBindings();
@@ -190,7 +182,6 @@ public class RobotContainer implements Sendable {
               // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
               // CommandScheduler.getInstance().schedule(new ShooterCommand(shooter,
               // chassis));
-              // CommandScheduler.getInstance().schedule(new StateBasedClimb(climb, chassis));
             }, chassis),
             // new WaitCommand(1.1),
             startToBalls.resetOdometry(),
@@ -249,11 +240,6 @@ public class RobotContainer implements Sendable {
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    // climb.setDefaultCommand(new ControllerClimb(climbController, climb));
-    // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
-    // driverController.rightButton().onTrue(new ControllerClimb(driverController,
-    // climb));
-    // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
 
     // turret.setDefaultCommand(new TurretFollow(turret, Field.HubRed.CENTER,
     // chassis));
@@ -352,7 +338,6 @@ public class RobotContainer implements Sendable {
     // An example command will be run in autonomous
     // return null;
     return autoCommand;
-    // return new DuchToBalls(chassis, intake, shinua, turret, shooter, climb);
   }
 
 }
