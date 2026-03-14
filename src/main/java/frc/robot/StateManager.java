@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -133,8 +134,10 @@ public class StateManager extends SubsystemBase {
         updateShift();
 
         if (isStateChangeActivated) {
-            if (isOnTrench())
+            if (isOnTrench(true))
                 RobotCommon.changeState(RobotStates.Trench);
+            else if (RobotCommon.currentState == RobotStates.Trench && isOnTrench(false))
+                return;
             else if (isHub() && !RobotCommon.currentShift.equals(RobotCommon.Shifts.Inactive)) {
                 RobotCommon.changeState(RobotStates.Hub);
             } else if (isDelivery()) {
@@ -232,13 +235,14 @@ public class StateManager extends SubsystemBase {
 
     private final double TRENCH_OFFSET = 0.5;
 
-    private boolean isOnTrench() {
-        return (RobotCommon.futureRobotPose.getY() > Field.TrenchRedAudience.Y_FRONT - 0.4
-                || RobotCommon.futureRobotPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.4)
-                && ((RobotCommon.futureRobotPose.getX() < Field.HubRed.X_BACK + TRENCH_OFFSET
-                        && RobotCommon.futureRobotPose.getX() > Field.HubRed.X_FRONT - TRENCH_OFFSET)
-                        || (RobotCommon.futureRobotPose.getX() < Field.HubBlue.X_FRONT + TRENCH_OFFSET
-                                && RobotCommon.futureRobotPose.getX() > Field.HubBlue.X_BACK - TRENCH_OFFSET));
+    private boolean isOnTrench(boolean isFuture) {
+        Pose2d checkPose = isFuture ? RobotCommon.futureRobotPose : RobotCommon.currentRobotPose;
+        return (checkPose.getY() > Field.TrenchRedAudience.Y_FRONT - 0.4
+                || checkPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.4)
+                && ((checkPose.getX() < Field.HubRed.X_BACK + TRENCH_OFFSET
+                        && checkPose.getX() > Field.HubRed.X_FRONT - TRENCH_OFFSET)
+                        || (checkPose.getX() < Field.HubBlue.X_FRONT + TRENCH_OFFSET
+                                && checkPose.getX() > Field.HubBlue.X_BACK - TRENCH_OFFSET));
     }
 
     private boolean isAutoIntake() {
