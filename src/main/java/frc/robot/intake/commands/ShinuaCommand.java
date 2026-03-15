@@ -69,8 +69,8 @@ public class ShinuaCommand extends Command {
     private void applyIntakeValues() {
         shinua.setDutyIndexerClose(0.8);
         shinua.setDutyIndexerFar(0);
-        shinua.setDutyIndexerOnTop(-0.1);
-        shinua.setPowerBattery(0.05);
+        shinua.setDutyIndexerOnTop(-0.8);
+        shinua.setPowerBattery(0);
 
     }
 
