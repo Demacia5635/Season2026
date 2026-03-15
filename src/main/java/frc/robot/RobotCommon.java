@@ -45,7 +45,7 @@ public class RobotCommon {
     public static boolean hasDisabledIntake = false;
 
     public static boolean isReady() {
-        return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+        return true;//return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
     }
 
     public static void changeState(RobotStates newState) {
