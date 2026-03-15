@@ -48,7 +48,7 @@ public class IntakeConstants {
                         .withCurrent(20)
                         .withVolts(8)
                         .withPID(BATTERY_KP, BATTERT_KI, BATTERY_KD, BATTERT_KS, BATTERY_KV, BATTERY_KA, BATTER_KG)
-                        .withRadiansMotor(36);
+                        .withRadiansMotor(12);
 
         // indexer on the top value
         public static final int INDEXER_ON_TOP_ID = 30;
