@@ -16,6 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFXMotor motorIntake;
   private static IntakeSubsystem instance;
 
+
   private IntakeSubsystem() {
     motorIntake = new TalonFXMotor(IntakeConstants.INTAKE_CONFIG);
 
@@ -24,6 +25,8 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putData("Intake/Motor/set brake",
         new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
   }
+
+  
 
   public static IntakeSubsystem getInstance() {
     if (instance == null)

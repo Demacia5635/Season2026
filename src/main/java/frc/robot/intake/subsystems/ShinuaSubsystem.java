@@ -1,5 +1,7 @@
 package frc.robot.intake.subsystems;
 
+import java.nio.Buffer;
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,6 +17,10 @@ public class ShinuaSubsystem extends SubsystemBase {
   private TalonFXMotor motorBattery;
   private TalonFXMotor motorIndexerOnTop;
   private static ShinuaSubsystem instance;
+  private boolean isMotorGoingToBeOnFireBatrry;
+  private boolean isMotorGoingToBeOnFireCloseReadLine;
+  private boolean isMotorGoingToBeOnFireFarReadLine;
+  private boolean isMotorGoingToBeOnFireMotorOnTop;
 
   private ShinuaSubsystem() {
     motorIndexerClose = new SparkMaxMotor(IntakeConstants.INDEXER_CLOSE_CONFIG);
@@ -45,6 +51,55 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerFar.checkElectronics();
     motorIndexerOnTop.checkElectronics();
     motorBattery.checkElectronics();
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addBooleanProperty("battery motor lock", this::getIsBattryLock, this::setIndexrBatrryLock);
+      builder.addBooleanProperty("motor on top lock", this::getIsIndexrOnTopLock, this::setIndexrOnTop);
+      builder.addBooleanProperty("motor close lock", this::getIsIndexrCloseLock, this::setIndexrCloseLock);
+      builder.addBooleanProperty("motor far lock", this::getIsIndexerFarLock, this::setIndexrFarLock);
+  }
+
+  @Override
+  public void periodic(){
+    if(motorIndexerOnTop.getCurrentCurrent() > 25) isMotorGoingToBeOnFireMotorOnTop =true;
+    if(motorBattery.getCurrentCurrent() > 25) isMotorGoingToBeOnFireBatrry = true;
+    if(motorIndexerClose.getCurrentCurrent() > 25) isMotorGoingToBeOnFireCloseReadLine = true; 
+    if(motorIndexerFar.getCurrentCurrent() > 25) isMotorGoingToBeOnFireFarReadLine = true;
+  }
+
+
+  private boolean getIsIndexrOnTopLock(){
+    return isMotorGoingToBeOnFireBatrry;
+  }
+
+  private boolean getIsIndexrCloseLock(){
+    return isMotorGoingToBeOnFireCloseReadLine;
+  }
+
+  private boolean getIsIndexerFarLock(){
+    return isMotorGoingToBeOnFireFarReadLine;
+  }
+
+  private boolean getIsBattryLock(){
+    return isMotorGoingToBeOnFireBatrry;
+  }
+
+  private void setIndexrOnTop(boolean lock){
+    this.isMotorGoingToBeOnFireMotorOnTop = lock;
+  }
+
+  private void setIndexrCloseLock(boolean lock){
+    this.isMotorGoingToBeOnFireCloseReadLine = lock;
+  }
+
+  private void setIndexrFarLock(boolean lock){
+    this.isMotorGoingToBeOnFireFarReadLine = lock;
+  }
+
+  private void setIndexrBatrryLock(boolean lock){
+    this.isMotorGoingToBeOnFireBatrry = lock;
   }
 
   public void setNeutralMode(boolean isBrake) {
