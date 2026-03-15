@@ -123,12 +123,12 @@ public class ShooterConstans {
                         .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
                         .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
-        public static final double MAX_ANGLE_HOOD = Math.toRadians(80d);
-        public static final double MIN_ANGLE_HOOD = Math.toRadians(51d);
+        public static final double MAX_ANGLE_HOOD = Math.toRadians(86d);
+        public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
         public static final int HOOD_ENCODER_CHANNEL = 8;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(85) - 0.5844147733840412;
+        public static final double HOOD_OFFSET = Math.toRadians(86) - 0.752882679432794;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(false);
