@@ -6,14 +6,12 @@ package frc.robot.Shooter.subsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.RobotCommon;
-import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 
 /**

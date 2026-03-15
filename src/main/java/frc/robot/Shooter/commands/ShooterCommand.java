@@ -13,10 +13,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.log.LogManager;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
-import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
@@ -51,7 +49,7 @@ public class ShooterCommand extends Command {
 
   private double HOOD_OFFSET = Math.toRadians(2);
   private double VELOCITY_CORRECTION = 1;
-  private boolean shootVelocityWasOK = false;
+  // private boolean shootVelocityWasOK = false;
 
   public ShooterCommand(Shooter shooter, Chassis chassis) {
     this.chassis = chassis;
