@@ -105,7 +105,7 @@ public class RobotContainer implements Sendable {
     ledManager = new LedManager();
     leds = new RobotBLedStrip();
     chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
-    // turret = Turret.getInstance();
+    turret = Turret.getInstance();
     // ballCamera = new Dvirs_ObjectPose(
     // new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false,
     // true));
