@@ -62,18 +62,15 @@ public class ShinuaCommand extends Command {
         shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
         shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
         shinua.setDutyIndexerOnTop(1);
-        shinua.setPowerBattery(0.6);
+        shinua.setPowerBattery(0.5);
 
     }
 
     private void applyIntakeValues() {
-
-        shinua.setDutyIndexerFar(0.0);
-
-        shinua.setDutyIndexerClose(1);
-        shinua.setDutyIndexerOnTop(-0.8);
-
-        shinua.setPowerBattery(0.1);
+        shinua.setDutyIndexerClose(0.8);
+        shinua.setDutyIndexerFar(0);
+        shinua.setDutyIndexerOnTop(-0.1);
+        shinua.setPowerBattery(0.05);
 
     }
 
@@ -83,18 +80,14 @@ public class ShinuaCommand extends Command {
     @Override
     public void execute() {
         switch (RobotCommon.currentState) {
+            case DriveWithIntake:
+                applyIntakeValues();
+                break;
             case Hub, Delivery:
                 if (RobotCommon.isReady()) {
-
-                    shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-                    shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
-                    shinua.setDutyIndexerOnTop(1);
-                    shinua.setPowerBattery(0.5);
+                    applyShootingValues();
                 } else {
-                    shinua.setDutyIndexerClose(0.8);
-                    shinua.setDutyIndexerFar(0);
-                    shinua.setDutyIndexerOnTop(0);
-                    shinua.setPowerBattery(0.05);
+                    applyIntakeValues();
                 }
 
                 break;
