@@ -18,7 +18,6 @@ import frc.robot.StateManager;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
-import frc.robot.climb.subsystems.Climb;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
@@ -28,7 +27,6 @@ public class DuchToBalls extends SequentialCommandGroup {
     private final ShinuaSubsystem shinua;
     private final Turret turret;
     private final Shooter shooter;
-    private final Climb climb;
 
     private final PathPoint trenchHelper = new PathPoint(new Pose2d(8.716, Field.TrenchRedScoring.Y_CENTER, Rotation2d.fromDegrees(125)));
     private final PathPoint[] traj1 = {
@@ -40,13 +38,12 @@ public class DuchToBalls extends SequentialCommandGroup {
     };
 
     public DuchToBalls(Chassis chassis, IntakeSubsystem intake, ShinuaSubsystem shinua,
-            Turret turret, Shooter shooter, Climb climb) {
+            Turret turret, Shooter shooter) {
         this.chassis = chassis;
         this.intake = intake;
         this.shinua = shinua;
         this.turret = turret;
         this.shooter = shooter;
-        this.climb = climb;
         StateManager.getInstance().setStateChangeActivated(false);
         // addCommands(new FunctionalCommand(
         //         () -> {

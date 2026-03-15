@@ -39,6 +39,7 @@ public class RobotBLedStrip extends LedStrip {
     public void periodic() {
         super.periodic();
 
-        setSolidGay();
+        setColor(Color.kPurple);
     }
 }
+    

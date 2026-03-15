@@ -183,7 +183,8 @@ public class Data<T> {
     public static void addSignals(boolean isRio, StatusSignal<?>... signals) {
         if (isRio) 
             rioSignals.addAll(Arrays.asList(signals));
-        canivoreSignals.addAll(Arrays.asList(signals));
+        else
+            canivoreSignals.addAll(Arrays.asList(signals));
     }
 
     /**
@@ -272,8 +273,8 @@ public class Data<T> {
     }
 
     public static void setFrequancyAll() {
-        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), rioSignals);
-        StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), canivoreSignals);
+       // StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), rioSignals);
+       // StatusSignal.setUpdateFrequencyForAll(Frequency.ofBaseUnits(100, Hertz), canivoreSignals);
     }
 
     /**
