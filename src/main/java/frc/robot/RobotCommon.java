@@ -50,7 +50,7 @@ public class RobotCommon {
     }
 
     public static void changeState(RobotStates newState) {
-        RobotContainer.leds.changeColor(newState);
+        RobotContainer.mainLeds.changeColor(newState);
         currentState = newState;
     }
 
@@ -59,7 +59,7 @@ public class RobotCommon {
     }
 
     public static Command changeStateCommand(RobotStates newState) {
-        RobotContainer.leds.changeColor(newState);
+        RobotContainer.mainLeds.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
     }
 

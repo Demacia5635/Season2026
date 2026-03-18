@@ -6,16 +6,22 @@ package frc.demacia.vision;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.robot.RobotCommon;
 import frc.robot.Turret.Turret;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
 
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -69,9 +75,20 @@ public class TagPose {
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
     latency = 0;
     field = new Field2d();
+    pipeEntry = Table.getEntry("pipeline");
     LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     SmartDashboard.putData("field-tag " + camera.getName(), field);
+    SmartDashboard.putData("chassis/reset gyro by camera " + camera.getName(),
+        Commands.sequence(
+            new InstantCommand(() -> changePipeline(5)).ignoringDisable(true),
+            new InstantCommand(() -> Chassis.getInstance().setYaw(getRobotAngle())).ignoringDisable(true),
+            new InstantCommand(() -> changePipeline(4)).ignoringDisable(true)).ignoringDisable(true));
 
+  }
+
+  private void changePipeline(int id) {
+    wantedPip = id;
+    pipeEntry.setDouble(id);
   }
 
   public void updateValues() {
@@ -231,10 +248,10 @@ public class TagPose {
     return (int) Table.getEntry("tid").getDouble(0.0);
   }
 
-  // public double getAngle() {
-  // return Table.getEntry("botpose").getDoubleArray(new double[] { 0, 0, 0, 0, 0,
-  // 0 })[5];
-  // }
+  public double getAngle() {
+    return Table.getEntry("botpose").getDoubleArray(new double[] { 0, 0, 0, 0, 0,
+        0 })[5];
+  }
 
   public Rotation2d getRobotAngle() {
     return null;

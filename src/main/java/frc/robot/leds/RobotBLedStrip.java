@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 public class RobotBLedStrip extends LedStrip {
 
     public RobotBLedStrip() {
-        super("Robot B Strip", 1000, RobotContainer.ledManager);
+        super("Robot B Strip", 24, RobotContainer.ledManager);
         setColor(Color.kPurple);
     }
 
@@ -39,6 +39,7 @@ public class RobotBLedStrip extends LedStrip {
     @Override
     public void periodic() {
         super.periodic();
+        // setGay();
 
         // setColor(Color.kPurple);
     }

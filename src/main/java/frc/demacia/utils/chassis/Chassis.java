@@ -129,7 +129,18 @@ public class Chassis extends SubsystemBase {
 
     private Rotation2d lastGyroYaw;
 
-    public Chassis(ChassisConfig chassisConfig) {
+    private static Chassis instance;
+
+    public static void initialize(ChassisConfig chassisConfig) {
+        if (instance == null)
+            instance = new Chassis(chassisConfig);
+    }
+
+    public static Chassis getInstance() {
+        return instance;
+    }
+
+    private Chassis(ChassisConfig chassisConfig) {
         setName(getName());
 
         this.chassisConfig = chassisConfig;
@@ -190,9 +201,11 @@ public class Chassis extends SubsystemBase {
 
     private final PIDController xController = new PIDController(0.5, 0.0, 0.0);
     private final PIDController yController = new PIDController(0.5, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(0.01, 0.0, 0) {{
-        enableContinuousInput(-Math.PI, Math.PI);
-    }};
+    private final PIDController headingController = new PIDController(0.01, 0.0, 0) {
+        {
+            enableContinuousInput(-Math.PI, Math.PI);
+        }
+    };
 
     private int index = 0;
 
@@ -204,12 +217,10 @@ public class Chassis extends SubsystemBase {
                 sample.vy + yController.calculate(pose.getY(), sample.y),
                 -sample.omega + headingController.calculate(pose.getRotation().getRadians(), -sample.heading));
 
-
         SmartDashboard.putNumber("traj/current heading", pose.getRotation().getDegrees());
         SmartDashboard.putNumber("traj/heading error", sample.heading - pose.getRotation().getRadians());
         SmartDashboard.putNumber("traj/speeds omega", speeds.omegaRadiansPerSecond);
         SmartDashboard.putNumber("traj/sample time", sample.getTimestamp());
-        
 
         setVelocities(speeds);
     }

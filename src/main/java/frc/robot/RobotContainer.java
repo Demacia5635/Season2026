@@ -72,6 +72,7 @@ import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.commands.getBallOutCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
+import frc.robot.leds.DianasourLedStrip;
 import frc.robot.leds.RobotBLedStrip;
 
 /**
@@ -94,7 +95,8 @@ public class RobotContainer implements Sendable {
   public static ShinuaSubsystem shinua;
   public static Shooter shooter;
   public static LedManager ledManager;
-  public static RobotBLedStrip leds;
+  public static RobotBLedStrip mainLeds;
+  public static DianasourLedStrip dianasourLedStrip;
   public static Buttons buttons;
 
   // The robot's subsystems and commands are defined here...
@@ -105,19 +107,21 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
+    Chassis.initialize(RobotBChassisConstants.CHASSIS_CONFIG);
+    chassis = Chassis.getInstance();
     intake = IntakeSubsystem.getInstance();
     shinua = ShinuaSubsystem.getInstance();
     turret = Turret.getInstance();
     shooter = Shooter.getInstance();
 
     ledManager = new LedManager();
-    leds = new RobotBLedStrip();
+    mainLeds = new RobotBLedStrip();
+    dianasourLedStrip = new DianasourLedStrip();
     buttons = Buttons.getInstance();
 
     PDH.setSwitchableChannel(true);
     
-    StateManager.initialize(chassis, intake, shinua, turret, shooter, driverController, leds);
+    StateManager.initialize(chassis, intake, shinua, turret, shooter, driverController, mainLeds);
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -254,11 +258,11 @@ public class RobotContainer implements Sendable {
 
     SmartDashboard.putData("Auto Drive Test", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis).alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
 
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[0], new InstantCommand(() -> leds.setColor(Color.kRed)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[1], new InstantCommand(() -> leds.setColor(Color.kYellow)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[2], new InstantCommand(() -> leds.setColor(Color.kGreen)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[3], new InstantCommand(() -> leds.setColor(Color.kBlue)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[4], new InstantCommand(() -> leds.setColor(Color.kOrange)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[0], new InstantCommand(() -> mainLeds.setColor(Color.kRed)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[1], new InstantCommand(() -> mainLeds.setColor(Color.kYellow)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[2], new InstantCommand(() -> mainLeds.setColor(Color.kGreen)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[3], new InstantCommand(() -> mainLeds.setColor(Color.kBlue)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[4], new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
 
     driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
     driverController.downButton().onTrue(new TurretFollow(turret, Field.HubRed.CENTER, chassis));
