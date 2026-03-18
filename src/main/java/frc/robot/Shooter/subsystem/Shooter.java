@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
 import frc.robot.RobotCommon;
@@ -45,7 +46,7 @@ public class Shooter extends SubsystemBase {
 
   boolean isShooting;
 
-  private boolean isHoodMotorLock = false;
+  private boolean isHoodMotorLock = true;
 
   double lastShooterMotorCurrent;
 
@@ -69,6 +70,8 @@ public class Shooter extends SubsystemBase {
         new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Hood/set brake",
         new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
+    
+    LogManager.log("Shooter Initalize");
   }
 
   public void checkElectronics() {

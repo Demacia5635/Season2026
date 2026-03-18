@@ -96,7 +96,7 @@ public class RobotContainer implements Sendable {
   public static Shooter shooter;
   public static LedManager ledManager;
   public static RobotBLedStrip mainLeds;
-  public static DianasourLedStrip dianasourLedStrip;
+  // public static DianasourLedStrip dianasourLedStrip;
   public static Buttons buttons;
 
   // The robot's subsystems and commands are defined here...
@@ -116,7 +116,7 @@ public class RobotContainer implements Sendable {
 
     ledManager = new LedManager();
     mainLeds = new RobotBLedStrip();
-    dianasourLedStrip = new DianasourLedStrip();
+    // dianasourLedStrip = new DianasourLedStrip();
     buttons = Buttons.getInstance();
 
     PDH.setSwitchableChannel(true);
@@ -195,13 +195,16 @@ public class RobotContainer implements Sendable {
               // CommandScheduler.getInstance().schedule(new ShooterCommand(shooter,
               // chassis));
             }, chassis),
-            // new WaitCommand(1.1),
-            startToBalls.resetOdometry(),
+            new WaitCommand(2),
+            // startToBalls.resetOdometry(),
             startToBalls.cmd(),
             new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)
         ));
 
-    // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
+        startToBalls.doneDelayed(0).onTrue(ballsToShoot.cmd());
+        ballsToShoot.doneDelayed(2).onTrue(shootToBalls2.cmd());
+        shootToBalls2.doneDelayed(0).onTrue(balls2ToDepot.cmd());
+        // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
     // startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
     // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
     // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls1DepotFromShoot.and(timeToBalls2.negate()))
@@ -291,6 +294,17 @@ public class RobotContainer implements Sendable {
             shooter).ignoringDisable(true));
   }
 
+  public Command disableInit() {
+    return new InstantCommand(() -> {
+      chassis.stop();
+      intake.stopIntake();
+      shinua.stop();
+      turret.stop();
+      shooter.stop();
+      StateManager.getInstance().resetShift();
+    }).withName("Disable Init").ignoringDisable(true);
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
@@ -303,7 +317,7 @@ public class RobotContainer implements Sendable {
     builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
         (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
 
-    builder.addDoubleProperty("Auto Timer", () -> 20 - autoTimer.get(), null);
+    builder.addDoubleProperty("Match Time", DriverStation::getMatchTime, null);
   }
 
   public static void updateCommon() {

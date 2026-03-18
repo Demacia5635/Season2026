@@ -82,6 +82,10 @@ public class Quest extends SubsystemBase {
     return questNav.isConnected();
   }
 
+  public boolean isWorking() {
+    return isConnected() && isTracking() && questNav.getBatteryPercent().getAsInt() > 10;
+  }
+
 
   // Check if Quest is tracking
   public boolean isTracking() {

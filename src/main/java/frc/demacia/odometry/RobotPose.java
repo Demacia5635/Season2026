@@ -61,6 +61,10 @@ public class RobotPose {
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
     }
 
+    public Quest getQuest() {
+        return quest;
+    }
+
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPose();
     }

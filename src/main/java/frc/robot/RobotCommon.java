@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.demacia.odometry.RobotPose;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 
@@ -40,30 +41,38 @@ public class RobotCommon {
     public static boolean isComp = false;
     public static boolean isRobotCalibrated = false;
     public static Shifts currentShift = Shifts.Auto;
+    public static Shifts nextShift = Shifts.Transition;
     public static Translation2d fuelPosition = null;
     public static double fuelTime = 0;
     public static boolean hasDisabledIntake = false;
 
     public static boolean isReady() {
         // return true;
-       return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
+        return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
 
     public static void changeState(RobotStates newState) {
-        RobotContainer.mainLeds.changeColor(newState);
+        // RobotContainer.dianasourLedStrip.changeColor(newState);
         currentState = newState;
     }
 
-    public static void changeShift(Shifts newShift) {
+    public static void changeShift(Shifts newShift, Shifts nextShift) {
+        // RobotContainer.mainLeds.startShift(newShift);
         currentShift = newShift;
+        RobotCommon.nextShift = nextShift;
     }
 
     public static Command changeStateCommand(RobotStates newState) {
-        RobotContainer.mainLeds.changeColor(newState);
+        // RobotContainer.dianasourLedStrip.changeColor(newState);
         return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
     }
 
     public static boolean isReadyToShoot() {
         return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
+    }
+
+    public static boolean isRobotFunctional() {
+        return Turret.getInstance().hasCalibrated() && RobotPose.getInstance().getQuest().isWorking()
+                && RobotCommon.currentRobotPose != Pose2d.kZero;
     }
 }

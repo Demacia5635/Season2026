@@ -41,13 +41,13 @@ public class ShooterCommand extends Command {
   Shooter shooter;
   Chassis chassis;
   private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.48;
-  private double MAGNUS_CORRECTION = 0.05;
+  private double MAGNUS_CORRECTION = 0.1;
   private double wantedAngle;
   private double wantedVel;
   private double wantedFeederPower;
   private double velocityFromBattery = 1;
 
-  private double HOOD_OFFSET = Math.toRadians(2);
+  private double HOOD_OFFSET = Math.toRadians(4);
   private double VELOCITY_CORRECTION = 1;
   // private boolean shootVelocityWasOK = false;
 
@@ -154,6 +154,7 @@ public class ShooterCommand extends Command {
         turretPos = nextPose.getTranslation()
             .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle));
         toHub = Field.HubRed.CENTER.minus(turretPos);
+        SmartDashboard.putNumber("Distance from Hub", toHub.getNorm());
 
         // get the distance, heading and LUT valuse
         distance = toHub.getNorm();

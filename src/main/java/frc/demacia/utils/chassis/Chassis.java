@@ -197,6 +197,8 @@ public class Chassis extends SubsystemBase {
                         new double[] { 0.03, 0.03, 99999999 })),
                 QUEST_STD);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
+        
+        LogManager.log(chassisConfig.name + " initalize");
     }
 
     private final PIDController xController = new PIDController(0.5, 0.0, 0.0);

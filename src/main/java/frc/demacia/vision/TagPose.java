@@ -82,7 +82,7 @@ public class TagPose {
         Commands.sequence(
             new InstantCommand(() -> changePipeline(5)).ignoringDisable(true),
             new InstantCommand(() -> Chassis.getInstance().setYaw(getRobotAngle())).ignoringDisable(true),
-            new InstantCommand(() -> changePipeline(4)).ignoringDisable(true)).ignoringDisable(true));
+            new InstantCommand(() -> changePipeline(0)).ignoringDisable(true)).ignoringDisable(true));
 
   }
 

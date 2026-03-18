@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix.time.StopWatch;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -75,7 +77,7 @@ public class StateManager extends SubsystemBase {
         RobotCommon.currentShift = Shifts.Disable;
         this.isRedWonAuto = true;
         this.timer = new Timer();
-        this.shiftNum = 0;
+        this.shiftNum = -1;
 
         this.intakeCurrentTimer = new Timer();
 
@@ -104,6 +106,7 @@ public class StateManager extends SubsystemBase {
         builder.addBooleanProperty("Is Activated", this::isStateChangeActivated, this::setStateChangeActivated);
         builder.addDoubleProperty("Time left", this::getTimeLeft, null);
         builder.addStringProperty("current state", () -> RobotCommon.currentState.name(), null);
+        builder.addStringProperty("current Shift", () -> RobotCommon.currentShift.name(), null);
     }
 
     public boolean isCanIntake() {
@@ -116,10 +119,14 @@ public class StateManager extends SubsystemBase {
             switch (DriverStation.getGameSpecificMessage()) {
                 case "R":
                     isRedWonAuto = true;
+                    if (shiftNum == 1)
+                        RobotCommon.nextShift = RobotCommon.isRed ? Shifts.Inactive : Shifts.Active;
                     break;
 
                 case "B":
                     isRedWonAuto = false;
+                    if (shiftNum == 1)
+                        RobotCommon.nextShift = RobotCommon.isRed ? Shifts.Active : Shifts.Inactive;
                     break;
 
                 default:
@@ -184,7 +191,7 @@ public class StateManager extends SubsystemBase {
         this.isStateChangeActivated = isActivated;
     }
 
-    private double getTimeLeft() {
+    public double getTimeLeft() {
         switch (shiftNum) {
             case 0:
                 return 20 - timer.get();
@@ -199,30 +206,41 @@ public class StateManager extends SubsystemBase {
         }
     }
 
+    public void resetShift() {
+        if (shiftNum != 0) {
+            timer.stop();
+            timer.reset();
+            shiftNum = -1;
+            RobotCommon.changeShift(Shifts.Disable, Shifts.Auto);
+        }
+    }
+
     private void updateShift() {
         if (RobotCommon.currentShift == Shifts.Disable && RobotState.isEnabled() && RobotState.isAutonomous()) {
-            RobotCommon.changeShift(Shifts.Auto);
+            RobotCommon.changeShift(Shifts.Auto, Shifts.Transition);
             timer.start();
             shiftNum = 0;
         } else if (RobotCommon.currentShift == Shifts.Auto && RobotState.isTeleop()) {
-            RobotCommon.changeShift(Shifts.Transition);
+            RobotCommon.changeShift(Shifts.Transition,
+                    isRedWonAuto && RobotCommon.isRed ? Shifts.Inactive : Shifts.Active);
             shiftNum = 1;
             timer.reset();
             timer.start();
         } else if (RobotCommon.currentShift == Shifts.Transition && timer.hasElapsed(10)) {
-            RobotCommon.changeShift(isRedWonAuto && RobotCommon.isRed ? Shifts.Active : Shifts.Inactive);
+            RobotCommon.changeShift(isRedWonAuto && RobotCommon.isRed ? Shifts.Inactive : Shifts.Active,
+                    isRedWonAuto && RobotCommon.isRed ? Shifts.Active : Shifts.Inactive);
             timer.reset();
             shiftNum = 2;
         } else if (RobotCommon.currentShift == Shifts.Active && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.currentShift = Shifts.Inactive;
+            RobotCommon.changeShift(Shifts.Inactive, shiftNum != 5 ? Shifts.Active : Shifts.Endgame);
             timer.reset();
             shiftNum++;
         } else if (RobotCommon.currentShift == Shifts.Inactive && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.currentShift = Shifts.Active;
+            RobotCommon.changeShift(Shifts.Active, shiftNum != 5 ? Shifts.Inactive : Shifts.Endgame);
             timer.reset();
             shiftNum++;
         } else if (shiftNum == 5 && timer.hasElapsed(25)) {
-            RobotCommon.currentShift = Shifts.Endgame;
+            RobotCommon.changeShift(Shifts.Endgame, Shifts.Disable);
             shiftNum = 6;
             timer.reset();
         }

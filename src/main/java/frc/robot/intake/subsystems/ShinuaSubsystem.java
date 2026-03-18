@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.SparkMaxMotor;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.motors.TalonSRXMotor;
@@ -57,6 +58,8 @@ public class ShinuaSubsystem extends SubsystemBase {
         new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
 
     timer = new Timer();
+
+    LogManager.log("Shinua Initalize");
   }
 
   public void checkElectronics() {
