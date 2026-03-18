@@ -32,7 +32,7 @@ public class DriveCommand extends Command {
   public DriveCommand(Chassis chassis, CommandController controller) {
     this.chassis = chassis;
     this.controller = controller;
-    precisionMode = false;
+     precisionMode = false;
     addRequirements(chassis);
   }
 

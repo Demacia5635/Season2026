@@ -6,6 +6,7 @@ package frc.robot.Shooter.subsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,47 +21,54 @@ import frc.robot.Shooter.constants.ShooterConstans;
  * hear we crate all the motors and the sensorse and use them
  */
 public class Shooter extends SubsystemBase {
-  /** Creates a new shooter. */
-
-  private TalonFXMotor shooterMotor;
-  private TalonFXMotor feederMotor;
-  private TalonFXMotor hoodMotor;
-
-  private DigitalEncoder hoodEncoder;
-
-  public double angle;
-
   private static Shooter instance;
-
-  private Shooter() {
-    hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
-    shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
-    feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
-    hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
-    setHoodMotorPosition(getHoodAngleAbsEncoder());
-    hoodMotor.configPidFf(0);
-    hoodMotor.configMotionMagic();
-    shooterMotor.configPidFf(0);
-    SmartDashboard.putData("Shooter", this);
-    SmartDashboard.putData("Shooter/Hood/set coast",
-        new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/Hood/set brake",
-        new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/Flywheel/set coast",
-        new InstantCommand(() -> shooterMotor.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/Flywheel/set brake",
-        new InstantCommand(() -> shooterMotor.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/Feeder/set coast",
-        new InstantCommand(() -> feederMotor.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shooter/Feeder/set brake",
-        new InstantCommand(() -> feederMotor.setNeutralMode(true)).ignoringDisable(true));
-
-  }
 
   public static Shooter getInstance() {
     if (instance == null)
       instance = new Shooter();
     return instance;
+  }
+
+  public static void setInstance(Shooter instance) {
+    Shooter.instance = instance;
+  }
+
+  /** Creates a new shooter. */
+
+  private TalonFXMotor shooterMotor;
+
+  private TalonFXMotor feederMotor;
+
+  private TalonFXMotor hoodMotor;
+
+  private DigitalEncoder hoodEncoder;
+
+  boolean isShooting;
+
+  private boolean isHoodMotorLock = false;
+
+  double lastShooterMotorCurrent;
+
+  private Shooter() {
+    hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
+    hoodMotor.configSoftwareLimit(ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
+    shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
+    feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
+    hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
+    setHoodMotorPosition(getHoodAngleAbsEncoder());
+    // hoodMotor.configPidFf(0);
+    // hoodMotor.configMotionMagic();
+    // shooterMotor.configPidFf(0);
+
+    isShooting = false;
+    lastShooterMotorCurrent = shooterMotor.getCurrentCurrent();
+    timer = new Timer();
+
+    SmartDashboard.putData("Shooter", this);
+    SmartDashboard.putData("Shooter/Hood/set coast",
+        new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
+    SmartDashboard.putData("Shooter/Hood/set brake",
+        new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
   }
 
   public void checkElectronics() {
@@ -80,19 +88,6 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setNeutralMode(isBrake);
   }
 
-  private boolean isFlywheelReady() {
-    return RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
-        ? Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.8
-        : Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4;
-  }
-
-  private boolean isHoodReady() {
-    return !isHoodMotorLock && hoodEncoder.isConnected() && RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
-        ? Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3)
-        : Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5);
-
-  }
-
   public boolean isReady() {
     return isFlywheelReady() && isHoodReady();
   }
@@ -108,8 +103,10 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("abs encoder", () -> hoodEncoder.get(), null);
     builder.addDoubleProperty("abs encoder after gear",
         () -> MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5)), null);
-    
+
     builder.addBooleanProperty("isLockedHood", this::isHoodMotorLock, this::setHoodMotorLock);
+    builder.addBooleanProperty("is Shooting", () -> isShooting || timer.isRunning(), null);
+    builder.addDoubleProperty("flywheel current", () -> shooterMotor.getCurrentCurrent(), null);
   }
 
   /**
@@ -148,7 +145,8 @@ public class Shooter extends SubsystemBase {
   public void setFlywheelPower(double power) {
     shooterMotor.set(power);
   }
-/**
+
+  /**
    * this function is to set the hood power
    * 
    * @param power is the vaubole of the pwer of the hood
@@ -156,8 +154,6 @@ public class Shooter extends SubsystemBase {
   public void setHoodPower(double power) {
     hoodMotor.set(power);
   }
-
-  private boolean isHoodMotorLock = false;
 
   /**
    * this function is to set the hood angle
@@ -171,7 +167,8 @@ public class Shooter extends SubsystemBase {
     if (!hoodEncoder.isConnected())
       return;
 
-    if (isHoodMotorLock) return;
+    if (isHoodMotorLock)
+      return;
 
     // if(hoodMotor.getCurrentCurrent() > 20){
     // return;
@@ -185,7 +182,6 @@ public class Shooter extends SubsystemBase {
     }
     hoodMotor.setPositionVoltage(angle);
   }
-
 
   /**
    * this function is to get the hood motor angle
@@ -224,9 +220,22 @@ public class Shooter extends SubsystemBase {
     feederMotor.stopMotor();
   }
 
+  Timer timer;
+
   @Override
   public void periodic() {
-    if (hoodMotor.getCurrentCurrent() > 18) isHoodMotorLock = true;
+    if (hoodMotor.getCurrentCurrent() > 18)
+      isHoodMotorLock = true;
+    isShooting = (lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() >= 5
+        && lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() <= 20);
+    if (isShooting) {
+      timer.start();
+    }
+    if (timer.hasElapsed(3)) {
+      timer.stop();
+      timer.reset();
+    }
+    lastShooterMotorCurrent = shooterMotor.getCurrentCurrent();
   }
 
   public TalonFXMotor getShooterMotor() {
@@ -261,23 +270,25 @@ public class Shooter extends SubsystemBase {
     this.hoodEncoder = hoodEncoder;
   }
 
-  public double getAngle() {
-    return angle;
-  }
-
-  public void setAngle(double angle) {
-    this.angle = angle;
-  }
-
-  public static void setInstance(Shooter instance) {
-    Shooter.instance = instance;
-  }
-
   public boolean isHoodMotorLock() {
     return isHoodMotorLock;
   }
 
   public void setHoodMotorLock(boolean isHoodMotorLock) {
     this.isHoodMotorLock = isHoodMotorLock;
+  }
+
+  private boolean isFlywheelReady() {
+    return isShooting || timer.isRunning() || (RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
+        ? Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.8
+        : Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4);
+  }
+
+  private boolean isHoodReady() {
+    return !isHoodMotorLock && hoodEncoder.isConnected()
+        && RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
+            ? Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3)
+            : Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5);
+
   }
 }

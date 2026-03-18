@@ -20,46 +20,23 @@ public class ShooterConstans {
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
 
-                SHOOTER_LOOKUP_TABLE.add(1.3, 12.7, Math.toRadians(72));
-                SHOOTER_LOOKUP_TABLE.add(2.28, 13.6, Math.toRadians(65));
-                SHOOTER_LOOKUP_TABLE.add(3.22, 15, Math.toRadians(62));
-                SHOOTER_LOOKUP_TABLE.add(4.55, 16.7, Math.toRadians(58));
+                // SHOOTER_LOOKUP_TABLE.add(1.3, 12.7, Math.toRadians(72));
+                // SHOOTER_LOOKUP_TABLE.add(2.28, 13.6, Math.toRadians(65));
+                // SHOOTER_LOOKUP_TABLE.add(3.22, 15, Math.toRadians(62));
+                // SHOOTER_LOOKUP_TABLE.add(4.55, 16.7, Math.toRadians(58));
 
-                // SHOOTER_LOOKUP_TABLE.add(1, 0, Math.toRadians(85));
+                // SHOOTER_LOOKUP_TABLE.add(0.96, 12.7, Math.toRadians(72));
+                // SHOOTER_LOOKUP_TABLE.add(2.34, 14, Math.toRadians(68));
+                // SHOOTER_LOOKUP_TABLE.add(3.05, 15, Math.toRadians(66));
+                // SHOOTER_LOOKUP_TABLE.add(4.39, 17.7, Math.toRadians(60));
 
-                /* LookUp Table Bad */
-                // SHOOTER_LOOKUP_TABLE.add(1.32, 12, Math.toRadians(70));
-                // SHOOTER_LOOKUP_TABLE.add(2.75, 13.5, Math.toRadians(63));
-                // SHOOTER_LOOKUP_TABLE.add(3.75, 15, Math.toRadians(60));
+                /* look up table 18.3 */
+                SHOOTER_LOOKUP_TABLE.add(1.3, 12, Math.toRadians(78));
+                SHOOTER_LOOKUP_TABLE.add(2.24, 12.9, Math.toRadians(72));
+                SHOOTER_LOOKUP_TABLE.add(3.3, 14.2, Math.toRadians(68));
+                SHOOTER_LOOKUP_TABLE.add(4.41, 16.5, Math.toRadians(66));
+                SHOOTER_LOOKUP_TABLE.add(5.53, 17.7, Math.toRadians(62));
 
-                // SHOOTER_LOOKUP_TABLE.add(1.3, 12.8, Math.toRadians(77));
-                // SHOOTER_LOOKUP_TABLE.add(2.25, 13.5, Math.toRadians(70));
-                // SHOOTER_LOOKUP_TABLE.add(2.75, 14.2, Math.toRadians(67));
-                // SHOOTER_LOOKUP_TABLE.add(3.74, 15, Math.toRadians(64));
-
-                // SHOOTER_LOOKUP_TABLE.add(5, 17.2, Math.toRadians(62));
-
-                // SHOOTER_LOOKUP_TABLE.add(1.35, 13, Math.toRadians(80));
-                // SHOOTER_LOOKUP_TABLE.add(2.85, 14.8, Math.toRadians(70));
-
-                // SHOOTER_LOOKUP_TABLE.add(3.44, 15.5, Math.toRadians(67));
-                // SHOOTER_LOOKUP_TABLE.add(4.94, 17.5, Math.toRadians(60));
-
-                // SHOOTER_LOOKUP_TABLE.add(0.95, 12, Math.toRadians(79));
-                // SHOOTER_LOOKUP_TABLE.add(1.53, 13.4, Math.toRadians(75));
-                // SHOOTER_LOOKUP_TABLE.add(2.55, 14.4, Math.toRadians(68));
-                // SHOOTER_LOOKUP_TABLE.add(3.28, 15.73, Math.toRadians(67));
-                // SHOOTER_LOOKUP_TABLE.add(4.26, 15.73, Math.toRadians(67));
-
-                // SHOOTER_LOOKUP_TABLE.add(1, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(1.5, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(2, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(2.5, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(3, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(3.5, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(4, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(4.5, 0, 0);
-                // SHOOTER_LOOKUP_TABLE.add(5, 0, 0);
         }
 
         public static final Canbus SHOOTER_CANBUS = Canbus.Rio;
@@ -67,8 +44,8 @@ public class ShooterConstans {
         public static final int SHOOTER_MOTOR_ID = 50;
         public static final String SHOOTER_MOTOR_NAME = "Shooter/Flywheel";
 
-        public static final double SHOOTER_KP = 2;
-        public static final double SHOOTER_KI = 0.2;
+        public static final double SHOOTER_KP = 0d;
+        public static final double SHOOTER_KI = 0d;
         public static final double SHOOTER_KS = 0.30414;
         public static final double SHOOTER_KV = 0.47818;
         public static final double SHOOTER_KA = 0.19290;
@@ -78,6 +55,7 @@ public class ShooterConstans {
         public static final TalonFXConfig SHOOTER_MOTOR_CONFIG = new TalonFXConfig(SHOOTER_MOTOR_ID, SHOOTER_CANBUS,
                         SHOOTER_MOTOR_NAME)
                         .withFeedForward(SHHOTER_KV2, 0)
+                        .withCurrent(40)
                         .withInvert(false)
                         .withBrake(false)
                         .withPID(SHOOTER_KP, SHOOTER_KI, 0, SHOOTER_KS, SHOOTER_KV, SHOOTER_KA, 0)
@@ -117,18 +95,18 @@ public class ShooterConstans {
         public static final TalonFXConfig HOOD_CONFIG = new TalonFXConfig(HOOD_ID, SHOOTER_CANBUS, HOOD_NAME)
                         .withBrake(true)
                         .withRadiansMotor(HOOD_GEAR_RATIO)
-                        .withCurrent(15)
+                        .withCurrent(20)
                         .withInvert(true)
                         .withMaxPositionError(MAX_HOOD_ANGLE_ERROR)
                         .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
                         .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
-        public static final double MAX_ANGLE_HOOD = Math.toRadians(86d);
-        public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
+        public static final double MAX_ANGLE_HOOD = Math.toRadians(83d);
+        public static final double MIN_ANGLE_HOOD = Math.toRadians(47d);
 
         public static final int HOOD_ENCODER_CHANNEL = 8;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(86) - 0.752882679432794;
+        public static final double HOOD_OFFSET = Math.toRadians(86) - 0.1161603883664826; // 0.752882679432794;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(false);
@@ -140,7 +118,7 @@ public class ShooterConstans {
         public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.8619, 1.5023);
         public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.8619, 6.523);
 
-        public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(0.165, 0.195);
+        public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
         public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; // m/s
 
 }

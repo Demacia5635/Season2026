@@ -10,7 +10,8 @@ import frc.robot.RobotContainer;
 public class RobotBLedStrip extends LedStrip {
 
     public RobotBLedStrip() {
-        super("Robot B Strip", 300, RobotContainer.ledManager);
+        super("Robot B Strip", 1000, RobotContainer.ledManager);
+        setColor(Color.kPurple);
     }
 
     private Color getColorBasedOnState(RobotCommon.RobotStates state) {
@@ -39,7 +40,7 @@ public class RobotBLedStrip extends LedStrip {
     public void periodic() {
         super.periodic();
 
-        setColor(Color.kPurple);
+        // setColor(Color.kPurple);
     }
 }
     

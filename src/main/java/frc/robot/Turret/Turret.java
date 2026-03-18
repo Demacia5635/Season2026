@@ -33,7 +33,6 @@ public class Turret extends SubsystemBase {
 
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
-  TagPose tag;
 
   private boolean isTurretLock;
 
@@ -45,13 +44,13 @@ public class Turret extends SubsystemBase {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
     limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
+
     SmartDashboard.putData("Turret", this);
     SmartDashboard.putData("Turret/Motor/set coast",
         new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Turret/Motor/set brake",
         new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
-    turretMotor.configMotionMagic();
-    turretMotor.configPidFf(0);
+
     LogManager.log("Turret Initalize");
   }
 
@@ -73,17 +72,18 @@ public class Turret extends SubsystemBase {
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
     builder.addBooleanProperty("is ready", this::isReady, null);
     builder.addDoubleProperty("Position", () -> Math.toDegrees(getTurretAngle()), null);
+    builder.addDoubleProperty("error", () -> Math.toDegrees(wantedAngle - getTurretAngle()), null);
   }
 
   public double getTurretVelocity() {
     return turretMotor.getCurrentVelocity();
   }
 
-  public boolean getTurretLock(){
+  public boolean getTurretLock() {
     return isTurretLock;
   }
 
-  public void setTurretLock(boolean lock){
+  public void setTurretLock(boolean lock) {
     this.isTurretLock = lock;
   }
 
@@ -99,7 +99,7 @@ public class Turret extends SubsystemBase {
     if (!hasCalibrated)
       return;
 
-    if(getTurretLock()){
+    if (getTurretLock()) {
       return;
     }
 
@@ -116,16 +116,15 @@ public class Turret extends SubsystemBase {
     if (!hasCalibrated)
       return;
 
-    if(getTurretLock()){
+    if (getTurretLock())
       return;
-    }
 
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
-    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
-      turretMotor.stop();
-      return;
-    }
+    // if (Math.abs(wantedPosition - getTurretAngle()) <= MAX_ALLOWED_ANGLE_ERROR) {
+    // turretMotor.stop();
+    // return;
+    // }
 
     turretMotor.setMotion(wantedPosition);
   }
@@ -145,21 +144,21 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isReady() {
-    return hasCalibrated() && (RobotCommon.currentState == RobotStates.Delivery)
-        ? Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5)
-        : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(3);
+    return hasCalibrated() && Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
+    // return hasCalibrated() && (RobotCommon.currentState == RobotStates.Delivery)
+    // ? Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5)
+    // : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
   }
 
   @Override
-  public void periodic(){
-    if(turretMotor.getCurrentCurrent() > 25) setTurretLock(true); 
+  public void periodic() {
+    if (turretMotor.getCurrentCurrent() > 25)
+      setTurretLock(true);
   }
 
   public boolean isAtMinLimit() {
     return !limitSwitchMin.get();
   }
-
-  
 
   public boolean isAtMaxLimit() {
     return !limitSwitchMax.get();
@@ -184,7 +183,7 @@ public class Turret extends SubsystemBase {
 
   public void updatePositionByLimit() {
     if (isAtMinLimit())
-      turretMotor.setEncoderPosition(MIN_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(MIN_SENSOR);
     if (isAtMaxLimit())
       turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
   }

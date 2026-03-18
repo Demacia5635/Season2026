@@ -55,8 +55,10 @@ public class IntakeConstants {
         public static final String INDEXER_TOP_NAME = "Shinua/Top";
         public static final TalonFXConfig INDEXER_ON_TOP_CONFIG = new TalonFXConfig(INDEXER_ON_TOP_ID, Canbus.CANIvore,
                         INDEXER_TOP_NAME)
+                        .withRadiansMotor(4)
                         .withBrake(true)
                         .withVolts(8)
+                        .withCurrent(20)
                         .withInvert(false);
 
         // indexer close value

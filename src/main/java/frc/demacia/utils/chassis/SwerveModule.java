@@ -5,6 +5,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.demacia.utils.motors.MotorInterface;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.Cancoder;
@@ -86,6 +87,7 @@ public class SwerveModule {
      * @param velocityMetersPerSecond Target velocity
      */
     public void setDriveVelocity(double velocityMetersPerSecond) {
+        SmartDashboard.putNumber("Drive Vel", velocityMetersPerSecond);
         driveMotor.setVelocity(velocityMetersPerSecond);
     }
 

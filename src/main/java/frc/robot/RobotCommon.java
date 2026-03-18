@@ -19,7 +19,7 @@ public class RobotCommon {
         Drive, Trench, Test;
     }
 
-    public static RobotStates currentState = RobotStates.Drive;
+    public static RobotStates currentState = RobotStates.Idle;
     public static Pose2d currentRobotPose = Pose2d.kZero;
     public static Pose2d futureRobotPose = Pose2d.kZero; // 0.04 seconds in advance
     public static ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
@@ -45,7 +45,8 @@ public class RobotCommon {
     public static boolean hasDisabledIntake = false;
 
     public static boolean isReady() {
-        return true;//return Turret.getInstance().isReady() && RobotContainer.shooter.isReady();
+        // return true;
+       return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
 
     public static void changeState(RobotStates newState) {

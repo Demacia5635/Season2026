@@ -62,7 +62,7 @@ public class ShinuaCommand extends Command {
         shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
         shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
         shinua.setDutyIndexerOnTop(1);
-        shinua.setPowerBattery(0.5);
+        shinua.setPowerBattery(0.2);
 
     }
 
@@ -88,6 +88,7 @@ public class ShinuaCommand extends Command {
                     applyShootingValues();
                 } else {
                     applyIntakeValues();
+                    shinua.setPowerBattery(0.3);
                 }
 
                 break;

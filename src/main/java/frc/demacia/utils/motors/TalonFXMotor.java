@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
@@ -112,6 +113,15 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         configureMotionMagic(false);
 
         getConfigurator().apply(cfg);
+    }
+
+    public void configSoftwareLimit(double min, double max) {
+      SoftwareLimitSwitchConfigs cfg = new SoftwareLimitSwitchConfigs();
+      cfg.ForwardSoftLimitEnable = max != Double.MAX_VALUE;
+      cfg.ReverseSoftLimitEnable = min != Double.MAX_VALUE;
+      cfg.ForwardSoftLimitThreshold = max;
+      cfg.ReverseSoftLimitThreshold = min;
+      getConfigurator().apply(cfg);
     }
 
     /**

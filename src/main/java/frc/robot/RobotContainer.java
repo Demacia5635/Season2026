@@ -22,9 +22,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,6 +49,7 @@ import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.FlywheelPower;
 import frc.robot.Shooter.commands.FlywheelTesting;
+import frc.robot.Shooter.commands.HoodErrorTesting;
 import frc.robot.Shooter.commands.HoodTesting;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.commands.ShooterTesting;
@@ -56,6 +59,8 @@ import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.robot.Turret.TurretCommands.TurretFollow;
 import frc.robot.Turret.TurretCommands.TurretPower;
+import frc.robot.buttons.Buttons;
+import frc.robot.buttons.ButtonsConstants;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
@@ -80,17 +85,18 @@ import frc.robot.leds.RobotBLedStrip;
  */
 public class RobotContainer implements Sendable {
 
-  public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  public static final PowerDistribution PDH = new PowerDistribution(16, ModuleType.kRev);
+  
+  public static Chassis chassis;
   public static Turret turret;
   public static IntakeSubsystem intake;
   public static ShinuaSubsystem shinua;
   public static Shooter shooter;
   public static LedManager ledManager;
   public static RobotBLedStrip leds;
-  private Dvirs_ObjectPose ballCamera;
+  public static Buttons buttons;
 
-  TalonFXMotor motor;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -99,16 +105,18 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
     intake = IntakeSubsystem.getInstance();
     shinua = ShinuaSubsystem.getInstance();
+    turret = Turret.getInstance();
     shooter = Shooter.getInstance();
+
     ledManager = new LedManager();
     leds = new RobotBLedStrip();
-    chassis = new Chassis(RobotBChassisConstants.CHASSIS_CONFIG);
-    turret = Turret.getInstance();
-    // ballCamera = new Dvirs_ObjectPose(
-    // new Camera("balls", new Translation3d(0.27, -0.15, 0.308), -30, 22, false,
-    // true));
+    buttons = Buttons.getInstance();
+
+    PDH.setSwitchableChannel(true);
+    
     StateManager.initialize(chassis, intake, shinua, turret, shooter, driverController, leds);
 
     SmartDashboard.putData("RC", this);
@@ -130,7 +138,7 @@ public class RobotContainer implements Sendable {
 
     configureAuto();
     SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
-    SmartDashboard.putData("PDH", new PowerDistribution(16, ModuleType.kRev));
+    SmartDashboard.putData("PDH", PDH);
   }
 
   private AutoFactory autoFactory;
@@ -220,6 +228,7 @@ public class RobotContainer implements Sendable {
     autoCommand = autoRoutine.cmd();
   }
 
+  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
@@ -240,43 +249,22 @@ public class RobotContainer implements Sendable {
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
+    // shooter.setDefaultCommand(new HoodErrorTesting());
+    turret.setDefaultCommand(new TurretCommand(turret));
 
-    // turret.setDefaultCommand(new TurretFollow(turret, Field.HubRed.CENTER,
-    // chassis));
+    SmartDashboard.putData("Auto Drive Test", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis).alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
 
-    // turret.setDefaultCommand(new TurretCommand(turret));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[0], new InstantCommand(() -> leds.setColor(Color.kRed)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[1], new InstantCommand(() -> leds.setColor(Color.kYellow)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[2], new InstantCommand(() -> leds.setColor(Color.kGreen)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[3], new InstantCommand(() -> leds.setColor(Color.kBlue)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[4], new InstantCommand(() -> leds.setColor(Color.kOrange)).ignoringDisable(true));
 
     driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
+    driverController.downButton().onTrue(new TurretFollow(turret, Field.HubRed.CENTER, chassis));
 
     driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
     driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
-    // new Trigger(() -> driverController.rightBumper().getAsBoolean() ||
-    // driverController.getRightTrigger(0.2).getAsBoolean() ||
-    // driverController.getLeftTrigger(0.2).getAsBoolean())
-    // .onTrue(new InstantCommand(() -> {
-    // switch (RobotCommon.currentState) {
-    // case DeliveryWithAutoIntake:
-    // RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake);
-    // break;
-    // case DeliveryWithoutAutoIntake:
-    // RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake);
-    // break;
-    // case DriveAutoIntake:
-    // RobotCommon.changeState(RobotStates.DriveWithIntake);
-    // break;
-    // case DriveWithIntake:
-    // RobotCommon.changeState(RobotStates.DriveAutoIntake);
-    // break;
-    // case HubWithAutoIntake:
-    // RobotCommon.changeState(RobotStates.HubWithoutAutoIntake);
-    // break;
-    // case HubWithoutAutoIntake:
-    // RobotCommon.changeState(RobotStates.HubWithAutoIntake);
-    // break;
-    // default:
-    // break;
-    // }
-    // }).ignoringDisable(true));
     driverController.rightBumper().onTrue(new InstantCommand(() -> {
       if (StateManager.getInstance().isStateChangeActivated()) {
         StateManager.getInstance().setStateChangeActivated(false);
