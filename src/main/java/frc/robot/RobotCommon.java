@@ -48,7 +48,7 @@ public class RobotCommon {
 
     public static boolean isReady() {
         // return true;
-        return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
+        return (StateManager.getInstance().getTimeLeft() <= 3 || !currentShift.equals(Shifts.Inactive) || !currentState.equals(RobotStates.Hub)) && Turret.getInstance().isReady() && Shooter.getInstance().isReady();
     }
 
     public static void changeState(RobotStates newState) {
@@ -58,6 +58,7 @@ public class RobotCommon {
 
     public static void changeShift(Shifts newShift, Shifts nextShift) {
         // RobotContainer.mainLeds.startShift(newShift);
+        RobotContainer.mainLeds.isShiftEnded = true;
         currentShift = newShift;
         RobotCommon.nextShift = nextShift;
     }

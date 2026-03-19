@@ -257,9 +257,10 @@ public class RobotContainer implements Sendable {
     driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // shooter.setDefaultCommand(new HoodErrorTesting());
-    turret.setDefaultCommand(new TurretCommand(turret));
-
+    // turret.setDefaultCommand(new TurretCommand(turret));
+    turret.setDefaultCommand(new TurretFollow(turret, HUB_POS, chassis));
     SmartDashboard.putData("Auto Drive Test", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis).alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
+    SmartDashboard.putData("Set Hood angle", new InstantCommand(()->shooter.setHoodMotorPosition(Math.toRadians(86))).ignoringDisable(true));
 
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[0], new InstantCommand(() -> mainLeds.setColor(Color.kRed)).ignoringDisable(true));
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[1], new InstantCommand(() -> mainLeds.setColor(Color.kYellow)).ignoringDisable(true));

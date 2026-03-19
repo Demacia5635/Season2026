@@ -50,11 +50,12 @@ public class Vision {
     public boolean isSeeTag() {
         for (TagPose tag : tags) {
             if (tag.isSeeTag() && tag.getTagId() != 15 && tag.getTagId() != 12 && tag.getTagId() != 7
-                    && tag.getTagId() != 1 && tag.getTagId() != 6)
+                    && tag.getTagId() != 1 && tag.getTagId() != 6 && Math.abs(tag.getCamToTagYaw()) < 12)
                 return true;
         }
         return false;
     }
+    
 
     private double getCollectedConfidence() {
         double confidence = 0;

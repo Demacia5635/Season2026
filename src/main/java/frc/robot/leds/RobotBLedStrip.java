@@ -61,23 +61,28 @@ public class RobotBLedStrip extends LedStrip {
     public void startShift(Shifts shift) {
         switch (shift) {
             case Transition:
-                startTransition();
+                if (!transitionTimer.isRunning())
+                    startTransition();
                 break;
             
             case Active:
-                startOurShift();
+                if (!ourShiftTimer.isRunning())
+                    startOurShift();
                 break;
 
             case Inactive:
-                startTheirShift();
+                if (!theirShiftTimer.isRunning())
+                    startTheirShift();
                 break;
             
             case Endgame:
-                startEndGame();
+                if (!endGameTimer.isRunning())
+                    startEndGame();
                 break;
 
             case Disable:
-                startDisable();
+                if (!disableTimer.isRunning())
+                    startDisable();
                 break;
 
             default:
@@ -85,37 +90,39 @@ public class RobotBLedStrip extends LedStrip {
         }
     }
 
-    private final double TIME_TO_BLINK = 3;
+    public boolean isShiftEnded = false;
+
+    private final double TIME_TO_BLINK = 5;
 
     @Override
     public void periodic() {
         super.periodic();
 
-        setColor(Color.kGreen);
+        setColor(Color.kPurple);
 
         if (StateManager.getInstance().getTimeLeft() <= TIME_TO_BLINK) {
             startShift(RobotCommon.nextShift);
         }
 
         if (!RobotCommon.isReady()) {
-            setGay();
-            // setColor(Color.kRed);
+            // setGay();
+            setColor(Color.kRed);
         } 
 
         if (transitionTimer.isRunning()) {
             setBlink(Color.kPurple);
         }
 
-        if (transitionTimer.hasElapsed(TIME_TO_BLINK)) {
+        if (transitionTimer.hasElapsed(TIME_TO_BLINK / 2)) {
             transitionTimer.stop();
             transitionTimer.reset();
         }
 
         if (ourShiftTimer.isRunning()) {
-            setBlink(Color.kDarkRed);
+            setBlink(Color.kDarkGreen);
         }
 
-        if (ourShiftTimer.hasElapsed(TIME_TO_BLINK)){
+        if (ourShiftTimer.hasElapsed(TIME_TO_BLINK / 2)){
             ourShiftTimer.stop();
             ourShiftTimer.reset();
         }
@@ -124,7 +131,7 @@ public class RobotBLedStrip extends LedStrip {
             setBlink(Color.kDarkBlue);
         }
         
-        if (theirShiftTimer.hasElapsed(TIME_TO_BLINK)) {
+        if (theirShiftTimer.hasElapsed(TIME_TO_BLINK / 2)) {
             theirShiftTimer.stop();
             theirShiftTimer.reset();
         }
@@ -133,7 +140,7 @@ public class RobotBLedStrip extends LedStrip {
             setBlink(Color.kYellow);
         }
 
-        if (endGameTimer.hasElapsed(TIME_TO_BLINK)) {
+        if (endGameTimer.hasElapsed(TIME_TO_BLINK / 2)) {
             endGameTimer.stop();
             endGameTimer.reset();
         }
@@ -146,6 +153,12 @@ public class RobotBLedStrip extends LedStrip {
             disableTimer.stop();
             disableTimer.reset();
         }
+   
+        if (isShiftEnded) {
+            setColor(Color.kWhite);
+            isShiftEnded = false;
+        }
+
     }
 }
     

@@ -34,7 +34,7 @@ public class Turret extends SubsystemBase {
   private LimitSwitch limitSwitchMin;
   private LimitSwitch limitSwitchMax;
 
-  private boolean isTurretLock = true;
+  private boolean isTurretLock = false;
 
   private double wantedAngle = 0;
 
@@ -43,6 +43,7 @@ public class Turret extends SubsystemBase {
   private Turret() {
     turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
+    limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
 
     SmartDashboard.putData("Turret", this);
     SmartDashboard.putData("Turret/Motor/set coast",
@@ -101,9 +102,10 @@ public class Turret extends SubsystemBase {
     if (getTurretLock()) {
       return;
     }
+    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
     this.wantedAngle = wantedPosition;
-    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+
     if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
@@ -151,8 +153,8 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (turretMotor.getCurrentCurrent() > 25)
-      setTurretLock(true);
+    // if (turretMotor.getCurrentCurrent() > 35)
+    // setTurretLock(true);
   }
 
   public boolean isAtMinLimit() {
@@ -160,8 +162,8 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtMaxLimit() {
-    return false;
-    // return !limitSwitchMax.get();
+    // return false;
+    return !limitSwitchMax.get();
   }
 
   public boolean hasCalibrated() {

@@ -26,7 +26,8 @@ public class IntakeConstants {
 
         // intake motor
         public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(INTAKE_ID, INTAKE_CANBUS, INTAKE_NAME)
-                        .withInvert(true);
+                        .withInvert(true)
+                        .withCurrent(25);
 
         // battery value
         public static final int BATTERY_ID = 33;
@@ -45,10 +46,10 @@ public class IntakeConstants {
         public static final TalonFXConfig BATTERY_CONFIG = new TalonFXConfig(BATTERY_ID, Canbus.CANIvore, BATTER_NAME)
                         .withBrake(true)
                         .withInvert(false)
-                        .withCurrent(20)
-                        .withVolts(8)
+                        .withCurrent(15)
+                        .withVolts(10)
                         .withPID(BATTERY_KP, BATTERT_KI, BATTERY_KD, BATTERT_KS, BATTERY_KV, BATTERY_KA, BATTER_KG)
-                        .withRadiansMotor(12);
+                        .withRadiansMotor(48);
 
         // indexer on the top value
         public static final int INDEXER_ON_TOP_ID = 30;

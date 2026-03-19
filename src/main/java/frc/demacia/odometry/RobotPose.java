@@ -109,7 +109,6 @@ public class RobotPose {
     }
 
     public void addVisionMeasurement() {
-        vision.updateValues();
 
         // if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
         //     hasUpdatedQuestIntialPose = true;
@@ -145,6 +144,7 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
         addOdometryCalculation(odometryObservation, currentVelocity);
 
+        vision.updateValues();
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 
             addQuestMeasurement();

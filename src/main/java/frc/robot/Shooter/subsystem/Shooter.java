@@ -46,7 +46,7 @@ public class Shooter extends SubsystemBase {
 
   boolean isShooting;
 
-  private boolean isHoodMotorLock = true;
+  private boolean isHoodMotorLock = false;
 
   double lastShooterMotorCurrent;
 
@@ -167,9 +167,6 @@ public class Shooter extends SubsystemBase {
     if (Double.isNaN(wantedAngle))
       return;
 
-    if (!hoodEncoder.isConnected())
-      return;
-
     if (isHoodMotorLock)
       return;
 
@@ -227,8 +224,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (hoodMotor.getCurrentCurrent() > 18)
-      isHoodMotorLock = true;
+    // if (hoodMotor.getCurrentCurrent() > 18)
+    //   isHoodMotorLock = true;
     isShooting = (lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() >= 5
         && lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() <= 20);
     if (isShooting) {
@@ -288,7 +285,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private boolean isHoodReady() {
-    return !isHoodMotorLock && hoodEncoder.isConnected()
+    return !isHoodMotorLock
         && RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
             ? Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3)
             : Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5);

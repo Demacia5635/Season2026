@@ -30,12 +30,19 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(3.05, 15, Math.toRadians(66));
                 // SHOOTER_LOOKUP_TABLE.add(4.39, 17.7, Math.toRadians(60));
 
-                /* look up table 18.3 */
-                SHOOTER_LOOKUP_TABLE.add(1.3, 12.3, Math.toRadians(73));
-                SHOOTER_LOOKUP_TABLE.add(2.24, 13.2, Math.toRadians(68));
-                SHOOTER_LOOKUP_TABLE.add(3.3, 14.5, Math.toRadians(63));
-                SHOOTER_LOOKUP_TABLE.add(4.41, 16.8, Math.toRadians(61));
-                SHOOTER_LOOKUP_TABLE.add(5.53, 18d, Math.toRadians(57));
+                // /* look up table 18.3 */
+                // SHOOTER_LOOKUP_TABLE.add(1.3, 12.6, Math.toRadians(73));
+                // SHOOTER_LOOKUP_TABLE.add(2.24, 13.5, Math.toRadians(68));
+                // SHOOTER_LOOKUP_TABLE.add(3.3, 14.8, Math.toRadians(63));
+                // SHOOTER_LOOKUP_TABLE.add(4.41, 17.1, Math.toRadians(61));
+                // SHOOTER_LOOKUP_TABLE.add(5.53, 18.3, Math.toRadians(54));
+
+                SHOOTER_LOOKUP_TABLE.add(1.31, 12.3, Math.toRadians(75));
+
+                SHOOTER_LOOKUP_TABLE.add(2.38, 13.7, Math.toRadians(68));
+                SHOOTER_LOOKUP_TABLE.add(3.28, 14.7, Math.toRadians(64));
+                SHOOTER_LOOKUP_TABLE.add(4.14, 16.4, Math.toRadians(60));
+                SHOOTER_LOOKUP_TABLE.add(5.23, 17.5, Math.toRadians(55));
 
         }
 
@@ -71,9 +78,9 @@ public class ShooterConstans {
         public static final TalonFXConfig FEEDER_CONFIG = new TalonFXConfig(FEEDER_ID, SHOOTER_CANBUS, FEEDER_NAME)
                         .withRadiansMotor(FEEDER_GEAR_RATIO)
                         .withBrake(false)
-                        .withVolts(8)
+                        .withVolts(10)
                         .withInvert(false)
-                        .withCurrent(20);
+                        .withCurrent(15);
 
         public static final int HOOD_ID = 51;
         public static final String HOOD_NAME = "Shooter/Hood";
@@ -104,7 +111,7 @@ public class ShooterConstans {
         public static final double MAX_ANGLE_HOOD = Math.toRadians(83d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(47d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 8;
+        public static final int HOOD_ENCODER_CHANNEL = 7;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
         public static final double HOOD_OFFSET = Math.toRadians(86) - 0.1161603883664826; // 0.752882679432794;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,

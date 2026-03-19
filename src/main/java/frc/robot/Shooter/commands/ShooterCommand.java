@@ -40,8 +40,8 @@ import frc.robot.Shooter.utils.ShooterUtils;
 public class ShooterCommand extends Command {
   Shooter shooter;
   Chassis chassis;
-  private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.48;
-  private double MAGNUS_CORRECTION = 0.1;
+  private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.45;
+  private double MAGNUS_CORRECTION = 0.2;
   private double wantedAngle;
   private double wantedVel;
   private double wantedFeederPower;
@@ -135,7 +135,7 @@ public class ShooterCommand extends Command {
 
     robotSpeeds = RobotCommon.fieldRelativeSpeeds;
     nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
-        0.04);
+        0.07);
 
     switch (RobotCommon.currentState) {
       case Delivery:
@@ -165,7 +165,8 @@ public class ShooterCommand extends Command {
         double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
         if (RobotCommon.isReady()) shooter.setFeederPower(0.7);
-        setFlywheelAndHood(lutVel, lutHoodAngle, heading);
+        shooter.setVelocitiesAndAngle(lut[0], lut[1]);
+        // setFlywheelAndHood(lutVel, lutHoodAngle, heading);
         break;
 
       case Trench:

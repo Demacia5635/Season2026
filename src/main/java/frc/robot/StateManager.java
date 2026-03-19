@@ -145,7 +145,7 @@ public class StateManager extends SubsystemBase {
                 RobotCommon.changeState(RobotStates.Trench);
             else if (RobotCommon.currentState == RobotStates.Trench && isOnTrench(false))
                 return;
-            else if (isHub() && !RobotCommon.currentShift.equals(RobotCommon.Shifts.Inactive)) {
+            else if (isHub()) {
                 RobotCommon.changeState(RobotStates.Hub);
             } else if (isDelivery()) {
                 RobotCommon.changeState(RobotStates.Delivery);
@@ -232,11 +232,11 @@ public class StateManager extends SubsystemBase {
             timer.reset();
             shiftNum = 2;
         } else if (RobotCommon.currentShift == Shifts.Active && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.changeShift(Shifts.Inactive, shiftNum != 5 ? Shifts.Active : Shifts.Endgame);
+            RobotCommon.changeShift(Shifts.Inactive, shiftNum != 4 ? Shifts.Active : Shifts.Endgame);
             timer.reset();
             shiftNum++;
         } else if (RobotCommon.currentShift == Shifts.Inactive && timer.hasElapsed(25) && shiftNum != 5) {
-            RobotCommon.changeShift(Shifts.Active, shiftNum != 5 ? Shifts.Inactive : Shifts.Endgame);
+            RobotCommon.changeShift(Shifts.Active, shiftNum != 4 ? Shifts.Inactive : Shifts.Endgame);
             timer.reset();
             shiftNum++;
         } else if (shiftNum == 5 && timer.hasElapsed(25)) {
