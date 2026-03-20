@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
@@ -48,6 +49,7 @@ public class RobotPose {
     private int visionCounter;
 
     private Matrix<N3, N1> visionSTD;
+    private BuiltInAccelerometer accelerometer;
 
     private RobotPose(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
@@ -59,6 +61,7 @@ public class RobotPose {
         this.hasUpdatedQuestIntialPose = false;
         this.visionCounter = 0;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
+        this.accelerometer = new BuiltInAccelerometer();
     }
 
     public Quest getQuest() {
@@ -88,14 +91,13 @@ public class RobotPose {
         return instance;
     }
 
-    public void addOdometryCalculation(OdometryObservation odometryObservation, Translation2d currentVelocity) {
-        poseEstimator.addOdometryCalculation(odometryObservation, currentVelocity);
+    public void addOdometryCalculation(OdometryObservation odometryObservation) {
+        poseEstimator.addOdometryCalculation(odometryObservation);
     }
 
     public void addOdometryCalculation(Pose2d odometryPose, Rotation2d gyroAngle,
-            SwerveModulePosition[] modulePositions, Translation2d currentVelocity) {
-        addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions),
-                currentVelocity);
+            SwerveModulePosition[] modulePositions) {
+        addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
     }
     public void setQuestPose(){
         if(vision.isSeeTag()){
@@ -127,7 +129,7 @@ public class RobotPose {
 
     public void update(Pose2d odometryPose, Rotation2d gyroAngle,
             SwerveModulePosition[] modulePositions, Translation2d currentVelocity) {
-        update(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions), currentVelocity);
+        update(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
 
     }
 
@@ -141,8 +143,9 @@ public class RobotPose {
 
     }
 
-    public void update(OdometryObservation odometryObservation, Translation2d currentVelocity) {
-        addOdometryCalculation(odometryObservation, currentVelocity);
+    public void update(OdometryObservation odometryObservation) {
+        
+        if(accelerometer.getX() < 1.8 && accelerometer.getY() < 1.8) addOdometryCalculation(odometryObservation);
 
         vision.updateValues();
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {
