@@ -11,6 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
@@ -93,6 +94,13 @@ public class Turret extends SubsystemBase {
 
   private double clampAngle(double angle) {
     return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
+  }
+
+
+  public void setPositionFieldRelative(double fieldRelativeAngle){
+    setPositionPID(fieldRelativeAngle - RobotCommon.futureRobotPose.getRotation().getRadians());
+
+
   }
 
   public void setPositionPID(double wantedPosition) {
@@ -179,6 +187,8 @@ public class Turret extends SubsystemBase {
     this.hasCalibrated = true;
   }
 
+
+  
   public double getTurretAngle() {
     return moduloAngleToTurret(turretMotor.getCurrentPosition());
   }

@@ -22,9 +22,8 @@ public class TurretFollow extends Command {
 
     @Override
     public void execute() {
-        
-        turret.setPositionPID(MathUtil.angleModulus(target.minus(chassis.getPoseWithVelocity(0.07).getTranslation())
-                .getAngle().minus(RobotCommon.robotAngle).getRadians()) );
+        turret.setPositionFieldRelative(MathUtil.angleModulus(target.minus(RobotCommon.futureRobotPose.getTranslation()).getAngle().getRadians()));
+     
     }
 
     @Override

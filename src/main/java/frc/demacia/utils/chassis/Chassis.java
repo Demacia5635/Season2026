@@ -51,6 +51,7 @@ import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.utils.ShooterUtils;
+import frc.robot.Turret.Turret;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -194,7 +195,7 @@ public class Chassis extends SubsystemBase {
         }
         RobotPose.initialize(modulePositions, new Matrix<>(
                 new SimpleMatrix(
-                        new double[] { 0.03, 0.03, 99999999 })),
+                        new double[] { 0.03, 0.03, 0 })),
                 QUEST_STD);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
         
@@ -533,8 +534,10 @@ public class Chassis extends SubsystemBase {
                 RobotCommon.robotAngle,
                 getModulePositions());
 
-        RobotPose.getInstance().update(observation, getVelocityAsVector());
+        RobotPose.getInstance().update(observation);
         field.setRobotPose(RobotCommon.currentRobotPose);
+        field.getObject("Turret").setPose(new Pose2d(RobotCommon.currentRobotPose.getTranslation()
+            .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle)), Rotation2d.fromRadians(RobotCommon.robotAngle.getRadians() + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
         field.getObject("estimation").setPose(
                 ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.currentRobotPose, 0.1));
     }

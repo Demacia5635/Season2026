@@ -135,7 +135,7 @@ public class ShooterCommand extends Command {
 
     robotSpeeds = RobotCommon.fieldRelativeSpeeds;
     nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
-        0.07);
+        0.1);
 
     switch (RobotCommon.currentState) {
       case Delivery:
@@ -150,7 +150,7 @@ public class ShooterCommand extends Command {
       case Hub:
         robotSpeeds = RobotCommon.fieldRelativeSpeeds;
         nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
-            0.04);
+            0.1);
         turretPos = nextPose.getTranslation()
             .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle));
         toHub = Field.HubRed.CENTER.minus(turretPos);
@@ -165,8 +165,7 @@ public class ShooterCommand extends Command {
         double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
         if (RobotCommon.isReady()) shooter.setFeederPower(0.7);
-        shooter.setVelocitiesAndAngle(lut[0], lut[1]);
-        // setFlywheelAndHood(lutVel, lutHoodAngle, heading);
+        setFlywheelAndHood(lutVel, lutHoodAngle, heading);
         break;
 
       case Trench:

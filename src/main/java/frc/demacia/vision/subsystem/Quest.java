@@ -107,8 +107,6 @@ public class Quest extends SubsystemBase {
 
       // the quest x & y
 
-      SmartDashboard.putNumber("Quest/X", getRobotPose2d().getX());
-      SmartDashboard.putNumber("Quest/Y", getRobotPose2d().getY());
 
       // the quest x & y
 

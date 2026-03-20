@@ -177,10 +177,19 @@ public class TagPose {
 
   public double getDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
+    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw+camera.getYaw()));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     return dist;
   }
+// public double getDistFromCamera() {
+//     double totalPitchRad = Math.toRadians(Math.abs(camToTagPitch + camera.getPitch()));
+//     double yawRad = Math.toRadians(Math.abs(camToTagYaw + camera.getYaw()));
+
+//     double groundDist = Math.abs(height - camera.getHeight()) / Math.tan(totalPitchRad);
+
+//     dist = groundDist / Math.cos(yawRad);
+//     return dist;
+// }
 
   private void crop() {
     double YawCrop = getYawCrop();

@@ -20,10 +20,12 @@ public class ShooterConstans {
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
 
-                // SHOOTER_LOOKUP_TABLE.add(1.3, 12.7, Math.toRadians(72));
-                // SHOOTER_LOOKUP_TABLE.add(2.28, 13.6, Math.toRadians(65));
-                // SHOOTER_LOOKUP_TABLE.add(3.22, 15, Math.toRadians(62));
-                // SHOOTER_LOOKUP_TABLE.add(4.55, 16.7, Math.toRadians(58));
+                SHOOTER_LOOKUP_TABLE.add(1.3, 12.7, Math.toRadians(72));
+                SHOOTER_LOOKUP_TABLE.add(2.28, 13.6, Math.toRadians(65));
+                SHOOTER_LOOKUP_TABLE.add(3.22, 15, Math.toRadians(62));
+                SHOOTER_LOOKUP_TABLE.add(4.55, 16.7, Math.toRadians(58));
+                SHOOTER_LOOKUP_TABLE.add(5.53, 18.3, Math.toRadians(54));
+
 
                 // SHOOTER_LOOKUP_TABLE.add(0.96, 12.7, Math.toRadians(72));
                 // SHOOTER_LOOKUP_TABLE.add(2.34, 14, Math.toRadians(68));
@@ -37,12 +39,12 @@ public class ShooterConstans {
                 // SHOOTER_LOOKUP_TABLE.add(4.41, 17.1, Math.toRadians(61));
                 // SHOOTER_LOOKUP_TABLE.add(5.53, 18.3, Math.toRadians(54));
 
-                SHOOTER_LOOKUP_TABLE.add(1.31, 12.3, Math.toRadians(75));
+                // SHOOTER_LOOKUP_TABLE.add(1.31, 12.3, Math.toRadians(75));
 
-                SHOOTER_LOOKUP_TABLE.add(2.38, 13.7, Math.toRadians(68));
-                SHOOTER_LOOKUP_TABLE.add(3.28, 14.7, Math.toRadians(64));
-                SHOOTER_LOOKUP_TABLE.add(4.14, 16.4, Math.toRadians(60));
-                SHOOTER_LOOKUP_TABLE.add(5.23, 17.5, Math.toRadians(55));
+                // SHOOTER_LOOKUP_TABLE.add(2.38, 13.7, Math.toRadians(68));
+                // SHOOTER_LOOKUP_TABLE.add(3.28, 14.7, Math.toRadians(64));
+                // SHOOTER_LOOKUP_TABLE.add(4.14, 16.4, Math.toRadians(60));
+                // SHOOTER_LOOKUP_TABLE.add(5.23, 17.5, Math.toRadians(55));
 
         }
 
@@ -51,7 +53,7 @@ public class ShooterConstans {
         public static final int SHOOTER_MOTOR_ID = 50;
         public static final String SHOOTER_MOTOR_NAME = "Shooter/Flywheel";
 
-        public static final double SHOOTER_KP = 0d;
+        public static final double SHOOTER_KP = 2d;
         public static final double SHOOTER_KI = 0d;
         public static final double SHOOTER_KS = 0.30414;
         public static final double SHOOTER_KV = 0.47818;
