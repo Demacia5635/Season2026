@@ -238,7 +238,7 @@ public class VisionConstants {
                 public static final TagPose[] TAGS_ARRAY = {
                                 // new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)),
                                 //prev x offset 0.283 
-                                new TagPose(new Camera("hub", new Translation3d(0.269,-0.22,0.375), 25, -2d, false, false))
+                                new TagPose(new Camera("hub", new Translation3d(0.32,-0.21,0.383), 28.55, -2d, false, false))
                         };
 
         }
