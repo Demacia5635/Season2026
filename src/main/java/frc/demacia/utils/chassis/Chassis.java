@@ -204,7 +204,7 @@ public class Chassis extends SubsystemBase {
 
     private final PIDController xController = new PIDController(0.5, 0.0, 0.0);
     private final PIDController yController = new PIDController(0.5, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(0.01, 0.0, 0) {
+    private final PIDController headingController = new PIDController(0.03, 0.0, 0) {
         {
             enableContinuousInput(-Math.PI, Math.PI);
         }

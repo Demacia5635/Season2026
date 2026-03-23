@@ -151,18 +151,6 @@ public class TagPose {
    * * @return Translation2d representing vector to tag
    */
   public Translation2d getRobotToTagFieldRel() {
-    if (camera.getIsOnTurret()) {
-      cameraToTag = new Translation2d(getDistFromCamera(),
-          Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
-
-      turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
-          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
-      // System.out.println(turretToTag);
-
-      robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))
-          .rotateBy(RobotCommon.robotAngle);
-      return robotToTag;
-    }
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(getDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
@@ -177,19 +165,10 @@ public class TagPose {
 
   public double getDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw+camera.getYaw()));
+    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     return dist;
   }
-// public double getDistFromCamera() {
-//     double totalPitchRad = Math.toRadians(Math.abs(camToTagPitch + camera.getPitch()));
-//     double yawRad = Math.toRadians(Math.abs(camToTagYaw + camera.getYaw()));
-
-//     double groundDist = Math.abs(height - camera.getHeight()) / Math.tan(totalPitchRad);
-
-//     dist = groundDist / Math.cos(yawRad);
-//     return dist;
-// }
 
   private void crop() {
     double YawCrop = getYawCrop();

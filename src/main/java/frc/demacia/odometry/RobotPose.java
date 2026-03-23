@@ -25,13 +25,17 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.Utilities;
+import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
+import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.Turret.Turret;
 
@@ -46,7 +50,7 @@ public class RobotPose {
     private Matrix<N3, N1> questSTD;
 
     private boolean hasUpdatedQuestIntialPose;
-    private int visionCounter;
+    private boolean hasQuestDisconnected;
 
     private Matrix<N3, N1> visionSTD;
     private BuiltInAccelerometer accelerometer;
@@ -59,16 +63,24 @@ public class RobotPose {
         this.questSTD = questSTD;
         this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 999999 }));
         this.hasUpdatedQuestIntialPose = false;
-        this.visionCounter = 0;
+        this.hasQuestDisconnected = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
         this.accelerometer = new BuiltInAccelerometer();
+        SmartDashboard.putData("Reset Pose Based Red Hub", new InstantCommand(() -> {
+            Chassis.getInstance().setYaw(Rotation2d.kZero);
+            setQuestPose(hubRedResetPose);
+            resetPose(hubRedResetPose);
+        }).ignoringDisable(true));
     }
+    private final Pose2d hubRedResetPose = new Pose2d(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER, Rotation2d.kZero);
 
     public Quest getQuest() {
         return quest;
     }
 
     public Pose2d getPose() {
+        // if(hasUpdatedQuestIntialPose && quest.isConnected()) return quest.getRobotPose2d();
+        
         return poseEstimator.getEstimatedPose();
     }
 
@@ -79,10 +91,11 @@ public class RobotPose {
             instance = new RobotPose(modulePositions, stateSTD, questSTD);
     }
 
-    public void resetPose(){
+    public void resetPose() {
         resetPose(Pose2d.kZero);
     }
-    public void resetPose(Pose2d pose){
+
+    public void resetPose(Pose2d pose) {
         System.out.println(pose);
         poseEstimator.resetPose(pose);
     }
@@ -99,13 +112,17 @@ public class RobotPose {
             SwerveModulePosition[] modulePositions) {
         addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
     }
-    public void setQuestPose(){
-        if(vision.isSeeTag()){
-            setQuestPose(vision.getPoseEstimation());
-        }
+
+    public void setQuestPose() {
+        // if (vision.isSeeTag()) {
+        //     setQuestPose(vision.getPoseEstimation());
+        // }
+        // else{
+            setQuestPose(getPose());
+        // }
     }
 
-    public void setQuestPose(Pose2d pose){
+    public void setQuestPose(Pose2d pose) {
         hasUpdatedQuestIntialPose = true;
         quest.setQuestPose(new Pose3d(pose));
     }
@@ -113,8 +130,8 @@ public class RobotPose {
     public void addVisionMeasurement() {
 
         // if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
-        //     hasUpdatedQuestIntialPose = true;
-        //     setQuestPose();    
+        // hasUpdatedQuestIntialPose = true;
+        // setQuestPose();
         // }
 
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
@@ -144,19 +161,26 @@ public class RobotPose {
     }
 
     public void update(OdometryObservation odometryObservation) {
-        
-        if(accelerometer.getX() < 1.8 && accelerometer.getY() < 1.8) addOdometryCalculation(odometryObservation);
+
+        if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
+            addOdometryCalculation(odometryObservation);
 
         vision.updateValues();
+
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 
             addQuestMeasurement();
         }
         if (shouldUpdateVision()) {
-            visionCounter++;
+
             addVisionMeasurement();
-        } else {
-            visionCounter = 0;
+            if (hasQuestDisconnected && quest.isConnected()) {
+                setQuestPose();
+                hasQuestDisconnected = false;
+            }
+        }
+        if (!hasQuestDisconnected && !quest.isConnected()) {
+            hasQuestDisconnected = true;
         }
     }
 

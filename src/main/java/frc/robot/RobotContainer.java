@@ -88,7 +88,7 @@ public class RobotContainer implements Sendable {
 
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
   public static final PowerDistribution PDH = new PowerDistribution(16, ModuleType.kRev);
-  
+
   public static Chassis chassis;
   public static Turret turret;
   public static IntakeSubsystem intake;
@@ -120,7 +120,7 @@ public class RobotContainer implements Sendable {
     buttons = Buttons.getInstance();
 
     PDH.setSwitchableChannel(true);
-    
+
     StateManager.initialize(chassis, intake, shinua, turret, shooter, driverController, mainLeds);
 
     SmartDashboard.putData("RC", this);
@@ -188,23 +188,26 @@ public class RobotContainer implements Sendable {
               autoTimer.start();
               chassis.resetTrajectory();
               StateManager.getInstance().setStateChangeActivated(false);
-              RobotCommon.changeState(RobotStates.Drive);
-              // CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
-              // CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-              // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
-              // CommandScheduler.getInstance().schedule(new ShooterCommand(shooter,
-              // chassis));
+              RobotCommon.changeState(RobotStates.Hub);
+              CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+              CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+              CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+              CommandScheduler.getInstance().schedule(new ShooterCommand(shooter,
+                  chassis));
             }, chassis),
             new WaitCommand(2),
+            RobotCommon.changeStateCommand(RobotStates.DriveWithIntake),
+            new WaitCommand(0.2),
             // startToBalls.resetOdometry(),
             startToBalls.cmd(),
-            new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)
-        ));
+            new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)));
 
-        startToBalls.doneDelayed(0).onTrue(ballsToShoot.cmd());
-        ballsToShoot.doneDelayed(2).onTrue(shootToBalls2.cmd());
-        shootToBalls2.doneDelayed(0).onTrue(balls2ToDepot.cmd());
-        // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
+    startToBalls.doneDelayed(0).onTrue(ballsToShoot.cmd());
+    ballsToShoot.done().onTrue(Commands.sequence(RobotCommon.changeStateCommand(RobotStates.Hub), new WaitCommand(2),
+        RobotCommon.changeStateCommand(RobotStates.DriveWithIntake), new WaitCommand(0.2), shootToBalls2.cmd()));
+    shootToBalls2.doneDelayed(0)
+        .onTrue(Commands.sequence(balls2ToShoot.cmd(), RobotCommon.changeStateCommand(RobotStates.Hub)));
+    // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
     // startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
     // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
     // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls1DepotFromShoot.and(timeToBalls2.negate()))
@@ -235,7 +238,6 @@ public class RobotContainer implements Sendable {
     autoCommand = autoRoutine.cmd();
   }
 
-  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
@@ -258,14 +260,22 @@ public class RobotContainer implements Sendable {
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
     // shooter.setDefaultCommand(new HoodErrorTesting());
     turret.setDefaultCommand(new TurretCommand(turret));
-    SmartDashboard.putData("Auto Drive Test", new RunCommand(()->chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis).alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
-    SmartDashboard.putData("Set Hood angle", new InstantCommand(()->shooter.setHoodMotorPosition(Math.toRadians(86))).ignoringDisable(true));
+    SmartDashboard.putData("Auto Drive Test",
+        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis)
+            .alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
+    SmartDashboard.putData("Set Hood angle",
+        new InstantCommand(() -> shooter.setHoodMotorPosition(Math.toRadians(86))).ignoringDisable(true));
 
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[0], new InstantCommand(() -> mainLeds.setColor(Color.kRed)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[1], new InstantCommand(() -> mainLeds.setColor(Color.kYellow)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[2], new InstantCommand(() -> mainLeds.setColor(Color.kGreen)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[3], new InstantCommand(() -> mainLeds.setColor(Color.kBlue)).ignoringDisable(true));
-    buttons.addButton(ButtonsConstants.VOLTS_RANGE[4], new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[0],
+        new InstantCommand(() -> mainLeds.setColor(Color.kRed)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[1],
+        new InstantCommand(() -> mainLeds.setColor(Color.kYellow)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[2],
+        new InstantCommand(() -> mainLeds.setColor(Color.kGreen)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[3],
+        new InstantCommand(() -> mainLeds.setColor(Color.kBlue)).ignoringDisable(true));
+    buttons.addButton(ButtonsConstants.VOLTS_RANGE[4],
+        new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
 
     driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
     driverController.downButton().onTrue(new TurretFollow(turret, Field.HubRed.CENTER, chassis));

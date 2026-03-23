@@ -153,7 +153,7 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isReady() {
-    return hasCalibrated() && Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
+    return hasCalibrated() && Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(10);
     // return hasCalibrated() && (RobotCommon.currentState == RobotStates.Delivery)
     // ? Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5)
     // : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);

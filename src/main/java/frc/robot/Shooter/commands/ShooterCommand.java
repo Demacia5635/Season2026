@@ -115,7 +115,7 @@ public class ShooterCommand extends Command {
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
     RobotCommon.futureAngleFromTargetRobotRelative = MathUtil
-        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2* Math.PI);
+        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI);
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
   }
@@ -135,7 +135,7 @@ public class ShooterCommand extends Command {
 
     robotSpeeds = RobotCommon.fieldRelativeSpeeds;
     nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
-        0.1);
+        0.2);
 
     switch (RobotCommon.currentState) {
       case Delivery:
@@ -144,13 +144,11 @@ public class ShooterCommand extends Command {
         vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
-        if (RobotCommon.isReady()) shooter.setFeederPower(0.6);
+        if (RobotCommon.isReady())
+          shooter.setFeederPower(0.6);
         break;
 
       case Hub:
-        robotSpeeds = RobotCommon.fieldRelativeSpeeds;
-        nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
-            0.1);
         turretPos = nextPose.getTranslation()
             .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle));
         toHub = Field.HubRed.CENTER.minus(turretPos);
@@ -164,7 +162,8 @@ public class ShooterCommand extends Command {
         double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
         double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
-        if (RobotCommon.isReady()) shooter.setFeederPower(0.7);
+        if (RobotCommon.isReady())
+          shooter.setFeederPower(0.7);
         setFlywheelAndHood(lutVel, lutHoodAngle, heading);
         break;
 

@@ -16,7 +16,7 @@ public class TurretConstants {
     private static final Canbus CANBUS = Canbus.CANIvore;
     private static final double GEAR_RATIO = ((36d * 112d) / 27d);
 
-    private static final double kP = 19.2d;//0.5;
+    private static final double kP = 18;//0.5;
     private static final double kI = 0;
     private static final double kD = 0;
     private static final double kS = 0.03737;
