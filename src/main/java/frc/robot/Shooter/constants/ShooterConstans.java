@@ -124,8 +124,8 @@ public class ShooterConstans {
         public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
         public static final Pose2d hubPose2d = new Pose2d(HUB_POSE_Translation2d, new Rotation2d());
 
-        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.8619, 1.5023);
-        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.8619, 6.523);
+        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.2619, 4.023 - 2.5);
+        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.2619, 4.023 + 2.5);
 
         public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
         public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; // m/s

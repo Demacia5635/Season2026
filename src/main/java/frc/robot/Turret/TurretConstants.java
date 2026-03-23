@@ -16,15 +16,15 @@ public class TurretConstants {
     private static final Canbus CANBUS = Canbus.CANIvore;
     private static final double GEAR_RATIO = ((36d * 112d) / 27d);
 
-    private static final double kP = 18;//0.5;
+    private static final double kP = 0.6;
     private static final double kI = 0;
     private static final double kD = 0;
-    private static final double kS = 0.03737;
-    private static final double kV = 2.75556;
-    private static final double kA = 0.12839;
+    private static final double kS = 0.03248;
+    private static final double kV = 2.75969;
+    private static final double kA = 0.13299;
 
     private static final double MAX_VELOCITY = Math.toRadians(210);
-    private static final double MAX_ACCEL = Math.toRadians(300);
+    private static final double MAX_ACCEL = Math.toRadians(500);
     private static final double MAX_JERK = Math.toRadians(0);
 
     public static final TalonFXConfig TURRET_MOTOR_CONFIG = new TalonFXConfig(TURRET_MOTOR_ID, CANBUS, "Turret/Motor")
@@ -37,7 +37,7 @@ public class TurretConstants {
     public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(9, "Max Limit Switch");
     public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(6, "Min Limit Switch");
 
-    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(0.8);
+    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.2);
 
     public static final double CURRENT_FOR_LIMIT = 30; //need to test
     public static final double TIME_UNDER_CURRENT_FOR_LIMIT = 0.3; //seconds, need to test

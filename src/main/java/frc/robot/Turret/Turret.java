@@ -17,6 +17,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
+import frc.robot.StateManager;
 import frc.robot.RobotCommon.RobotStates;
 
 import static frc.robot.Turret.TurretConstants.*;
@@ -96,10 +97,8 @@ public class Turret extends SubsystemBase {
     return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
   }
 
-
-  public void setPositionFieldRelative(double fieldRelativeAngle){
+  public void setPositionFieldRelative(double fieldRelativeAngle) {
     setPositionPID(fieldRelativeAngle - RobotCommon.futureRobotPose.getRotation().getRadians());
-
 
   }
 
@@ -130,16 +129,13 @@ public class Turret extends SubsystemBase {
 
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
-    // if (Math.abs(wantedPosition - getTurretAngle()) <= MAX_ALLOWED_ANGLE_ERROR) {
-    // turretMotor.stop();
-    // return;
-    // }
+
+    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+      turretMotor.stop();
+      return;
+    }
 
     turretMotor.setMotion(wantedPosition);
-  }
-
-  public double getTurretPose() {
-    return turretMotor.getCurrentPosition();
   }
 
   public void setPower(double power) {
@@ -152,11 +148,19 @@ public class Turret extends SubsystemBase {
     turretMotor.set(power);
   }
 
+  private double getMaxAngleError(double distanceFromHub) {
+    if (RobotCommon.currentState == RobotStates.Delivery)
+      return Math.toRadians(12);
+    return getMaxAngleErrorByDistance(distanceFromHub);
+  }
+
+  private double getMaxAngleErrorByDistance(double distanceFromHub) {
+    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7, 1, 6));
+  }
+
   public boolean isReady() {
-    return hasCalibrated() && Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(10);
-    // return hasCalibrated() && (RobotCommon.currentState == RobotStates.Delivery)
-    // ? Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5)
-    // : Math.abs(getTurretAngle() - wantedAngle) <= Math.toRadians(5);
+    return hasCalibrated()
+        && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.currentDistanceFromTarget);
   }
 
   @Override
@@ -187,8 +191,6 @@ public class Turret extends SubsystemBase {
     this.hasCalibrated = true;
   }
 
-
-  
   public double getTurretAngle() {
     return moduloAngleToTurret(turretMotor.getCurrentPosition());
   }

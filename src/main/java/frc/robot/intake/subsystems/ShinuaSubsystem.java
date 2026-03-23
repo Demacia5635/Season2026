@@ -85,19 +85,16 @@ public class ShinuaSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Indexer Current", () -> motorIndexerOnTop.getCurrentCurrent(), null);
   }
 
+  public double getIndexerOnTopCurrent() {
+    return motorIndexerOnTop.getCurrentCurrent();
+  }
+
+  public double getIndexerOnTopVelocity() {
+    return motorIndexerOnTop.getCurrentVelocity();
+  }
+
   @Override
   public void periodic() {
-    // if (motorIndexerOnTop.getCurrentCurrent() > 18 && motorIndexerOnTop.getCurrentVelocity() < Math.PI) {
-    //   timer.reset();
-    //   isIndexerLocked = true;
-    // }
-    // if (isIndexerLocked)
-    //   timer.start();
-    // if (timer.hasElapsed(2)) {
-    //   timer.stop();
-    //   timer.reset();
-    //   isIndexerLocked = false;
-    // }
   }
 
   public void setNeutralMode(boolean isBrake) {
@@ -126,9 +123,9 @@ public class ShinuaSubsystem extends SubsystemBase {
   public void setDutyIndexerOnTop(double pow) {
     motorIndexerOnTop.setDuty(pow);
     // if (timer.isRunning())
-    //   motorIndexerOnTop.setDuty(-1);
+    // motorIndexerOnTop.setDuty(-1);
     // else
-    //   motorIndexerOnTop.setDuty(pow);
+    // motorIndexerOnTop.setDuty(pow);
   }
 
   public void stopIndexerOnTop() {

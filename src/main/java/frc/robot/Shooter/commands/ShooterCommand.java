@@ -139,9 +139,9 @@ public class ShooterCommand extends Command {
 
     switch (RobotCommon.currentState) {
       case Delivery:
-        Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(chassis.getFuturePose(0.1).getTranslation());
-        hoodAngle = Math.toRadians(47);
-        vel = 1.2 * Math.sqrt(chassisToDelivery.getNorm() * 9.81);
+        Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(nextPose.getTranslation());
+        hoodAngle = Math.toRadians(45);
+        vel = Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
         setFlywheelAndHood(vel, hoodAngle, heading);
         if (RobotCommon.isReady())
@@ -157,6 +157,8 @@ public class ShooterCommand extends Command {
         // get the distance, heading and LUT valuse
         distance = toHub.getNorm();
         heading = toHub.getAngle();
+
+        RobotCommon.currentDistanceFromTarget = distance;
 
         lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
         double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting

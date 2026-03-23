@@ -69,15 +69,15 @@ public class TurretCommand extends Command {
 
         switch (RobotCommon.currentState) {
             case Hub, Delivery:
-                turret.setPositionPID(RobotCommon.futureAngleFromTargetRobotRelative);
+                turret.setPositionMotion(RobotCommon.futureAngleFromTargetRobotRelative);
                 // turret.setPositionFieldRelative(RobotCommon.futureAngleFromTarget);
                 break;
 
             case Drive:
-                turret.setPositionPID(Math.PI);
+                turret.setPositionMotion(Math.PI);
                 break;
             case Test:
-                turret.setPositionPID((Math.toRadians(wantedAngle)));
+                turret.setPositionMotion((Math.toRadians(wantedAngle)));
                 break;
 
             default:

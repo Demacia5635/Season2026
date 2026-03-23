@@ -26,6 +26,8 @@ public class ShinuaCommand extends Command {
     private double rightPow;
     /** Test power for battery */
     private double batteryPow;
+    private Timer timer;
+    private boolean hasStarted = false;
 
     /**
      * Creates a new ShinuaCommand
@@ -74,6 +76,25 @@ public class ShinuaCommand extends Command {
 
     }
 
+    private boolean isBallsStuck() {
+
+        return (shinua.getIndexerOnTopCurrent() > 18 && shinua.getIndexerOnTopVelocity() < Math.PI);
+    }
+
+    private void handleBallsStuck() {
+        if (hasStarted) {
+            if (timer.hasElapsed(0.25))
+                hasStarted = false;
+            else {
+
+                shinua.setDutyIndexerFar(-0.4);
+                shinua.setDutyIndexerClose(-0.4);
+                shinua.setDutyIndexerOnTop(-1);
+
+            }
+        }
+    }
+
     /**
      * 
      */
@@ -84,6 +105,12 @@ public class ShinuaCommand extends Command {
                 applyIntakeValues();
                 break;
             case Hub, Delivery:
+
+                if (isBallsStuck()) {
+                    handleBallsStuck();
+                    return;
+                }
+
                 if (RobotCommon.isReady()) {
                     applyShootingValues();
                 } else {

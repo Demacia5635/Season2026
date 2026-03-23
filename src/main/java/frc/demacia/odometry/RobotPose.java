@@ -114,12 +114,12 @@ public class RobotPose {
     }
 
     public void setQuestPose() {
-        // if (vision.isSeeTag()) {
-        //     setQuestPose(vision.getPoseEstimation());
-        // }
-        // else{
+        if (vision.isSeeTag()) {
+            setQuestPose(vision.getPoseEstimation());
+        }
+        else{
             setQuestPose(getPose());
-        // }
+        }
     }
 
     public void setQuestPose(Pose2d pose) {
