@@ -78,12 +78,26 @@ public class TagPose {
     pipeEntry = Table.getEntry("pipeline");
     LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     SmartDashboard.putData("field-tag " + camera.getName(), field);
+    SmartDashboard.putData("setTo3d " + camera.getName(),
+        new InstantCommand(() -> setDimension(true)).ignoringDisable(true));
+    SmartDashboard.putData("setTo2d " + camera.getName(),
+        new InstantCommand(() -> setDimension(false)).ignoringDisable(true));
     SmartDashboard.putData("chassis/reset gyro by camera " + camera.getName(),
         Commands.sequence(
             new InstantCommand(() -> changePipeline(5)).ignoringDisable(true),
             new InstantCommand(() -> Chassis.getInstance().setYaw(getRobotAngle())).ignoringDisable(true),
             new InstantCommand(() -> changePipeline(0)).ignoringDisable(true)).ignoringDisable(true));
 
+  }
+
+  public void setDimension(boolean is3D) {
+
+    Table.getEntry("pipeline").setNumber(is3D ? 1 : 0);
+  }
+
+  public Rotation2d get3dAngle() {
+    double[] botpose_orb_wpired = Table.getEntry("botpose").getDoubleArray(new double[12]);
+    return new Rotation2d(Math.toRadians(botpose_orb_wpired[5]));
   }
 
   private void changePipeline(int id) {
@@ -119,9 +133,9 @@ public class TagPose {
       wantedPip = 0;
       pose = new Pose2d();
     }
-    if (wantedPip != Table.getEntry("getpipe").getDouble(0.0)) {
-      pipeEntry.setDouble(wantedPip);
-    }
+    // if (wantedPip != Table.getEntry("getpipe").getDouble(0.0)) {
+    // pipeEntry.setDouble(wantedPip);
+    // }
     return pose;
   }
 

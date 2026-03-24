@@ -127,7 +127,8 @@ public class Quest extends SubsystemBase {
   }
 
 
-  public void questResetfromRobotToQuest(Rotation2d angle){
+  
+  public void setHeading(Rotation2d angle){
     setQuestPose(new Pose3d(getRobotPose2d().getX(),getRobotPose2d().getY(),currentQuestPose.getZ(),new Rotation3d(angle)));
   }
 }

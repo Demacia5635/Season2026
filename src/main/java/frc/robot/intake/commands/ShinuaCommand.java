@@ -26,8 +26,8 @@ public class ShinuaCommand extends Command {
     private double rightPow;
     /** Test power for battery */
     private double batteryPow;
-    private Timer timer;
-    private boolean hasStarted = false;
+    private Timer hasStuckTimer;
+    private Timer handleStuckBallsTimer;
 
     /**
      * Creates a new ShinuaCommand
@@ -41,6 +41,9 @@ public class ShinuaCommand extends Command {
         leftPow = 0;
         rightPow = 0;
         batteryPow = 0;
+
+        hasStuckTimer = new Timer();
+        handleStuckBallsTimer = new Timer();
 
         addRequirements(shinua);
 
@@ -70,29 +73,22 @@ public class ShinuaCommand extends Command {
 
     private void applyIntakeValues() {
         shinua.setDutyIndexerClose(0.8);
-        shinua.setDutyIndexerFar(0);
-        shinua.setDutyIndexerOnTop(-0.8);
+        shinua.setDutyIndexerFar(-0.3);
+        shinua.setDutyIndexerOnTop(-1);
         shinua.setPowerBattery(0);
 
     }
 
     private boolean isBallsStuck() {
-
-        return (shinua.getIndexerOnTopCurrent() > 18 && shinua.getIndexerOnTopVelocity() < Math.PI);
+        // return false;
+        return (shinua.getIndexerOnTopCurrent() > 18);
+        //  && Math.abs(shinua.getIndexerOnTopVelocity()) < 15);
     }
 
     private void handleBallsStuck() {
-        if (hasStarted) {
-            if (timer.hasElapsed(0.25))
-                hasStarted = false;
-            else {
-
-                shinua.setDutyIndexerFar(-0.4);
-                shinua.setDutyIndexerClose(-0.4);
-                shinua.setDutyIndexerOnTop(-1);
-
-            }
-        }
+        shinua.setDutyIndexerFar(-1);
+        shinua.setDutyIndexerClose(-1);
+        shinua.setDutyIndexerOnTop(-1);
     }
 
     /**
@@ -106,9 +102,23 @@ public class ShinuaCommand extends Command {
                 break;
             case Hub, Delivery:
 
-                if (isBallsStuck()) {
+                if (isBallsStuck() && !hasStuckTimer.isRunning()) {
+                    hasStuckTimer.reset();
+                    hasStuckTimer.start();
+                    return;
+                }
+
+                if (hasStuckTimer.hasElapsed(0.1) && isBallsStuck()) {
+                    handleStuckBallsTimer.reset();
+                    handleStuckBallsTimer.start();
+                    RobotCommon.isStuck = true;
                     handleBallsStuck();
                     return;
+                }
+
+                if (handleStuckBallsTimer.hasElapsed(0.3)) {
+                    handleStuckBallsTimer.stop();
+                    RobotCommon.isStuck = false;
                 }
 
                 if (RobotCommon.isReady()) {

@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -35,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
@@ -86,7 +89,7 @@ import frc.robot.leds.RobotBLedStrip;
  */
 public class RobotContainer implements Sendable {
 
-  CommandController driverController = new CommandController(0, ControllerType.kPS5);
+  public static final CommandController driverController = new CommandController(0, ControllerType.kXbox);
   public static final PowerDistribution PDH = new PowerDistribution(16, ModuleType.kRev);
 
   public static Chassis chassis;
@@ -98,6 +101,8 @@ public class RobotContainer implements Sendable {
   public static RobotBLedStrip mainLeds;
   // public static DianasourLedStrip dianasourLedStrip;
   public static Buttons buttons;
+  public static RobotPose robotPose;
+
 
   // The robot's subsystems and commands are defined here...
 
@@ -169,6 +174,10 @@ public class RobotContainer implements Sendable {
     AutoTrajectory depotToTower = autoRoutine.trajectory("DepotToTower");
     AutoTrajectory shootToTower = autoRoutine.trajectory("ShootToTower");
 
+
+    AutoTrajectory newStartToBalls = autoRoutine.trajectory("NewStartToBalls");
+    AutoTrajectory newBallsFromBump = autoRoutine.trajectory("NewBallsFromBump");
+
     Trigger timeToDepot = new Trigger(() -> DriverStation.getMatchTime() != 0);
     Trigger timeToBalls2 = new Trigger(() -> DriverStation.getMatchTime() != 0);
     Trigger timeToBalls2FromShoot = new Trigger(() -> DriverStation.getMatchTime() != 0);
@@ -199,14 +208,18 @@ public class RobotContainer implements Sendable {
             RobotCommon.changeStateCommand(RobotStates.DriveWithIntake),
             new WaitCommand(0.2),
             // startToBalls.resetOdometry(),
-            startToBalls.cmd(),
-            new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)));
+            // startToBalls.cmd(),
+            newStartToBalls.cmd()
+            // new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(0, 0, 0)), chassis)));
+        ));
 
-    startToBalls.doneDelayed(0).onTrue(ballsToShoot.cmd());
-    ballsToShoot.done().onTrue(Commands.sequence(RobotCommon.changeStateCommand(RobotStates.Hub), new WaitCommand(2),
-        RobotCommon.changeStateCommand(RobotStates.DriveWithIntake), new WaitCommand(0.2), shootToBalls2.cmd()));
-    shootToBalls2.doneDelayed(0)
-        .onTrue(Commands.sequence(balls2ToShoot.cmd(), RobotCommon.changeStateCommand(RobotStates.Hub)));
+    newStartToBalls.doneDelayed(0.5).onTrue(newBallsFromBump.cmd());
+    
+    // startToBalls.doneDelayed(0).onTrue(ballsToShoot.cmd());
+    // ballsToShoot.done().onTrue(Commands.sequence(RobotCommon.changeStateCommand(RobotStates.Hub), new WaitCommand(2),
+    //     RobotCommon.changeStateCommand(RobotStates.DriveWithIntake), new WaitCommand(0.2), shootToBalls2.cmd()));
+    // shootToBalls2.doneDelayed(0)
+    //     .onTrue(Commands.sequence(balls2ToShoot.cmd(), RobotCommon.changeStateCommand(RobotStates.Hub)));
     // startToBalls.done().and(timeToBalls2.or(timeToDepot.negate())).onTrue(ballsToShoot.cmd());
     // startToBalls.done().and(timeToDepot).and(timeToBalls2.negate()).onTrue(ballsToDepot.cmd());
     // ballsToShoot.doneDelayed(timeToWaitForShooting).and(timeToBalls2FromShoot).onTrue(shootToBalls2.cmd());
@@ -229,13 +242,17 @@ public class RobotContainer implements Sendable {
     // shootToDepot.done().onTrue(depotToTower.cmd());
     // balls2ToDepot.done().onTrue(depotToTower.cmd());
 
-    autoRoutine.anyDone(shootToTower, depotToTower).onTrue(
+    autoRoutine.anyDone(shootToTower, depotToTower, newBallsFromBump).onTrue(
         Commands.sequence(
             new WaitCommand(3),
             new InstantCommand(() -> autoTimer.stop()),
             new RunCommand(() -> chassis.setModuleState(new SwerveModuleState(0d, Rotation2d.kZero)), chassis)));
 
     autoCommand = autoRoutine.cmd();
+  }
+
+  public static void rumble() {
+    driverController.setRumble(RumbleType.kBothRumble, 1);
   }
 
   /**
@@ -256,15 +273,8 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
-    driverController.rightButton().whileTrue(new getBallOutCommand(intake, driverController));
     shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    // shooter.setDefaultCommand(new HoodErrorTesting());
-     turret.setDefaultCommand(new TurretCommand(turret));
-    SmartDashboard.putData("Auto Drive Test",
-        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(-1, 0, 0)), chassis)
-            .alongWith(RobotCommon.changeStateCommand(RobotStates.Hub)));
-    SmartDashboard.putData("Set Hood angle",
-        new InstantCommand(() -> shooter.setHoodMotorPosition(Math.toRadians(86))).ignoringDisable(true));
+    turret.setDefaultCommand(new TurretCommand(turret));
 
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[0],
         new InstantCommand(() -> mainLeds.setColor(Color.kRed)).ignoringDisable(true));
@@ -277,31 +287,22 @@ public class RobotContainer implements Sendable {
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[4],
         new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
 
-    driverController.rightButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
-    driverController.downButton().onTrue(new TurretFollow(turret, Field.HubRed.CENTER, chassis));
-
-    driverController.povDown().onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
-    driverController.povUp().onTrue(RobotCommon.changeStateCommand(RobotStates.Drive));
-    driverController.rightBumper().onTrue(new InstantCommand(() -> {
-      if (StateManager.getInstance().isStateChangeActivated()) {
-        StateManager.getInstance().setStateChangeActivated(false);
-        RobotCommon.changeState(RobotStates.DriveWithIntake);
-      } else {
-        StateManager.getInstance().setStateChangeActivated(true);
-      }
-    }));
-    driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle).ignoringDisable(true).andThen(
-        new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(false)).ignoringDisable(true))
-        .ignoringDisable(true));
+    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    driverController.rightBumper().onTrue(new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
+    driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
+    driverController.rightButton().onTrue(new getBallOutCommand(intake, shinua, driverController));
+    driverController.downButton().onTrue(new RunCommand(() -> {rumble.setRumble(RumbleType.kBothRumble, 1); rumble.setOutput(1, true);}).ignoringDisable(true));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
+
+  XboxController rumble = new XboxController(1);
 
   private void setUserButton() {
     new Trigger(() -> !DriverStation.isEnabled() &&
         RobotController.getUserButton())
         .onTrue(new SetRobotNeutralMode(chassis, intake, shinua, turret,
-            shooter).ignoringDisable(true));
+            shooter, mainLeds).ignoringDisable(true));
   }
 
   public Command disableInit() {
@@ -352,8 +353,9 @@ public class RobotContainer implements Sendable {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return null;
-    return autoCommand;
+    return null;
+    // return autoCommand;
+    // return autoFactory.trajectoryCmd("TestPath");
   }
 
 }

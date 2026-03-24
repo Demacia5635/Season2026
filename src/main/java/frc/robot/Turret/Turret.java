@@ -155,7 +155,7 @@ public class Turret extends SubsystemBase {
   }
 
   private double getMaxAngleErrorByDistance(double distanceFromHub) {
-    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7, 1, 6));
+    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7.5, 2, 6));
   }
 
   public boolean isReady() {
@@ -200,6 +200,8 @@ public class Turret extends SubsystemBase {
       turretMotor.setEncoderPosition(MIN_SENSOR);
     if (isAtMaxLimit())
       turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
+    
+    turretMotor.configSoftwareLimit(MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
   }
 
   public void stop() {

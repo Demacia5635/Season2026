@@ -123,6 +123,7 @@ public class Chassis extends SubsystemBase {
     public Quest quest;
     private Field2d questField;
     public ObjectPose objectPose;
+    private RobotPose robotPose;
 
     private StatusSignal<Angle> gyroYawStatus;
     // private TagPose limelight4;
@@ -154,7 +155,7 @@ public class Chassis extends SubsystemBase {
         }
 
         gyro = new Pigeon(chassisConfig.pigeonConfig);
-        quest = new Quest();
+        
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
@@ -164,9 +165,7 @@ public class Chassis extends SubsystemBase {
                 new Matrix<>(VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY)));
 
         field = new Field2d();
-        questField = new Field2d();
         tagsField = new Field2d();
-
         SmartDashboard.putData("chassis/reset gyro",
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
         SmartDashboard.putData("chassis/reset gyro 180",
@@ -198,7 +197,9 @@ public class Chassis extends SubsystemBase {
                         new double[] { 0.03, 0.03, 0 })),
                 QUEST_STD);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
-        
+
+        SmartDashboard.putData("reset with 3d",
+                new InstantCommand(() -> RobotPose.getInstance().setAngle3DLimelight()).ignoringDisable(true));
         LogManager.log(chassisConfig.name + " initalize");
     }
 
@@ -224,6 +225,9 @@ public class Chassis extends SubsystemBase {
         SmartDashboard.putNumber("traj/heading error", sample.heading - pose.getRotation().getRadians());
         SmartDashboard.putNumber("traj/speeds omega", speeds.omegaRadiansPerSecond);
         SmartDashboard.putNumber("traj/sample time", sample.getTimestamp());
+
+        field.getObject("trajectory point #" + index).setPose(sample.getPose());
+        index++;
 
         setVelocities(speeds);
     }
@@ -427,23 +431,6 @@ public class Chassis extends SubsystemBase {
         tagsField.setRobotPose(pose);
     }
 
-    // private void updateQuest(Pose2d questPose) {
-    // demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp()
-    // - 0.05);
-    // demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
-    // questField.setRobotPose(questPose);
-    // }
-
-    // private Matrix<N3, N1> getSTD() {
-    // double x = 0.05;
-    // double y = 0.05;
-    // double theta = 0.03;
-    private void updateQuest(Pose2d questPose) {
-        demaciaPoseEstimator.addVisionMeasurement(questPose, Timer.getFPGATimestamp() - 0.05);
-        demaciaPoseEstimator.setVisionMeasurementStdDevs(QUEST_STD);
-        questField.setRobotPose(questPose);
-    }
-
     private Matrix<N3, N1> getSTD() {
         double x = 0.05;
         double y = 0.05;
@@ -537,7 +524,9 @@ public class Chassis extends SubsystemBase {
         RobotPose.getInstance().update(observation);
         field.setRobotPose(RobotCommon.currentRobotPose);
         field.getObject("Turret").setPose(new Pose2d(RobotCommon.currentRobotPose.getTranslation()
-            .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle)), Rotation2d.fromRadians(RobotCommon.robotAngle.getRadians() + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
+                .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle)),
+                Rotation2d.fromRadians(RobotCommon.robotAngle.getRadians()
+                        + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
         field.getObject("estimation").setPose(
                 ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.currentRobotPose, 0.1));
     }
@@ -611,7 +600,7 @@ public class Chassis extends SubsystemBase {
     public void setYaw(Rotation2d angle) {
         if (angle != null) {
             gyro.setYaw(angle.getDegrees());
-            quest.questResetfromRobotToQuest(angle);
+            RobotPose.getInstance().setQuestHeading(angle);
             RobotPose.getInstance()
                     .resetPose(
                             new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.demacia.utils.leds.LedConstants;
 import frc.demacia.utils.leds.LedStrip;
@@ -24,7 +25,11 @@ public class RobotBLedStrip extends LedStrip {
         this.endGameTimer = new Timer();
         this.disableTimer = new Timer();
 
+        this.userButtonTimer = new Timer();
+        this.shiftEndedTimer = new Timer();
+
         SmartDashboard.putData("Main Leds", this);
+        SmartDashboard.putData("Quest Connected", new InstantCommand(() -> isQuestDisconnected = false).ignoringDisable(true));
     }
 
     Timer transitionTimer;
@@ -32,28 +37,35 @@ public class RobotBLedStrip extends LedStrip {
     Timer theirShiftTimer;
     Timer endGameTimer;
     Timer disableTimer;
+    Timer shiftEndedTimer;
 
-    public void startTransition() {
+    Timer userButtonTimer;
+
+    public void startUserButton() {
+        userButtonTimer.start();
+    }
+
+    private void startTransition() {
         transitionTimer.reset();
         transitionTimer.start();
     }
 
-    public void startOurShift() {
+    private void startOurShift() {
         ourShiftTimer.reset();
         ourShiftTimer.start();
     }
 
-    public void startTheirShift() {
+    private void startTheirShift() {
         theirShiftTimer.reset();
         theirShiftTimer.start();
     }
 
-    public void startEndGame() {
+    private void startEndGame() {
         endGameTimer.reset();
         endGameTimer.start();
     }
 
-    public void startDisable() {
+    private void startDisable() {
         disableTimer.reset();
         disableTimer.start();
     }
@@ -64,7 +76,7 @@ public class RobotBLedStrip extends LedStrip {
                 if (!transitionTimer.isRunning())
                     startTransition();
                 break;
-            
+
             case Active:
                 if (!ourShiftTimer.isRunning())
                     startOurShift();
@@ -74,7 +86,7 @@ public class RobotBLedStrip extends LedStrip {
                 if (!theirShiftTimer.isRunning())
                     startTheirShift();
                 break;
-            
+
             case Endgame:
                 if (!endGameTimer.isRunning())
                     startEndGame();
@@ -90,9 +102,11 @@ public class RobotBLedStrip extends LedStrip {
         }
     }
 
+    public boolean isQuestDisconnected = false;
+
     public boolean isShiftEnded = false;
 
-    private final double TIME_TO_BLINK = 5;
+    private final double TIME_TO_BLINK = 10;
 
     @Override
     public void periodic() {
@@ -107,10 +121,11 @@ public class RobotBLedStrip extends LedStrip {
         if (!RobotCommon.isReady()) {
             // setGay();
             setColor(Color.kRed);
-        } 
+        }
 
         if (transitionTimer.isRunning()) {
             setBlink(Color.kPurple);
+            RobotContainer.rumble();
         }
 
         if (transitionTimer.hasElapsed(TIME_TO_BLINK / 2)) {
@@ -120,17 +135,19 @@ public class RobotBLedStrip extends LedStrip {
 
         if (ourShiftTimer.isRunning()) {
             setBlink(Color.kDarkGreen);
+            RobotContainer.rumble();
         }
 
-        if (ourShiftTimer.hasElapsed(TIME_TO_BLINK / 2)){
+        if (ourShiftTimer.hasElapsed(TIME_TO_BLINK / 2)) {
             ourShiftTimer.stop();
             ourShiftTimer.reset();
         }
 
         if (theirShiftTimer.isRunning()) {
             setBlink(Color.kDarkBlue);
+            RobotContainer.rumble();
         }
-        
+
         if (theirShiftTimer.hasElapsed(TIME_TO_BLINK / 2)) {
             theirShiftTimer.stop();
             theirShiftTimer.reset();
@@ -138,6 +155,7 @@ public class RobotBLedStrip extends LedStrip {
 
         if (endGameTimer.isRunning()) {
             setBlink(Color.kYellow);
+            RobotContainer.rumble();
         }
 
         if (endGameTimer.hasElapsed(TIME_TO_BLINK / 2)) {
@@ -147,18 +165,36 @@ public class RobotBLedStrip extends LedStrip {
 
         if (disableTimer.isRunning()) {
             setBlink(Color.kWhite);
+            RobotContainer.rumble();
         }
-        
+
         if (RobotState.isDisabled()) {
             disableTimer.stop();
             disableTimer.reset();
         }
-   
-        if (isShiftEnded) {
+
+        if (isShiftEnded || shiftEndedTimer.isRunning()) {
             setColor(Color.kWhite);
+            shiftEndedTimer.start();
             isShiftEnded = false;
         }
 
+        if (shiftEndedTimer.hasElapsed(1)) {
+            shiftEndedTimer.stop();
+            shiftEndedTimer.reset();
+        }
+
+        if (userButtonTimer.isRunning()) {
+            setBlink(Color.kOrange);
+            RobotContainer.rumble();
+        }
+        if (userButtonTimer.hasElapsed(1)) {
+            userButtonTimer.stop();
+            userButtonTimer.reset();
+        }
+
+        if (isQuestDisconnected) {
+            // setBlink(Color.kDarkRed);
+        }
     }
 }
-    

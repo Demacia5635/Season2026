@@ -16,10 +16,10 @@ public class getBallOutCommand extends Command {
   CommandController controller;  
   ShinuaSubsystem shinua;
 
-  public getBallOutCommand(IntakeSubsystem intake, CommandController controller) {
+  public getBallOutCommand(IntakeSubsystem intake, ShinuaSubsystem shinua, CommandController controller) {
     this.intake = intake;
     this.controller = controller;
-    this.shinua = ShinuaSubsystem.getInstance();
+    this.shinua = shinua;
     addRequirements(intake, shinua);
     // Use addRequirements() here to declare subsystem dependencies.
   }

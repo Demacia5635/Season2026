@@ -52,11 +52,11 @@ public class Shooter extends SubsystemBase {
 
   private Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
-    hoodMotor.configSoftwareLimit(ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
     setHoodMotorPosition(getHoodAngleAbsEncoder());
+    hoodMotor.configSoftwareLimit(ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
     // hoodMotor.configPidFf(0);
     // hoodMotor.configMotionMagic();
     // shooterMotor.configPidFf(0);
@@ -70,6 +70,10 @@ public class Shooter extends SubsystemBase {
         new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Hood/set brake",
         new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
+
+    isHoodMotorLock = true;
+    SmartDashboard.putData("Shooter/reset Hood Manual",
+      new InstantCommand(() -> {hoodMotor.setEncoderPosition(Math.toRadians(86)); isHoodMotorLock = false;}).ignoringDisable(true));
     
     LogManager.log("Shooter Initalize");
   }

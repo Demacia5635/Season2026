@@ -46,9 +46,13 @@ public class RobotCommon {
     public static double fuelTime = 0;
     public static boolean hasDisabledIntake = false;
 
+    public static boolean isStuck = false;
+
     public static boolean isReady() {
         // return true;
-        return (StateManager.getInstance().getTimeLeft() <= 3 || !currentShift.equals(Shifts.Inactive) || !currentState.equals(RobotStates.Hub)) && Turret.getInstance().isReady() && Shooter.getInstance().isReady();
+        return (StateManager.getInstance().getTimeLeft() <= 3 || !currentShift.equals(Shifts.Inactive)
+                || !currentState.equals(RobotStates.Hub)) && Turret.getInstance().isReady()
+                && Shooter.getInstance().isReady();
     }
 
     public static void changeState(RobotStates newState) {
@@ -65,7 +69,10 @@ public class RobotCommon {
 
     public static Command changeStateCommand(RobotStates newState) {
         // RobotContainer.dianasourLedStrip.changeColor(newState);
-        return new InstantCommand(() -> currentState = newState).ignoringDisable(true);
+        return new InstantCommand(() -> {
+            StateManager.getInstance().setStateChangeActivated(false);
+            currentState = newState;
+        }).ignoringDisable(true);
     }
 
     public static boolean isReadyToShoot() {

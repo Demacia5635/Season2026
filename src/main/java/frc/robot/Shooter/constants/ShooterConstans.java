@@ -110,12 +110,12 @@ public class ShooterConstans {
                         .withPID(HOOD_KP, HOOD_KI, HOOD_KD, HOOD_KS, HOOD_KV, HOOD_KA, HOOD_KG)
                         .withMotionParam(HOOD_MAX_VELOCITY, HOOD_MAX_ACCEL, HOOD_MAX_JERK);
 
-        public static final double MAX_ANGLE_HOOD = Math.toRadians(83d);
-        public static final double MIN_ANGLE_HOOD = Math.toRadians(47d);
+        public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
+        public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 7;
+        public static final int HOOD_ENCODER_CHANNEL = 8;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
-        public static final double HOOD_OFFSET = Math.toRadians(86) - 0.1161603883664826; // 0.752882679432794;
+        public static final double HOOD_OFFSET = Math.toRadians(86) - 0.8785463855763856; 
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,
                         HOOD_ENCODER_NAME)
                         .withInvert(false);
@@ -124,8 +124,8 @@ public class ShooterConstans {
         public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
         public static final Pose2d hubPose2d = new Pose2d(HUB_POSE_Translation2d, new Rotation2d());
 
-        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.2619, 4.023 - 2.5);
-        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.2619, 4.023 + 2.5);
+        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.6619, 4.023 - 2.5);
+        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.6619, 4.023 + 2.5);
 
         public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
         public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; // m/s

@@ -9,6 +9,7 @@ package frc.demacia.vision.utils;
 import java.util.ArrayList;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
 // import frc.robot.RobotCommon.*;
@@ -47,10 +48,30 @@ public class Vision {
         return false;
     }
 
+    // TODO: Remove Incorrect located tags
+    private boolean isTagHub(int tagId) {
+        return tagId == 2
+            || tagId == 3
+            || tagId == 4
+            || tagId == 5
+            || tagId == 8
+            || tagId == 9
+            || tagId == 10
+            || tagId == 11
+            || tagId == 18
+            || tagId == 19
+            || tagId == 20
+            || tagId == 21
+            || tagId == 24
+            || tagId == 25
+            || tagId == 26
+        ;
+    }
+
     public boolean isSeeTag() {
         
         for (TagPose tag : tags) {
-            if (tag.isSeeTag() && (tag.getTagId() == 9 || tag.getTagId() == 10) &&  Math.abs(tag.getCamToTagYaw()) < 12)
+            if (tag.isSeeTag() && isTagHub(tag.getTagId()) &&  Math.abs(tag.getCamToTagYaw()) < 12)
                 return true;
         }
         return false;
@@ -91,6 +112,15 @@ public class Vision {
         for (TagPose tag : tags) {
             tag.updateValues();
         }
+    }
+    
+    public Rotation2d getRobotAngle(){
+        for (TagPose tag : tags) {
+            if (tag.getRobotPose2d() != null) {
+                return new Rotation2d().fromDegrees(tag.getAngle());
+            }
+        }
+        return null;
     }
 
     // public Rotation2d getRotationEstimation() {

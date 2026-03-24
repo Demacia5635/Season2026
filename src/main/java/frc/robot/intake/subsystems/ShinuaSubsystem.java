@@ -28,10 +28,6 @@ public class ShinuaSubsystem extends SubsystemBase {
 
   private TalonFXMotor motorIndexerOnTop;
 
-  boolean isIndexerLocked = false;
-
-  Timer timer;
-
   private ShinuaSubsystem() {
     motorIndexerClose = new SparkMaxMotor(IntakeConstants.INDEXER_CLOSE_CONFIG);
     motorIndexerFar = new SparkMaxMotor(IntakeConstants.INDEXER_FAR_CONFIG);
@@ -57,8 +53,6 @@ public class ShinuaSubsystem extends SubsystemBase {
     SmartDashboard.putData("Shinua/Battery/set brake",
         new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
 
-    timer = new Timer();
-
     LogManager.log("Shinua Initalize");
   }
 
@@ -71,18 +65,8 @@ public class ShinuaSubsystem extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("is reversed", () -> isIndexerLocked, (value) -> {
-      if (value) {
-        timer.reset();
-        timer.start();
-        isIndexerLocked = true;
-      } else {
-        isIndexerLocked = false;
-        timer.stop();
-        timer.reset();
-      }
-    });
     builder.addDoubleProperty("Indexer Current", () -> motorIndexerOnTop.getCurrentCurrent(), null);
+    builder.addDoubleProperty("Indexer Ve", () -> getIndexerOnTopVelocity(), null);
   }
 
   public double getIndexerOnTopCurrent() {

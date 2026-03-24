@@ -16,7 +16,7 @@ public class TurretConstants {
     private static final Canbus CANBUS = Canbus.CANIvore;
     private static final double GEAR_RATIO = ((36d * 112d) / 27d);
 
-    private static final double kP = 0.6;
+    private static final double kP = 0.8;
     private static final double kI = 0;
     private static final double kD = 0;
     private static final double kS = 0.03248;
@@ -34,8 +34,8 @@ public class TurretConstants {
 
             .withPID(kP, kI, kD, kS, kV, kA, 0)
             .withMotionParam(MAX_VELOCITY, MAX_ACCEL, MAX_JERK);
-    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(9, "Max Limit Switch");
-    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(6, "Min Limit Switch");
+    public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(0, "Max Limit Switch");
+    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(7, "Min Limit Switch");
 
     public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.2);
 

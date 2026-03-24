@@ -37,6 +37,7 @@ import frc.demacia.vision.utils.VisionConstants;
 import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
+import frc.robot.RobotContainer;
 import frc.robot.Turret.Turret;
 
 /** Add your docs here. */
@@ -72,15 +73,18 @@ public class RobotPose {
             resetPose(hubRedResetPose);
         }).ignoringDisable(true));
     }
-    private final Pose2d hubRedResetPose = new Pose2d(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER, Rotation2d.kZero);
+
+    private final Pose2d hubRedResetPose = new Pose2d(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER,
+            Rotation2d.kZero);
 
     public Quest getQuest() {
         return quest;
     }
 
     public Pose2d getPose() {
-        // if(hasUpdatedQuestIntialPose && quest.isConnected()) return quest.getRobotPose2d();
-        
+        // if(hasUpdatedQuestIntialPose && quest.isConnected()) return
+        // quest.getRobotPose2d();
+
         return poseEstimator.getEstimatedPose();
     }
 
@@ -116,12 +120,15 @@ public class RobotPose {
     public void setQuestPose() {
         if (vision.isSeeTag()) {
             setQuestPose(vision.getPoseEstimation());
-        }
-        else{
+        } else {
             setQuestPose(getPose());
         }
     }
 
+
+    public void setQuestHeading(Rotation2d heading){
+        quest.setHeading(heading);
+    }
     public void setQuestPose(Pose2d pose) {
         hasUpdatedQuestIntialPose = true;
         quest.setQuestPose(new Pose3d(pose));
@@ -151,16 +158,20 @@ public class RobotPose {
     }
 
     private boolean shouldUpdateVision() {
-        // return (Math.hypot(RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond,
-        // RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond) <= 3
-        // // && Turret.getInstance().getTurretVelocity() <= Math.toRadians(100)
-        // && vision.isSeeTagWithDistance());
-
-        return vision.isSeeTag();// && Turret.getInstance().hasCalibrated();
+        return vision.isSeeTag();
 
     }
+    public void setAngle3DLimelight(){
+        Rotation2d newAngle = vision.getRobotAngle();
+        if(newAngle != null) Chassis.getInstance().setYaw(newAngle);
+        
+    }
 
+
+    
     public void update(OdometryObservation odometryObservation) {
+
+        if (!quest.isConnected()) RobotContainer.mainLeds.isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
             addOdometryCalculation(odometryObservation);
@@ -175,7 +186,7 @@ public class RobotPose {
 
             addVisionMeasurement();
             if (hasQuestDisconnected && quest.isConnected()) {
-                setQuestPose();
+                // setQuestPose();
                 hasQuestDisconnected = false;
             }
         }
@@ -183,45 +194,4 @@ public class RobotPose {
             hasQuestDisconnected = true;
         }
     }
-
-    private static Matrix<N3, N1> getSTD() {
-        double x = 0.05;
-        double y = 0.05;
-        double theta = 0.03;
-
-        ChassisSpeeds currentSpeeds = RobotCommon.robotRelativeSpeeds;
-        double speed = Utilities.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
-
-        // Vision confidence adjustment
-        // if (visionFuse != null && visionFuse.getVisionConfidence() < 0.3) {
-        // x += 0.3;
-        // y += 0.3;
-        // }
-
-        // Speed-based confidence calculation
-        if (speed > WORST_RELIABLE_SPEED) {
-            // Maximum uncertainty for high speeds
-            x += 0.02;
-            y += 0.02;
-        } else if (speed <= BEST_RELIABLE_SPEED) {
-            // Minimum uncertainty for low speeds
-            x -= 0.02;
-            y -= 0.02;
-        } else {
-            // Calculate normalized speed for the falloff range
-            double normalizedSpeed = (speed - BEST_RELIABLE_SPEED)
-                    / (WORST_RELIABLE_SPEED - BEST_RELIABLE_SPEED);
-
-            // Apply exponential falloff to calculate additional uncertainty
-            double speedConfidence = Math.exp(-3 * normalizedSpeed);
-
-            // Scale the uncertainty adjustment based on confidence
-            double adjustment = 0.02 * (1 - speedConfidence);
-            x += adjustment;
-            y += adjustment;
-        }
-
-        return new Matrix<N3, N1>(new SimpleMatrix(new double[] { x, y, theta }));
-    }
-
 }

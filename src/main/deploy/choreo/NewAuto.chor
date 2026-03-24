@@ -1,70 +1,14 @@
 {
- "name":"TomerAuto",
+ "name":"NewAuto",
  "version":2,
  "type":"Swerve",
  "variables":{
   "expressions":{},
   "poses":{
-   "Balls1":{
+   "Start":{
     "x":{
-     "exp":"7.9 m",
-     "val":7.9
-    },
-    "y":{
-     "exp":"5 m",
-     "val":5.0
-    },
-    "heading":{
-     "exp":"-70 deg",
-     "val":-1.2217304763960306
-    }
-   },
-   "Balls2":{
-    "x":{
-     "exp":"8 m",
-     "val":8.0
-    },
-    "y":{
-     "exp":"3.8 m",
-     "val":3.8
-    },
-    "heading":{
-     "exp":"-90 deg",
-     "val":-1.5707963267948966
-    }
-   },
-   "Balls3":{
-    "x":{
-     "exp":"6 m",
-     "val":6.0
-    },
-    "y":{
      "exp":"4 m",
      "val":4.0
-    },
-    "heading":{
-     "exp":"-100 deg",
-     "val":-1.7453292519943295
-    }
-   },
-   "NewBalls":{
-    "x":{
-     "exp":"8 m",
-     "val":8.0
-    },
-    "y":{
-     "exp":"5.6 m",
-     "val":5.6
-    },
-    "heading":{
-     "exp":"PI rad",
-     "val":3.141592653589793
-    }
-   },
-   "Shoot":{
-    "x":{
-     "exp":"3.3 m",
-     "val":3.3
     },
     "y":{
      "exp":"7.5 m",
@@ -73,34 +17,6 @@
     "heading":{
      "exp":"-90 deg",
      "val":-1.5707963267948966
-    }
-   },
-   "Start":{
-    "x":{
-     "exp":"4 m",
-     "val":4.0
-    },
-    "y":{
-     "exp":"7.4 m",
-     "val":7.4
-    },
-    "heading":{
-     "exp":"-90 deg",
-     "val":-1.5707963267948966
-    }
-   },
-   "Tower":{
-    "x":{
-     "exp":"1.6 m",
-     "val":1.6
-    },
-    "y":{
-     "exp":"4.175 m",
-     "val":4.175
-    },
-    "heading":{
-     "exp":"180 deg",
-     "val":3.141592653589793
     }
    }
   }
@@ -175,7 +91,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":null,
+  "root":"../C:/Users/5635/Season2026/src/main/deploy/choreo",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
