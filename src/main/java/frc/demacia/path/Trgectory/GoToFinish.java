@@ -14,12 +14,12 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.robot.RobotCommon;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class HoToFinish extends Command {
+public class GoToFinish extends Command {
   private ProfiledPIDController drivePID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
   private ProfiledPIDController rotationPID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
   Pose2d target;
   Chassis chassis;
-  public HoToFinish(Pose2d target, Chassis chassis) {
+  public GoToFinish(Pose2d target, Chassis chassis) {
     this.target = target;
     this.chassis = chassis;
     addRequirements(chassis);

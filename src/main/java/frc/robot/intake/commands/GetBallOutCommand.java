@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
-public class HetBallOutCommand extends Command {
+public class GetBallOutCommand extends Command {
 
   IntakeSubsystem intake;
   Trigger triggerToDisable;  
   ShinuaSubsystem shinua;
 
-  public HetBallOutCommand(IntakeSubsystem intake, ShinuaSubsystem shinua, Trigger triggerToDisable) {
+  public GetBallOutCommand(IntakeSubsystem intake, ShinuaSubsystem shinua, Trigger triggerToDisable) {
     this.intake = intake;
     this.triggerToDisable = triggerToDisable;
     this.shinua = shinua;
