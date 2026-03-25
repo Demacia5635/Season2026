@@ -151,13 +151,19 @@ public class RobotPose {
 
     public void update(OdometryObservation odometryObservation) {
 
+        vision.updateValues();
         if (!quest.isConnected())
             RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
-            addOdometryCalculation(odometryObservation);
+            if (quest.isConnected()) {
 
-        vision.updateValues();
+                addOdometryCalculation(new OdometryObservation(odometryObservation.timeStamp(),
+                        quest.getRobotPose2d().getRotation(), odometryObservation.swerveModules()));
+
+            } else {
+                addOdometryCalculation(odometryObservation);
+            }
 
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 

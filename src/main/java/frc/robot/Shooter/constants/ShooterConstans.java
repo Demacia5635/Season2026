@@ -67,7 +67,7 @@ public class ShooterConstans {
         public static final String HOOD_NAME = "Shooter/Hood";
 
         public static final double HOOD_KP = 24.3;
-        public static final double HOOD_KI = 0;
+        public static final double HOOD_KI = 0.1;
         public static final double HOOD_KD = 0;
         public static final double HOOD_KS = 0.08699;
         public static final double HOOD_KV = 1.93076;
@@ -93,7 +93,7 @@ public class ShooterConstans {
         public static final double MAX_ANGLE_HOOD = Math.toRadians(85d);
         public static final double MIN_ANGLE_HOOD = Math.toRadians(45d);
 
-        public static final int HOOD_ENCODER_CHANNEL = 8;
+        public static final int HOOD_ENCODER_CHANNEL = 1;
         public static final String HOOD_ENCODER_NAME = "Shooter/Hood/Angle Encoder";
         public static final double HOOD_OFFSET = Math.toRadians(86) - 0.8785463855763856;
         public static final DigitalEncoderConfig HOOD_ENCODER_CONFIG = new DigitalEncoderConfig(HOOD_ENCODER_CHANNEL,

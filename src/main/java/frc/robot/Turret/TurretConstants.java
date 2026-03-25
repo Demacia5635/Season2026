@@ -8,7 +8,7 @@ import frc.demacia.utils.sensors.LimitSwitchConfig;
 
 public class TurretConstants {
 
-    public static final double MAX_TURRET_ANGLE = 360;
+    public static final double MAX_TURRET_ANGLE = Math.toRadians(355);
     public static final double MIN_TURRET_ANGLE = Math.toRadians(30);
 
     public static final double MIN_SENSOR = 2 * Math.PI - 0.3354;
@@ -37,7 +37,7 @@ public class TurretConstants {
             .withMotionParam(MAX_VELOCITY, MAX_ACCEL, MAX_JERK);
 
     public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(0, "Max Limit Switch");
-    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(7, "Min Limit Switch");
+    public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(8, "Min Limit Switch");
 
     public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.2);
 

@@ -4,7 +4,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.demacia.utils.log.LogManager;
 import frc.robot.RobotCommon;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
@@ -26,8 +26,11 @@ public class ShinuaCommand extends Command {
     /** Test power for battery */
     private double batteryPow;
 
+    private Timer stuckBallsTimer;
     private Timer hasStuckTimer;
     private Timer handleStuckBallsTimer;
+
+    private Timer testTimer;
 
     /**
      * Creates a new ShinuaCommand
@@ -42,8 +45,10 @@ public class ShinuaCommand extends Command {
         rightPow = 0;
         batteryPow = 0;
 
+        stuckBallsTimer = new Timer();
         hasStuckTimer = new Timer();
         handleStuckBallsTimer = new Timer();
+        testTimer = new Timer();
 
         addRequirements(shinua);
 
@@ -80,9 +85,9 @@ public class ShinuaCommand extends Command {
     }
 
     private boolean isBallsStuck() {
-        // return false;
-        return (shinua.getIndexerOnTopCurrent() > 18);
-        // && Math.abs(shinua.getIndexerOnTopVelocity()) < 15);
+        return false;
+        // return shinua.getIndexerOnTopCurrent() > 18
+        // && Math.abs(shinua.getIndexerOnTopVelocity()) < 35;
     }
 
     private void handleBallsStuck() {
@@ -101,23 +106,36 @@ public class ShinuaCommand extends Command {
                 applyIntakeValues();
                 break;
             case Hub, Delivery:
+                if (isBallsStuck() && !stuckBallsTimer.isRunning() && !hasStuckTimer.isRunning()){
+                    stuckBallsTimer.reset();    
+                    stuckBallsTimer.start();
+                }
 
-                if (isBallsStuck() && !hasStuckTimer.isRunning()) {
+                if (stuckBallsTimer.isRunning() && !isBallsStuck()) {
+                    LogManager.log(stuckBallsTimer.get());
+                    stuckBallsTimer.stop();
+                    stuckBallsTimer.reset();
+                }
+
+                if (isBallsStuck() && stuckBallsTimer.hasElapsed(0.1) && !hasStuckTimer.isRunning()) {
+                    LogManager.log("stuck");
+                    stuckBallsTimer.stop();
+                    stuckBallsTimer.reset();
                     hasStuckTimer.reset();
                     hasStuckTimer.start();
-                    return;
-                }
-
-                if (hasStuckTimer.hasElapsed(0.1) && isBallsStuck()) {
-                    handleStuckBallsTimer.reset();
-                    handleStuckBallsTimer.start();
                     RobotCommon.setStuck(true);
                     handleBallsStuck();
-                    return;
+                    break;
                 }
 
-                if (handleStuckBallsTimer.hasElapsed(0.3)) {
-                    handleStuckBallsTimer.stop();
+                if (hasStuckTimer.isRunning() && !hasStuckTimer.hasElapsed(0.3)) {
+                    handleBallsStuck();
+                    break;
+                }
+
+                if (hasStuckTimer.hasElapsed(0.1)) {
+                    hasStuckTimer.stop();
+                    hasStuckTimer.reset();
                     RobotCommon.setStuck(false);
                 }
 

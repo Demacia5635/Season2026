@@ -36,6 +36,9 @@ public class Turret extends SubsystemBase {
 
   private boolean hasCalibrated;
 
+  private boolean hasReachedTarget;
+  private double lastTurretAngle;
+
   private Turret() {
     turretMotor = new TalonFXMotor(TurretConstants.TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(TurretConstants.LIMIT_SWITCH_MIN_CONFIG);
@@ -45,6 +48,9 @@ public class Turret extends SubsystemBase {
 
     isTurretLock = false;
     hasCalibrated = false;
+
+    hasReachedTarget = false;
+    lastTurretAngle = 0;
 
     SmartDashboard.putData("Turret", this);
     SmartDashboard.putData("Turret/Motor/set coast",
@@ -167,7 +173,7 @@ public class Turret extends SubsystemBase {
       turretMotor.setEncoderPosition(TurretConstants.MIN_SENSOR);
     if (isAtMaxLimit())
       turretMotor.setEncoderPosition(TurretConstants.MAX_SENSOR);
-    
+
     turretMotor.configSoftwareLimit(TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
   }
 

@@ -482,6 +482,8 @@ public class Chassis extends SubsystemBase {
     private void addStatus() {
         gyroYawStatus = gyro.getYaw();
         lastGyroYaw = new Rotation2d(gyroYawStatus.getValueAsDouble());
+        gyroAngularVelocityStatus = gyro.getAngularVelocityZWorld();
+        lastGyroAngularVelocity = gyroAngularVelocityStatus.getValue().in(Units.RadiansPerSecond);
     }
 
     private SwerveModulePosition[] getModulePositions() {

@@ -2,6 +2,7 @@ package frc.robot.intake.subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.demacia.utils.log.LogManager;
@@ -32,8 +33,14 @@ public class ShinuaSubsystem extends SubsystemBase {
 
     setName("Shinua");
     SmartDashboard.putData("Shinua", this);
+    SmartDashboard.putData("Shinua/Clear Sticky Fault", new InstantCommand(this::clearFaults).ignoringDisable(true));
 
     LogManager.log("Shinua Initalize");
+  }
+
+  public void clearFaults() {
+    motorIndexerClose.clearFaults();
+    motorIndexerFar.clearFaults();
   }
 
   public void checkElectronics() {

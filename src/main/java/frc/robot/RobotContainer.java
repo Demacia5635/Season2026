@@ -8,19 +8,23 @@ package frc.robot;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
-
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
@@ -114,12 +118,15 @@ public class RobotContainer implements Sendable {
             shooter, mainLeds).ignoringDisable(true));
   }
 
+  Command auto;
+
   private void configureAuto() {
     autoFactory = new AutoFactory(RobotCommon::getCurrentRobotPose, (pose) -> RobotPose.getInstance().resetPose(pose),
         chassis::followTrajectory,
         RobotCommon.isRed(), chassis);
     autoChooser = new AutoChooser();
 
+    auto = soloAuto().cmd();
     autoChooser.addRoutine("soloRoutine", this::soloAuto);
     autoChooser.addCmd("Nothing", () -> new Command() {
     });
@@ -129,16 +136,29 @@ public class RobotContainer implements Sendable {
 
   private AutoRoutine soloAuto() {
     AutoRoutine routine = autoFactory.newRoutine("soloRoutine");
+
+    AutoTrajectory trajectory = routine.trajectory("mainAuto/NewPath_copy1");
+    // AutoTrajectory trajectory = routine.trajectory("testPath/TestPath");
+
+
     routine.active().onTrue(
         Commands.sequence(
             new InstantCommand(() -> {
               chassis.resetTrajectory();
               StateManager.getInstance().setStateChangeActivated(false);
+              RobotCommon.changeStateCommand(RobotStates.Idle);
               CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
               CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
               CommandScheduler.getInstance().schedule(new TurretCommand(turret));
               CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
-            }, chassis)));
+            }, chassis),
+            trajectory.cmd()));
+  
+    trajectory.atTime("Delivery").onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
+    trajectory.atTime("Trench").onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    trajectory.atTime("Hub").onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+    trajectory.atTime("Trench").onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    trajectory.atTime("DriveWithIntake").onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
 
     return routine;
   }
@@ -182,9 +202,13 @@ public class RobotContainer implements Sendable {
         new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
     driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
     driverController.rightButton().onTrue(new GetBallOutCommand(intake, shinua, driverController.rightButton()));
+    driverController.downButton().whileTrue(
+        new RunCommand(() -> rumble.setRumble(RumbleType.kBothRumble, 1)).withTimeout(0.5).ignoringDisable(true));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
+
+  PS5Controller rumble = new PS5Controller(1);
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -250,7 +274,10 @@ public class RobotContainer implements Sendable {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.selectedCommand();
+    return null;
+    // return auto;
+
+    // return autoChooser.selectedCommand();
   }
 
   public AutoFactory getAutoFactory() {

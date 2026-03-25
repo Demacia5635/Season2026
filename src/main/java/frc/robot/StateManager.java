@@ -17,6 +17,7 @@ public class StateManager extends SubsystemBase {
     private static StateManager instance;
 
     public static StateManager getInstance() {
+        if (instance == null) instance = new StateManager();
         return instance;
     }
 
@@ -181,7 +182,7 @@ public class StateManager extends SubsystemBase {
     }
 
     private boolean isHub() {
-        if (RobotCommon.isReady())
+        if (RobotCommon.isRed())
             return Field.HubRed.X_BACK < RobotCommon.getCurrentRobotPose().getX();
         else
             return Field.HubBlue.X_BACK > RobotCommon.getCurrentRobotPose().getX();
