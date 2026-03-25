@@ -5,22 +5,16 @@
 package frc.robot.Turret;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.chassis.Chassis;
+
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
-import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
-import frc.robot.StateManager;
 import frc.robot.RobotCommon.RobotStates;
-
-import static frc.robot.Turret.TurretConstants.*;
 
 public class Turret extends SubsystemBase {
   private static Turret instance;
@@ -31,21 +25,26 @@ public class Turret extends SubsystemBase {
     return instance;
   }
 
-  private TalonFXMotor turretMotor;
+  private final TalonFXMotor turretMotor;
 
-  private LimitSwitch limitSwitchMin;
-  private LimitSwitch limitSwitchMax;
+  private final LimitSwitch limitSwitchMin;
+  private final LimitSwitch limitSwitchMax;
 
-  private boolean isTurretLock = false;
+  private double wantedAngle;
 
-  private double wantedAngle = 0;
+  private boolean isTurretLock;
 
-  private boolean hasCalibrated = false;
+  private boolean hasCalibrated;
 
   private Turret() {
-    turretMotor = new TalonFXMotor(TURRET_MOTOR_CONFIG);
-    limitSwitchMin = new LimitSwitch(LIMIT_SWITCH_MIN_CONFIG);
-    limitSwitchMax = new LimitSwitch(LIMIT_SWITCH_MAX_CONFIG);
+    turretMotor = new TalonFXMotor(TurretConstants.TURRET_MOTOR_CONFIG);
+    limitSwitchMin = new LimitSwitch(TurretConstants.LIMIT_SWITCH_MIN_CONFIG);
+    limitSwitchMax = new LimitSwitch(TurretConstants.LIMIT_SWITCH_MAX_CONFIG);
+
+    wantedAngle = 0;
+
+    isTurretLock = false;
+    hasCalibrated = false;
 
     SmartDashboard.putData("Turret", this);
     SmartDashboard.putData("Turret/Motor/set coast",
@@ -74,7 +73,6 @@ public class Turret extends SubsystemBase {
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
     builder.addBooleanProperty("is ready", this::isReady, null);
     builder.addDoubleProperty("Position", () -> Math.toDegrees(getTurretAngle()), null);
-    builder.addDoubleProperty("error", () -> Math.toDegrees(wantedAngle - getTurretAngle()), null);
   }
 
   public double getTurretVelocity() {
@@ -89,19 +87,6 @@ public class Turret extends SubsystemBase {
     this.isTurretLock = lock;
   }
 
-  private double moduloAngleToTurret(double angle) {
-    return MathUtil.inputModulus(angle, 0, Math.PI * 2);
-  }
-
-  private double clampAngle(double angle) {
-    return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
-  }
-
-  public void setPositionFieldRelative(double fieldRelativeAngle) {
-    setPositionPID(fieldRelativeAngle - RobotCommon.futureRobotPose.getRotation().getRadians());
-
-  }
-
   public void setPositionPID(double wantedPosition) {
     if (!hasCalibrated)
       return;
@@ -113,13 +98,14 @@ public class Turret extends SubsystemBase {
 
     this.wantedAngle = wantedPosition;
 
-    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+    if (Math.abs(wantedPosition - getTurretAngle()) < TurretConstants.MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
     }
     turretMotor.setPositionVoltage(wantedPosition);
   }
 
+  /* TODO: Change control to be more precise like last year arm */
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated)
       return;
@@ -130,7 +116,7 @@ public class Turret extends SubsystemBase {
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
-    if (Math.abs(wantedPosition - getTurretAngle()) < MAX_ALLOWED_ANGLE_ERROR) {
+    if (Math.abs(wantedPosition - getTurretAngle()) < TurretConstants.MAX_ALLOWED_ANGLE_ERROR) {
       turretMotor.stop();
       return;
     }
@@ -139,34 +125,16 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    // if (!hasCalibrated) return;
-    // if(getTurretPose() > Math.toRadians(110) || getTurretPose() <
-    // -Math.toRadians(110)) {
-    // turretMotor.stop();
-    // return;
-    // }
     turretMotor.set(power);
-  }
-
-  private double getMaxAngleError(double distanceFromHub) {
-    if (RobotCommon.currentState == RobotStates.Delivery)
-      return Math.toRadians(12);
-    return getMaxAngleErrorByDistance(distanceFromHub);
-  }
-
-  private double getMaxAngleErrorByDistance(double distanceFromHub) {
-    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7.5, 2, 6));
   }
 
   public boolean isReady() {
     return hasCalibrated()
-        && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.currentDistanceFromTarget);
+        && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget());
   }
 
   @Override
   public void periodic() {
-    // if (turretMotor.getCurrentCurrent() > 35)
-    // setTurretLock(true);
   }
 
   public boolean isAtMinLimit() {
@@ -174,7 +142,6 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtMaxLimit() {
-    // return false;
     return !limitSwitchMax.get();
   }
 
@@ -197,14 +164,32 @@ public class Turret extends SubsystemBase {
 
   public void updatePositionByLimit() {
     if (isAtMinLimit())
-      turretMotor.setEncoderPosition(MIN_SENSOR);
+      turretMotor.setEncoderPosition(TurretConstants.MIN_SENSOR);
     if (isAtMaxLimit())
-      turretMotor.setEncoderPosition(MAX_TURRET_ANGLE);
+      turretMotor.setEncoderPosition(TurretConstants.MAX_SENSOR);
     
-    turretMotor.configSoftwareLimit(MIN_TURRET_ANGLE, MAX_TURRET_ANGLE);
+    turretMotor.configSoftwareLimit(TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
   }
 
   public void stop() {
     turretMotor.stop();
+  }
+
+  private double moduloAngleToTurret(double angle) {
+    return MathUtil.inputModulus(angle, 0, Math.PI * 2);
+  }
+
+  private double clampAngle(double angle) {
+    return MathUtil.clamp(angle, TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
+  }
+
+  private double getMaxAngleError(double distanceFromHub) {
+    if (RobotCommon.getState().equals(RobotStates.Delivery))
+      return Math.toRadians(12);
+    return getMaxAngleErrorByDistance(distanceFromHub);
+  }
+
+  private double getMaxAngleErrorByDistance(double distanceFromHub) {
+    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7.5, 2, 6));
   }
 }

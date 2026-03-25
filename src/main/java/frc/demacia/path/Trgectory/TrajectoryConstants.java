@@ -4,17 +4,11 @@
 
 package frc.demacia.path.Trgectory;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-/** Add your docs here. */
 public class TrajectoryConstants {
     public static final double FIELD_LENGTH = -1; // X in field based
     public static final double FIELD_HEIGHT = -1; // y in field based
 
-    public static final double MAX__POSITION_THRESHOLD = 0.03; // in meters;
+    public static final double MAX_POSITION_THRESHOLD = 0.03; // in meters;
     public static final double MAX_ROTATION_THRESHOLD = Math.toRadians(0.75);
     
    

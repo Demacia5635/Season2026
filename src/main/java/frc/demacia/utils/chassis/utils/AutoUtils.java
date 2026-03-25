@@ -1,18 +1,13 @@
 package frc.demacia.utils.chassis.utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import frc.demacia.path.utils.PathPoint;
-import frc.demacia.path.utils.Segment;
 import frc.demacia.utils.chassis.Chassis;
+
 import frc.robot.RobotContainer;
 
 public class AutoUtils {
@@ -26,7 +21,7 @@ public class AutoUtils {
     public static final int[] reefCams = { 0, 3 };
 
     public AutoUtils() {
-        chassis = RobotContainer.chassis;
+        chassis = RobotContainer.getChassis();
     }
 
     public static void addCommands(Command c, SequentialCommandGroup cmd) {

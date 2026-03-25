@@ -6,11 +6,8 @@ package frc.demacia.vision;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,23 +15,19 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
-import frc.robot.RobotCommon;
-import frc.robot.Turret.Turret;
+
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.log.LogManager;
+import frc.demacia.vision.utils.VisionConstants;
+import frc.robot.RobotCommon;
 
-import static frc.demacia.vision.utils.VisionConstants.*;
-
-/** Add your docs here. */
 public class TagPose {
   // NetworkTables communication for each camera
   private NetworkTable Table;
 
   private NetworkTableEntry cropEntry;
   private NetworkTableEntry pipeEntry;
-
-  private double wantedPip = 0;
 
   private Field2d field;
 
@@ -52,9 +45,6 @@ public class TagPose {
   // vector for camera
   private Translation2d cameraToTag;
 
-  // vector for turret
-  private Translation2d turretToTag;
-
   // vector for robot
   private Translation2d robotToTag;
   private Translation2d originToRobot;
@@ -69,7 +59,6 @@ public class TagPose {
 
   @SuppressWarnings("unchecked")
   public TagPose(Camera camera) {
-    wantedPip = 0;
     confidence = 0;
     this.camera = camera;
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
@@ -101,7 +90,6 @@ public class TagPose {
   }
 
   private void changePipeline(int id) {
-    wantedPip = id;
     pipeEntry.setDouble(id);
   }
 
@@ -122,15 +110,13 @@ public class TagPose {
         crop();
       }
 
-      if (id > 0 && id < TAG_HEIGHT.length) {
-        pose = new Pose2d(getOriginToRobot(), RobotCommon.robotAngle);
+      if (id > 0 && id < VisionConstants.TAG_HEIGHT.length) {
+        pose = new Pose2d(getOriginToRobot(), RobotCommon.getRobotAngle());
         field.setRobotPose(pose);
         confidence = getConfidence();
-        wantedPip = getDistFromCamera() > 1 ? 0 : 0;
       }
     } else {
       cropStop();
-      wantedPip = 0;
       pose = new Pose2d();
     }
     // if (wantedPip != Table.getEntry("getpipe").getDouble(0.0)) {
@@ -146,9 +132,9 @@ public class TagPose {
    */
   public Translation2d getOriginToRobot() {
 
-    origintoTag = O_TO_TAG[(int) this.id == -1 ? 0 : (int) this.id];
+    origintoTag = VisionConstants.O_TO_TAG[(int) this.id == -1 ? 0 : (int) this.id];
 
-    height = TAG_HEIGHT[(int) this.id];
+    height = VisionConstants.TAG_HEIGHT[(int) this.id];
     if (origintoTag != null) {
 
       originToRobot = origintoTag.minus(getRobotToTagFieldRel());
@@ -168,12 +154,9 @@ public class TagPose {
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(getDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
-    // LogManager.log("cameraToTag :" +cameraToTag);
-    // LogManager.log("Camera to Tag Yaw :" + camToTagYaw);
     // Add camera offset to get robot center to tag vector
     robotToTag = (camera.getRobotToCamPosition().toTranslation2d()
-        .plus(cameraToTag)).rotateBy(RobotCommon.robotAngle);
-    // LogManager.log("Robot to Tag :" + robotToTag);
+        .plus(cameraToTag)).rotateBy(RobotCommon.getRobotAngle());
     return robotToTag;
   }
 
@@ -193,19 +176,19 @@ public class TagPose {
   }
 
   private double getCropOfset() {
-    double crop = getDistFromCamera() * CROP_CONSTAT;
-    return MathUtil.clamp(crop, MIN_CROP, MAX_CROP);
+    double crop = getDistFromCamera() * VisionConstants.CROP_CONSTAT;
+    return MathUtil.clamp(crop, VisionConstants.MIN_CROP, VisionConstants.MAX_CROP);
   }
 
   private double getYawCrop() {
     double TagYaw = ((-camToTagYaw) + camera.getYaw()) / 31.25;
-    return TagYaw + RobotCommon.fieldRelativeSpeeds.vyMetersPerSecond * PREDICT_Y
-        + RobotCommon.fieldRelativeSpeeds.omegaRadiansPerSecond * PREDICT_OMEGA;
+    return TagYaw + RobotCommon.getFieldRelativeSpeeds().vyMetersPerSecond * VisionConstants.PREDICT_Y
+        + RobotCommon.getFieldRelativeSpeeds().omegaRadiansPerSecond * VisionConstants.PREDICT_OMEGA;
   }
 
   private double getPitchCrop() {
     double TagPitch = camToTagPitch / 24.45;
-    return TagPitch + RobotCommon.fieldRelativeSpeeds.vxMetersPerSecond * PREDICT_X;
+    return TagPitch + RobotCommon.getFieldRelativeSpeeds().vxMetersPerSecond * VisionConstants.PREDICT_X;
   }
 
   private void cropStop() {
@@ -218,13 +201,13 @@ public class TagPose {
     double currentDist = getDistFromCamera();
 
     // If we're within reliable range, give high confidence
-    if (currentDist <= BEST_RELIABLE_DISTANCE) {
+    if (currentDist <= VisionConstants.BEST_RELIABLE_DISTANCE) {
       return 1.0;
     }
 
     // Calculate how far we are into the falloff range (0 to 1)
-    double normalizedDist = (currentDist - BEST_RELIABLE_DISTANCE)
-        / ((WORST_RELIABLE_DISTANCE) - BEST_RELIABLE_DISTANCE);
+    double normalizedDist = (currentDist - VisionConstants.BEST_RELIABLE_DISTANCE)
+        / ((VisionConstants.WORST_RELIABLE_DISTANCE) - VisionConstants.BEST_RELIABLE_DISTANCE);
 
     // Apply cubic falloff function
     return Math.pow(1 - normalizedDist, 3);

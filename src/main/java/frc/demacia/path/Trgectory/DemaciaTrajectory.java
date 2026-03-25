@@ -4,27 +4,19 @@
 
 package frc.demacia.path.Trgectory;
 
-import static frc.demacia.path.Trgectory.TrajectoryConstants.*;
-
-import java.nio.file.attribute.AclEntry;
 import java.util.ArrayList;
-import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotContainer;
+
 import frc.demacia.path.Trgectory.TrajectoryConstants.PathsConstraints;
 import frc.demacia.path.utils.Leg;
 import frc.demacia.path.utils.PathPoint;
 import frc.demacia.path.utils.RoundedPoint;
 import frc.demacia.path.utils.Segment;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.utils.Utilities;
 import frc.demacia.utils.Utils;
 
 /** Add your docs here. */
@@ -33,7 +25,6 @@ public class DemaciaTrajectory {
     private double trajectoryLength;
     private double distanceTraveledOnSegment;
     private ArrayList<PathPoint> points;
-    private ArrayList<PathPoint> pointsAfterFix;
     private RoundedPoint[] corners;
     private int segmentIndex;
     private Rotation2d wantedAngle;
@@ -88,8 +79,8 @@ public class DemaciaTrajectory {
 
     private PathPoint convertPoint(PathPoint pointToConvert) {
         return new PathPoint(
-                new Translation2d(FIELD_LENGTH - pointToConvert.getX(),
-                        FIELD_HEIGHT - pointToConvert.getY()),
+                new Translation2d(TrajectoryConstants.FIELD_LENGTH - pointToConvert.getX(),
+                        TrajectoryConstants.FIELD_HEIGHT - pointToConvert.getY()),
                 pointToConvert.getRotation());
     }
 
@@ -139,12 +130,12 @@ public class DemaciaTrajectory {
                         : segments.get(segmentIndex + 1).getPoints()[0]);
 
         if (segmentIndex == segments.size() - 1)
-            return chassisPose.getTranslation().getDistance(currentLastPoint) <= MAX__POSITION_THRESHOLD;
+            return chassisPose.getTranslation().getDistance(currentLastPoint) <= TrajectoryConstants.MAX_POSITION_THRESHOLD;
 
         else {
 
             return chassisPose.getTranslation().getDistance(currentLastPoint) < Utils.distanceToDeaccel(currentVelocty,
-                    PathsConstraints.FINISH_MAX_VELOCITY, PathsConstraints.FINISH_ACCEL);
+                    TrajectoryConstants.PathsConstraints.FINISH_MAX_VELOCITY, TrajectoryConstants.PathsConstraints.FINISH_ACCEL);
 
         }
     }
@@ -240,7 +231,7 @@ public class DemaciaTrajectory {
         double wantedOmega = 0;
         if (Math.abs(diffAngle) > Math.toRadians(10))
             wantedOmega = diffAngle * 2.2;
-        else if (Math.abs(diffAngle) < MAX_ROTATION_THRESHOLD)
+        else if (Math.abs(diffAngle) < TrajectoryConstants.MAX_ROTATION_THRESHOLD)
             wantedOmega = 0;
         else
             wantedOmega = diffAngle * 1.4;
@@ -251,10 +242,10 @@ public class DemaciaTrajectory {
     public boolean isFinishedTrajectory() {
 
         return ((chassisPose.getTranslation()
-                .getDistance(points.get(points.size() - 1).getTranslation()) <= MAX__POSITION_THRESHOLD
+                .getDistance(points.get(points.size() - 1).getTranslation()) <= TrajectoryConstants.MAX_POSITION_THRESHOLD
                 && segmentIndex == segments.size() - 1))
 
-                && wantedAngle.minus(chassisPose.getRotation()).getRadians() <= MAX_ROTATION_THRESHOLD;
+                && wantedAngle.minus(chassisPose.getRotation()).getRadians() <= TrajectoryConstants.MAX_ROTATION_THRESHOLD;
     }
 
 }

@@ -82,7 +82,7 @@ public class LogEntry<T> {
         createLogEntry(LogManager.log, name, metaData);
 
         // Check if we should publish to NetworkTables based on LogLevel and Competition state
-        if (logLevel == LogLevel.LOG_AND_NT || (logLevel == LogLevel.LOG_AND_NT_NOT_IN_COMP && !RobotCommon.isComp)) {
+        if (logLevel == LogLevel.LOG_AND_NT || (logLevel == LogLevel.LOG_AND_NT_NOT_IN_COMP && !RobotCommon.isComp())) {
             createPublisher(LogManager.table, name);
         } else {
             ntPublisher = null;

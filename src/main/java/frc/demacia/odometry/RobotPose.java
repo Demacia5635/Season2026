@@ -4,13 +4,6 @@
 
 package frc.demacia.odometry;
 
-import static frc.demacia.vision.utils.VisionConstants.BEST_RELIABLE_SPEED;
-import static frc.demacia.vision.utils.VisionConstants.WORST_RELIABLE_SPEED;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -18,30 +11,25 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
-import frc.demacia.utils.Utilities;
 import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
-import frc.demacia.vision.utils.LimelightHelpers.PoseEstimate;
-import frc.robot.Field;
-import frc.robot.RobotCommon;
-import frc.robot.RobotContainer;
-import frc.robot.Turret.Turret;
 
-/** Add your docs here. */
+import frc.robot.Field;
+import frc.robot.RobotContainer;
+
 public class RobotPose {
+
     private static RobotPose instance;
 
     private Vision vision;
@@ -82,8 +70,6 @@ public class RobotPose {
     }
 
     public Pose2d getPose() {
-        // if(hasUpdatedQuestIntialPose && quest.isConnected()) return
-        // quest.getRobotPose2d();
 
         return poseEstimator.getEstimatedPose();
     }
@@ -125,22 +111,16 @@ public class RobotPose {
         }
     }
 
-
-    public void setQuestHeading(Rotation2d heading){
+    public void setQuestHeading(Rotation2d heading) {
         quest.setHeading(heading);
     }
+
     public void setQuestPose(Pose2d pose) {
         hasUpdatedQuestIntialPose = true;
         quest.setQuestPose(new Pose3d(pose));
     }
 
     public void addVisionMeasurement() {
-
-        // if (!hasUpdatedQuestIntialPose && visionCounter > 30) {
-        // hasUpdatedQuestIntialPose = true;
-        // setQuestPose();
-        // }
-
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
         poseEstimator.addVisionMeasurement(vision.getPoseEstimation(), Timer.getFPGATimestamp() - 0.05);
     }
@@ -161,17 +141,18 @@ public class RobotPose {
         return vision.isSeeTag();
 
     }
-    public void setAngle3DLimelight(){
+
+    public void setAngle3DLimelight() {
         Rotation2d newAngle = vision.getRobotAngle();
-        if(newAngle != null) Chassis.getInstance().setYaw(newAngle);
-        
+        if (newAngle != null)
+            Chassis.getInstance().setYaw(newAngle);
+
     }
 
-
-    
     public void update(OdometryObservation odometryObservation) {
 
-        if (!quest.isConnected()) RobotContainer.mainLeds.isQuestDisconnected = true;
+        if (!quest.isConnected())
+            RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
             addOdometryCalculation(odometryObservation);

@@ -105,7 +105,7 @@ public class Vision {
             y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y, RobotCommon.robotAngle);
+        return new Pose2d(x, y, RobotCommon.getRobotAngle());
     }
 
     public void updateValues() {
@@ -117,7 +117,7 @@ public class Vision {
     public Rotation2d getRobotAngle(){
         for (TagPose tag : tags) {
             if (tag.getRobotPose2d() != null) {
-                return new Rotation2d().fromDegrees(tag.getAngle());
+                return Rotation2d.fromDegrees(tag.getAngle());
             }
         }
         return null;

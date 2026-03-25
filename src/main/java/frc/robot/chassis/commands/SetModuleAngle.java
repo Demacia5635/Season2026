@@ -8,6 +8,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.SwerveModule;
@@ -15,11 +16,12 @@ import frc.demacia.utils.motors.CloseLoopParam;
 import frc.demacia.utils.motors.TalonFXMotor;
 
 public class SetModuleAngle extends Command {
+
     private final Chassis chassis;
     private final SwerveModule[] swerveModules;
-    private TalonFXMotor[] motors;
+    private final TalonFXMotor[] motors;
     private CloseLoopParam pid;
-    private Command configPidFf;
+    private final Command configPidFf;
     private double position;
 
     public SetModuleAngle(Chassis chassis) {
@@ -66,11 +68,11 @@ public class SetModuleAngle extends Command {
                         value -> {
                             if (value) {
                                 if (!configPidFf.isScheduled()) {
-                                    configPidFf.schedule();
+                                    CommandScheduler.getInstance().schedule(configPidFf);
                                 }
                             } else {
                                 if (configPidFf.isScheduled()) {
-                                    configPidFf.cancel();
+                                    CommandScheduler.getInstance().cancel(configPidFf);
                                 }
                             }
                         });

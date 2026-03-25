@@ -4,9 +4,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.controller.CommandController;
+
 import frc.robot.RobotCommon;
-import frc.robot.intake.IntakeConstants;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
@@ -26,6 +25,7 @@ public class ShinuaCommand extends Command {
     private double rightPow;
     /** Test power for battery */
     private double batteryPow;
+
     private Timer hasStuckTimer;
     private Timer handleStuckBallsTimer;
 
@@ -64,8 +64,8 @@ public class ShinuaCommand extends Command {
 
     private void applyShootingValues() {
 
-        shinua.setDutyIndexerClose(IntakeConstants.MAX_POWER);
-        shinua.setDutyIndexerFar(IntakeConstants.MAX_POWER);
+        shinua.setDutyIndexerClose(1);
+        shinua.setDutyIndexerFar(1);
         shinua.setDutyIndexerOnTop(1);
         shinua.setPowerBattery(1);
 
@@ -82,7 +82,7 @@ public class ShinuaCommand extends Command {
     private boolean isBallsStuck() {
         // return false;
         return (shinua.getIndexerOnTopCurrent() > 18);
-        //  && Math.abs(shinua.getIndexerOnTopVelocity()) < 15);
+        // && Math.abs(shinua.getIndexerOnTopVelocity()) < 15);
     }
 
     private void handleBallsStuck() {
@@ -96,7 +96,7 @@ public class ShinuaCommand extends Command {
      */
     @Override
     public void execute() {
-        switch (RobotCommon.currentState) {
+        switch (RobotCommon.getState()) {
             case DriveWithIntake:
                 applyIntakeValues();
                 break;
@@ -111,14 +111,14 @@ public class ShinuaCommand extends Command {
                 if (hasStuckTimer.hasElapsed(0.1) && isBallsStuck()) {
                     handleStuckBallsTimer.reset();
                     handleStuckBallsTimer.start();
-                    RobotCommon.isStuck = true;
+                    RobotCommon.setStuck(true);
                     handleBallsStuck();
                     return;
                 }
 
                 if (handleStuckBallsTimer.hasElapsed(0.3)) {
                     handleStuckBallsTimer.stop();
-                    RobotCommon.isStuck = false;
+                    RobotCommon.setStuck(false);
                 }
 
                 if (RobotCommon.isReady()) {
@@ -131,7 +131,6 @@ public class ShinuaCommand extends Command {
                 break;
 
             case Test:
-
                 shinua.setDutyIndexerClose(rightPow);
                 shinua.setDutyIndexerFar(leftPow);
                 shinua.setDutyIndexerOnTop(topPow);

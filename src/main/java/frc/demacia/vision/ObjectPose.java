@@ -14,8 +14,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.Camera;
 
 // Subsystem that tracks and calculates the position of a vision target (object) on the field
 public class ObjectPose{
@@ -29,7 +27,6 @@ public class ObjectPose{
 
   private NetworkTable table;
   private Field2d field;
-  private Field2d robotfield;
 
   private double camToObjectYaw;
   private double camToObjectPitch;
@@ -52,7 +49,6 @@ public class ObjectPose{
     this.getRobotAngle = getRobotAngle;
     this.robotCurrentPose = robotCurrentPose;
     field = new Field2d();
-    robotfield = new Field2d();
 
     this.camera = camera;
     table = NetworkTableInstance.getDefault().getTable(camera.getTableName());

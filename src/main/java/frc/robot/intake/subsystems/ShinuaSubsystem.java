@@ -1,16 +1,13 @@
 package frc.robot.intake.subsystems;
 
-import java.nio.Buffer;
-
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.SparkMaxMotor;
 import frc.demacia.utils.motors.TalonFXMotor;
-import frc.demacia.utils.motors.TalonSRXMotor;
+
 import frc.robot.intake.IntakeConstants;
 
 public class ShinuaSubsystem extends SubsystemBase {
@@ -25,7 +22,6 @@ public class ShinuaSubsystem extends SubsystemBase {
   private SparkMaxMotor motorIndexerClose;
   private SparkMaxMotor motorIndexerFar;
   private TalonFXMotor motorBattery;
-
   private TalonFXMotor motorIndexerOnTop;
 
   private ShinuaSubsystem() {
@@ -33,25 +29,9 @@ public class ShinuaSubsystem extends SubsystemBase {
     motorIndexerFar = new SparkMaxMotor(IntakeConstants.INDEXER_FAR_CONFIG);
     motorIndexerOnTop = new TalonFXMotor(IntakeConstants.INDEXER_ON_TOP_CONFIG);
     motorBattery = new TalonFXMotor(IntakeConstants.BATTERY_CONFIG);
-    setEncoderPositionBattery(IntakeConstants.MIN_POSITION);
 
+    setName("Shinua");
     SmartDashboard.putData("Shinua", this);
-    SmartDashboard.putData("Shinua/Top/set coast",
-        new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Top/set brake",
-        new InstantCommand(() -> motorIndexerOnTop.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Left/set coast",
-        new InstantCommand(() -> motorIndexerFar.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Left/set brake",
-        new InstantCommand(() -> motorIndexerFar.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Right/set coast",
-        new InstantCommand(() -> motorIndexerClose.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Right/set brake",
-        new InstantCommand(() -> motorIndexerClose.setNeutralMode(true)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Battery/set coast",
-        new InstantCommand(() -> motorBattery.setNeutralMode(false)).ignoringDisable(true));
-    SmartDashboard.putData("Shinua/Battery/set brake",
-        new InstantCommand(() -> motorBattery.setNeutralMode(true)).ignoringDisable(true));
 
     LogManager.log("Shinua Initalize");
   }
@@ -75,10 +55,6 @@ public class ShinuaSubsystem extends SubsystemBase {
 
   public double getIndexerOnTopVelocity() {
     return motorIndexerOnTop.getCurrentVelocity();
-  }
-
-  @Override
-  public void periodic() {
   }
 
   public void setNeutralMode(boolean isBrake) {
@@ -106,10 +82,6 @@ public class ShinuaSubsystem extends SubsystemBase {
 
   public void setDutyIndexerOnTop(double pow) {
     motorIndexerOnTop.setDuty(pow);
-    // if (timer.isRunning())
-    // motorIndexerOnTop.setDuty(-1);
-    // else
-    // motorIndexerOnTop.setDuty(pow);
   }
 
   public void stopIndexerOnTop() {
@@ -126,14 +98,6 @@ public class ShinuaSubsystem extends SubsystemBase {
 
   public void setPowerBattery(double power) {
     motorBattery.set(power);
-  }
-
-  public boolean isAtMin() {
-    return IntakeConstants.MIN_POSITION >= motorBattery.getCurrentPosition();
-  }
-
-  public boolean isAtMax() {
-    return IntakeConstants.MAX_POSITION <= motorBattery.getCurrentPosition();
   }
 
   public void stop() {

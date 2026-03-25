@@ -28,7 +28,7 @@ public class FollowTrajectory extends Command {
 
   @Override
   public void initialize() {
-    this.trajectory = new DemaciaTrajectory(points, false, wantedAngle, RobotCommon.currentRobotPose);
+    this.trajectory = new DemaciaTrajectory(points, false, wantedAngle, RobotCommon.getCurrentRobotPose());
 
   }
 
@@ -36,7 +36,7 @@ public class FollowTrajectory extends Command {
   public void execute() {
     ChassisSpeeds speeds = chassis.getChassisSpeedsFieldRel();
     chassis.setVelocities(
-        trajectory.calculate(RobotCommon.currentRobotPose, Utils.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)));
+        trajectory.calculate(RobotCommon.getCurrentRobotPose(), Utils.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)));
 
   }
 

@@ -4,8 +4,6 @@
 
 package frc.demacia.path.Trgectory;
 
-import static edu.wpi.first.units.Units.Rotation;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,12 +14,12 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.robot.RobotCommon;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class goToFinish extends Command {
+public class GoToFinish extends Command {
   private ProfiledPIDController drivePID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
   private ProfiledPIDController rotationPID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
   Pose2d target;
   Chassis chassis;
-  public goToFinish(Pose2d target, Chassis chassis) {
+  public GoToFinish(Pose2d target, Chassis chassis) {
     this.target = target;
     this.chassis = chassis;
     addRequirements(chassis);
@@ -34,8 +32,8 @@ public class goToFinish extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d vectorError = target.getTranslation().minus(RobotCommon.currentRobotPose.getTranslation());
-    double rotationError = target.getRotation().minus(RobotCommon.currentRobotPose.getRotation()).getRadians();
+    Translation2d vectorError = target.getTranslation().minus(RobotCommon.getCurrentRobotPose().getTranslation());
+    double rotationError = target.getRotation().minus(RobotCommon.getCurrentRobotPose().getRotation()).getRadians();
     double vX = drivePID.calculate(-vectorError.getX(), 0);
     double vY = drivePID.calculate(-vectorError.getY(), 0);
     double omega = rotationPID.calculate(-rotationError, 0);
@@ -51,6 +49,6 @@ public class goToFinish extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return target.getTranslation().minus(RobotCommon.currentRobotPose.getTranslation()).getNorm() <= 0.03;
+    return target.getTranslation().minus(RobotCommon.getCurrentRobotPose().getTranslation()).getNorm() <= 0.03;
   }
 }

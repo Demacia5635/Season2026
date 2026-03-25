@@ -4,24 +4,17 @@
 
 package frc.demacia.vision.subsystem;
 
-
-
-import java.time.Period;
 import java.util.Arrays;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.demacia.utils.log.LogManager;
+
 import frc.demacia.vision.Camera;
-import frc.robot.RobotCommon;
 
 /** Add your docs here. */
 public class Dvirs_ObjectPose extends SubsystemBase {
@@ -41,11 +34,10 @@ public class Dvirs_ObjectPose extends SubsystemBase {
 
     private InterpolatingDoubleTreeMap lut = new InterpolatingDoubleTreeMap();
 
-
-    public Dvirs_ObjectPose(Camera objectCam){
+    public Dvirs_ObjectPose(Camera objectCam) {
         super();
-        lut.put(-8.0,1.30);
-        lut.put(-44.0,0.22);
+        lut.put(-8.0, 1.30);
+        lut.put(-44.0, 0.22);
         lut.put(-26.0, 0.47);
         lut.put(-16.67, 0.78);
         lut.put(-12.0, 1.1);
@@ -61,44 +53,45 @@ public class Dvirs_ObjectPose extends SubsystemBase {
 
         Arrays.fill(previousPos, null);
         this.objectCam = objectCam;
-          robotToCam = objectCam.getRobotToCamPosition().toTranslation2d();
-      
+        robotToCam = objectCam.getRobotToCamPosition().toTranslation2d();
+
         Table = NetworkTableInstance.getDefault().getTable(objectCam.getTableName());
         SmartDashboard.putString("objectCam.getTableName()", objectCam.getTableName());
         SmartDashboard.putData("Fuel", fuleField);
-       
+
     }
 
     public void periodic() {
         updateValues();
-        if(tv) {
+        if (tv) {
             double yaw = Math.toRadians(camObjectYaw);
             double alpha = (camObjectPitch + objectCam.getPitch()) * Math.cos(yaw);
             yaw += Math.toRadians(objectCam.getYaw());
-            // double alpha = Math.atan(Math.tan(Math.toRadians(camObjectPitch + objectCam.getPitch()))/Math.cos(yaw));
+            // double alpha = Math.atan(Math.tan(Math.toRadians(camObjectPitch +
+            // objectCam.getPitch()))/Math.cos(yaw));
             dist = lut.get(alpha);
-            SmartDashboard.putNumberArray("FuleCam", new Double[]{Math.toDegrees(yaw), alpha, dist});
+            SmartDashboard.putNumberArray("FuleCam", new Double[] { Math.toDegrees(yaw), alpha, dist });
             SmartDashboard.putNumber("Fuel distance", dist);
-            Translation2d robotToFuel = new Translation2d(robotToCam.getX() + dist*Math.cos(yaw),
+            Translation2d robotToFuel = new Translation2d(robotToCam.getX() + dist * Math.cos(yaw),
                     robotToCam.getY() + dist * Math.sin(yaw));
             SmartDashboard.putNumber("robotToCam.getY()", robotToCam.getY());
             SmartDashboard.putNumber("robotToFuelx", robotToFuel.getX());
             SmartDashboard.putNumber("robotToFuely", robotToFuel.getY());
-            RobotCommon.fuelPosition = robotToFuel;
+            // RobotCommon.fuelPosition = robotToFuel;
             // Translation2d fuelPos = RobotCommon.currentRobotPose.getTranslation().
-            //     plus(robotToFuel.rotateBy(RobotCommon.robotAngle));
-        } else if(Timer.getFPGATimestamp() - RobotCommon.fuelTime > 0.1) {
-            RobotCommon.fuelPosition = null;
+            // plus(robotToFuel.rotateBy(RobotCommon.robotAngle));
+            // } else if(Timer.getFPGATimestamp() - RobotCommon.fuelTime > 0.1) {
+            // RobotCommon.fuelPosition = null;
         }
     }
 
-    public boolean isObjectDetected(){
+    public boolean isObjectDetected() {
         return tv;
     }
 
-    public void updateValues(){
+    public void updateValues() {
         tv = Table.getEntry("tv").getDouble(0.0) != 0;
-        if(tv) {
+        if (tv) {
             camObjectPitch = Table.getEntry("ty").getDouble(0.0);
             camObjectYaw = (-Table.getEntry("tx").getDouble(0.0));
         } else {

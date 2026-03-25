@@ -12,12 +12,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.chassis.Chassis;
+
 import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Shooter.utils.ShooterUtils;
+import frc.robot.Turret.TurretConstants;
 
 /**
  * this is the main shooter command
@@ -38,21 +39,21 @@ import frc.robot.Shooter.utils.ShooterUtils;
  */
 
 public class ShooterCommand extends Command {
-  Shooter shooter;
-  Chassis chassis;
+
+  private final Shooter shooter;
+
   private double WHEEL_TO_BALL_VELOCITY_RATIO = 0.45;
   private double MAGNUS_CORRECTION = 0.2;
+  private double velocityFromBattery = 1;
+
   private double wantedAngle;
   private double wantedVel;
   private double wantedFeederPower;
-  private double velocityFromBattery = 1;
 
   private double HOOD_OFFSET = Math.toRadians(4);
   private double VELOCITY_CORRECTION = 1;
-  // private boolean shootVelocityWasOK = false;
 
-  public ShooterCommand(Shooter shooter, Chassis chassis) {
-    this.chassis = chassis;
+  public ShooterCommand(Shooter shooter) {
     this.shooter = shooter;
     this.wantedAngle = Math.toDegrees(shooter.getHoodAngleAbsEncoder());
     this.wantedVel = 0;
@@ -88,19 +89,11 @@ public class ShooterCommand extends Command {
     // calculate the new ball velocity
     double ballVelocity = Math.hypot(xyVel, zVel);
 
-    // LogManager.log("Distance from hub: " + distance + " heading to hub: " +
-    // heading + " LUT vel: " + lutVel + " LUT hood angle: " + lutHoodAngle + " LUT
-    // ball xyVel: " + xyVel
-    // + " Z vel: " + zVel + " x Vel: " + xVel + " yVel: " + yVel + " newVel: " +
-    // xyVel
-    // + " ball vel pre magnus: " + ballVelocity);
     ballVelocity -= MAGNUS_CORRECTION * (ballVelocity - lutVel); // correct for Magnus (back spin) effect
 
-    // LogManager.log("ball vel after magnus: " + ballVelocity);
     ballVelocity = ballVelocity / WHEEL_TO_BALL_VELOCITY_RATIO; // translate required ball velocity to flywheel
                                                                 // velocity
 
-    // LogManager.log("flywheel vel: " + ballVelocity);
     // calculate the hood angle
     double hoodAngle = Math.atan(zVel / xyVel) - HOOD_OFFSET; // with hood correction
     // check for max angle
@@ -114,8 +107,8 @@ public class ShooterCommand extends Command {
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
-    RobotCommon.futureAngleFromTargetRobotRelative = MathUtil
-        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI);
+    RobotCommon.setFutureAngleFromTargetRobotRelative(MathUtil
+        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI));
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
   }
@@ -133,13 +126,13 @@ public class ShooterCommand extends Command {
     double hoodAngle = 0;
     Rotation2d heading = Rotation2d.kZero;
 
-    robotSpeeds = RobotCommon.fieldRelativeSpeeds;
-    nextPose = ShooterUtils.computeFuturePosition(RobotCommon.fieldRelativeSpeeds, RobotCommon.currentRobotPose,
+    robotSpeeds = RobotCommon.getFieldRelativeSpeeds();
+    nextPose = ShooterUtils.computeFuturePosition(RobotCommon.getFieldRelativeSpeeds(), RobotCommon.getCurrentRobotPose(),
         0.2);
 
-    switch (RobotCommon.currentState) {
+    switch (RobotCommon.getState()) {
       case Delivery:
-        Translation2d chassisToDelivery = chassis.getDeliveryPoint().minus(nextPose.getTranslation());
+        Translation2d chassisToDelivery = ShooterUtils.getDeliveryPoint().minus(nextPose.getTranslation());
         hoodAngle = Math.toRadians(45);
         vel = Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();
@@ -150,15 +143,14 @@ public class ShooterCommand extends Command {
 
       case Hub:
         turretPos = nextPose.getTranslation()
-            .plus(ShooterConstans.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.robotAngle));
+            .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
         toHub = Field.HubRed.CENTER.minus(turretPos);
-        SmartDashboard.putNumber("Distance from Hub", toHub.getNorm());
 
         // get the distance, heading and LUT valuse
         distance = toHub.getNorm();
         heading = toHub.getAngle();
 
-        RobotCommon.currentDistanceFromTarget = distance;
+        RobotCommon.setCurrentDistanceFromTarget(distance);
 
         lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
         double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting

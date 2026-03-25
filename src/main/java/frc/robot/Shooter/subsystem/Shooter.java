@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.DigitalEncoder;
+
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
 
@@ -22,6 +24,7 @@ import frc.robot.Shooter.constants.ShooterConstans;
  * hear we crate all the motors and the sensorse and use them
  */
 public class Shooter extends SubsystemBase {
+
   private static Shooter instance;
 
   public static Shooter getInstance() {
@@ -34,47 +37,45 @@ public class Shooter extends SubsystemBase {
     Shooter.instance = instance;
   }
 
-  /** Creates a new shooter. */
+  private final TalonFXMotor shooterMotor;
+  private final TalonFXMotor feederMotor;
+  private final TalonFXMotor hoodMotor;
 
-  private TalonFXMotor shooterMotor;
+  private final DigitalEncoder hoodEncoder;
 
-  private TalonFXMotor feederMotor;
+  private boolean isShooting;
 
-  private TalonFXMotor hoodMotor;
+  private boolean isHoodMotorLock;
 
-  private DigitalEncoder hoodEncoder;
+  private double lastShooterMotorCurrent;
 
-  boolean isShooting;
-
-  private boolean isHoodMotorLock = false;
-
-  double lastShooterMotorCurrent;
+  private Timer shootingTimer;
 
   private Shooter() {
     hoodMotor = new TalonFXMotor(ShooterConstans.HOOD_CONFIG);
     shooterMotor = new TalonFXMotor(ShooterConstans.SHOOTER_MOTOR_CONFIG);
     feederMotor = new TalonFXMotor(ShooterConstans.FEEDER_CONFIG);
     hoodEncoder = new DigitalEncoder(ShooterConstans.HOOD_ENCODER_CONFIG);
+
     setHoodMotorPosition(getHoodAngleAbsEncoder());
     hoodMotor.configSoftwareLimit(ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
-    // hoodMotor.configPidFf(0);
-    // hoodMotor.configMotionMagic();
-    // shooterMotor.configPidFf(0);
 
     isShooting = false;
     lastShooterMotorCurrent = shooterMotor.getCurrentCurrent();
-    timer = new Timer();
+    shootingTimer = new Timer();
+    isHoodMotorLock = true;
 
     SmartDashboard.putData("Shooter", this);
     SmartDashboard.putData("Shooter/Hood/set coast",
         new InstantCommand(() -> hoodMotor.setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/Hood/set brake",
         new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
-
-    isHoodMotorLock = true;
     SmartDashboard.putData("Shooter/reset Hood Manual",
-      new InstantCommand(() -> {hoodMotor.setEncoderPosition(Math.toRadians(86)); isHoodMotorLock = false;}).ignoringDisable(true));
-    
+        new InstantCommand(() -> {
+          hoodMotor.setEncoderPosition(Math.toRadians(86));
+          isHoodMotorLock = false;
+        }).ignoringDisable(true));
+
     LogManager.log("Shooter Initalize");
   }
 
@@ -104,7 +105,6 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("get Vel", this::getShooterVelocity, null);
     builder.addBooleanProperty("flywheel Ready", this::isFlywheelReady, null);
     builder.addBooleanProperty("hood Ready", this::isHoodReady, null);
-    // builder.addBooleanProperty("is it at speed", () -> chassisSpeedCeack(),null);
     builder.addDoubleProperty("hood angle", () -> getHoodAngle(), null);
     builder.addBooleanProperty("is encode conected", () -> hoodEncoder.isConnected(), null);
     builder.addDoubleProperty("abs encoder", () -> hoodEncoder.get(), null);
@@ -112,7 +112,7 @@ public class Shooter extends SubsystemBase {
         () -> MathUtil.angleModulus((MathUtil.angleModulus(hoodEncoder.get()) * 0.5)), null);
 
     builder.addBooleanProperty("isLockedHood", this::isHoodMotorLock, this::setHoodMotorLock);
-    builder.addBooleanProperty("is Shooting", () -> isShooting || timer.isRunning(), null);
+    builder.addBooleanProperty("is Shooting", () -> isShooting || shootingTimer.isRunning(), null);
     builder.addDoubleProperty("flywheel current", () -> shooterMotor.getCurrentCurrent(), null);
   }
 
@@ -174,10 +174,6 @@ public class Shooter extends SubsystemBase {
     if (isHoodMotorLock)
       return;
 
-    // if(hoodMotor.getCurrentCurrent() > 20){
-    // return;
-    // }
-
     double angle = MathUtil.clamp(wantedAngle, ShooterConstans.MIN_ANGLE_HOOD, ShooterConstans.MAX_ANGLE_HOOD);
 
     if (Math.abs(angle - getHoodAngleAbsEncoder()) < ShooterConstans.MAX_HOOD_ANGLE_ERROR) {
@@ -224,20 +220,16 @@ public class Shooter extends SubsystemBase {
     feederMotor.stopMotor();
   }
 
-  Timer timer;
-
   @Override
   public void periodic() {
-    // if (hoodMotor.getCurrentCurrent() > 18)
-    //   isHoodMotorLock = true;
     isShooting = (lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() >= 5
         && lastShooterMotorCurrent - shooterMotor.getCurrentCurrent() <= 20);
     if (isShooting) {
-      timer.start();
+      shootingTimer.start();
     }
-    if (timer.hasElapsed(3)) {
-      timer.stop();
-      timer.reset();
+    if (shootingTimer.hasElapsed(3)) {
+      shootingTimer.stop();
+      shootingTimer.reset();
     }
     lastShooterMotorCurrent = shooterMotor.getCurrentCurrent();
   }
@@ -246,32 +238,16 @@ public class Shooter extends SubsystemBase {
     return shooterMotor;
   }
 
-  public void setShooterMotor(TalonFXMotor shooterMotor) {
-    this.shooterMotor = shooterMotor;
-  }
-
   public TalonFXMotor getFeederMotor() {
     return feederMotor;
-  }
-
-  public void setFeederMotor(TalonFXMotor feederMotor) {
-    this.feederMotor = feederMotor;
   }
 
   public TalonFXMotor getHoodMotor() {
     return hoodMotor;
   }
 
-  public void setHoodMotor(TalonFXMotor hoodMotor) {
-    this.hoodMotor = hoodMotor;
-  }
-
   public DigitalEncoder getHoodEncoder() {
     return hoodEncoder;
-  }
-
-  public void setHoodEncoder(DigitalEncoder hoodEncoder) {
-    this.hoodEncoder = hoodEncoder;
   }
 
   public boolean isHoodMotorLock() {
@@ -283,14 +259,14 @@ public class Shooter extends SubsystemBase {
   }
 
   private boolean isFlywheelReady() {
-    return isShooting || timer.isRunning() || (RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
+    return isShooting || shootingTimer.isRunning() || (RobotCommon.getState().equals(RobotCommon.RobotStates.Delivery)
         ? Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.8
         : Math.abs(shooterMotor.getCurrentClosedLoopError()) < 0.4);
   }
 
   private boolean isHoodReady() {
     return !isHoodMotorLock
-        && RobotCommon.currentState.equals(RobotCommon.RobotStates.Delivery)
+        && RobotCommon.getState().equals(RobotCommon.RobotStates.Delivery)
             ? Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(3)
             : Math.abs(hoodMotor.getCurrentClosedLoopError()) <= Math.toRadians(1.5);
 

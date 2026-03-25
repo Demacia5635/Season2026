@@ -3,27 +3,27 @@ package frc.robot.Turret.TurretCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.odometry.RobotPose;
-import frc.demacia.utils.chassis.Chassis;
+
 import frc.robot.RobotCommon;
 import frc.robot.Turret.Turret;
 
 public class TurretFollow extends Command {
+
     private final Turret turret;
     private final Translation2d target;
-    private final Chassis chassis;
 
-    public TurretFollow(Turret turret, Translation2d target, Chassis chassis) {
+    public TurretFollow(Turret turret, Translation2d target) {
         this.turret = turret;
         this.target = target;
-        this.chassis = chassis;
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        turret.setPositionFieldRelative(MathUtil.angleModulus(target.minus(RobotCommon.futureRobotPose.getTranslation()).getAngle().getRadians()));
-     
+        turret.setPositionMotion(MathUtil
+                .angleModulus(target.minus(RobotCommon.getFutureRobotPose().getTranslation()).getAngle().getRadians())
+                - RobotCommon.getFutureRobotPose().getRotation().getRadians());
+
     }
 
     @Override
@@ -31,4 +31,8 @@ public class TurretFollow extends Command {
         turret.stop();
     }
 
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

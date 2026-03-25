@@ -4,8 +4,6 @@
 
 package frc.demacia.vision.utils;
 
-import java.util.ArrayList;
-
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -16,12 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.ObjectPose;
-import frc.demacia.vision.TagPose;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
