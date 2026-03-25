@@ -1,0 +1,183 @@
+{
+ "name":"TomerAuto",
+ "version":2,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{
+   "Balls1":{
+    "x":{
+     "exp":"7.9 m",
+     "val":7.9
+    },
+    "y":{
+     "exp":"5 m",
+     "val":5.0
+    },
+    "heading":{
+     "exp":"-70 deg",
+     "val":-1.2217304763960306
+    }
+   },
+   "Balls2":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"3.8 m",
+     "val":3.8
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
+   "Balls3":{
+    "x":{
+     "exp":"6 m",
+     "val":6.0
+    },
+    "y":{
+     "exp":"4 m",
+     "val":4.0
+    },
+    "heading":{
+     "exp":"-100 deg",
+     "val":-1.7453292519943295
+    }
+   },
+   "NewBalls":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"5.6 m",
+     "val":5.6
+    },
+    "heading":{
+     "exp":"PI rad",
+     "val":3.141592653589793
+    }
+   },
+   "Shoot":{
+    "x":{
+     "exp":"3.3 m",
+     "val":3.3
+    },
+    "y":{
+     "exp":"7.5 m",
+     "val":7.5
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
+   "Start":{
+    "x":{
+     "exp":"4 m",
+     "val":4.0
+    },
+    "y":{
+     "exp":"7.4 m",
+     "val":7.4
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
+   "Tower":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"4.175 m",
+     "val":4.175
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   }
+  }
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"295 mm",
+    "val":0.295
+   },
+   "y":{
+    "exp":"395 mm",
+    "val":0.395
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-295 mm",
+    "val":-0.295
+   },
+   "y":{
+    "exp":"395 mm",
+    "val":0.395
+   }
+  },
+  "mass":{
+   "exp":"68 kg",
+   "val":68.0
+  },
+  "inertia":{
+   "exp":"6 kg m ^ 2",
+   "val":6.0
+  },
+  "gearing":{
+   "exp":"6.03",
+   "val":6.03
+  },
+  "radius":{
+   "exp":"4 in",
+   "val":0.1016
+  },
+  "vmax":{
+   "exp":"5500 RPM",
+   "val":575.9586531581288
+  },
+  "tmax":{
+   "exp":"7.12 N * m",
+   "val":7.12
+  },
+  "cof":{
+   "exp":"1.1",
+   "val":1.1
+  },
+  "bumper":{
+   "front":{
+    "exp":"16 in",
+    "val":0.4064
+   },
+   "side":{
+    "exp":"16 in",
+    "val":0.4064
+   },
+   "back":{
+    "exp":"16 in",
+    "val":0.4064
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[],
+ "codegen":{
+  "root":null,
+  "genVars":true,
+  "genTrajData":true,
+  "useChoreoLib":true
+ }
+}

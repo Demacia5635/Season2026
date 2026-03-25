@@ -25,4 +25,16 @@ public class TalonFXConfig extends BaseMotorConfig<TalonFXConfig> {
         super(id, name);
         copyBaseFields(config);
     }
+
+    public int getId(){
+      return id;
+    }
+
+    public Canbus getCunbus(){
+      return canbus;
+    }
+
+    public String name(){
+      return name;
+    }
 }

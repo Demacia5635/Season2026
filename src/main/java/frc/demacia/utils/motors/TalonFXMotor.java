@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.utils.Data;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
+import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 
 /**
  * Wrapper class for the TalonFX motor controller using Phoenix 6.
@@ -77,8 +79,12 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         setSignals();
         addLog();
         setName(name);
-        SmartDashboard.putData(name,this);
+        // SmartDashboard.putData(name,this);
         LogManager.log(name + " motor initialized");
+    }
+
+    public TalonFXConfig getConfig() {
+      return config;
     }
 
     /**
@@ -108,6 +114,15 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         getConfigurator().apply(cfg);
     }
 
+    public void configSoftwareLimit(double min, double max) {
+      SoftwareLimitSwitchConfigs cfg = new SoftwareLimitSwitchConfigs();
+      cfg.ForwardSoftLimitEnable = max != Double.MAX_VALUE;
+      cfg.ReverseSoftLimitEnable = min != Double.MAX_VALUE;
+      cfg.ForwardSoftLimitThreshold = max;
+      cfg.ReverseSoftLimitThreshold = min;
+      getConfigurator().apply(cfg);
+    }
+
     /**
      * Configures Motion Magic parameters (Velocity, Acceleration, Jerk).
      * @param apply Whether to apply the config immediately to the hardware
@@ -116,6 +131,10 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         cfg.MotionMagic.MotionMagicAcceleration = config.maxAcceleration;
         cfg.MotionMagic.MotionMagicCruiseVelocity = config.maxVelocity;
         cfg.MotionMagic.MotionMagicJerk = config.maxJerk;
+        cfg.MotionMagic.MotionMagicExpo_kA = config.pid[0].kA();
+        cfg.MotionMagic.MotionMagicExpo_kV = config.pid[0].kV();
+        
+        
         if(apply) {
             getConfigurator().apply(cfg.MotionMagic);
         }
@@ -160,6 +179,10 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
         }
     }
 
+    public boolean isRio(){
+      return config.canbus.equals(Canbus.Rio);
+    }
+
     @Override
     public void setName(String name) {
         MotorInterface.super.setName(name);
@@ -169,13 +192,13 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     /** Initializes the data signals for telemetry */
     @SuppressWarnings("unchecked")
     private void setSignals() {
-        closedLoopSPSignal = new Data<>(getClosedLoopReference());
-        closedLoopErrorSignal = new Data<>(getClosedLoopError());
-        positionSignal = new Data<>(getPosition());
-        velocitySignal = new Data<>(getVelocity());
-        accelerationSignal = new Data<>(getAcceleration());
-        voltageSignal = new Data<>(getMotorVoltage());
-        currentSignal = new Data<>(getStatorCurrent());
+        closedLoopSPSignal = new Data<>(new StatusSignal[]{getClosedLoopReference()},isRio());
+        closedLoopErrorSignal = new Data<>(new StatusSignal[]{getClosedLoopError()},isRio());
+        positionSignal = new Data<>(new StatusSignal[]{getPosition()},isRio());
+        velocitySignal = new Data<>(new StatusSignal[] {getVelocity()},isRio());
+        accelerationSignal = new Data<>(new StatusSignal[]{getAcceleration()},isRio());
+        voltageSignal = new Data<>(new StatusSignal[]{getMotorVoltage()}, isRio());
+        currentSignal = new Data<>(new StatusSignal[]{getStatorCurrent()},isRio());
     }
 
     /** Registers the motor's signals with the LogManager */
@@ -189,7 +212,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
             currentSignal.getSignal(),
             closedLoopErrorSignal.getSignal(),
             closedLoopSPSignal.getSignal(),
-            }).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP)
+            }, isRio()).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP)
             .withIsMotor().build();
         LogManager.addEntry(name + ": ControlMode", 
             () -> getCurrentControlMode())
@@ -256,6 +279,16 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     @Override
     public void setMotion(double position, double feedForward) {
         setControl(motionMagicVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
+        controlMode = ControlMode.MOTION;  
+    }
+
+    public void setMotionExpo(double position){
+        setMotionExpo(position, 0);
+    }
+
+    MotionMagicExpoVoltage motionMagicExpoVoltage = new MotionMagicExpoVoltage(0).withSlot(slot);
+    public void setMotionExpo(double position, double feedForward) {
+        setControl(motionMagicExpoVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
         controlMode = ControlMode.MOTION;  
     }
 
@@ -458,6 +491,9 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
       cfg.MotionMagic.MotionMagicAcceleration = config.maxAcceleration;
       cfg.MotionMagic.MotionMagicCruiseVelocity = config.maxVelocity;
       cfg.MotionMagic.MotionMagicJerk = config.maxJerk;
+      cfg.MotionMagic.MotionMagicExpo_kA = config.pid[0].kA();
+      cfg.MotionMagic.MotionMagicExpo_kV = config.pid[0].kV();
+      
       
       getConfigurator().apply(cfg);
     }).ignoringDisable(true);
