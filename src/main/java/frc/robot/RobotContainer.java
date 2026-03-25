@@ -41,7 +41,7 @@ import frc.robot.buttons.ButtonsConstants;
 import frc.robot.chassis.RobotBChassisConstants;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
-import frc.robot.intake.commands.GetBallOutCommand;
+import frc.robot.intake.commands.HetBallOutCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 import frc.robot.leds.RobotBLedStrip;
@@ -181,7 +181,7 @@ public class RobotContainer implements Sendable {
     driverController.rightBumper().onTrue(
         new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
     driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
-    driverController.rightButton().onTrue(new GetBallOutCommand(intake, shinua, driverController.rightButton()));
+    driverController.rightButton().onTrue(new HetBallOutCommand(intake, shinua, driverController.rightButton()));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
