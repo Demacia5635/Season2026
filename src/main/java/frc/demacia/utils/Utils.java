@@ -159,4 +159,22 @@ public class Utils {
     double t = (wantedVelocity - currentVelocity) / accel;
     return 0.5 * accel * t * t;
   }
+
+  public static double nextVelocity(double currentVelocity, double endVelocity, double maxVelocity, double maxAccel, double distance) {
+    // vmax - max velocity from current velocity accelerating at max accel and than deaccel to end velocity - with total distance = distance
+    // distance = (maxVelocity^2 - currentVelocity^2) / (2 * maxAccel) + (maxVelocity^2 - endVelocity^2) / (2 * maxAccel)
+    // distance * 2 * maxAccel = 2*maxVelocity^2 - currentVelocity^2 - endVelocity^2
+    // maxVelocity^2 = (distance * 2 * maxAccel + currentVelocity^2 + endVelocity^2) / 2
+    double vmax = Math.sqrt((distance * 2 * maxAccel + currentVelocity*currentVelocity + endVelocity*endVelocity) / 2);
+    if(vmax > currentVelocity) { // we can accelerate
+      return Math.max(currentVelocity + maxAccel * 0.02, maxVelocity);
+    } else { // we need to deccelerate
+      double deaccelTime = 2 * distance / (currentVelocity + endVelocity);
+      if(deaccelTime < 0.02) {
+        return endVelocity;
+      } else {
+        return currentVelocity - (currentVelocity - endVelocity) * 0.02 / deaccelTime;
+      }
+    }
+ }
 }
