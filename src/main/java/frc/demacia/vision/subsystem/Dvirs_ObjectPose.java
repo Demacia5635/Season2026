@@ -66,7 +66,7 @@ public class Dvirs_ObjectPose {
     public Translation2d getRobotToObjectFeildRel(){
         cameraToObject = new Translation2d(getDistance(),
             Rotation2d.fromDegrees(camObjectYaw + objectCam.getYaw()));
-        robotToObject = (objectCam.getRobotToTurretPosition().toTranslation2d().plus(cameraToObject))
+        robotToObject = (objectCam.getRobotToCamPosition().toTranslation2d().plus(cameraToObject))
             .rotateBy(RobotCommon.robotAngle);
         return robotToObject;
     }

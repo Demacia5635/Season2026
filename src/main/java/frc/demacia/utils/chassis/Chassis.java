@@ -12,12 +12,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-// import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -30,31 +26,19 @@ import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.demacia.utils.Utilities;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.ObjectPose;
 import frc.demacia.vision.TagPose;
 import frc.demacia.vision.subsystem.Quest;
-import frc.demacia.vision.utils.Vision;
-import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.constants.ShooterConstans;
-import frc.robot.Shooter.utils.ShooterUtils;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.demacia.vision.utils.VisionConstants.*;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -120,8 +104,6 @@ public class Chassis extends SubsystemBase {
     public ObjectPose objectPose;
 
     private StatusSignal<Angle> gyroYawStatus;
-    // private TagPose limelight4;
-    private TagPose limelight3;
 
     private Rotation2d lastGyroYaw;
 
@@ -249,14 +231,6 @@ public class Chassis extends SubsystemBase {
 
     public void setRotateToHub() {
         this.isRotateToHub = !isRotateToHub;
-    }
-
-    public Translation2d getDeliveryPoint() {
-        Translation2d futurePos = getPoseWithVelocity(0.1).getTranslation();
-        if (futurePos.getDistance(ShooterConstans.DELIVERY_POINT1) < futurePos
-                .getDistance(ShooterConstans.DELIVERY_POINT2))
-            return ShooterConstans.DELIVERY_POINT1;
-        return ShooterConstans.DELIVERY_POINT2;
     }
 
     /**
@@ -484,9 +458,6 @@ public class Chassis extends SubsystemBase {
 
         RobotPose.getInstance().update(observation, getVelocityAsVector());
         field.setRobotPose(getPose());
-        field.getObject("estimation").setPose(
-                ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.currentRobotPose, 0.1));
-
     }
 
     public void updateCommon() {

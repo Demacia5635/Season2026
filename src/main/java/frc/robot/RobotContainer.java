@@ -5,66 +5,15 @@
 // bft-pgmc-wgo
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Hertz;
-import static frc.robot.Constants.*;
-
-import com.ctre.phoenix6.StatusSignal;
-
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.FrequencyUnit;
-import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.leds.LedManager;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.ObjectPose;
-import frc.demacia.vision.subsystem.Dvirs_ObjectPose;
-import frc.robot.RobotCommon.RobotStates;
-import frc.robot.Shooter.commands.FlywheelTesting;
-import frc.robot.Shooter.commands.HoodTesting;
-import frc.robot.Shooter.commands.ShooterCommand;
-import frc.robot.Shooter.commands.ShooterTesting;
-import frc.robot.Shooter.subsystem.Shooter;
-import frc.demacia.utils.Data;
-import frc.demacia.utils.chassis.Chassis;
-import frc.demacia.utils.chassis.DriveCommand;
-import frc.demacia.utils.controller.CommandController;
-import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.robot.chassis.MK4iChassisConstants;
-import frc.robot.chassis.RobotAChassisConstants;
-import frc.robot.chassis.commands.DrivePower;
-import frc.robot.chassis.commands.DriveVelocity;
-import frc.robot.chassis.commands.SetModuleAngle;
-import frc.robot.climb.commands.ControllerClimb;
-import frc.robot.climb.commands.StateBasedClimb;
-import frc.robot.climb.subsystems.Climb;
-import frc.robot.intake.commands.BatteryTest;
-import frc.robot.intake.commands.IntakeCommand;
-import frc.robot.intake.commands.ShinuaCommand;
-import frc.robot.intake.subsystems.IntakeSubsystem;
-import frc.robot.intake.subsystems.ShinuaSubsystem;
-import frc.robot.leds.RobotALedStrip;
-import frc.robot.turret.TurretCommands.TurretCalibration;
-import frc.robot.turret.TurretCommands.TurretCommand;
-import frc.robot.turret.TurretCommands.TurretFollow;
-import frc.robot.turret.TurretCommands.TurretPower;
-import frc.robot.turret.subsystems.Turret;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -77,16 +26,7 @@ import frc.robot.turret.subsystems.Turret;
  */
 public class RobotContainer implements Sendable {
 
-  public static Chassis chassis;
   CommandController driverController = new CommandController(0, ControllerType.kPS5);
-  public static Turret turret;
-  public static IntakeSubsystem intake;
-  public static ShinuaSubsystem shinua;
-  public static Shooter shooter;
-  public static LedManager ledManager;
-  public static RobotALedStrip leds;
-  public static Climb climb;
-  private Dvirs_ObjectPose ballCamera;
   // The robot's subsystems and commands are defined here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -95,48 +35,10 @@ public class RobotContainer implements Sendable {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    intake = new IntakeSubsystem();
-    shinua = new ShinuaSubsystem();
-    shooter = new Shooter();
-    ledManager = new LedManager();
-    leds = new RobotALedStrip();
-    // climb = new Climb();
-    chassis = new Chassis(RobotAChassisConstants.CHASSIS_CONFIG);
-    // turret = Turret.getInstance();
-    ballCamera = new Dvirs_ObjectPose(new Camera("fuel", new Translation3d(0.298, -0.385, 0.26), -27, 4.6, true));
-
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
-    SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
-      chassis.checkElectronics();
-      intake.checkElectronics();
-      shinua.checkElectronics();
-      // turret.checkElectronics();
-      shooter.checkElectronics();
-      // climb.checkElectronics();
-    }).ignoringDisable(true));
-    addStatesToElasticForTesting();
     configureBindings();
     setUserButton();
-
-    // Data.setFrequancyAll();
-  }
-
-  public void addStatesToElasticForTesting() {
-    SendableChooser<RobotCommon.RobotStates> robotStateChooser = new SendableChooser<>();
-    robotStateChooser.setDefaultOption("Idle", RobotCommon.RobotStates.Idle);
-    for (int i = 1; i < RobotCommon.RobotStates.values().length; i++) {
-      robotStateChooser.addOption(RobotCommon.RobotStates.values()[i].name(), RobotCommon.RobotStates.values()[i]);
-    }
-    robotStateChooser.onChange(state -> RobotCommon.currentState = state);
-    SmartDashboard.putData("Robot State Chooser", robotStateChooser);
-
-    SendableChooser<RobotCommon.Shifts> shiftsChooser = new SendableChooser<>();
-    for (RobotCommon.Shifts state : RobotCommon.Shifts.class.getEnumConstants()) {
-      shiftsChooser.addOption(state.name(), state);
-    }
-    shiftsChooser.onChange(state -> RobotCommon.currentShift = state);
-    SmartDashboard.putData("Shifts Chooser", shiftsChooser);
   }
 
   /**
@@ -154,51 +56,7 @@ public class RobotContainer implements Sendable {
    * joysticks}.
    */
   private void configureBindings() {
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController, ballCamera));
-    intake.setDefaultCommand(new IntakeCommand(intake));
-    shinua.setDefaultCommand(new ShinuaCommand(shinua));
 
-    // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    shooter.setDefaultCommand(new ShooterCommand(shooter, chassis));
-    // climb.setDefaultCommand(new StateBasedClimb(climb, chassis));
-    // driverController.rightButton().onTrue(new ControllerClimb(driverController,
-    // climb));
-    // climb.setDefaultCommand(new ControllerClimb(driverController, climb));
-
-    // turret.setDefaultCommand(new TurretFollow(turret,
-    // Field.HUB(true).getCenter().getTranslation(), chassis));
-    SmartDashboard.putData("Activate Feeder", new StartEndCommand(() -> {
-      shooter.setFeederPower(0.8);
-    }, () -> {
-      shooter.setFeederPower(0);
-    }));
-
-    // shooter.setDefaultCommand(new ShooterTesting(shooter));
-    // turret.setDefaultCommand(new TurretPower(driverController));
-    // turret.setDefaultCommand(new TurretCommand(turret));
-    // turret.setDefaultCommand(new TurretFollow(turret,
-    // Field.HUB(true).getCenter().getTranslation(), chassis));
-
-    driverController.downButton().onTrue(RobotCommon.changeState(RobotStates.HubWithAutoIntake));
-    driverController.upButton().onTrue(RobotCommon.changeState(RobotStates.DriveAutoIntake));
-    driverController.rightButton().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithAutoIntake));
-
-    driverController.povDown().onTrue(RobotCommon.changeState(RobotStates.HubWithoutAutoIntake));
-    driverController.povUp().onTrue(RobotCommon.changeState(RobotStates.Drive));
-    driverController.povRight().onTrue(RobotCommon.changeState(RobotStates.DeliveryWithoutAutoIntake));
-
-    driverController.rightBumper().onTrue(RobotCommon.changeState(RobotStates.Idle));
-
-    SmartDashboard.putData("Auto Drive",
-        new RunCommand(() -> chassis.setRobotRelVelocities(new ChassisSpeeds(2, 0, 0)), chassis));
-
-    // SmartDashboard.putData("lever to zero", new
-    // InstantCommand(()->climb.setLeverAngle(0)));
-    // SmartDashboard.putData("calibrate Climb", new CalibrateClimb(climb));
-    // SmartDashboard.putData("Reset Turret Position",
-    //     new InstantCommand(() -> turret.setEncoderPosition(0)).ignoringDisable(true));
-    // SmartDashboard.putData("Turret Calibration", new TurretCalibration(turret));
-    SmartDashboard.putData("Config steer", new SetModuleAngle(chassis));
   }
 
   private void setUserButton() {
@@ -210,28 +68,8 @@ public class RobotContainer implements Sendable {
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("is comp", () -> RobotCommon.isComp, (isComp) -> RobotCommon.isComp = isComp);
     builder.addBooleanProperty("is red", () -> RobotCommon.isRed, (isRed) -> RobotCommon.isRed = isRed);
-    builder.addDoubleProperty("maxDriveVelocity", () -> chassis.getConfig().maxDriveVelocity,
-        (max) -> chassis.getConfig().withMaxDriveVelocity(max));
-
     builder.addBooleanProperty("change is Robot Calibrated for testing", () -> RobotCommon.isRobotCalibrated,
         (isRobotCalibrated) -> RobotCommon.isRobotCalibrated = isRobotCalibrated);
-    builder.addDoubleProperty("change Accuracy for testing", () -> RobotCommon.targetAccuracy,
-        (targetAccuracy) -> RobotCommon.targetAccuracy = targetAccuracy);
-  }
-
-  static public void updateCommon() {
-    Translation2d currentPoseFromHub = RobotCommon.currentRobotPose.getTranslation().minus(HUB_POS);
-    RobotCommon.currentDistanceFromTarget = currentPoseFromHub.getNorm();
-    RobotCommon.currentAngleFromTarget = currentPoseFromHub.getAngle().getRadians();
-    RobotCommon.currentWantedTurretAngle = RobotCommon.currentWantedTurretAngle
-        - RobotCommon.currentRobotPose.getRotation().getRadians();
-
-    Translation2d futurePoseFromHub = RobotCommon.futureRobotPose.getTranslation().minus(HUB_POS);
-    RobotCommon.futureDistanceFromTarget = futurePoseFromHub.getNorm();
-    RobotCommon.futureAngleFromTarget = futurePoseFromHub.getAngle().getRadians();
-    RobotCommon.futureWantedTurretAngle = RobotCommon.futureWantedTurretAngle
-        - RobotCommon.futureRobotPose.getRotation().getRadians();
-
   }
 
   /**

@@ -4,8 +4,6 @@
 
 package frc.demacia.vision.utils;
 
-import java.util.ArrayList;
-
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -13,16 +11,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.ObjectPose;
-import frc.demacia.vision.TagPose;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
 /**
@@ -235,8 +225,7 @@ public class VisionConstants {
 
         
         public static class Tags {
-                public static final TagPose[] TAGS_ARRAY = {
-                                new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)) };
+                public static final TagPose[] TAGS_ARRAY = {};
 
         }
 }

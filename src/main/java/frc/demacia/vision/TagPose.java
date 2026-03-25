@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.robot.RobotCommon;
-import frc.robot.turret.subsystems.Turret;
 import frc.demacia.utils.log.LogManager;
 
 import static frc.demacia.vision.utils.VisionConstants.*;
@@ -45,9 +44,6 @@ public class TagPose {
 
   // vector for camera
   private Translation2d cameraToTag;
-
-  // vector for turret
-  private Translation2d turretToTag;
 
   // vector for robot
   private Translation2d robotToTag;
@@ -80,8 +76,6 @@ public class TagPose {
     camToTagPitch = Table.getEntry("ty").getDouble(0.0);
     camToTagYaw = (-Table.getEntry("tx").getDouble(0.0));
     id = (int) Table.getEntry("tid").getDouble(0.0);
-    // if (camera.getIsOnTurret()) {
-    // }
 
   }
 
@@ -134,18 +128,6 @@ public class TagPose {
    * * @return Translation2d representing vector to tag
    */
   public Translation2d getRobotToTagFieldRel() {
-    if (camera.getIsOnTurret()) {
-      cameraToTag = new Translation2d(getDistFromCamera(),
-          Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
-
-      turretToTag = (camera.getTurretToCamPosition().plus(cameraToTag))
-          .rotateBy(new Rotation2d(Turret.getInstance().getTurretAngle()));
-      // System.out.println(turretToTag);
-
-      robotToTag = (camera.getRobotToTurretPosition().toTranslation2d().plus(turretToTag))
-          .rotateBy(RobotCommon.robotAngle);
-      return robotToTag;
-    }
     // Convert camera measurements to vector
     cameraToTag = new Translation2d(getDistFromCamera(),
         Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));

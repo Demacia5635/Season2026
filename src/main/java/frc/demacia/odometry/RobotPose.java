@@ -7,10 +7,6 @@ package frc.demacia.odometry;
 import static frc.demacia.vision.utils.VisionConstants.BEST_RELIABLE_SPEED;
 import static frc.demacia.vision.utils.VisionConstants.WORST_RELIABLE_SPEED;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -22,16 +18,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.Utilities;
-import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
-import frc.robot.turret.subsystems.Turret;
 
 /** Add your docs here. */
 public class RobotPose {
