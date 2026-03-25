@@ -3,6 +3,7 @@ package frc.demacia.utils.mechanisms;
 import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,9 +31,12 @@ public class BaseMechanism extends SubsystemBase{
     protected HashMap<String, MotorInterface> motors;
     /** Map of sensors belonging to this mechanism, keyed by their name */
     protected HashMap<String, SensorInterface> sensors;
+    /** Map of motors limits belonging to this mechanism, keyed by their name */
+    protected HashMap<String, Pair<Double, Double>> motorLimits;
 
     protected MotorInterface[] motorArray;
     protected SensorInterface[] sensorArray;
+    protected Pair<Double,Double>[] motorLimitsArray;
 
     protected boolean hasCalibrated = true;
 
@@ -143,6 +147,10 @@ public class BaseMechanism extends SubsystemBase{
             return 0;
         }
         return lookUpTable.get(distance.getAsDouble())[i];
+    }
+
+    public void addLimit(String motorName, double min,  double max) {
+
     }
 
     /**
