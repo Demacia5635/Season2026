@@ -9,24 +9,14 @@ public class TrajectoryConstants {
     public static final double FIELD_HEIGHT = -1; // y in field based
 
     public static final double MAX_POSITION_THRESHOLD = 0.03; // in meters;
-    public static final double MAX_ROTATION_THRESHOLD = Math.toRadians(0.75);
+    public static final double MAX_ROTATION_THRESHOLD = Math.toRadians(2);
     
    
 
 
     public class PathsConstraints {
-        public static final double MAX_VELOCITY = 3;
+        public static final double MAX_VELOCITY = 2.5;
         public static final double MAX_ACCEL = 6;
-
-        public static final double FINISH_MAX_VELOCITY = 1;
-        public static final double FINISH_ACCEL = 1;
-
-        public static final double APPROACH_MAX_VEL = 1.5;
-        public static final double APPROACH_ACCEL = 3;
-
-        public static final double DISTANCE_TO_SLOWER_VELOCITY = 1;
-        public static final double MAX_ROTATIONAL_VELOCITY = Math.toRadians(360); // in radians;
-        public static final double MAX_ROTATIONAL_ACCEL = Math.toRadians(720); // in radians^2
 
     }
 

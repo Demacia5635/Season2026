@@ -19,9 +19,9 @@ public class Leg extends Segment{
      * @param p1 the first point of the leg
      * @param p2 the last point of the leg
      */
-    public Leg(Translation2d p1, Translation2d p2)
+    public Leg(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity)
     {
-        super(p1, p2);
+        super(p1, p2, headingInRad, wantedVelocity);
         totalVector = p2.minus(p1);
         velDirection = totalVector.div(totalVector.getNorm());
     }
@@ -43,8 +43,16 @@ public class Leg extends Segment{
         Translation2d relativePos = position.minus(p1);
 
         //double distanceMoved = (relativePos.getX() * velDirection.getX()) + (relativePos.getY()*velDirection.getY());
-        return Math.abs(relativePos.getNorm());
+        return relativePos.getNorm();
     }
+
+    @Override
+    public double getDistanceLeft(Translation2d currentPosition){
+        return p2.minus(currentPosition).getNorm();
+    
+    }
+
+
 
     @Override
     public double getLength()

@@ -5,10 +5,15 @@
 // bft-pgmc-wgo
 package frc.robot;
 
+import java.util.ArrayList;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -18,6 +23,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
+import frc.demacia.path.Trgectory.FollowTrajectory;
+import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
@@ -99,6 +107,7 @@ public class RobotContainer implements Sendable {
 
     ledManager = new LedManager();
     mainLeds = new RobotBLedStrip();
+
     // dianasourLedStrip = new DianasourLedStrip();
     buttons = Buttons.getInstance();
 
@@ -140,7 +149,6 @@ public class RobotContainer implements Sendable {
     AutoTrajectory trajectory = routine.trajectory("mainAuto/NewPath_copy1");
     // AutoTrajectory trajectory = routine.trajectory("testPath/TestPath");
 
-
     routine.active().onTrue(
         Commands.sequence(
             new InstantCommand(() -> {
@@ -153,7 +161,7 @@ public class RobotContainer implements Sendable {
               CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
             }, chassis),
             trajectory.cmd()));
-  
+
     trajectory.atTime("Delivery").onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
     trajectory.atTime("Trench").onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
     trajectory.atTime("Hub").onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
@@ -273,12 +281,43 @@ public class RobotContainer implements Sendable {
     return instance;
   }
 
+  Field2d field = new Field2d();
+
   public Command getAutonomousCommand() {
-    return null;
+    ArrayList<PathPoint> points = new ArrayList<>();
+    points.add(PathPoint.kZero);
+    
+    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1, 1));
+    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)), 0,1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 - 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5), Rotation2d.fromDegrees(180-15)),0.5, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9, Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5, 3));
+    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1, 3));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
+
+    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.k180deg), 2.5, 0.7));
+    points.add(new PathPoint(new Pose2d(10.1, 3.35, Rotation2d.k180deg), 1, 0.7));
+    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.5, 0.4));
+    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.5, 0.4));
+    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.5, 0.4));
+    points.add(new PathPoint(new Pose2d(8.33, 1.1, Rotation2d.kCW_90deg), 2, 0.4));
+    points.add(new PathPoint(new Pose2d(10, 1.1, Rotation2d.k180deg), 2, 0));
+    points.add(new PathPoint(new Pose2d(13.7, 1.03, Rotation2d.kCW_90deg), 0, 0));
+
+    for (int i = 0; i < points.size(); i++) {
+      field.getObject("points #"+i).setPose(points.get(i));
+    }
+    SmartDashboard.putData("RC/field", field);
+
+    FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
+    return RobotCommon.changeStateCommand(RobotStates.Trench).andThen(trajectory);
     // return auto;
 
+
     // return autoChooser.selectedCommand();
-  }
+  } 
+
 
   public AutoFactory getAutoFactory() {
     return autoFactory;
