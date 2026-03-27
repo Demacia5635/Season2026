@@ -14,22 +14,33 @@ import edu.wpi.first.math.geometry.Translation2d;
  *
  */
 public class PathPoint extends Pose2d{
-    public static final PathPoint kZero = new PathPoint(Translation2d.kZero, Rotation2d.kZero);
+    public static final PathPoint kZero = new PathPoint(Translation2d.kZero, Rotation2d.kZero, 0);
 
+    double wantedVelocity;
     double radius;
 
-    public PathPoint(Pose2d pose2d) {
-      this(pose2d.getTranslation(), pose2d.getRotation());
+
+    public PathPoint(Pose2d pose, double wantedVelocity, double radius){
+      this(pose.getX(), pose.getY(), pose.getRotation(), radius, wantedVelocity);
     }
-    public PathPoint(Translation2d p, Rotation2d r) {
-      this(p.getX(),p.getY(),r,0);
+    public PathPoint(Pose2d pose2d, double wantedVelocity) {
+      this(pose2d.getTranslation(), pose2d.getRotation(), wantedVelocity);
     }
-    public PathPoint(Translation2d p, Rotation2d r, double radius) {
-      this(p.getX(),p.getY(),r,radius);
+    public PathPoint(Translation2d p, Rotation2d r, double wantedVelocity) {
+      this(p.getX(),p.getY(),r,0, wantedVelocity);
     }
-    public PathPoint(double x, double y, Rotation2d rotation, double radius) {
+    public PathPoint(Translation2d p, Rotation2d r, double radius, double wantedVelocity) {
+      this(p.getX(),p.getY(),r,radius, wantedVelocity);
+    }
+    public PathPoint(double x, double y, Rotation2d rotation, double radius, double wantedVelocity) {
       super(x,y,rotation);
       this.radius = radius;
+      this.wantedVelocity = wantedVelocity;
+    }
+
+
+    public double getWantedVelocity(){
+      return this.wantedVelocity;
     }
 
     public double getRadius()

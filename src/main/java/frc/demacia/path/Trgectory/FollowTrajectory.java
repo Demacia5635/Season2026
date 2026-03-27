@@ -17,18 +17,16 @@ public class FollowTrajectory extends Command {
   private Chassis chassis;
   private DemaciaTrajectory trajectory;
   private ArrayList<PathPoint> points;
-  private Rotation2d wantedAngle;
 
-  public FollowTrajectory(Chassis chassis, ArrayList<PathPoint> points, Rotation2d wantedAngle) {
+  public FollowTrajectory(Chassis chassis, ArrayList<PathPoint> points) {
     this.chassis = chassis;
     this.points = points;
-    this.wantedAngle = wantedAngle;
     addRequirements(chassis);
   }
 
   @Override
   public void initialize() {
-    this.trajectory = new DemaciaTrajectory(points, false, wantedAngle, RobotCommon.getCurrentRobotPose());
+    this.trajectory = new DemaciaTrajectory(points, false, RobotCommon.getCurrentRobotPose());
 
   }
 

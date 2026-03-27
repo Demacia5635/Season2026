@@ -23,10 +23,10 @@ public class Arc extends Segment{
      * @param p2 - Circle center of arc
      * @param angle - Arc's angle
      */
-    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle)
+    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle, double headingInRad, double wantedVelocity)
     {
         //start point
-        super(p1,p2);
+        super(p1,p2, headingInRad, wantedVelocity);
         this.angle = angle;
 
         startVector = p1.minus(p2);
@@ -51,6 +51,15 @@ public class Arc extends Segment{
         }
 
         return points;
+    }
+
+    @Override
+    public double getDistanceLeft(Translation2d currentPosition) {
+      Translation2d relativePos = currentPosition.minus(p2);
+
+      Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
+
+      return Math.abs((angle.getRadians()-diffAngle.getRadians()) * radius);    
     }
 
     @Override

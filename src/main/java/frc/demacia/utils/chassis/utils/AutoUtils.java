@@ -28,12 +28,12 @@ public class AutoUtils {
         cmd.addCommands(c);
     }
 
-    public static PathPoint offset(Translation2d from, double x, double y, double angle) {
-        return offset(from, x, y, angle, 0);
+    public static PathPoint offset(Translation2d from, double x, double y, double angle, double wantedVelocity) {
+        return offset(from, x, y, angle, 0, wantedVelocity);
     }
 
-    public static PathPoint offset(Translation2d from, double x, double y, double angle, double radius) {
-        return new PathPoint(from.getX() + x, from.getY() + y, Rotation2d.fromDegrees(angle), radius);
+    public static PathPoint offset(Translation2d from, double x, double y, double angle, double radius, double wantedVelocity) {
+        return new PathPoint(from.getX() + x, from.getY() + y, Rotation2d.fromDegrees(angle), radius, wantedVelocity);
 
     }
 
