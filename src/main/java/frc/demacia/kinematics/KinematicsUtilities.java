@@ -5,8 +5,9 @@
 package frc.demacia.kinematics;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
+
 import static frc.demacia.kinematics.KinematicsConstants.*;
 
 /** Add your docs here. */
@@ -20,11 +21,11 @@ public class KinematicsUtilities {
         return Math.sqrt(x * x + y * y);
     }
 
-    public static Translation2d limitVector(Translation2d vector, Translation2d limit) {
+    public static Translation2dDemacia limitVector(Translation2dDemacia vector, Translation2dDemacia limit) {
         return limitVector(vector, limit.getNorm());
     }
 
-    public static Translation2d limitVector(Translation2d vector, double limit) {
+    public static Translation2dDemacia limitVector(Translation2dDemacia vector, double limit) {
         double vectorNorm = vector.getNorm();
         if (vectorNorm > limit) {
             return (vector.div(vectorNorm)).times(limit);
@@ -36,21 +37,21 @@ public class KinematicsUtilities {
         return Math.abs(value) <= limit;
     }
 
-    public static boolean isInRange(ChassisSpeeds speeds, double limit) {
+    public static boolean isInRange(ChassisSpeedsDemacia speeds, double limit) {
         return Math.abs(speeds.vxMetersPerSecond) <= limit && Math.abs(speeds.vyMetersPerSecond) <= limit
                 && Math.abs(speeds.omegaRadiansPerSecond) <= limit;
     }
 
     public static class Limits {
 
-        private static ChassisSpeeds chassisFromRest(double currentV, double wantedV, ChassisSpeeds wantedSpeeds) {
+        private static ChassisSpeedsDemacia chassisFromRest(double currentV, double wantedV, ChassisSpeedsDemacia wantedSpeeds) {
 
             if (wantedV < MIN_VELOCITY) { // target is standing
-                return new ChassisSpeeds(0, 0, wantedSpeeds.omegaRadiansPerSecond);
+                return new ChassisSpeedsDemacia(0, 0, wantedSpeeds.omegaRadiansPerSecond);
             } else { // target is moving
                 // we are moving to the required heading and accelerating, no radial limit
                 double ratio = MathUtil.clamp(wantedV, currentV, currentV + MAX_DELTA_V) / wantedV;
-                return new ChassisSpeeds(wantedSpeeds.vxMetersPerSecond * ratio, wantedSpeeds.vyMetersPerSecond * ratio,
+                return new ChassisSpeedsDemacia(wantedSpeeds.vxMetersPerSecond * ratio, wantedSpeeds.vyMetersPerSecond * ratio,
                         wantedSpeeds.omegaRadiansPerSecond);
             }
         }
@@ -60,7 +61,7 @@ public class KinematicsUtilities {
 
         }
 
-        public static ChassisSpeeds limitVelocities(ChassisSpeeds wantedSpeeds, ChassisSpeeds currentSpeeds) {
+        public static ChassisSpeedsDemacia limitVelocities(ChassisSpeedsDemacia wantedSpeeds, ChassisSpeedsDemacia currentSpeeds) {
             double currentVelocity = Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
             double wantedVelocity = Math.hypot(wantedSpeeds.vxMetersPerSecond, wantedSpeeds.vyMetersPerSecond);
 
@@ -71,7 +72,7 @@ public class KinematicsUtilities {
             if (wantedVelocity < MIN_VELOCITY) { // target is stop
                 // just deaccelrate to stop
                 double ratio = Math.max(currentVelocity - MAX_DELTA_V, wantedVelocity) / currentVelocity;
-                return new ChassisSpeeds(currentSpeeds.vxMetersPerSecond * ratio,
+                return new ChassisSpeedsDemacia(currentSpeeds.vxMetersPerSecond * ratio,
                         currentSpeeds.vyMetersPerSecond * ratio,
                         wantedSpeeds.omegaRadiansPerSecond);
             }
@@ -98,7 +99,7 @@ public class KinematicsUtilities {
             }
 
             if (targetVelocity < MIN_VELOCITY) {
-                return new ChassisSpeeds(0, 0, wantedSpeeds.omegaRadiansPerSecond);
+                return new ChassisSpeedsDemacia(0, 0, wantedSpeeds.omegaRadiansPerSecond);
             }
             // calculate the maximum heading change using the target velocity and allowed
             // radial acceleration
@@ -108,7 +109,7 @@ public class KinematicsUtilities {
             targetVelocityHeading = currentVelocityHeading + velocityHeadingDiff;
 
             // return the speeds - using target velocity and target angle
-            return new ChassisSpeeds(targetVelocity * Math.cos(targetVelocityHeading),
+            return new ChassisSpeedsDemacia(targetVelocity * Math.cos(targetVelocityHeading),
                     targetVelocity * Math.sin(targetVelocityHeading),
                     wantedSpeeds.omegaRadiansPerSecond);
         }

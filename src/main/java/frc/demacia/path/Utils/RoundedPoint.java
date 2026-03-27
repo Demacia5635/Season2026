@@ -1,19 +1,19 @@
 
 package frc.demacia.path.utils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 public class RoundedPoint {
     double smoothnes = 10;
     double radius;
-    Translation2d aPoint;
-    Translation2d bPoint;
-    Translation2d cPoint;
-    Translation2d vectorAtoB;
-    Translation2d vectorBtoC;
-    Rotation2d cornerDir;
-    Rotation2d cornerAngle;
+    Translation2dDemacia aPoint;
+    Translation2dDemacia bPoint;
+    Translation2dDemacia cPoint;
+    Translation2dDemacia vectorAtoB;
+    Translation2dDemacia vectorBtoC;
+    Rotation2dDemacia cornerDir;
+    Rotation2dDemacia cornerAngle;
     double heading1;
     double heading2;
     double wantedVelocity1;
@@ -66,7 +66,7 @@ public class RoundedPoint {
      * @return The position of the corner's circle center
      */
     // Calculate Cross Angle vector here too
-    public Translation2d getCenterCircle() {
+    public Translation2dDemacia getCenterCircle() {
         double length;
 
         if (this.cornerAngle.div(2).getSin() != 0 && Math.abs(this.cornerAngle.getDegrees()) < 177)
@@ -74,7 +74,7 @@ public class RoundedPoint {
         else
             length = 0;
 
-        Translation2d dirVector = new Translation2d(length, this.cornerDir);
+        Translation2dDemacia dirVector = new Translation2dDemacia(length, this.cornerDir);
         return dirVector.plus(bPoint);
     }
 
@@ -84,9 +84,9 @@ public class RoundedPoint {
      *         circle's center)
      */
     // Calculate cornerDegree beforehand.
-    public Translation2d startRange() {
-        return new Translation2d(radius, vectorAtoB.times(-1).getAngle()
-                .plus(new Rotation2d((Math.PI / 2) * Math.signum(cornerAngle.getDegrees()))));
+    public Translation2dDemacia startRange() {
+        return new Translation2dDemacia(radius, vectorAtoB.times(-1).getAngle()
+                .plus(new Rotation2dDemacia((Math.PI / 2) * Math.signum(cornerAngle.getDegrees()))));
     }
 
     /**
@@ -94,9 +94,9 @@ public class RoundedPoint {
      * @return The ending position of the corner's curve (relative to the corner's
      *         circle's center)
      */
-    public Translation2d endRange() {
-        return new Translation2d(radius,
-                vectorBtoC.getAngle().minus(new Rotation2d((Math.PI / 2) * Math.signum(cornerAngle.getDegrees()))));
+    public Translation2dDemacia endRange() {
+        return new Translation2dDemacia(radius,
+                vectorBtoC.getAngle().minus(new Rotation2dDemacia((Math.PI / 2) * Math.signum(cornerAngle.getDegrees()))));
     }
 
     /**
@@ -104,12 +104,12 @@ public class RoundedPoint {
      * @return An array of points that represent the corner's curve's structure
      */
 
-    public Translation2d[] getPoints() {
+    public Translation2dDemacia[] getPoints() {
         int place = 0;
-        Translation2d[] points = new Translation2d[(int) smoothnes];
+        Translation2dDemacia[] points = new Translation2dDemacia[(int) smoothnes];
         double diffAngle = endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
         for (double i = 0; i < diffAngle; i = i + (diffAngle / smoothnes)) {
-            points[place] = startRange().rotateBy((new Rotation2d(Math.toRadians(i)))).plus(getCenterCircle());
+            points[place] = startRange().rotateBy((new Rotation2dDemacia(Math.toRadians(i)))).plus(getCenterCircle());
             place++;
         }
         return points;
@@ -132,11 +132,11 @@ public class RoundedPoint {
         return getCenterCircle().plus(startRange()).minus(aPoint).getNorm();
     }
 
-    public Translation2d getCurveStart() {
+    public Translation2dDemacia getCurveStart() {
         return getCenterCircle().plus(startRange());
     }
 
-    public Translation2d getCurveEnd() {
+    public Translation2dDemacia getCurveEnd() {
         return getCenterCircle().plus(endRange());
     }
 
@@ -161,7 +161,7 @@ public class RoundedPoint {
     }
 
     public Arc getArc() {
-        Rotation2d diffAngle = endRange().getAngle().minus(startRange().getAngle());
+        Rotation2dDemacia diffAngle = endRange().getAngle().minus(startRange().getAngle());
         return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle, heading2, wantedVelocity2);
     }
 }

@@ -29,6 +29,8 @@ import java.util.Objects;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class Pose2dDemacia implements Interpolatable<Pose2dDemacia>, ProtobufSerializable, StructSerializable {
 
+  public static final Pose2dDemacia kZero = new Pose2dDemacia();
+
   private Translation2dDemacia m_translation;
   private Rotation2dDemacia m_rotation;
 
@@ -139,8 +141,9 @@ public class Pose2dDemacia implements Interpolatable<Pose2dDemacia>, ProtobufSer
    * @param other The pose to subtract.
    * @return This object (modified, now representing the difference).
    */
-  public Pose2dDemacia minus(Pose2dDemacia other) {
-    return relativeTo(other);
+  public Transform2dDemacia minus(Pose2dDemacia other) {
+    final var pose = relativeTo(other);
+    return new Transform2dDemacia(pose.m_translation, pose.m_rotation);
   }
 
   /**
@@ -319,7 +322,7 @@ public class Pose2dDemacia implements Interpolatable<Pose2dDemacia>, ProtobufSer
    * Units.degreesToRadians(0.5)).
    * @return This object (modified).
    */
-  public Pose2dDemacia exp(Twist2d twist) {
+  public Pose2dDemacia exp(Twist2dDemacia twist) {
     double dx = twist.dx;
     double dy = twist.dy;
     double dtheta = twist.dtheta;
@@ -453,7 +456,7 @@ public class Pose2dDemacia implements Interpolatable<Pose2dDemacia>, ProtobufSer
       return endValue;
     } else {
       var twist = this.log(endValue);
-      var scaledTwist = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
+      var scaledTwist = new Twist2dDemacia(twist.dx * t, twist.dy * t, twist.dtheta * t);
       return this.exp(scaledTwist);
     }
   }

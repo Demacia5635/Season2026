@@ -72,11 +72,15 @@ public class Shooter extends SubsystemBase {
         new InstantCommand(() -> hoodMotor.setNeutralMode(true)).ignoringDisable(true));
     SmartDashboard.putData("Shooter/reset Hood Manual",
         new InstantCommand(() -> {
-          hoodMotor.setEncoderPosition(Math.toRadians(86));
-          isHoodMotorLock = false;
+          resetHoodManual();
         }).ignoringDisable(true));
 
     LogManager.log("Shooter Initalize");
+  }
+
+  public void resetHoodManual() {
+    hoodMotor.setEncoderPosition(Math.toRadians(86));
+    isHoodMotorLock = false;
   }
 
   public void checkElectronics() {

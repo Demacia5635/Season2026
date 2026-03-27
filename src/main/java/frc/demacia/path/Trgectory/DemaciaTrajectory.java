@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.logging.LogManager;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import frc.demacia.path.Trgectory.TrajectoryConstants.PathsConstraints;
@@ -21,6 +17,9 @@ import frc.demacia.path.utils.PathPoint;
 import frc.demacia.path.utils.RoundedPoint;
 import frc.demacia.path.utils.Segment;
 import frc.demacia.utils.Utils;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 /** Add your docs here. */
 public class DemaciaTrajectory {
@@ -32,7 +31,7 @@ public class DemaciaTrajectory {
     private int segmentIndex;
     // private Rotation2d wantedAngle;
     public double distanceLeft;
-    Pose2d chassisPose = new Pose2d();
+    Pose2dDemacia chassisPose = new Pose2dDemacia();
     double accel;
     double maxVel;
     boolean isAuto;
@@ -42,7 +41,7 @@ public class DemaciaTrajectory {
      * given points based on blue alliance
      * 
      */
-    public DemaciaTrajectory(ArrayList<PathPoint> points, boolean isRed, Pose2d initialPose) {
+    public DemaciaTrajectory(ArrayList<PathPoint> points, boolean isRed, Pose2dDemacia initialPose) {
         this.segments = new ArrayList<Segment>();
         this.trajectoryLength = 0;
         this.distanceTraveledOnSegment = 0;
@@ -63,7 +62,7 @@ public class DemaciaTrajectory {
 
     }
 
-    private void fixFirstPoint(Pose2d initialPose) {
+    private void fixFirstPoint(Pose2dDemacia initialPose) {
         points.remove(0);
         points.add(0, new PathPoint(initialPose.getTranslation(), initialPose.getRotation(), 0));
 
@@ -81,7 +80,7 @@ public class DemaciaTrajectory {
 
     private PathPoint convertPoint(PathPoint pointToConvert) {
         return new PathPoint(
-                new Translation2d(TrajectoryConstants.FIELD_LENGTH - pointToConvert.getX(),
+                new Translation2dDemacia(TrajectoryConstants.FIELD_LENGTH - pointToConvert.getX(),
                         TrajectoryConstants.FIELD_HEIGHT - pointToConvert.getY()),
                 pointToConvert.getRotation(), pointToConvert.getWantedVelocity());
     }
@@ -126,8 +125,8 @@ public class DemaciaTrajectory {
         return sum;
     }
 
-    public boolean hasFinishedSegments(Pose2d chassisPose, double currentVelocty) {
-        Translation2d currentLastPoint = segmentIndex == segments.size() - 1
+    public boolean hasFinishedSegments(Pose2dDemacia chassisPose, double currentVelocty) {
+        Translation2dDemacia currentLastPoint = segmentIndex == segments.size() - 1
                 ? segments.get(segmentIndex).getPoints()[1]
                 : (segments.get(segmentIndex) instanceof Leg ? segments.get(segmentIndex).getPoints()[1]
                         : segments.get(segmentIndex + 1).getPoints()[0]);
@@ -144,7 +143,7 @@ public class DemaciaTrajectory {
         }
     }
 
-    private double getVelocity(Segment currentSegment, Pose2d chassisPose, double currentVelocity) {
+    private double getVelocity(Segment currentSegment, Pose2dDemacia chassisPose, double currentVelocity) {
         double distance = currentSegment.getDistanceLeft(chassisPose.getTranslation());
         double wantedVelocity = currentSegment.getWantedVelocity();
         double vmax = Math
@@ -168,7 +167,7 @@ public class DemaciaTrajectory {
 
     double lastDistance = 0;
 
-    public ChassisSpeeds calculate(Pose2d chassisPose, double currentVelocity) {
+    public ChassisSpeedsDemacia calculate(Pose2dDemacia chassisPose, double currentVelocity) {
         this.chassisPose = chassisPose;
         var segment = segments.get(segmentIndex);
 
@@ -187,12 +186,12 @@ public class DemaciaTrajectory {
                 chassisPose,
                 currentVelocity);
 
-        Translation2d wantedVelocity = segments.get(segmentIndex).calcVector(chassisPose.getTranslation(), velocity);
+        Translation2dDemacia wantedVelocity = segments.get(segmentIndex).calcVector(chassisPose.getTranslation(), velocity);
         double diffAngle = MathUtil.angleModulus(segment.getHeading() - chassisPose.getRotation().getRadians());
         double wantedOmega = 0;
 
         wantedOmega = Math.abs(diffAngle) < TrajectoryConstants.MAX_ROTATION_THRESHOLD ? 0 : 1.1 * diffAngle;
-        return new ChassisSpeeds(wantedVelocity.getX(), wantedVelocity.getY(), -wantedOmega);
+        return new ChassisSpeedsDemacia(wantedVelocity.getX(), wantedVelocity.getY(), -wantedOmega);
     }
 
     public boolean isFinishedTrajectory() {

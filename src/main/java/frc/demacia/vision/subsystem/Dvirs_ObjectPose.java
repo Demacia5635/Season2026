@@ -6,14 +6,13 @@ package frc.demacia.vision.subsystem;
 
 import java.util.Arrays;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.vision.Camera;
 
 /** Add your docs here. */
@@ -27,8 +26,8 @@ public class Dvirs_ObjectPose extends SubsystemBase {
     private double camObjectPitch;
     private double dist;
 
-    private Translation2d robotToCam;
-    private Translation2d[] previousPos = new Translation2d[3];
+    private Translation2dDemacia robotToCam;
+    private Translation2dDemacia[] previousPos = new Translation2dDemacia[3];
     private boolean tv = false;
     private Field2d fuleField = new Field2d();
 
@@ -72,7 +71,7 @@ public class Dvirs_ObjectPose extends SubsystemBase {
             dist = lut.get(alpha);
             SmartDashboard.putNumberArray("FuleCam", new Double[] { Math.toDegrees(yaw), alpha, dist });
             SmartDashboard.putNumber("Fuel distance", dist);
-            Translation2d robotToFuel = new Translation2d(robotToCam.getX() + dist * Math.cos(yaw),
+            Translation2dDemacia robotToFuel = new Translation2dDemacia(robotToCam.getX() + dist * Math.cos(yaw),
                     robotToCam.getY() + dist * Math.sin(yaw));
             SmartDashboard.putNumber("robotToCam.getY()", robotToCam.getY());
             SmartDashboard.putNumber("robotToFuelx", robotToFuel.getX());

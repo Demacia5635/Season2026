@@ -2,10 +2,10 @@
 package frc.demacia.utils.chassis;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.SwerveModulePositionDemacia;
+import frc.demacia.utils.geometry.SwerveModuleStateDemacia;
 import frc.demacia.utils.motors.MotorInterface;
 import frc.demacia.utils.sensors.Cancoder;
 
@@ -104,8 +104,8 @@ public class SwerveModule {
     public double getSteerAngle() {
         return steerMotor.getCurrentAngle();
     }
-    public Rotation2d getSteerRotation() {
-        return new Rotation2d(getSteerAngle());
+    public Rotation2dDemacia getSteerRotation() {
+        return new Rotation2dDemacia(getSteerAngle());
     }
     public double getSteerVel() {
         return steerMotor.getCurrentVelocity();
@@ -126,7 +126,7 @@ public class SwerveModule {
      * 
      * @param state Target state with speed (m/s) and angle (Rotation2d)
      */
-    public void setState(SwerveModuleState state) {
+    public void setState(SwerveModuleStateDemacia state) {
         double wantedAngle = state.angle.getRadians();
         double diff = wantedAngle - steerMotor.getCurrentPosition();
         double vel = state.speedMetersPerSecond;
@@ -157,8 +157,8 @@ public class SwerveModule {
      * 
      * @return Current drive position (meters) and steer angle
      */
-    public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(driveMotor.getCurrentPosition(), Rotation2d.fromRadians(steerMotor.getCurrentPosition()));
+    public SwerveModulePositionDemacia getModulePosition() {
+        return new SwerveModulePositionDemacia(driveMotor.getCurrentPosition(), Rotation2dDemacia.fromRadians(steerMotor.getCurrentPosition()));
     }
 
     /**
@@ -166,8 +166,8 @@ public class SwerveModule {
      * 
      * @return Current velocity (m/s) and angle (Rotation2d)
      */
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVel(), getSteerRotation());
+    public SwerveModuleStateDemacia getState() {
+        return new SwerveModuleStateDemacia(getDriveVel(), getSteerRotation());
     }
 
     /**

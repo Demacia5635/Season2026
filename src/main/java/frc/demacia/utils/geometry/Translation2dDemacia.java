@@ -33,6 +33,8 @@ import java.util.Objects;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class Translation2dDemacia
     implements Interpolatable<Translation2dDemacia>, ProtobufSerializable, StructSerializable {
+  
+  public static final Translation2dDemacia kZero = new Translation2dDemacia();
 
   private double m_x;
   private double m_y;

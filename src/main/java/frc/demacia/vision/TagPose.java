@@ -5,9 +5,6 @@
 package frc.demacia.vision;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -17,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.utils.VisionConstants;
@@ -43,17 +43,17 @@ public class TagPose {
   private double height;
 
   // vector for camera
-  private Translation2d cameraToTag;
+  private Translation2dDemacia cameraToTag;
 
   // vector for robot
-  private Translation2d robotToTag;
-  private Translation2d originToRobot;
+  private Translation2dDemacia robotToTag;
+  private Translation2dDemacia originToRobot;
 
   // vector for tag
-  private Translation2d origintoTag;
+  private Translation2dDemacia origintoTag;
 
   // robot pose
-  public Pose2d pose = new Pose2d();
+  public Pose2dDemacia pose = new Pose2dDemacia();
 
   private double latency;
 
@@ -67,9 +67,9 @@ public class TagPose {
     pipeEntry = Table.getEntry("pipeline");
     LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     SmartDashboard.putData("field-tag " + camera.getName(), field);
-    SmartDashboard.putData("setTo3d " + camera.getName(),
+    SmartDashboard.putData("set to 3d " + camera.getName(),
         new InstantCommand(() -> setDimension(true)).ignoringDisable(true));
-    SmartDashboard.putData("setTo2d " + camera.getName(),
+    SmartDashboard.putData("set to 2d " + camera.getName(),
         new InstantCommand(() -> setDimension(false)).ignoringDisable(true));
     SmartDashboard.putData("chassis/reset gyro by camera " + camera.getName(),
         Commands.sequence(
@@ -84,9 +84,9 @@ public class TagPose {
     Table.getEntry("pipeline").setNumber(is3D ? 1 : 0);
   }
 
-  public Rotation2d get3dAngle() {
+  public Rotation2dDemacia get3dAngle() {
     double[] botpose_orb_wpired = Table.getEntry("botpose").getDoubleArray(new double[12]);
-    return new Rotation2d(Math.toRadians(botpose_orb_wpired[5]));
+    return new Rotation2dDemacia(Math.toRadians(botpose_orb_wpired[5]));
   }
 
   private void changePipeline(int id) {
@@ -104,20 +104,20 @@ public class TagPose {
 
   }
 
-  public Pose2d getRobotPose2d() {
+  public Pose2dDemacia getRobotPose2d() {
     if (isSeeTag()) {
       if (camera.getIsCroping()) {
         crop();
       }
 
       if (id > 0 && id < VisionConstants.TAG_HEIGHT.length) {
-        pose = new Pose2d(getOriginToRobot(), RobotCommon.getRobotAngle());
+        pose = new Pose2dDemacia(getOriginToRobot(), RobotCommon.getRobotAngle());
         field.setRobotPose(pose);
         confidence = getConfidence();
       }
     } else {
       cropStop();
-      pose = new Pose2d();
+      pose = new Pose2dDemacia();
     }
     // if (wantedPip != Table.getEntry("getpipe").getDouble(0.0)) {
     // pipeEntry.setDouble(wantedPip);
@@ -130,7 +130,7 @@ public class TagPose {
    * Uses known AprilTag position and measured vector to tag
    * * @return Translation2d representing robot position on field
    */
-  public Translation2d getOriginToRobot() {
+  public Translation2dDemacia getOriginToRobot() {
 
     origintoTag = VisionConstants.O_TO_TAG[(int) this.id == -1 ? 0 : (int) this.id];
 
@@ -141,7 +141,7 @@ public class TagPose {
 
       return originToRobot;
     }
-    return new Translation2d();
+    return new Translation2dDemacia();
 
   }
 
@@ -150,10 +150,10 @@ public class TagPose {
    * Accounts for camera offset from robot center
    * * @return Translation2d representing vector to tag
    */
-  public Translation2d getRobotToTagFieldRel() {
+  public Translation2dDemacia getRobotToTagFieldRel() {
     // Convert camera measurements to vector
-    cameraToTag = new Translation2d(getDistFromCamera(),
-        Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
+    cameraToTag = new Translation2dDemacia(getDistFromCamera(),
+        Rotation2dDemacia.fromDegrees(camToTagYaw + camera.getYaw()));
     // Add camera offset to get robot center to tag vector
     robotToTag = (camera.getRobotToCamPosition().toTranslation2d()
         .plus(cameraToTag)).rotateBy(RobotCommon.getRobotAngle());
@@ -238,7 +238,7 @@ public class TagPose {
         0 })[5];
   }
 
-  public Rotation2d getRobotAngle() {
+  public Rotation2dDemacia getRobotAngle() {
     return null;
   }
 
@@ -250,9 +250,9 @@ public class TagPose {
     return Table.getEntry("tv").getDouble(0.0) >= 0.1;
   }
 
-  public Translation2d getCameraToTag() {
-    return cameraToTag = new Translation2d(getDistFromCamera(),
-        Rotation2d.fromDegrees(camToTagYaw + camera.getYaw()));
+  public Translation2dDemacia getCameraToTag() {
+    return cameraToTag = new Translation2dDemacia(getDistFromCamera(),
+        Rotation2dDemacia.fromDegrees(camToTagYaw + camera.getYaw()));
   }
 
 }

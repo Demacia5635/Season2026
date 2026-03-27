@@ -8,8 +8,8 @@ package frc.demacia.vision.utils;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.vision.TagPose;
 import frc.robot.RobotCommon;
 // import frc.robot.RobotCommon.*;
@@ -46,6 +46,12 @@ public class Vision {
                 return true;
         }
         return false;
+    }
+
+    public void setToDimension(boolean is3d) {
+        for (TagPose tagPose : tags) {
+            tagPose.setDimension(is3d);
+        }
     }
 
     // TODO: Remove Incorrect located tags
@@ -92,7 +98,7 @@ public class Vision {
         return getCollectedConfidence() == 0 ? 0 : confidence * (1d / getCollectedConfidence());
     }
 
-    public Pose2d getPoseEstimation() {
+    public Pose2dDemacia getPoseEstimation() {
         double x = 0;
         double y = 0;
         double confidence = 0;
@@ -100,12 +106,12 @@ public class Vision {
             if (tag.getRobotPose2d() == null)
                 continue;
             confidence = normalizeConfidence(tag.getPoseEstemationConfidence());
-            Pose2d pose2d = tag.getRobotPose2d();
+            Pose2dDemacia pose2d = tag.getRobotPose2d();
             x += pose2d.getX() * confidence;
             y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y, RobotCommon.getRobotAngle());
+        return new Pose2dDemacia(x, y, RobotCommon.getRobotAngle());
     }
 
     public void updateValues() {
@@ -114,10 +120,10 @@ public class Vision {
         }
     }
     
-    public Rotation2d getRobotAngle(){
+    public Rotation2dDemacia getRobotAngle(){
         for (TagPose tag : tags) {
             if (tag.getRobotPose2d() != null) {
-                return Rotation2d.fromDegrees(tag.getAngle());
+                return Rotation2dDemacia.fromDegrees(tag.getAngle());
             }
         }
         return null;

@@ -6,9 +6,7 @@ package frc.demacia.path.Trgectory;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -16,6 +14,8 @@ import frc.robot.RobotCommon;
 import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.Utils;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
+import frc.demacia.utils.geometry.Pose2dDemacia;
 
 public class FollowTrajectory extends Command {
   private Chassis chassis;
@@ -28,6 +28,14 @@ public class FollowTrajectory extends Command {
     this.points = points;
     this.eventLoop = new EventLoop();
     addRequirements(chassis);
+  }
+
+  public Trigger addTrigger(Pose2dDemacia pose2d, double meterTreshold, double rotationTreshold) {
+    return new Trigger(eventLoop, () -> {
+      return Math.abs(RobotCommon.getCurrentRobotPose().getX() - pose2d.getX()) <= meterTreshold
+          && Math.abs(RobotCommon.getCurrentRobotPose().getY() - pose2d.getY()) <= meterTreshold
+          && Math.abs(MathUtil.angleModulus(RobotCommon.getRobotAngle().getRadians() - pose2d.getRotation().getRadians())) <= rotationTreshold;
+    });
   }
 
   @Override
@@ -45,7 +53,7 @@ public class FollowTrajectory extends Command {
 
   @Override
   public void execute() {
-    ChassisSpeeds speeds = chassis.getChassisSpeedsFieldRel();
+    ChassisSpeedsDemacia speeds = chassis.getChassisSpeedsFieldRel();
     chassis.setVelocities(
         trajectory.calculate(RobotCommon.getCurrentRobotPose(), Utils.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond)));
     eventLoop.poll();

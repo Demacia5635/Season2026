@@ -15,6 +15,7 @@ import frc.demacia.utils.motors.TalonFXMotor;
 import frc.demacia.utils.sensors.LimitSwitch;
 import frc.robot.RobotCommon;
 import frc.robot.RobotCommon.RobotStates;
+import frc.robot.Turret.TurretCommands.TurretCalibration;
 
 public class Turret extends SubsystemBase {
   private static Turret instance;
@@ -36,9 +37,6 @@ public class Turret extends SubsystemBase {
 
   private boolean hasCalibrated;
 
-  private boolean hasReachedTarget;
-  private double lastTurretAngle;
-
   private Turret() {
     turretMotor = new TalonFXMotor(TurretConstants.TURRET_MOTOR_CONFIG);
     limitSwitchMin = new LimitSwitch(TurretConstants.LIMIT_SWITCH_MIN_CONFIG);
@@ -49,14 +47,12 @@ public class Turret extends SubsystemBase {
     isTurretLock = false;
     hasCalibrated = false;
 
-    hasReachedTarget = false;
-    lastTurretAngle = 0;
-
     SmartDashboard.putData("Turret", this);
     SmartDashboard.putData("Turret/Motor/set coast",
         new InstantCommand(() -> setNeutralMode(false)).ignoringDisable(true));
     SmartDashboard.putData("Turret/Motor/set brake",
         new InstantCommand(() -> setNeutralMode(true)).ignoringDisable(true));
+    SmartDashboard.putData("Turret/turret calibration", new TurretCalibration(this));
 
     LogManager.log("Turret Initalize");
   }
@@ -185,6 +181,7 @@ public class Turret extends SubsystemBase {
       turretMotor.setEncoderPosition(TurretConstants.MAX_SENSOR);
 
     turretMotor.configSoftwareLimit(TurretConstants.MIN_TURRET_ANGLE, TurretConstants.MAX_TURRET_ANGLE);
+    hasCalibrated = true;
   }
 
   public void stop() {

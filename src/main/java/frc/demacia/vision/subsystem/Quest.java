@@ -1,13 +1,12 @@
 package frc.demacia.vision.subsystem;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Pose3dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
@@ -26,7 +25,7 @@ public class Quest extends SubsystemBase {
   private Field2d robotField;
 
   private QuestNav questNav;
-  private Pose3d currentQuestPose;
+  private Pose3dDemacia currentQuestPose;
   private double timestamp;
 
 
@@ -42,7 +41,7 @@ public class Quest extends SubsystemBase {
 
     robotField = new Field2d();//robot pose
 
-    currentQuestPose = new Pose3d(); // Initialize to origin - IMPORTANT!
+    currentQuestPose = new Pose3dDemacia(); // Initialize to origin - IMPORTANT!
 
     addLog();
   }
@@ -62,14 +61,14 @@ public class Quest extends SubsystemBase {
 
 
   // Set robot pose (transforms to Quest frame and sends to QuestNav)
-  public void setQuestPose(Pose3d currentBotpose) {
+  public void setQuestPose(Pose3dDemacia currentBotpose) {
     questNav.setPose(currentBotpose.transformBy(ROBOT_TO_QUEST3D));// the transformBy is to switch x & y and gives back
    }                                                               // the hight of the quest
 
   /**
    * * @return the center of the robot form quest
    */
-  public Pose2d getRobotPose2d() {
+  public Pose2dDemacia getRobotPose2d() {
     // return new Pose2d(currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse()).toPose2d().getTranslation(),gyroAngle.get().rotateBy(Rotation2d.fromDegrees(90)));// the transformBy is to switch x & y
     return currentQuestPose.transformBy(ROBOT_TO_QUEST3D.inverse()).toPose2d();
   }
@@ -126,7 +125,7 @@ public class Quest extends SubsystemBase {
 
 
   
-  public void setHeading(Rotation2d angle){
-    setQuestPose(new Pose3d(getRobotPose2d().getX(),getRobotPose2d().getY(),currentQuestPose.getZ(),new Rotation3d(angle)));
+  public void setHeading(Rotation2dDemacia angle){
+    setQuestPose(new Pose3dDemacia(getRobotPose2d().getX(),getRobotPose2d().getY(),currentQuestPose.getZ(),new Rotation3d(angle)));
   }
 }

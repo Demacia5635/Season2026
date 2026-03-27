@@ -1,23 +1,22 @@
 package frc.demacia.utils.chassis.utils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
-
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.robot.RobotContainer;
 
 public class AutoUtils {
 
     static Chassis chassis;
     static double maxVel = 4;
-    static Translation2d cornerOffsetLeft = new Translation2d(0.480, 0.93212813);
-    static Translation2d cornerOffsetRight = new Translation2d(0.480, -0.93212813);
-    public static final Translation2d blueReefCenter = new Translation2d(4.490, 4.035);
-    public static final Translation2d redReefCenter = new Translation2d(13.058902, 4.035);
+    static Translation2dDemacia cornerOffsetLeft = new Translation2dDemacia(0.480, 0.93212813);
+    static Translation2dDemacia cornerOffsetRight = new Translation2dDemacia(0.480, -0.93212813);
+    public static final Translation2dDemacia blueReefCenter = new Translation2dDemacia(4.490, 4.035);
+    public static final Translation2dDemacia redReefCenter = new Translation2dDemacia(13.058902, 4.035);
     public static final int[] reefCams = { 0, 3 };
 
     public AutoUtils() {
@@ -28,12 +27,12 @@ public class AutoUtils {
         cmd.addCommands(c);
     }
 
-    public static PathPoint offset(Translation2d from, double x, double y, double angle, double wantedVelocity) {
+    public static PathPoint offset(Translation2dDemacia from, double x, double y, double angle, double wantedVelocity) {
         return offset(from, x, y, angle, 0, wantedVelocity);
     }
 
-    public static PathPoint offset(Translation2d from, double x, double y, double angle, double radius, double wantedVelocity) {
-        return new PathPoint(from.getX() + x, from.getY() + y, Rotation2d.fromDegrees(angle), radius, wantedVelocity);
+    public static PathPoint offset(Translation2dDemacia from, double x, double y, double angle, double radius, double wantedVelocity) {
+        return new PathPoint(from.getX() + x, from.getY() + y, Rotation2dDemacia.fromDegrees(angle), radius, wantedVelocity);
 
     }
 

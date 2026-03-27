@@ -22,19 +22,33 @@ import edu.wpi.first.util.struct.StructSerializable;
 import java.util.Objects;
 
 /**
- * A rotation in a 2D coordinate frame represented by a point on the unit circle (cosine and sine).
+ * A rotation in a 2D coordinate frame represented by a point on the unit circle
+ * (cosine and sine).
  *
- * <p>The angle is continuous, that is if a Rotation2d is constructed with 361 degrees, it will
- * return 361 degrees. This allows algorithms that wouldn't want to see a discontinuity in the
+ * <p>
+ * The angle is continuous, that is if a Rotation2d is constructed with 361
+ * degrees, it will
+ * return 361 degrees. This allows algorithms that wouldn't want to see a
+ * discontinuity in the
  * rotations as it sweeps past from 360 to 0 on the second time around.
  *
- * <p><b>NOTE: This is a MUTABLE implementation. Methods like plus(), minus(), rotateBy() modify the current object!</b>
+ * <p>
+ * <b>NOTE: This is a MUTABLE implementation. Methods like plus(), minus(),
+ * rotateBy() modify the current object!</b>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class Rotation2dDemacia
     implements Interpolatable<Rotation2dDemacia>, ProtobufSerializable, StructSerializable {
-  
+
+  public static final Rotation2dDemacia kZero = new Rotation2dDemacia();
+  public static final Rotation2dDemacia kCW_Pi_2 = new Rotation2dDemacia(-Math.PI / 2);
+  public static final Rotation2dDemacia kCW_90deg = kCW_Pi_2;
+  public static final Rotation2dDemacia kCCW_Pi_2 = new Rotation2dDemacia(Math.PI / 2);
+  public static final Rotation2dDemacia kCCW_90deg = kCCW_Pi_2;
+  public static final Rotation2dDemacia kPi = new Rotation2dDemacia(Math.PI);
+  public static final Rotation2dDemacia k180deg = kPi;
+
   private double m_value;
   private double m_cos;
   private double m_sin;
@@ -91,7 +105,8 @@ public class Rotation2dDemacia
    * Constructs a Rotation2d from a rotation matrix.
    *
    * @param rotationMatrix The rotation matrix.
-   * @throws IllegalArgumentException if the rotation matrix isn't special orthogonal.
+   * @throws IllegalArgumentException if the rotation matrix isn't special
+   *                                  orthogonal.
    */
   public Rotation2dDemacia(Matrix<N2, N2> rotationMatrix) {
     final var R = rotationMatrix;
@@ -104,16 +119,15 @@ public class Rotation2dDemacia
       throw new IllegalArgumentException(msg);
     }
     if (Math.abs(R.det() - 1.0) > 1e-9) {
-      var msg =
-          "Rotation matrix is orthogonal but not special orthogonal\n\nR =\n"
-              + R.getStorage().toString()
-              + '\n';
+      var msg = "Rotation matrix is orthogonal but not special orthogonal\n\nR =\n"
+          + R.getStorage().toString()
+          + '\n';
       MathSharedStore.reportError(msg, Thread.currentThread().getStackTrace());
       throw new IllegalArgumentException(msg);
     }
 
-    // R = [cosθ  −sinθ]
-    //     [sinθ   cosθ]
+    // R = [cosθ −sinθ]
+    // [sinθ cosθ]
     m_cos = R.get(0, 0);
     m_sin = R.get(1, 0);
 
@@ -168,7 +182,10 @@ public class Rotation2dDemacia
    * Adds two rotations together, with the result being bounded between -π and π.
    * <b>Modifies this object.</b>
    *
-   * <p>For example, <code>Rotation2d.fromDegrees(30).plus(Rotation2d.fromDegrees(60))</code> equals
+   * <p>
+   * For example,
+   * <code>Rotation2d.fromDegrees(30).plus(Rotation2d.fromDegrees(60))</code>
+   * equals
    * <code>Rotation2d(Math.PI/2.0)</code>
    *
    * @param other The rotation to add.
@@ -182,7 +199,9 @@ public class Rotation2dDemacia
    * Subtracts the new rotation from the current rotation.
    * <b>Modifies this object.</b>
    *
-   * <p>For example, <code>Rotation2d.fromDegrees(10).minus(Rotation2d.fromDegrees(100))</code>
+   * <p>
+   * For example,
+   * <code>Rotation2d.fromDegrees(10).minus(Rotation2d.fromDegrees(100))</code>
    * equals <code>Rotation2d(-Math.PI/2.0)</code>
    *
    * @param other The rotation to subtract.
@@ -206,7 +225,8 @@ public class Rotation2dDemacia
   }
 
   /**
-   * Takes the inverse of the current rotation. This is simply the negative of the current angular value.
+   * Takes the inverse of the current rotation. This is simply the negative of the
+   * current angular value.
    * <b>Modifies this object.</b>
    *
    * @return This object (modified).
@@ -246,7 +266,8 @@ public class Rotation2dDemacia
    * Adds the new rotation to the current rotation using a rotation matrix.
    * <b>Modifies this object.</b>
    *
-   * <p>The matrix multiplication is as follows:
+   * <p>
+   * The matrix multiplication is as follows:
    *
    * <pre>
    * [cos_new]   [other.cos, -other.sin][cos]
@@ -280,8 +301,8 @@ public class Rotation2dDemacia
    * @return Matrix representation of this rotation.
    */
   public Matrix<N2, N2> toMatrix() {
-    // R = [cosθ  −sinθ]
-    //     [sinθ   cosθ]
+    // R = [cosθ −sinθ]
+    // [sinθ cosθ]
     return MatBuilder.fill(Nat.N2(), Nat.N2(), m_cos, -m_sin, m_sin, m_cos);
   }
 
@@ -298,7 +319,8 @@ public class Rotation2dDemacia
    * Returns the radian value of the Rotation2d.
    *
    * @return The radian value of the Rotation2d.
-   * @see edu.wpi.first.math.MathUtil#angleModulus(double) to constrain the angle within (-π, π]
+   * @see edu.wpi.first.math.MathUtil#angleModulus(double) to constrain the angle
+   *      within (-π, π]
    */
   @JsonProperty
   public double getRadians() {
@@ -309,8 +331,9 @@ public class Rotation2dDemacia
    * Returns the degree value of the Rotation2d.
    *
    * @return The degree value of the Rotation2d.
-   * @see edu.wpi.first.math.MathUtil#inputModulus(double, double, double) to constrain the angle
-   * within (-180, 180]
+   * @see edu.wpi.first.math.MathUtil#inputModulus(double, double, double) to
+   *      constrain the angle
+   *      within (-180, 180]
    */
   public double getDegrees() {
     return Math.toDegrees(m_value);
@@ -376,7 +399,8 @@ public class Rotation2dDemacia
 
   @Override
   public Rotation2dDemacia interpolate(Rotation2dDemacia endValue, double t) {
-    return new Rotation2dDemacia(m_value).plus(((new Rotation2dDemacia(endValue.m_value)).minus(this).times(MathUtil.clamp(t, 0, 1))));
+    return new Rotation2dDemacia(m_value)
+        .plus(((new Rotation2dDemacia(endValue.m_value)).minus(this).times(MathUtil.clamp(t, 0, 1))));
   }
 
   /** Rotation2d protobuf for serialization. */

@@ -4,22 +4,18 @@
 
 package frc.demacia.path.utils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-
-/** Add your docs here. */
-
-
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 public class Leg extends Segment{
-    Translation2d totalVector;
-    final Translation2d velDirection;
+    Translation2dDemacia totalVector;
+    final Translation2dDemacia velDirection;
     /**
      * creates a leg type segment
      * @param p1 the first point of the leg
      * @param p2 the last point of the leg
      */
-    public Leg(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity)
+    public Leg(Translation2dDemacia p1, Translation2dDemacia p2, double headingInRad, double wantedVelocity)
     {
         super(p1, p2, headingInRad, wantedVelocity);
         totalVector = p2.minus(p1);
@@ -27,27 +23,27 @@ public class Leg extends Segment{
     }
 
     @Override
-    public Translation2d calcVector(Translation2d position, double velocity)
+    public Translation2dDemacia calcVector(Translation2dDemacia position, double velocity)
     {
        // if (p2.getDistance(position) <= 0.2) return new Translation2d(velocity, position.minus(p2).getAngle());
-        Translation2d relativePos = position.minus(p2);
+        Translation2dDemacia relativePos = position.minus(p2);
         double diffAngleMaxed = Math.min(15, p1.minus(p2).getAngle().minus(relativePos.getAngle()).getDegrees());
 
-        return new Translation2d(velocity, relativePos.times(-1).getAngle().minus(Rotation2d.fromDegrees(diffAngleMaxed)));
+        return new Translation2dDemacia(velocity, relativePos.times(-1).getAngle().minus(Rotation2dDemacia.fromDegrees(diffAngleMaxed)));
 
     }
 
     @Override
-    public double distancePassed(Translation2d position)
+    public double distancePassed(Translation2dDemacia position)
     {
-        Translation2d relativePos = position.minus(p1);
+        Translation2dDemacia relativePos = position.minus(p1);
 
         //double distanceMoved = (relativePos.getX() * velDirection.getX()) + (relativePos.getY()*velDirection.getY());
         return relativePos.getNorm();
     }
 
     @Override
-    public double getDistanceLeft(Translation2d currentPosition){
+    public double getDistanceLeft(Translation2dDemacia currentPosition){
         return p2.minus(currentPosition).getNorm();
     
     }

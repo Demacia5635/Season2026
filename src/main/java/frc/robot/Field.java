@@ -1,6 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 /**
  * Field constants for the 2026 FRC game: REBUILT™ presented by Haas.
@@ -152,7 +152,7 @@ public final class Field {
         /** Distance from Red Alliance Wall to this Hub's X_BACK face — 158.34 in. */
         public static final double DISTANCE_FROM_WALL = 4.028;
 
-        public static final Translation2d CENTER = new Translation2d(X_CENTER, Y_CENTER);
+        public static final Translation2dDemacia CENTER = new Translation2dDemacia(X_CENTER, Y_CENTER);
     }
 
     /** BLUE Alliance Hub positional and size constants. */

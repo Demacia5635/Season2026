@@ -6,36 +6,37 @@ package frc.demacia.vision;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.demacia.utils.geometry.Field2dDemacia;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 // Subsystem that tracks and calculates the position of a vision target (object) on the field
 public class ObjectPose{
-  private Translation2d robotToObject;
-  private Translation2d cameraToObject;
-  private Translation2d OriginToObject;
+  private Translation2dDemacia robotToObject;
+  private Translation2dDemacia cameraToObject;
+  private Translation2dDemacia OriginToObject;
 
   // Previous cycle tracking
-  private Pose2d previousObjectPose;
+  private Pose2dDemacia previousObjectPose;
   private boolean hasPreviousTarget = false;
 
   private NetworkTable Table;
-  private Field2d field;
-  private Field2d robotfield;
+  private Field2dDemacia field;
+  private Field2dDemacia robotfield;
 
   private double camToObjectYaw;
   private double camToObjectPitch;
 
-  private Supplier<Rotation2d> getRobotAngle;
-  private Supplier<Pose2d> robotCurrentPose;
+  private Supplier<Rotation2dDemacia> getRobotAngle;
+  private Supplier<Pose2dDemacia> robotCurrentPose;
 
   private Camera camera;
-  private Pose2d objectPose;
+  private Pose2dDemacia objectPose;
 
   // Deadzone and tracking parameters
   private static final double DEADZONE_DISTANCE = 0.5; // meters - adjust based on your robot size
@@ -45,7 +46,7 @@ public class ObjectPose{
    * Constructor - Initializes the object tracker with camera configuration and robot position suppliers.
    * Sets up the NetworkTable connection to receive vision data from the camera.
    */
-  public ObjectPose(Camera camera, Supplier<Rotation2d> getRobotAngle, Supplier<Pose2d> robotCurrentPose) {
+public ObjectPose(Camera camera, Supplier<Rotation2dDemacia> getRobotAngle, Supplier<Pose2dDemacia> robotCurrentPose) {
     this.getRobotAngle = getRobotAngle;
     this.robotCurrentPose = robotCurrentPose;
     field = new Field2d();
@@ -69,7 +70,7 @@ public class ObjectPose{
    * 
    * @return The chosen Pose2d to use for object tracking
    */
-  private Pose2d chooseObjectPose() {
+  private Pose2dDemacia chooseObjectPose() {
     double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
     double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
     boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
@@ -81,7 +82,7 @@ public class ObjectPose{
         return previousObjectPose;
       } else {
         SmartDashboard.putString("Target Status", "No Target");
-        return Pose2d.kZero;
+        return Pose2dDemacia.kZero;
       }
     }
 
@@ -89,8 +90,8 @@ public class ObjectPose{
     camToObjectPitch = currentCamToObjectPitch;
     camToObjectYaw = currentCamToObjectYaw;
     
-    Translation2d currentOriginToObject = getOriginToObject();
-    Pose2d currentObjectPose = new Pose2d(currentOriginToObject, getRobotAngle.get());
+    Translation2dDemacia currentOriginToObject = getOriginToObject();
+    Pose2dDemacia currentObjectPose = new Pose2dDemacia(currentOriginToObject, getRobotAngle.get());
     double currentDistance = getRobotToObject().getNorm();
 
     // Check if current target is in deadzone
@@ -137,7 +138,7 @@ public class ObjectPose{
   public void update(){
     objectPose = chooseObjectPose();
     
-    if (!objectPose.equals(Pose2d.kZero)) {
+    if (!objectPose.equals(Pose2dDemacia.kZero)) {
       field.setRobotPose(objectPose);
     }
   }
@@ -146,9 +147,9 @@ public class ObjectPose{
    * Returns the last calculated field pose of the tracked object.
    * @return Pose2d containing the object's position and rotation on the field
    */
-  public Pose2d getPose2d() {
+  public Pose2dDemacia getPose2d() {
     if (objectPose == null) {
-      return Pose2d.kZero;
+      return Pose2dDemacia.kZero;
     }
     return objectPose;
   }
@@ -171,9 +172,9 @@ public class ObjectPose{
    * First calculates camera-to-object translation, then adds the camera's offset from robot center.
    * @return Translation2d from robot center to object in robot coordinates
    */
-  public Translation2d getRobotToObject() {
-    cameraToObject = new Translation2d(getDistcameraToObject(), Rotation2d.fromDegrees(camToObjectYaw));
-    robotToObject = new Translation2d(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
+  public Translation2dDemacia getRobotToObject() {
+    cameraToObject = new Translation2dDemacia(getDistcameraToObject(), Rotation2dDemacia.fromDegrees(camToObjectYaw));
+    robotToObject = new Translation2dDemacia(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
     return robotToObject;
   }
 
@@ -182,12 +183,12 @@ public class ObjectPose{
    * Rotates the robot-to-object vector by the robot's field angle, then adds the robot's field position.
    * @return Translation2d from field origin to object in field coordinates 0.775
    */
-  public Translation2d getOriginToObject() {
+  public Translation2dDemacia getOriginToObject() {
     if (robotCurrentPose.get() != null) {
       robotToObject = getRobotToObject().rotateBy(getRobotAngle.get());
       OriginToObject = robotToObject.plus(robotCurrentPose.get().getTranslation());
     } else {
-      return Translation2d.kZero;
+      return Translation2dDemacia.kZero;
     }
     return OriginToObject;
   }

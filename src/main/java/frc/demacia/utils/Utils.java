@@ -5,15 +5,15 @@ import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import frc.demacia.utils.controller.CommandController;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 public class Utils {
 
-  public static double degrees(Rotation2d r) {
+  public static double degrees(Rotation2dDemacia r) {
     return MathUtil.inputModulus(r.getDegrees(), -180, 180);
   }
 
@@ -21,7 +21,7 @@ public class Utils {
     return MathUtil.inputModulus(angle, -180, 180);
   }
 
-  public static double angleDif(Rotation2d r1, Rotation2d r2) {
+  public static double angleDif(Rotation2dDemacia r1, Rotation2dDemacia r2) {
     return degrees(r1.minus(r2));
   }
 
@@ -32,8 +32,8 @@ public class Utils {
         deadband(controller.getRightTrigger(), 0.1) != 0;
   }
 
-  public static Translation2d getStickVector(CommandController controller) {
-    return new Translation2d(controller.getRightX(), controller.getRightY());
+  public static Translation2dDemacia getStickVector(CommandController controller) {
+    return new Translation2dDemacia(controller.getRightX(), controller.getRightY());
   }
 
   public static double deadband(double x, double threshold) {
@@ -109,12 +109,12 @@ public class Utils {
   // Field.SubShootPosition;
   // }
 
-  public static double angleErrorInDegrees(Rotation2d r1, Rotation2d r2, double deadband) {
+  public static double angleErrorInDegrees(Rotation2dDemacia r1, Rotation2dDemacia r2, double deadband) {
 
     return deadband(MathUtil.inputModulus(r1.minus(r2).getDegrees(), -180, 180), deadband);
   }
 
-  public static double angleErrorInRadians(Rotation2d r1, Rotation2d r2, double deadband) {
+  public static double angleErrorInRadians(Rotation2dDemacia r1, Rotation2dDemacia r2, double deadband) {
     return deadband(MathUtil.angleModulus(r1.minus(r2).getRadians()), deadband);
   }
 
@@ -142,7 +142,7 @@ public class Utils {
     return rotationsPerSecond * 2 * Math.PI * radius;
   }
 
-  public static double angleFromTranslation2d(Translation2d translation2d) {
+  public static double angleFromTranslation2d(Translation2dDemacia translation2d) {
     double magnitude = hypot(translation2d.getX(), translation2d.getY());
     if (magnitude > 1e-6) {
       return Math.atan2(translation2d.getY() / magnitude, translation2d.getX() / magnitude);

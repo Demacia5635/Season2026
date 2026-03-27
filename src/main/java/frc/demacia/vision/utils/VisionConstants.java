@@ -7,14 +7,13 @@ package frc.demacia.vision.utils;
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Rotation3dDemacia;
+import frc.demacia.utils.geometry.Transform3dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
+import frc.demacia.utils.geometry.Translation3dDemacia;
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
@@ -45,40 +44,40 @@ public class VisionConstants {
          * 
          * Updated for 2026 REEFSCAPE season.
          */
-        public static final Translation2d[] O_TO_TAG = {
+        public static final Translation2dDemacia[] O_TO_TAG = {
                         null, // 0 - unused
-                        new Translation2d(inchToMeter(467.637), inchToMeter(292.314)), // 1
-                        new Translation2d(inchToMeter(469.111), inchToMeter(182.6)), // 2
-                        new Translation2d(inchToMeter(445.349), inchToMeter(172.844)), // 3
-                        new Translation2d(inchToMeter(445.349), inchToMeter(158.844)), // 4
-                        new Translation2d(inchToMeter(469.111), inchToMeter(135.088)), // 5
-                        new Translation2d(inchToMeter(467.637), inchToMeter(25.374)), // 6
-                        new Translation2d(inchToMeter(470.586), inchToMeter(25.374)), // 7
-                        new Translation2d(inchToMeter(483.111), inchToMeter(135.088)), // 8
-                        new Translation2d(inchToMeter(492.881), inchToMeter(144.844)), // 9
-                        new Translation2d(inchToMeter(492.881), inchToMeter(158.844)), // 10
-                        new Translation2d(inchToMeter(483.111), inchToMeter(182.6)), // 11
-                        new Translation2d(inchToMeter(470.586), inchToMeter(292.314)), // 12
-                        new Translation2d(inchToMeter(650.918), inchToMeter(291.469)), // 13
-                        new Translation2d(inchToMeter(650.918), inchToMeter(274.469)), // 14
-                        new Translation2d(inchToMeter(650.904), inchToMeter(170.219)), // 15
-                        new Translation2d(inchToMeter(650.904), inchToMeter(153.219)), // 16
-                        new Translation2d(inchToMeter(183.586), inchToMeter(25.374)), // 17
-                        new Translation2d(inchToMeter(182.111), inchToMeter(135.088)), // 18
-                        new Translation2d(inchToMeter(205.873), inchToMeter(144.844)), // 19
-                        new Translation2d(inchToMeter(205.873), inchToMeter(158.844)), // 20
-                        new Translation2d(inchToMeter(182.111), inchToMeter(182.6)), // 21
-                        new Translation2d(inchToMeter(183.586), inchToMeter(292.314)), // 22
-                        new Translation2d(inchToMeter(180.637), inchToMeter(292.314)), // 23
-                        new Translation2d(inchToMeter(168.111), inchToMeter(182.6)), // 24
-                        new Translation2d(inchToMeter(158.341), inchToMeter(172.844)), // 25
-                        new Translation2d(inchToMeter(158.341), inchToMeter(158.844)), // 26
-                        new Translation2d(inchToMeter(168.111), inchToMeter(135.088)), // 27
-                        new Translation2d(inchToMeter(180.637), inchToMeter(25.374)), // 28
-                        new Translation2d(inchToMeter(0.305), inchToMeter(26.219)), // 29
-                        new Translation2d(inchToMeter(0.305), inchToMeter(43.219)), // 30
-                        new Translation2d(inchToMeter(0.318), inchToMeter(147.469)), // 31
-                        new Translation2d(inchToMeter(0.318), inchToMeter(164.469)) // 32
+                        new Translation2dDemacia(inchToMeter(467.637), inchToMeter(292.314)), // 1
+                        new Translation2dDemacia(inchToMeter(469.111), inchToMeter(182.6)), // 2
+                        new Translation2dDemacia(inchToMeter(445.349), inchToMeter(172.844)), // 3
+                        new Translation2dDemacia(inchToMeter(445.349), inchToMeter(158.844)), // 4
+                        new Translation2dDemacia(inchToMeter(469.111), inchToMeter(135.088)), // 5
+                        new Translation2dDemacia(inchToMeter(467.637), inchToMeter(25.374)), // 6
+                        new Translation2dDemacia(inchToMeter(470.586), inchToMeter(25.374)), // 7
+                        new Translation2dDemacia(inchToMeter(483.111), inchToMeter(135.088)), // 8
+                        new Translation2dDemacia(inchToMeter(492.881), inchToMeter(144.844)), // 9
+                        new Translation2dDemacia(inchToMeter(492.881), inchToMeter(158.844)), // 10
+                        new Translation2dDemacia(inchToMeter(483.111), inchToMeter(182.6)), // 11
+                        new Translation2dDemacia(inchToMeter(470.586), inchToMeter(292.314)), // 12
+                        new Translation2dDemacia(inchToMeter(650.918), inchToMeter(291.469)), // 13
+                        new Translation2dDemacia(inchToMeter(650.918), inchToMeter(274.469)), // 14
+                        new Translation2dDemacia(inchToMeter(650.904), inchToMeter(170.219)), // 15
+                        new Translation2dDemacia(inchToMeter(650.904), inchToMeter(153.219)), // 16
+                        new Translation2dDemacia(inchToMeter(183.586), inchToMeter(25.374)), // 17
+                        new Translation2dDemacia(inchToMeter(182.111), inchToMeter(135.088)), // 18
+                        new Translation2dDemacia(inchToMeter(205.873), inchToMeter(144.844)), // 19
+                        new Translation2dDemacia(inchToMeter(205.873), inchToMeter(158.844)), // 20
+                        new Translation2dDemacia(inchToMeter(182.111), inchToMeter(182.6)), // 21
+                        new Translation2dDemacia(inchToMeter(183.586), inchToMeter(292.314)), // 22
+                        new Translation2dDemacia(inchToMeter(180.637), inchToMeter(292.314)), // 23
+                        new Translation2dDemacia(inchToMeter(168.111), inchToMeter(182.6)), // 24
+                        new Translation2dDemacia(inchToMeter(158.341), inchToMeter(172.844)), // 25
+                        new Translation2dDemacia(inchToMeter(158.341), inchToMeter(158.844)), // 26
+                        new Translation2dDemacia(inchToMeter(168.111), inchToMeter(135.088)), // 27
+                        new Translation2dDemacia(inchToMeter(180.637), inchToMeter(25.374)), // 28
+                        new Translation2dDemacia(inchToMeter(0.305), inchToMeter(26.219)), // 29
+                        new Translation2dDemacia(inchToMeter(0.305), inchToMeter(43.219)), // 30
+                        new Translation2dDemacia(inchToMeter(0.318), inchToMeter(147.469)), // 31
+                        new Translation2dDemacia(inchToMeter(0.318), inchToMeter(164.469)) // 32
         };
 
         /**
@@ -88,40 +87,40 @@ public class VisionConstants {
          * 
          * Updated for 2026 REEFSCAPE season.
          */
-        public static final Rotation2d[] TAG_ANGLE = {
+        public static final Rotation2dDemacia[] TAG_ANGLE = {
                         null, // 0 - unused
-                        Rotation2d.fromDegrees(180), // 1
-                        Rotation2d.fromDegrees(90), // 2
-                        Rotation2d.fromDegrees(180), // 3
-                        Rotation2d.fromDegrees(180), // 4
-                        Rotation2d.fromDegrees(270), // 5
-                        Rotation2d.fromDegrees(180), // 6
-                        Rotation2d.fromDegrees(0), // 7
-                        Rotation2d.fromDegrees(270), // 8
-                        Rotation2d.fromDegrees(0), // 9
-                        Rotation2d.fromDegrees(0), // 10
-                        Rotation2d.fromDegrees(90), // 11
-                        Rotation2d.fromDegrees(0), // 12
-                        Rotation2d.fromDegrees(180), // 13
-                        Rotation2d.fromDegrees(180), // 14
-                        Rotation2d.fromDegrees(180), // 15
-                        Rotation2d.fromDegrees(180), // 16
-                        Rotation2d.fromDegrees(0), // 17
-                        Rotation2d.fromDegrees(270), // 18
-                        Rotation2d.fromDegrees(0), // 19
-                        Rotation2d.fromDegrees(0), // 20
-                        Rotation2d.fromDegrees(90), // 21
-                        Rotation2d.fromDegrees(0), // 22
-                        Rotation2d.fromDegrees(180), // 23
-                        Rotation2d.fromDegrees(90), // 24
-                        Rotation2d.fromDegrees(180), // 25
-                        Rotation2d.fromDegrees(180), // 26
-                        Rotation2d.fromDegrees(270), // 27
-                        Rotation2d.fromDegrees(180), // 28
-                        Rotation2d.fromDegrees(0), // 29
-                        Rotation2d.fromDegrees(0), // 30
-                        Rotation2d.fromDegrees(0), // 31
-                        Rotation2d.fromDegrees(0) // 32
+                        Rotation2dDemacia.fromDegrees(180), // 1
+                        Rotation2dDemacia.fromDegrees(90), // 2
+                        Rotation2dDemacia.fromDegrees(180), // 3
+                        Rotation2dDemacia.fromDegrees(180), // 4
+                        Rotation2dDemacia.fromDegrees(270), // 5
+                        Rotation2dDemacia.fromDegrees(180), // 6
+                        Rotation2dDemacia.fromDegrees(0), // 7
+                        Rotation2dDemacia.fromDegrees(270), // 8
+                        Rotation2dDemacia.fromDegrees(0), // 9
+                        Rotation2dDemacia.fromDegrees(0), // 10
+                        Rotation2dDemacia.fromDegrees(90), // 11
+                        Rotation2dDemacia.fromDegrees(0), // 12
+                        Rotation2dDemacia.fromDegrees(180), // 13
+                        Rotation2dDemacia.fromDegrees(180), // 14
+                        Rotation2dDemacia.fromDegrees(180), // 15
+                        Rotation2dDemacia.fromDegrees(180), // 16
+                        Rotation2dDemacia.fromDegrees(0), // 17
+                        Rotation2dDemacia.fromDegrees(270), // 18
+                        Rotation2dDemacia.fromDegrees(0), // 19
+                        Rotation2dDemacia.fromDegrees(0), // 20
+                        Rotation2dDemacia.fromDegrees(90), // 21
+                        Rotation2dDemacia.fromDegrees(0), // 22
+                        Rotation2dDemacia.fromDegrees(180), // 23
+                        Rotation2dDemacia.fromDegrees(90), // 24
+                        Rotation2dDemacia.fromDegrees(180), // 25
+                        Rotation2dDemacia.fromDegrees(180), // 26
+                        Rotation2dDemacia.fromDegrees(270), // 27
+                        Rotation2dDemacia.fromDegrees(180), // 28
+                        Rotation2dDemacia.fromDegrees(0), // 29
+                        Rotation2dDemacia.fromDegrees(0), // 30
+                        Rotation2dDemacia.fromDegrees(0), // 31
+                        Rotation2dDemacia.fromDegrees(0) // 32
         };
 
         /**
@@ -169,9 +168,9 @@ public class VisionConstants {
 
         // Scoring position offsets TODO: Update these based on 2026 Hub/Tower/Outpost
         // positions
-        public static final Translation2d HUB_TAG_TO_RIGHT_SCORING = new Translation2d(-0.55, -0.160);
-        public static final Translation2d HUB_TAG_TO_LEFT_SCORING = new Translation2d(-0.55, 0.160);
-        public static final Translation2d INTAKE_TAG_TO_SCORING = new Translation2d(-0.85, 0.0);
+        public static final Translation2dDemacia HUB_TAG_TO_RIGHT_SCORING = new Translation2dDemacia(-0.55, -0.160);
+        public static final Translation2dDemacia HUB_TAG_TO_LEFT_SCORING = new Translation2dDemacia(-0.55, 0.160);
+        public static final Translation2dDemacia INTAKE_TAG_TO_SCORING = new Translation2dDemacia(-0.85, 0.0);
 
         /**
          * Converts a measurement from inches to meters
@@ -200,7 +199,7 @@ public class VisionConstants {
 
         // Quest VR headset mounting configuration
         // TODO: Find the right offsets for your robot's Quest mounting position
-        public static final Rotation3d YAW_OFFSET_QUEST = new Rotation3d(0, 0.0, 0);
+        public static final Rotation3dDemacia YAW_OFFSET_QUEST = new Rotation3dDemacia(0, 0.0, 0);
         public static final double Y_OFFSET_QUEST = -0.176043;//-0.14018022
         public static final double X_OFFSET_QUEST = 0.1579;//0.3026234
         public static final double Z_OFFSET_QUEST = 0.460;//0.460
@@ -209,7 +208,7 @@ public class VisionConstants {
         /**
          * Transform from the center of the robot to Quest headset position in 3d
          */
-        public static final Transform3d ROBOT_TO_QUEST3D = new Transform3d(
+        public static final Transform3dDemacia ROBOT_TO_QUEST3D = new Transform3dDemacia(
                         X_OFFSET_QUEST,
                         Y_OFFSET_QUEST,
                         Z_OFFSET_QUEST,
@@ -231,8 +230,8 @@ public class VisionConstants {
                 public static final TagPose[] TAGS_ARRAY = {
                                 // new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)),
                                 //prev x offset 0.283 
-                                new TagPose(new Camera("hub", new Translation3d(0.27,-0.20,0.345), 19d, 2d, false, false)),
-                                new TagPose(new Camera("back", new Translation3d(-0.284, -0.205, 0.184), 31d, 180d, false, false))
+                                new TagPose(new Camera("hub", new Translation3dDemacia(0.27,-0.20,0.345), 19d, 2d, false, false)),
+                                new TagPose(new Camera("back", new Translation3dDemacia(-0.284, -0.205, 0.184), 31d, 180d, false, false))
                         };
 
         }

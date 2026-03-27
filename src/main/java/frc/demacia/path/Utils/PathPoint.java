@@ -4,54 +4,53 @@
 
 package frc.demacia.path.utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 /**
  * 
- *A point in the path
+ * A point in the path
  *
  */
-public class PathPoint extends Pose2d{
-    public static final PathPoint kZero = new PathPoint(Translation2d.kZero, Rotation2d.kZero, 0);
+public class PathPoint extends Pose2dDemacia {
+  public static final PathPoint kZero = new PathPoint(Translation2dDemacia.kZero, Rotation2dDemacia.kZero, 0d);
 
-    double wantedVelocity;
-    double radius;
+  double wantedVelocity;
+  double radius;
 
+  public PathPoint(Pose2dDemacia pose, double wantedVelocity, double radius) {
+    this(pose.getX(), pose.getY(), pose.getRotation(), radius, wantedVelocity);
+  }
 
-    public PathPoint(Pose2d pose, double wantedVelocity, double radius){
-      this(pose.getX(), pose.getY(), pose.getRotation(), radius, wantedVelocity);
-    }
-    public PathPoint(Pose2d pose2d, double wantedVelocity) {
-      this(pose2d.getTranslation(), pose2d.getRotation(), wantedVelocity);
-    }
-    public PathPoint(Translation2d p, Rotation2d r, double wantedVelocity) {
-      this(p.getX(),p.getY(),r,0, wantedVelocity);
-    }
-    public PathPoint(Translation2d p, Rotation2d r, double radius, double wantedVelocity) {
-      this(p.getX(),p.getY(),r,radius, wantedVelocity);
-    }
-    public PathPoint(double x, double y, Rotation2d rotation, double radius, double wantedVelocity) {
-      super(x,y,rotation);
-      this.radius = radius;
-      this.wantedVelocity = wantedVelocity;
-    }
+  public PathPoint(Pose2dDemacia pose2d, double wantedVelocity) {
+    this(pose2d.getTranslation(), pose2d.getRotation(), wantedVelocity);
+  }
 
+  public PathPoint(Translation2dDemacia p, Rotation2dDemacia r, double wantedVelocity) {
+    this(p.getX(), p.getY(), r, 0, wantedVelocity);
+  }
 
-    public double getWantedVelocity(){
-      return this.wantedVelocity;
-    }
+  public PathPoint(Translation2dDemacia p, Rotation2dDemacia r, double radius, double wantedVelocity) {
+    this(p.getX(), p.getY(), r, radius, wantedVelocity);
+  }
 
-    public double getRadius()
-    {
-      return radius;
-    }
+  public PathPoint(double x, double y, Rotation2dDemacia rotation, double radius, double wantedVelocity) {
+    super(x, y, rotation);
+    this.radius = radius;
+    this.wantedVelocity = wantedVelocity;
+  }
 
-    public void setRadius(double radius)
-    {
-      this.radius = radius;
-    }
+  public double getWantedVelocity() {
+    return this.wantedVelocity;
+  }
 
+  public double getRadius() {
+    return radius;
+  }
+
+  public void setRadius(double radius) {
+    this.radius = radius;
+  }
 
 }

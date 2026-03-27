@@ -2,8 +2,6 @@ package frc.demacia.utils.geometry;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTable;
@@ -33,7 +31,7 @@ public class Field2dDemacia implements NTSendable, AutoCloseable {
   @SuppressWarnings("this-escape")
   public Field2dDemacia() {
     FieldObject2dDemacia obj = new FieldObject2dDemacia("Robot");
-    obj.setPose(Pose2d.kZero);
+    obj.setPose(Pose2dDemacia.kZero);
     m_objects.add(obj);
     SendableRegistry.add(this, "Field");
   }
@@ -50,7 +48,7 @@ public class Field2dDemacia implements NTSendable, AutoCloseable {
    *
    * @param pose 2D pose
    */
-  public synchronized void setRobotPose(Pose2d pose) {
+  public synchronized void setRobotPose(Pose2dDemacia pose) {
     m_objects.get(0).setPose(pose);
   }
 
@@ -61,7 +59,7 @@ public class Field2dDemacia implements NTSendable, AutoCloseable {
    * @param yMeters Y location, in meters
    * @param rotation rotation
    */
-  public synchronized void setRobotPose(double xMeters, double yMeters, Rotation2d rotation) {
+  public synchronized void setRobotPose(double xMeters, double yMeters, Rotation2dDemacia rotation) {
     m_objects.get(0).setPose(xMeters, yMeters, rotation);
   }
 
@@ -72,7 +70,7 @@ public class Field2dDemacia implements NTSendable, AutoCloseable {
    * @param y Y location
    * @param rotation rotation
    */
-  public synchronized void setRobotPose(Distance x, Distance y, Rotation2d rotation) {
+  public synchronized void setRobotPose(Distance x, Distance y, Rotation2dDemacia rotation) {
     m_objects.get(0).setPose(x.in(Meters), y.in(Meters), rotation);
   }
 
@@ -81,7 +79,7 @@ public class Field2dDemacia implements NTSendable, AutoCloseable {
    *
    * @return 2D pose
    */
-  public synchronized Pose2d getRobotPose() {
+  public synchronized Pose2dDemacia getRobotPose() {
     return m_objects.get(0).getPose();
   }
 

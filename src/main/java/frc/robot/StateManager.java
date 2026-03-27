@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
@@ -8,7 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.demacia.utils.geometry.Pose2dDemacia;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.RobotCommon.Shifts;
 
@@ -183,7 +182,7 @@ public class StateManager extends SubsystemBase {
     private final double TRENCH_OFFSET = 0.5;
 
     private boolean isOnTrench(boolean isFuture) {
-        Pose2d checkPose = isFuture ? RobotCommon.getFutureRobotPose() : RobotCommon.getCurrentRobotPose();
+        Pose2dDemacia checkPose = isFuture ? RobotCommon.getFutureRobotPose() : RobotCommon.getCurrentRobotPose();
         return (checkPose.getY() > Field.TrenchRedAudience.Y_FRONT - 0.4
                 || checkPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.4)
                 && ((checkPose.getX() < Field.HubRed.X_BACK + TRENCH_OFFSET

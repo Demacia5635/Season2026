@@ -1,6 +1,6 @@
 package frc.demacia.utils.chassis;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.utils.motors.BaseMotorConfig;
 import frc.demacia.utils.sensors.CancoderConfig;
 
@@ -28,7 +28,7 @@ public class SwerveModuleConfig {
     public final CancoderConfig cancoderConfig;
     public double steerOffset = 0;
 
-    public Translation2d position = Translation2d.kZero;
+    public Translation2dDemacia position = Translation2dDemacia.kZero;
 
     public double steerVelToDriveVel = 0;
 
@@ -58,7 +58,7 @@ public class SwerveModuleConfig {
         return this;
     }
 
-    public SwerveModuleConfig withPosion(Translation2d position) {
+    public SwerveModuleConfig withPosion(Translation2dDemacia position) {
         this.position = position;
         return this;
     }

@@ -7,20 +7,22 @@ package frc.demacia.odometry;
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Pose3dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.SwerveModulePositionDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
@@ -44,7 +46,7 @@ public class RobotPose {
     private Matrix<N3, N1> visionSTD;
     private BuiltInAccelerometer accelerometer;
 
-    private RobotPose(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
+    private RobotPose(Translation2dDemacia[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
         this.vision = new Vision((VisionConstants.Tags.TAGS_ARRAY));
 
@@ -55,26 +57,39 @@ public class RobotPose {
         this.hasQuestDisconnected = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
         this.accelerometer = new BuiltInAccelerometer();
-        SmartDashboard.putData("Reset Pose Based Red Hub", new InstantCommand(() -> {
-            Chassis.getInstance().setYaw(Rotation2d.kZero);
-            setQuestPose(hubRedResetPose);
-            resetPose(hubRedResetPose);
-        }).ignoringDisable(true));
+        
+        SmartDashboard.putData("full reset pose", fullResetPoseCommand());
     }
 
-    private final Pose2d hubRedResetPose = new Pose2d(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER,
-            Rotation2d.kZero);
+    public Command fullResetPoseCommand() {
+        return Commands.sequence(
+            new InstantCommand(() -> vision.setToDimension(true)),
+            new WaitCommand(1),
+            new InstantCommand(this::setAngle3DLimelight),
+            new WaitCommand(1),
+            new InstantCommand(() -> vision.setToDimension(false)),
+            new WaitCommand(1),
+            new InstantCommand(this::setQuestPose)
+        ).ignoringDisable(true);
+    }
+
+    public Vision getVision() {
+        return vision;
+    }
+
+    private final Pose2dDemacia hubRedResetPose = new Pose2dDemacia(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER,
+            Rotation2dDemacia.kZero);
 
     public Quest getQuest() {
         return quest;
     }
 
-    public Pose2d getPose() {
+    public Pose2dDemacia getPose() {
 
         return poseEstimator.getEstimatedPose();
     }
 
-    public static void initialize(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
+    public static void initialize(Translation2dDemacia[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
 
         if (instance == null)
@@ -82,11 +97,10 @@ public class RobotPose {
     }
 
     public void resetPose() {
-        resetPose(Pose2d.kZero);
+        resetPose(Pose2dDemacia.kZero);
     }
 
-    public void resetPose(Pose2d pose) {
-        System.out.println(pose);
+    public void resetPose(Pose2dDemacia pose) {
         poseEstimator.resetPose(pose);
     }
 
@@ -98,8 +112,8 @@ public class RobotPose {
         poseEstimator.addOdometryCalculation(odometryObservation);
     }
 
-    public void addOdometryCalculation(Pose2d odometryPose, Rotation2d gyroAngle,
-            SwerveModulePosition[] modulePositions) {
+    public void addOdometryCalculation(Pose2dDemacia odometryPose, Rotation2dDemacia gyroAngle,
+            SwerveModulePositionDemacia[] modulePositions) {
         addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
     }
 
@@ -111,13 +125,13 @@ public class RobotPose {
         }
     }
 
-    public void setQuestHeading(Rotation2d heading) {
+    public void setQuestHeading(Rotation2dDemacia heading) {
         quest.setHeading(heading);
     }
 
-    public void setQuestPose(Pose2d pose) {
+    public void setQuestPose(Pose2dDemacia pose) {
         hasUpdatedQuestIntialPose = true;
-        quest.setQuestPose(new Pose3d(pose));
+        quest.setQuestPose(new Pose3dDemacia(pose));
     }
 
     public void addVisionMeasurement(Rotation2d gyroAngle) {
@@ -135,8 +149,8 @@ public class RobotPose {
 
     }
 
-    public void update(Pose2d odometryPose, Rotation2d gyroAngle,
-            SwerveModulePosition[] modulePositions, Translation2d currentVelocity) {
+    public void update(Pose2dDemacia odometryPose, Rotation2dDemacia gyroAngle,
+            SwerveModulePositionDemacia[] modulePositions, Translation2dDemacia currentVelocity) {
         update(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
 
     }
@@ -147,7 +161,7 @@ public class RobotPose {
     }
 
     public void setAngle3DLimelight() {
-        Rotation2d newAngle = vision.getRobotAngle();
+        Rotation2dDemacia newAngle = vision.getRobotAngle();
         if (newAngle != null)
             Chassis.getInstance().setYaw(newAngle);
 

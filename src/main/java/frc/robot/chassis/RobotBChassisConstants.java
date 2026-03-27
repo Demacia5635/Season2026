@@ -1,9 +1,9 @@
 package frc.robot.chassis;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import frc.demacia.utils.chassis.ChassisConfig;
 import frc.demacia.utils.chassis.Mk5nConstants;
 import frc.demacia.utils.chassis.SwerveModuleConfig;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.CancoderConfig;
@@ -142,7 +142,7 @@ public final class RobotBChassisConstants {
                     SteerMotor.getSteerMotor(i * 3 + 2, moduleName),
                     DriveMotor.getDriveMotor(i * 3 + 1, moduleName),
                     new CancoderConfig(i * 3 + 3, CANBUS, NAME + "/" + moduleName + "/" + "Cancoder"))
-                    .withPosion(new Translation2d(
+                    .withPosion(new Translation2dDemacia(
                             i == 0 || i == 1 ? 0.295 : -0.295,
                             i == 0 || i == 2 ? 0.395 : -0.395))
                     .withSteerOffset(offsets[i]);

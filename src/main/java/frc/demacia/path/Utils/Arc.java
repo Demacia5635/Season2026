@@ -4,18 +4,17 @@
 
 package frc.demacia.path.utils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 /** Add your docs here. */
 public class Arc extends Segment{
 
     //p1 represents the start point, p2 represents the circle center
-    Rotation2d angle;
+    Rotation2dDemacia angle;
 
 
-    final Translation2d startVector;
+    final Translation2dDemacia startVector;
     final double radius;
     /**
      * 
@@ -23,7 +22,7 @@ public class Arc extends Segment{
      * @param p2 - Circle center of arc
      * @param angle - Arc's angle
      */
-    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle, double headingInRad, double wantedVelocity)
+    public Arc(Translation2dDemacia p1, Translation2dDemacia p2, Rotation2dDemacia angle, double headingInRad, double wantedVelocity)
     {
         //start point
         super(p1,p2, headingInRad, wantedVelocity);
@@ -35,17 +34,17 @@ public class Arc extends Segment{
     }
 
     @Override
-    public Translation2d[] getPoints()
+    public Translation2dDemacia[] getPoints()
     {
-      Translation2d arrow = p1.minus(p2);
-      Translation2d[] points = new Translation2d[4];
+      Translation2dDemacia arrow = p1.minus(p2);
+      Translation2dDemacia[] points = new Translation2dDemacia[4];
       double diffAngle = angle.getRadians();
       int place = 0;
       if(radius == 0){
-        return new Translation2d[] {p1, p2};
+        return new Translation2dDemacia[] {p1, p2};
       }
         for (double i = 0;Math.abs(i) < Math.abs(diffAngle); i = i + (diffAngle / 4)) {
-            points[place] = p2.plus(arrow.rotateBy(new Rotation2d(i)));
+            points[place] = p2.plus(arrow.rotateBy(new Rotation2dDemacia(i)));
           
             place++;
         }
@@ -54,42 +53,42 @@ public class Arc extends Segment{
     }
 
     @Override
-    public double getDistanceLeft(Translation2d currentPosition) {
-      Translation2d relativePos = currentPosition.minus(p2);
+    public double getDistanceLeft(Translation2dDemacia currentPosition) {
+      Translation2dDemacia relativePos = currentPosition.minus(p2);
 
-      Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
+      Rotation2dDemacia diffAngle = startVector.getAngle().minus(relativePos.getAngle());
 
       return Math.abs((angle.getRadians()-diffAngle.getRadians()) * radius);    
     }
 
     @Override
-    public Translation2d calcVector(Translation2d pos,double velocity)
+    public Translation2dDemacia calcVector(Translation2dDemacia pos,double velocity)
     {
-        Translation2d relativePos = pos.minus(p2);
+        Translation2dDemacia relativePos = pos.minus(p2);
         double dFromCenter = relativePos.getNorm();
 
-        Rotation2d tAngle = new Rotation2d(((velocity * 0.02) / radius) * Math.signum(angle.getDegrees()));
+        Rotation2dDemacia tAngle = new Rotation2dDemacia(((velocity * 0.02) / radius) * Math.signum(angle.getDegrees()));
 
 
         //tangent angle to arc, determined by the robot's position
-        Rotation2d tanAngle = relativePos.getAngle().plus(new Rotation2d(Math.toRadians(90 * Math.signum(angle.getDegrees()))));
+        Rotation2dDemacia tanAngle = relativePos.getAngle().plus(new Rotation2dDemacia(Math.toRadians(90 * Math.signum(angle.getDegrees()))));
         //fix angle = turn angle, multiplied by a ratio.
         //bigger ratio - will turn more towards the center
         //smaller ratio - will turn less towards the center
-        Rotation2d fixAngle = tAngle.times(dFromCenter / radius);
+        Rotation2dDemacia fixAngle = tAngle.times(dFromCenter / radius);
 
 
 
       
-      return new Translation2d(velocity, tanAngle.plus(fixAngle));
+      return new Translation2dDemacia(velocity, tanAngle.plus(fixAngle));
     }
 
     @Override
-    public double distancePassed(Translation2d pos)
+    public double distancePassed(Translation2dDemacia pos)
     {
-      Translation2d relativePos = pos.minus(p2);
+      Translation2dDemacia relativePos = pos.minus(p2);
 
-      Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
+      Rotation2dDemacia diffAngle = startVector.getAngle().minus(relativePos.getAngle());
 
       return Math.abs(diffAngle.getRadians() * radius);
     }

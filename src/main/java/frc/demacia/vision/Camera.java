@@ -4,19 +4,19 @@
 
 package frc.demacia.vision;
 
-import edu.wpi.first.math.geometry.Translation3d;
+import frc.demacia.utils.geometry.Translation3dDemacia;
 
 public class Camera {
 
     private String name;
-    private Translation3d robotToCamPosition;
+    private Translation3dDemacia robotToCamPosition;
     private double pitch;
     private double yaw;
     private String tableName;
     private boolean isCroping;
     private boolean isObjectCamera = false;
 
-    public Camera(String name, Translation3d robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
+    public Camera(String name, Translation3dDemacia robotToCamPosition, double pitch, double yaw, boolean isCroping, boolean isObjectCamera) {
         this.name = name;
         this.robotToCamPosition = robotToCamPosition;
         this.pitch = pitch;
@@ -27,8 +27,8 @@ public class Camera {
     }
 
 
-    public Translation3d getRobotToCamPosition() {
-        return robotToCamPosition != null? robotToCamPosition  : new Translation3d();
+    public Translation3dDemacia getRobotToCamPosition() {
+        return robotToCamPosition != null? robotToCamPosition  : Translation3dDemacia.kZero;
     }
 
     public double getHeight() {

@@ -5,14 +5,13 @@
 package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
@@ -75,7 +74,7 @@ public class ShooterCommand extends Command {
   public void initialize() {
   }
 
-  private void setFlywheelAndHood(double lutVel, double lutHoodAngle, Rotation2d heading) {
+  private void setFlywheelAndHood(double lutVel, double lutHoodAngle, Rotation2dDemacia heading) {
 
     // set the horizontal (xy) velocity and the vertical (z) velocity
     double xyVel = lutVel * Math.cos(lutHoodAngle);
@@ -103,7 +102,7 @@ public class ShooterCommand extends Command {
     }
 
     // calculate the heading
-    Rotation2d ballHeading = new Rotation2d(xVel, yVel);
+    Rotation2dDemacia ballHeading = new Rotation2dDemacia(xVel, yVel);
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
@@ -114,9 +113,9 @@ public class ShooterCommand extends Command {
   }
 
   ChassisSpeeds robotSpeeds;
-  Pose2d nextPose;
-  Translation2d toHub;
-  Translation2d turretPos;
+  Pose2dDemacia nextPose;
+  Translation2dDemacia toHub;
+  Translation2dDemacia turretPos;
   double distance;
   double[] lut;
 

@@ -1,8 +1,7 @@
 package frc.robot.Turret;
 
-import edu.wpi.first.math.geometry.Translation2d;
-
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.sensors.LimitSwitchConfig;
 
@@ -41,5 +40,5 @@ public class TurretConstants {
 
     public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.2);
 
-    public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
+    public static final Translation2dDemacia TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
 }

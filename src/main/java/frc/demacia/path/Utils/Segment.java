@@ -4,17 +4,17 @@
 
 package frc.demacia.path.utils;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 
 /** Add your docs here. */
 public class Segment {
-    protected Translation2d p1;
-    protected Translation2d p2;
+    protected Translation2dDemacia p1;
+    protected Translation2dDemacia p2;
     double headingInRad;
     double wantedVelocity;
 
     
-    public Segment(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity)
+    public Segment(Translation2dDemacia p1, Translation2dDemacia p2, double headingInRad, double wantedVelocity)
     {
         this.p1 = p1;
         this.p2 = p2;
@@ -22,17 +22,17 @@ public class Segment {
         this.wantedVelocity = wantedVelocity;
     }
     
-    public Translation2d calcVector(Translation2d position, double velocity) {return Translation2d.kZero;}
-    public double distancePassed(Translation2d position) {return 0;}
+    public Translation2dDemacia calcVector(Translation2dDemacia position, double velocity) {return Translation2dDemacia.kZero;}
+    public double distancePassed(Translation2dDemacia position) {return 0;}
     public double getLength() {return 0;}
     public double getHeading() { return headingInRad;}
     public double getWantedVelocity(){return this.wantedVelocity;}
 
-    public double getDistanceLeft(Translation2d currentPosition){
+    public double getDistanceLeft(Translation2dDemacia currentPosition){
         return 0;
     }
-    public Translation2d[] getPoints() {
-        Translation2d[] pArr = {p1,p2}; 
+    public Translation2dDemacia[] getPoints() {
+        Translation2dDemacia[] pArr = {p1,p2}; 
         return pArr;
     }
     @Override

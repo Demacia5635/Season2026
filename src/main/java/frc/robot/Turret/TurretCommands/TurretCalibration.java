@@ -29,7 +29,6 @@ public class TurretCalibration extends Command {
   public void end(boolean interrupted) {
     turret.stop();
     if (!interrupted) {
-      turret.setCalibrated();
       turret.updatePositionByLimit();
     }
   }

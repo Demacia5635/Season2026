@@ -4,12 +4,11 @@
 
 package frc.robot.Shooter.constants;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-
 import frc.demacia.utils.LookUpTable;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
+import frc.demacia.utils.geometry.Translation3dDemacia;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.sensors.DigitalEncoderConfig;
@@ -100,12 +99,12 @@ public class ShooterConstans {
                         HOOD_ENCODER_NAME)
                         .withInvert(false);
 
-        public static final Translation3d HUB_POSE_Translation3d = new Translation3d(11.265 + 0.5969, 4.023, 1.829);
-        public static final Translation2d HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
-        public static final Pose2d hubPose2d = new Pose2d(HUB_POSE_Translation2d, new Rotation2d());
+        public static final Translation3dDemacia HUB_POSE_Translation3d = new Translation3dDemacia(11.265 + 0.5969, 4.023, 1.829);
+        public static final Translation2dDemacia HUB_POSE_Translation2d = HUB_POSE_Translation3d.toTranslation2d();
+        public static final Pose2dDemacia hubPose2d = new Pose2dDemacia(HUB_POSE_Translation2d, Rotation2dDemacia.kZero);
 
-        public static final Translation2d DELIVERY_POINT1 = new Translation2d(12.6619, 4.023 - 2.5);
-        public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.6619, 4.023 + 2.5);
+        public static final Translation2dDemacia DELIVERY_POINT1 = new Translation2dDemacia(12.6619, 4.023 - 2.5);
+        public static final Translation2dDemacia DELIVERY_POINT2 = new Translation2dDemacia(12.6619, 4.023 + 2.5);
 
         public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; // m/s
 

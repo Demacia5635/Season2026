@@ -2,10 +2,6 @@ package frc.demacia.utils.geometry;
 
 import static edu.wpi.first.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.units.measure.Distance;
 import java.util.ArrayList;
@@ -35,7 +31,7 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @param pose 2D pose
    */
-  public synchronized void setPose(Pose2d pose) {
+  public synchronized void setPose(Pose2dDemacia pose) {
     setPoses(pose);
   }
 
@@ -46,8 +42,8 @@ public class FieldObject2dDemacia implements AutoCloseable {
    * @param yMeters Y location, in meters
    * @param rotation rotation
    */
-  public synchronized void setPose(double xMeters, double yMeters, Rotation2d rotation) {
-    setPose(new Pose2d(xMeters, yMeters, rotation));
+  public synchronized void setPose(double xMeters, double yMeters, Rotation2dDemacia rotation) {
+    setPose(new Pose2dDemacia(xMeters, yMeters, rotation));
   }
 
   /**
@@ -57,8 +53,8 @@ public class FieldObject2dDemacia implements AutoCloseable {
    * @param y Y location
    * @param rotation rotation
    */
-  public synchronized void setPose(Distance x, Distance y, Rotation2d rotation) {
-    setPose(new Pose2d(x.in(Meters), y.in(Meters), rotation));
+  public synchronized void setPose(Distance x, Distance y, Rotation2dDemacia rotation) {
+    setPose(new Pose2dDemacia(x.in(Meters), y.in(Meters), rotation));
   }
 
   /**
@@ -66,10 +62,10 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @return 2D pose
    */
-  public synchronized Pose2d getPose() {
+  public synchronized Pose2dDemacia getPose() {
     updateFromEntry();
     if (m_poses.isEmpty()) {
-      return Pose2d.kZero;
+      return Pose2dDemacia.kZero;
     }
     return m_poses.get(0);
   }
@@ -79,7 +75,7 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @param poses list of 2D poses
    */
-  public synchronized void setPoses(List<Pose2d> poses) {
+  public synchronized void setPoses(List<Pose2dDemacia> poses) {
     m_poses.clear();
     m_poses.addAll(poses);
     updateEntry();
@@ -90,7 +86,7 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @param poses list of 2D poses
    */
-  public synchronized void setPoses(Pose2d... poses) {
+  public synchronized void setPoses(Pose2dDemacia... poses) {
     m_poses.clear();
     Collections.addAll(m_poses, poses);
     updateEntry();
@@ -101,9 +97,9 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @param trajectory The trajectory from which the poses should be added.
    */
-  public synchronized void setTrajectory(Trajectory trajectory) {
+  public synchronized void setTrajectory(Trajectory2dDemacia trajectory) {
     m_poses.clear();
-    for (Trajectory.State state : trajectory.getStates()) {
+    for (Trajectory2dDemacia.State state : trajectory.getStates()) {
       m_poses.add(state.poseMeters);
     }
     updateEntry();
@@ -114,7 +110,7 @@ public class FieldObject2dDemacia implements AutoCloseable {
    *
    * @return list of 2D poses
    */
-  public synchronized List<Pose2d> getPoses() {
+  public synchronized List<Pose2dDemacia> getPoses() {
     updateFromEntry();
     return new ArrayList<>(m_poses);
   }
@@ -130,8 +126,8 @@ public class FieldObject2dDemacia implements AutoCloseable {
 
     double[] arr = new double[m_poses.size() * 3];
     int ndx = 0;
-    for (Pose2d pose : m_poses) {
-      Translation2d translation = pose.getTranslation();
+    for (Pose2dDemacia pose : m_poses) {
+      Translation2dDemacia translation = pose.getTranslation();
       arr[ndx + 0] = translation.getX();
       arr[ndx + 1] = translation.getY();
       arr[ndx + 2] = pose.getRotation().getDegrees();
@@ -158,12 +154,12 @@ public class FieldObject2dDemacia implements AutoCloseable {
 
       m_poses.clear();
       for (int i = 0; i < arr.length; i += 3) {
-        m_poses.add(new Pose2d(arr[i], arr[i + 1], Rotation2d.fromDegrees(arr[i + 2])));
+        m_poses.add(new Pose2dDemacia(arr[i], arr[i + 1], Rotation2dDemacia.fromDegrees(arr[i + 2])));
       }
     }
   }
 
   String m_name;
   DoubleArrayEntry m_entry;
-  private final List<Pose2d> m_poses = new ArrayList<>();
+  private final List<Pose2dDemacia> m_poses = new ArrayList<>();
 }

@@ -5,21 +5,21 @@
 package frc.demacia.path.Trgectory;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.robot.RobotCommon;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class GoToFinish extends Command {
   private ProfiledPIDController drivePID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
   private ProfiledPIDController rotationPID = new ProfiledPIDController(1.2, 0, 0, new Constraints(1.5, 2));
-  Pose2d target;
+  Pose2dDemacia target;
   Chassis chassis;
-  public GoToFinish(Pose2d target, Chassis chassis) {
+  public GoToFinish(Pose2dDemacia target, Chassis chassis) {
     this.target = target;
     this.chassis = chassis;
     addRequirements(chassis);
@@ -32,7 +32,7 @@ public class GoToFinish extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d vectorError = target.getTranslation().minus(RobotCommon.getCurrentRobotPose().getTranslation());
+    Translation2dDemacia vectorError = target.getTranslation().minus(RobotCommon.getCurrentRobotPose().getTranslation());
     double rotationError = target.getRotation().minus(RobotCommon.getCurrentRobotPose().getRotation()).getRadians();
     double vX = drivePID.calculate(-vectorError.getX(), 0);
     double vY = drivePID.calculate(-vectorError.getY(), 0);
