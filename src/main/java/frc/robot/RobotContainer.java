@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -70,6 +69,7 @@ public class RobotContainer implements Sendable {
   public static RobotContainer instance;
   private AutoFactory autoFactory;
   private AutoChooser autoChooser;
+
 
   public RobotContainer() {
     instance = this;
@@ -137,7 +137,7 @@ public class RobotContainer implements Sendable {
   private AutoRoutine soloAuto() {
     AutoRoutine routine = autoFactory.newRoutine("soloRoutine");
 
-    AutoTrajectory trajectory = routine.trajectory("mainAuto/NewPath_copy1");
+    AutoTrajectory trajectory = routine.trajectory("mainAuto/DeliveryTesting");
     // AutoTrajectory trajectory = routine.trajectory("testPath/TestPath");
 
 
@@ -146,7 +146,7 @@ public class RobotContainer implements Sendable {
             new InstantCommand(() -> {
               chassis.resetTrajectory();
               StateManager.getInstance().setStateChangeActivated(false);
-              RobotCommon.changeStateCommand(RobotStates.Idle);
+              RobotCommon.changeStateCommand(RobotStates.Trench);
               CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
               CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
               CommandScheduler.getInstance().schedule(new TurretCommand(turret));
@@ -157,7 +157,6 @@ public class RobotContainer implements Sendable {
     trajectory.atTime("Delivery").onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
     trajectory.atTime("Trench").onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
     trajectory.atTime("Hub").onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
-    trajectory.atTime("Trench").onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
     trajectory.atTime("DriveWithIntake").onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
 
     return routine;
@@ -204,6 +203,7 @@ public class RobotContainer implements Sendable {
     driverController.rightButton().onTrue(new GetBallOutCommand(intake, shinua, driverController.rightButton()));
     driverController.downButton().whileTrue(
         new RunCommand(() -> rumble.setRumble(RumbleType.kBothRumble, 1)).withTimeout(0.5).ignoringDisable(true));
+    driverController.leftButton().onTrue(new InstantCommand(DriveCommand::setPrecisionMode).ignoringDisable(true));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
@@ -274,8 +274,8 @@ public class RobotContainer implements Sendable {
   }
 
   public Command getAutonomousCommand() {
-    return null;
-    // return auto;
+    // return null;
+    return auto;
 
     // return autoChooser.selectedCommand();
   }

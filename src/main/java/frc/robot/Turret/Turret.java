@@ -111,7 +111,6 @@ public class Turret extends SubsystemBase {
     turretMotor.setPositionVoltage(wantedPosition);
   }
 
-  /* TODO: Change control to be more precise like last year arm */
   public void setPositionMotion(double wantedPosition) {
     if (!hasCalibrated)
       return;
@@ -122,7 +121,7 @@ public class Turret extends SubsystemBase {
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
-    if (Math.abs(wantedPosition - getTurretAngle()) < TurretConstants.MAX_ALLOWED_ANGLE_ERROR) {
+    if (Math.abs(wantedPosition - getTurretAngle()) < getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget())) {
       turretMotor.stop();
       return;
     }
@@ -196,6 +195,6 @@ public class Turret extends SubsystemBase {
   }
 
   private double getMaxAngleErrorByDistance(double distanceFromHub) {
-    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 7.5, 2, 6));
+    return Math.toRadians(MathUtil.clamp(-distanceFromHub + 9, 3, 8));
   }
 }

@@ -117,7 +117,7 @@ public class ShinuaCommand extends Command {
                     stuckBallsTimer.reset();
                 }
 
-                if (isBallsStuck() && stuckBallsTimer.hasElapsed(0.1) && !hasStuckTimer.isRunning()) {
+                if (isBallsStuck() && stuckBallsTimer.hasElapsed(0.15) && !hasStuckTimer.isRunning()) {
                     LogManager.log("stuck");
                     stuckBallsTimer.stop();
                     stuckBallsTimer.reset();
@@ -128,7 +128,7 @@ public class ShinuaCommand extends Command {
                     break;
                 }
 
-                if (hasStuckTimer.isRunning() && !hasStuckTimer.hasElapsed(0.3)) {
+                if (hasStuckTimer.isRunning() && !hasStuckTimer.hasElapsed(0.2)) {
                     handleBallsStuck();
                     break;
                 }

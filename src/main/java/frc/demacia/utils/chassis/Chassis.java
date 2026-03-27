@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.demacia.kinematics.DemaciaKinematics;
-import frc.demacia.odometry.DemaciaPoseEstimator;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.utils.log.LogManager;
@@ -108,7 +107,6 @@ public class Chassis extends SubsystemBase {
     private DemaciaKinematics demaciaKinematics;
     private SwerveDriveKinematics wpilibKinematics;
 
-    private DemaciaPoseEstimator demaciaPoseEstimator;
     private Field2d field;
 
     private StatusSignal<Angle> gyroYawStatus;
@@ -117,9 +115,9 @@ public class Chassis extends SubsystemBase {
     private Rotation2d lastGyroYaw;
     private double lastGyroAngularVelocity;
 
-    private final PIDController xController = new PIDController(0.5, 0.0, 0.0);
+    private final PIDController xController = new PIDController(0.2, 0.0, 0.0);
 
-    private final PIDController yController = new PIDController(0.5, 0.0, 0.0);
+    private final PIDController yController = new PIDController(0.2, 0.0, 0.0);
     private final PIDController headingController = new PIDController(0.03, 0.0, 0) {
         {
             enableContinuousInput(-Math.PI, Math.PI);
@@ -150,11 +148,7 @@ public class Chassis extends SubsystemBase {
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
-        demaciaPoseEstimator = new DemaciaPoseEstimator(
-                modulePositions,
-                new Matrix<>(VecBuilder.fill(0.02, 0.02, 0)),
-                new Matrix<>(VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY)));
-
+      
         field = new Field2d();
         SmartDashboard.putData("chassis/reset gyro",
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
@@ -182,12 +176,17 @@ public class Chassis extends SubsystemBase {
     }
 
     public void followTrajectory(SwerveSample sample) {
+
+
         Pose2d pose = RobotCommon.getCurrentRobotPose();
 
         ChassisSpeeds speeds = new ChassisSpeeds(
                 sample.vx + xController.calculate(pose.getX(), sample.x),
                 sample.vy + yController.calculate(pose.getY(), sample.y),
                 -sample.omega + headingController.calculate(pose.getRotation().getRadians(), -sample.heading));
+
+
+        
 
         SmartDashboard.putNumber("traj/current heading", pose.getRotation().getDegrees());
         SmartDashboard.putNumber("traj/heading error", sample.heading - pose.getRotation().getRadians());
@@ -383,10 +382,10 @@ public class Chassis extends SubsystemBase {
 
         RobotPose.getInstance().update(observation);
         field.setRobotPose(RobotCommon.getCurrentRobotPose());
-        field.getObject("Turret").setPose(new Pose2d(RobotCommon.getCurrentRobotPose().getTranslation()
-                .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle())),
-                Rotation2d.fromRadians(RobotCommon.getRobotAngle().getRadians()
-                        + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
+        // field.getObject("Turret").setPose(new Pose2d(RobotCommon.getCurrentRobotPose().getTranslation()
+        //         .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle())),
+        //         Rotation2d.fromRadians(RobotCommon.getRobotAngle().getRadians()
+        //                 + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
         field.getObject("estimation").setPose(
                 ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.getCurrentRobotPose(), 0.1));
     }
@@ -462,7 +461,7 @@ public class Chassis extends SubsystemBase {
             RobotPose.getInstance().setQuestHeading(angle);
             RobotPose.getInstance()
                     .resetPose(
-                            new Pose2d(demaciaPoseEstimator.getEstimatedPose().getTranslation(), gyro.getRotation2d()));
+                            new Pose2d(Translation2d.kZero, gyro.getRotation2d()));
         }
     }
 

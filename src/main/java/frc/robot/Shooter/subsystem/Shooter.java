@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
 
   private final DigitalEncoder hoodEncoder;
 
-  private boolean isShooting;
+  public boolean isShooting;
 
   private boolean isHoodMotorLock;
 

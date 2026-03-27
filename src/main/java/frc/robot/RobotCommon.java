@@ -34,9 +34,10 @@ public class RobotCommon {
     private static Shifts nextShift = Shifts.Transition;
 
     public static boolean isReady() {
+        // return true;
         return (StateManager.getInstance().getTimeLeft() <= 3 || !shift.equals(Shifts.Inactive)
-                || !state.equals(RobotStates.Hub)) && Turret.getInstance().isReady()
-                && Shooter.getInstance().isReady();
+                || !state.equals(RobotStates.Hub)) && ((Turret.getInstance().isReady()
+                && Shooter.getInstance().isReady()) || Shooter.getInstance().isShooting);
     }
 
     public static void changeShift(Shifts newShift, Shifts nextShift) {

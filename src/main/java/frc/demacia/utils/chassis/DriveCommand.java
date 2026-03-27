@@ -17,11 +17,13 @@ public class DriveCommand extends Command {
   private CommandController controller;
   private double direction;
   private ChassisSpeeds speeds;
+  private static boolean isPrecisionMode;
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
     this.chassis = chassis;
     this.controller = controller;
+    isPrecisionMode = false;
     addRequirements(chassis);
   }
 
@@ -45,14 +47,25 @@ public class DriveCommand extends Command {
       // velY = Math.signum(velY) * Math.max(Math.abs(velY), 2);
     }
 
+    if (isPrecisionMode) {
+      velX /= 2;
+      velY /= 2;
+      velRot /= 2;
+    }
+
     speeds = new ChassisSpeeds(velX, velY, -velRot);
 
     chassis.setVelocities(speeds);
   }
 
+  public static void setPrecisionMode() {
+    isPrecisionMode = !isPrecisionMode;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isPrecisionMode = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
