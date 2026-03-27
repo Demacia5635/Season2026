@@ -223,7 +223,7 @@ public class VisionConstants {
         // Translation3d(0.11307,0.14305,0.18386) ));
         public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
                         new SimpleMatrix(
-                                        new double[] { 0, 0, 9999999 }));
+                                        new double[] { 0.05, 0.05, 0 }));
 
 
         
@@ -231,7 +231,8 @@ public class VisionConstants {
                 public static final TagPose[] TAGS_ARRAY = {
                                 // new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)),
                                 //prev x offset 0.283 
-                                new TagPose(new Camera("hub", new Translation3d(0.27,-0.20,0.345), 19d, 2d, false, false))
+                                new TagPose(new Camera("hub", new Translation3d(0.27,-0.20,0.345), 19d, 2d, false, false)),
+                                new TagPose(new Camera("back", new Translation3d(-0.284, -0.205, 0.184), 31d, 180d, false, false))
                         };
 
         }

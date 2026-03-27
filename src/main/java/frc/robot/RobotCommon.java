@@ -33,11 +33,13 @@ public class RobotCommon {
     private static Shifts shift = Shifts.Auto;
     private static Shifts nextShift = Shifts.Transition;
 
+    private static boolean hasReady = false;
+
     public static boolean isReady() {
         // return true;
         return (StateManager.getInstance().getTimeLeft() <= 3 || !shift.equals(Shifts.Inactive)
                 || !state.equals(RobotStates.Hub)) && ((Turret.getInstance().isReady()
-                && Shooter.getInstance().isReady()) || Shooter.getInstance().isShooting);
+                && Shooter.getInstance().isReady()));
     }
 
     public static void changeShift(Shifts newShift, Shifts nextShift) {
@@ -156,5 +158,13 @@ public class RobotCommon {
 
     public static void setNextShift(Shifts nextShift) {
         RobotCommon.nextShift = nextShift;
+    }
+
+    public static boolean isHasReady() {
+        return hasReady;
+    }
+
+    public static void setHasReady(boolean hasReady) {
+        RobotCommon.hasReady = hasReady;
     }
 }

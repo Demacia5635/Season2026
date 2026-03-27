@@ -15,7 +15,7 @@ public class TrajectoryConstants {
 
 
     public class PathsConstraints {
-        public static final double MAX_VELOCITY = 2.5;
+        public static final double MAX_VELOCITY = 1.5;
         public static final double MAX_ACCEL = 6;
 
     }

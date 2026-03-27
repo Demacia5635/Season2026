@@ -79,6 +79,7 @@ public class Turret extends SubsystemBase {
     builder.addBooleanProperty("Has Calibrated", this::hasCalibrated, null);
     builder.addBooleanProperty("is ready", this::isReady, null);
     builder.addDoubleProperty("Position", () -> Math.toDegrees(getTurretAngle()), null);
+    builder.addDoubleProperty("Wanted", () -> Math.toDegrees(wantedAngle), null);
   }
 
   public double getTurretVelocity() {
@@ -121,11 +122,6 @@ public class Turret extends SubsystemBase {
     this.wantedAngle = wantedPosition;
     wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
-    if (Math.abs(wantedPosition - getTurretAngle()) < getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget())) {
-      turretMotor.stop();
-      return;
-    }
-
     turretMotor.setMotion(wantedPosition);
   }
 
@@ -133,13 +129,28 @@ public class Turret extends SubsystemBase {
     turretMotor.set(power);
   }
 
+  private int readyCounter = 10;
+  private boolean isReady = false;
+
   public boolean isReady() {
-    return hasCalibrated()
-        && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget());
+    return isReady;
   }
 
   @Override
   public void periodic() {
+    readyCounter ++;
+    if (hasCalibrated()
+        && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget())) {
+          if(!isReady && readyCounter > 10) {
+              isReady = true;
+              readyCounter = 0;
+          }
+  } else { 
+        if(isReady && readyCounter > 10) {
+          readyCounter = 0;
+          isReady = false;
+        }
+  }
   }
 
   public boolean isAtMinLimit() {

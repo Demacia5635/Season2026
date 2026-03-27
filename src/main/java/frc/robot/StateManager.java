@@ -81,10 +81,21 @@ public class StateManager extends SubsystemBase {
         }
     }
 
+    Timer hasReadytimer = new Timer();
+
     @Override
     public void periodic() {
         checkGameData();
         updateShift();
+
+        if (RobotCommon.isReady() && !RobotCommon.isHasReady()) {
+            RobotCommon.setHasReady(true);
+            hasReadytimer.start();
+        }
+
+        if (hasReadytimer.hasElapsed(4) && RobotCommon.isReady() && !RobotCommon.isHasReady()) {
+            
+        }
 
         if (isStateChangeActivated) {
             if (isOnTrench(true))

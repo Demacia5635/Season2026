@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
@@ -77,7 +78,6 @@ public class RobotContainer implements Sendable {
   public static RobotContainer instance;
   private AutoFactory autoFactory;
   private AutoChooser autoChooser;
-
 
   public RobotContainer() {
     instance = this;
@@ -286,38 +286,65 @@ public class RobotContainer implements Sendable {
   public Command getAutonomousCommand() {
     ArrayList<PathPoint> points = new ArrayList<>();
     points.add(PathPoint.kZero);
-    
-    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1, 1));
-    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)), 0,1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 - 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5), Rotation2d.fromDegrees(180-15)),0.5, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9, Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5, 3));
-    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1, 3));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8, Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
 
-    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.k180deg), 2.5, 0.7));
+    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1,
+    // 1));
+    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)),
+    // 0,1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 -
+    // 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5),
+    // Rotation2d.fromDegrees(180-15)),0.5, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9,
+    // Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5,
+    // 3));
+    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1,
+    // 3));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
+
+    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 1, 1));
     points.add(new PathPoint(new Pose2d(10.1, 3.35, Rotation2d.k180deg), 1, 0.7));
-    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.5, 0.4));
-    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.5, 0.4));
-    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.5, 0.4));
-    points.add(new PathPoint(new Pose2d(8.33, 1.1, Rotation2d.kCW_90deg), 2, 0.4));
-    points.add(new PathPoint(new Pose2d(10, 1.1, Rotation2d.k180deg), 2, 0));
-    points.add(new PathPoint(new Pose2d(13.7, 1.03, Rotation2d.kCW_90deg), 0, 0));
+    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1, 0.4));
+    points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 1, 0));
+    points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0));
 
     for (int i = 0; i < points.size(); i++) {
-      field.getObject("points #"+i).setPose(points.get(i));
+      field.getObject("points #" + i).setPose(points.get(i));
     }
     SmartDashboard.putData("RC/field", field);
 
     FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
-    return RobotCommon.changeStateCommand(RobotStates.Trench).andThen(trajectory);
+
+    trajectory.addTrigger(new Pose2d(10.18, 1, Rotation2d.kZero), 0.2, 2 * Math.PI)
+        .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    trajectory.addTrigger(new Pose2d(8.25, 2.5, Rotation2d.kCW_90deg), 0.5, 0.4 * Math.PI)
+      .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    trajectory.addTrigger(new Pose2d(13, 1, Rotation2d.kCW_90deg), 0.3, 2 * Math.PI)
+      .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+
+    return Commands.sequence(
+      new InstantCommand(() -> {
+        StateManager.getInstance().setStateChangeActivated(false);
+        RobotCommon.setState(RobotStates.Trench);
+        CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+        CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+        CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+        CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
+        CommandScheduler.getInstance().schedule(new WaitCommand(2).andThen(RobotCommon.changeStateCommand(RobotStates.Delivery)));
+      }, chassis),
+      trajectory
+    );
     // return auto;
 
-
     // return autoChooser.selectedCommand();
-  } 
-
+  }
 
   public AutoFactory getAutoFactory() {
     return autoFactory;

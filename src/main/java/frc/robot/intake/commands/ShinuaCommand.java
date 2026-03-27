@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.log.LogManager;
 import frc.robot.RobotCommon;
+import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
 /**
@@ -85,9 +86,9 @@ public class ShinuaCommand extends Command {
     }
 
     private boolean isBallsStuck() {
-        return false;
-        // return shinua.getIndexerOnTopCurrent() > 18
-        // && Math.abs(shinua.getIndexerOnTopVelocity()) < 35;
+        return (shinua.getIndexerOnTopCurrent() > 18
+        && Math.abs(shinua.getIndexerOnTopVelocity()) < 50) 
+        || IntakeSubsystem.getInstance().getCurrent() > 15;
     }
 
     private void handleBallsStuck() {
@@ -112,13 +113,11 @@ public class ShinuaCommand extends Command {
                 }
 
                 if (stuckBallsTimer.isRunning() && !isBallsStuck()) {
-                    LogManager.log(stuckBallsTimer.get());
                     stuckBallsTimer.stop();
                     stuckBallsTimer.reset();
                 }
 
-                if (isBallsStuck() && stuckBallsTimer.hasElapsed(0.15) && !hasStuckTimer.isRunning()) {
-                    LogManager.log("stuck");
+                if (isBallsStuck() && stuckBallsTimer.hasElapsed(0.3) && !hasStuckTimer.isRunning()) {
                     stuckBallsTimer.stop();
                     stuckBallsTimer.reset();
                     hasStuckTimer.reset();
@@ -133,7 +132,7 @@ public class ShinuaCommand extends Command {
                     break;
                 }
 
-                if (hasStuckTimer.hasElapsed(0.1)) {
+                if (hasStuckTimer.hasElapsed(0.2)) {
                     hasStuckTimer.stop();
                     hasStuckTimer.reset();
                     RobotCommon.setStuck(false);

@@ -43,6 +43,10 @@ public class IntakeSubsystem extends SubsystemBase {
     motorIntake.setDuty(pow);
   }
 
+
+  public double getCurrent(){
+    return motorIntake.getCurrentCurrent();
+  }
   public void stopIntake() {
     motorIntake.stop();
   }

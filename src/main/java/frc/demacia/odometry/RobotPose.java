@@ -50,7 +50,7 @@ public class RobotPose {
 
         this.quest = new Quest();
         this.questSTD = questSTD;
-        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 999999 }));
+        this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 0 }));
         this.hasUpdatedQuestIntialPose = false;
         this.hasQuestDisconnected = false;
         this.poseEstimator = new DemaciaPoseEstimator(modulePositions, stateSTD, visionSTD);
@@ -120,14 +120,18 @@ public class RobotPose {
         quest.setQuestPose(new Pose3d(pose));
     }
 
-    public void addVisionMeasurement() {
+    public void addVisionMeasurement(Rotation2d gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
-        poseEstimator.addVisionMeasurement(vision.getPoseEstimation(), Timer.getFPGATimestamp() - 0.05);
+        poseEstimator.addVisionMeasurement(
+                new Pose2d(vision.getPoseEstimation().getX(), vision.getPoseEstimation().getY(), gyroAngle),
+                Timer.getFPGATimestamp() - 0.05);
     }
 
-    public void addQuestMeasurement() {
+    public void addQuestMeasurement(Rotation2d gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(questSTD);
-        poseEstimator.addVisionMeasurement(quest.getRobotPose2d(), Timer.getFPGATimestamp() - 0.05);
+        poseEstimator.addVisionMeasurement(
+                new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
+                Timer.getFPGATimestamp() - 0.05);
 
     }
 
@@ -156,22 +160,15 @@ public class RobotPose {
             RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
-            if (quest.isConnected()) {
-
-                addOdometryCalculation(new OdometryObservation(odometryObservation.timeStamp(),
-                        quest.getRobotPose2d().getRotation(), odometryObservation.swerveModules()));
-
-            } else {
-                addOdometryCalculation(odometryObservation);
-            }
+            addOdometryCalculation(odometryObservation);
 
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 
-            addQuestMeasurement();
+            addQuestMeasurement(odometryObservation.gyroAngle());
         }
         if (shouldUpdateVision()) {
 
-            addVisionMeasurement();
+            addVisionMeasurement(odometryObservation.gyroAngle());
             if (hasQuestDisconnected && quest.isConnected()) {
                 // setQuestPose();
                 hasQuestDisconnected = false;

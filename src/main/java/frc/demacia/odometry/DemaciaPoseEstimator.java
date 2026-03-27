@@ -20,6 +20,7 @@ import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.demacia.utils.chassis.Chassis;
 
 /** Add your docs here. */
 public class DemaciaPoseEstimator {
@@ -199,7 +200,7 @@ public class DemaciaPoseEstimator {
     }
 
     public Pose2d getEstimatedPose() {
-        return estimatedPose;
+        return new Pose2d(estimatedPose.getTranslation(), Chassis.getInstance().getGyroAngle());
     }
 
     public void resetPose() {
