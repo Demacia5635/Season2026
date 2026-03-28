@@ -88,7 +88,8 @@ public class ShinuaCommand extends Command {
     private boolean isBallsStuck() {
         return (shinua.getIndexerOnTopCurrent() > 18
         && Math.abs(shinua.getIndexerOnTopVelocity()) < 50) 
-        || IntakeSubsystem.getInstance().getCurrent() > 15;
+        || (IntakeSubsystem.getInstance().getCurrent() > 22
+        && IntakeSubsystem.getInstance().getVelocity() < 40);
     }
 
     private void handleBallsStuck() {

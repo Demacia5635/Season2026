@@ -16,7 +16,8 @@ public class IntakeConstants {
 
         public static final TalonFXConfig INTAKE_CONFIG = new TalonFXConfig(INTAKE_ID, INTAKE_CANBUS, INTAKE_NAME)
                         .withInvert(true)
-                        .withCurrent(25);
+                        .withRadiansMotor(12)
+                        .withCurrent(30);
 
         public static final int INDEXER_ON_TOP_ID = 30;
         public static final String INDEXER_TOP_NAME = "Shinua/Top";
@@ -25,7 +26,7 @@ public class IntakeConstants {
                         .withRadiansMotor(4)
                         .withBrake(true)
                         .withVolts(8)
-                        .withCurrent(20)
+                        .withCurrent(30)
                         .withInvert(false);
 
         public static final int INDEXER_CLOSE_ID = 31;

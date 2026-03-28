@@ -185,7 +185,7 @@ public class StateManager extends SubsystemBase {
     private boolean isOnTrench(boolean isFuture) {
         Pose2d checkPose = isFuture ? RobotCommon.getFutureRobotPose() : RobotCommon.getCurrentRobotPose();
         return (checkPose.getY() > Field.TrenchRedAudience.Y_FRONT - 0.4
-                || checkPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.4)
+                || checkPose.getY() < Field.TrenchRedScoring.Y_BACK + 0.2)
                 && ((checkPose.getX() < Field.HubRed.X_BACK + TRENCH_OFFSET
                         && checkPose.getX() > Field.HubRed.X_FRONT - TRENCH_OFFSET)
                         || (checkPose.getX() < Field.HubBlue.X_FRONT + TRENCH_OFFSET

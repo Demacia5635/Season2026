@@ -299,7 +299,7 @@ public class RobotContainer implements Sendable {
     // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
     // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
 
-    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 2,  1, 2));
+    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 2, 1, 2));
     points.add(new PathPoint(new Pose2d(9.6, 3.35, Rotation2d.k180deg), 2, 0.7, 2));
     points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4, 0.5));
     points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4, 0.5));
@@ -310,25 +310,33 @@ public class RobotContainer implements Sendable {
 
     FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
 
-    trajectory.addTrigger(new Pose2d(10.7, 0.5, Rotation2d.kZero), 0.5, 2 * Math.PI)
-        .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
-    trajectory.addTrigger(new Pose2d(8.4, 0.6, Rotation2d.kCW_90deg), 0.5, 0.4 * Math.PI)
-      .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    trajectory.addTrigger(new Pose2d(12.3, 0.5, Rotation2d.kCW_90deg), 0.3, 2 * Math.PI)
-      .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+    // trajectory.addTriggerPosition(new Pose2d(10.7, 0.5, Rotation2d.kZero), 0.5, 2
+    // * Math.PI)
+    // .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    // trajectory.addTriggerPosition(new Pose2d(8.4, 0.6, Rotation2d.kCW_90deg),
+    // 0.5, 0.4 * Math.PI)
+    // .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    trajectory.addTriggerPosition(new Pose2d(12.3, 1, Rotation2d.kCW_90deg), 0.5, 2 * Math.PI)
+        .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+
+    trajectory.addTriggerTime(1).onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
+    trajectory.addTriggerTime(13).onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    // trajectory.addTriggerTime(12).onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
 
     return Commands.sequence(
-      new InstantCommand(() -> {
-        StateManager.getInstance().setStateChangeActivated(false);
-        RobotCommon.setState(RobotStates.Trench);
-        CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
-        CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-        CommandScheduler.getInstance().schedule(new TurretCommand(turret));
-        CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
-        CommandScheduler.getInstance().schedule(new WaitCommand(2).andThen(RobotCommon.changeStateCommand(RobotStates.Delivery)));
-      }, chassis),
-      trajectory
-    ).andThen(new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
+        new InstantCommand(() -> {
+          StateManager.getInstance().setStateChangeActivated(false);
+          RobotCommon.setState(RobotStates.Hub);
+          CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+          CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+          CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+          CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
+        }, chassis),
+        new WaitCommand(3),
+        RobotCommon.changeStateCommand(RobotStates.Trench),
+        trajectory).andThen(
+            new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true))
+        .withName("Auto Command");
   }
 
   public AutoFactory getAutoFactory() {

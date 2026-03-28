@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
@@ -146,7 +147,7 @@ public class RobotPose {
     }
 
     private boolean shouldUpdateVision() {
-        return vision.isSeeTag();
+        return vision.isSeeTag() && vision.isSeeTagWithDistance();
 
     }
 
@@ -163,7 +164,7 @@ public class RobotPose {
         if (!quest.isConnected())
             RobotContainer.getMainLeds().isQuestDisconnected = true;
 
-        if (Math.abs(accelerometer.getX()) < 1.8 && Math.abs(accelerometer.getZ()) < 1.8)
+        if (Math.abs(accelerometer.getX()) < 0.3 && Math.abs(accelerometer.getZ()) < 0.3)
             addOdometryCalculation(odometryObservation);
 
         if (hasUpdatedQuestIntialPose && quest.isConnected()) {

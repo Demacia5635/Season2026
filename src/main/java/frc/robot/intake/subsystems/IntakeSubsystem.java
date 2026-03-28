@@ -43,6 +43,9 @@ public class IntakeSubsystem extends SubsystemBase {
     motorIntake.setDuty(pow);
   }
 
+  public double getVelocity() {
+    return motorIntake.getCurrentVelocity();
+  }
 
   public double getCurrent(){
     return motorIntake.getCurrentCurrent();

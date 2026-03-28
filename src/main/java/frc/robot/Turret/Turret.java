@@ -138,19 +138,19 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    readyCounter ++;
+    readyCounter++;
     if (hasCalibrated()
         && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget())) {
-          if(!isReady) {
-              isReady = true;
-              readyCounter = 0;
-          }
-  } else { 
-        if(isReady && readyCounter > 20) {
-          readyCounter = 0;
-          isReady = false;
-        }
-  }
+      if (!isReady) {
+        isReady = true;
+        readyCounter = 0;
+      }
+    } else {
+      if (isReady && readyCounter > 20) {
+        readyCounter = 0;
+        isReady = false;
+      }
+    }
   }
 
   public boolean isAtMinLimit() {

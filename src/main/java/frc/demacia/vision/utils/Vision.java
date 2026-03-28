@@ -42,7 +42,7 @@ public class Vision {
     public boolean isSeeTagWithDistance() {
 
         for (TagPose tag : tags) {
-            if (tag.isSeeTag() && tag.getDistFromCamera() < 3.5)
+            if (tag.isSeeTag() && tag.getDistFromCamera() < 3)
                 return true;
         }
         return false;
