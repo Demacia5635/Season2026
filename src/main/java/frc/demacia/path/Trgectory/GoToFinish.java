@@ -5,10 +5,10 @@
 package frc.demacia.path.Trgectory;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.robot.RobotCommon;
@@ -37,7 +37,7 @@ public class GoToFinish extends Command {
     double vX = drivePID.calculate(-vectorError.getX(), 0);
     double vY = drivePID.calculate(-vectorError.getY(), 0);
     double omega = rotationPID.calculate(-rotationError, 0);
-    chassis.setVelocities(new ChassisSpeeds(vX, vY, omega));
+    chassis.setVelocities(new ChassisSpeedsDemacia(vX, vY, omega));
   }
 
   // Called once the command ends or is interrupted.

@@ -32,8 +32,7 @@ public class FollowTrajectory extends Command {
 
   public Trigger addTrigger(Pose2dDemacia pose2d, double meterTreshold, double rotationTreshold) {
     return new Trigger(eventLoop, () -> {
-      return Math.abs(RobotCommon.getCurrentRobotPose().getX() - pose2d.getX()) <= meterTreshold
-          && Math.abs(RobotCommon.getCurrentRobotPose().getY() - pose2d.getY()) <= meterTreshold
+      return RobotCommon.getCurrentRobotPose().getTranslation().getDistance(pose2d.getTranslation()) <= meterTreshold
           && Math.abs(MathUtil.angleModulus(RobotCommon.getRobotAngle().getRadians() - pose2d.getRotation().getRadians())) <= rotationTreshold;
     });
   }
@@ -42,13 +41,6 @@ public class FollowTrajectory extends Command {
   public void initialize() {
     this.trajectory = new DemaciaTrajectory(points, false, RobotCommon.getCurrentRobotPose());
 
-  }
-
-  public Trigger addTrigger(Pose2d pose, double meterTreshold, double rotationTreshold) {
-    return new Trigger(() -> {
-      return Math.abs(RobotCommon.getCurrentRobotPose().getTranslation().getDistance(pose.getTranslation())) <= meterTreshold
-          && Math.abs(RobotCommon.getCurrentRobotPose().getRotation().getRadians() - pose.getRotation().getRadians()) <= rotationTreshold;
-    });
   }
 
   @Override

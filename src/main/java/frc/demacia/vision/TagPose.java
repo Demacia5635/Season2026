@@ -8,12 +8,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.demacia.utils.chassis.Chassis;
+import frc.demacia.utils.geometry.Field2dDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
 import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
@@ -29,7 +29,7 @@ public class TagPose {
   private NetworkTableEntry cropEntry;
   private NetworkTableEntry pipeEntry;
 
-  private Field2d field;
+  private Field2dDemacia field;
 
   // Vision processing variables
   private double camToTagYaw;
@@ -63,7 +63,7 @@ public class TagPose {
     this.camera = camera;
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
     latency = 0;
-    field = new Field2d();
+    field = new Field2dDemacia();
     pipeEntry = Table.getEntry("pipeline");
     LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
     SmartDashboard.putData("field-tag " + camera.getName(), field);

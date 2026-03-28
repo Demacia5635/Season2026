@@ -166,7 +166,6 @@ public class VisionConstants {
                         DEPOT_TAG_HEIGHT // 32 - 21.75" (Depot)
         };
 
-        // Scoring position offsets TODO: Update these based on 2026 Hub/Tower/Outpost
         // positions
         public static final Translation2dDemacia HUB_TAG_TO_RIGHT_SCORING = new Translation2dDemacia(-0.55, -0.160);
         public static final Translation2dDemacia HUB_TAG_TO_LEFT_SCORING = new Translation2dDemacia(-0.55, 0.160);
@@ -198,7 +197,6 @@ public class VisionConstants {
         public static final double PREDICT_OMEGA = 0.2;
 
         // Quest VR headset mounting configuration
-        // TODO: Find the right offsets for your robot's Quest mounting position
         public static final Rotation3dDemacia YAW_OFFSET_QUEST = new Rotation3dDemacia(0, 0.0, 0);
         public static final double Y_OFFSET_QUEST = -0.176043;//-0.14018022
         public static final double X_OFFSET_QUEST = 0.1579;//0.3026234

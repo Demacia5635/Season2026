@@ -11,18 +11,12 @@ import com.ctre.phoenix6.StatusSignal;
 
 import choreo.trajectory.SwerveSample;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,13 +31,12 @@ import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.geometry.SwerveModulePositionDemacia;
 import frc.demacia.utils.geometry.SwerveModuleStateDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
+import frc.demacia.utils.geometry.Twist2dDemacia;
 import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.utils.ShooterUtils;
-import frc.robot.Turret.Turret;
-import frc.robot.Turret.TurretConstants;
 
 /**
  * Main swerve drive chassis controller.
@@ -107,7 +100,6 @@ public class Chassis extends SubsystemBase {
     public SwerveModule[] modules;
     private Pigeon gyro;
     private DemaciaKinematics demaciaKinematics;
-    private SwerveDriveKinematics wpilibKinematics;
 
     private Field2dDemacia field;
 
@@ -149,7 +141,6 @@ public class Chassis extends SubsystemBase {
 
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
-        wpilibKinematics = new SwerveDriveKinematics(modulePositions);
       
         field = new Field2dDemacia();
         SmartDashboard.putData("chassis/reset gyro",
@@ -329,8 +320,8 @@ public class Chassis extends SubsystemBase {
         return ChassisSpeedsDemacia.fromFieldRelativeSpeeds(RobotCommon.getFieldRelativeSpeeds(), RobotCommon.getRobotAngle());
     }
 
-    public void setRobotRelVelocities(ChassisSpeeds speeds) {
-        SwerveModuleState[] states = wpilibKinematics.toSwerveModuleStates(speeds);
+    public void setRobotReVelocities(ChassisSpeedsDemacia speeds) {
+        SwerveModuleStateDemacia[] states = demaciaKinematics.toSwerveModuleStates(speeds);
         setModuleStates(states);
     }
 
@@ -397,7 +388,7 @@ public class Chassis extends SubsystemBase {
     }
 
     public Pose2dDemacia getFuturePose(double dtSeconds) {
-        return RobotCommon.getCurrentRobotPose().exp(new Twist2d(
+        return RobotCommon.getCurrentRobotPose().exp(new Twist2dDemacia(
                 (RobotCommon.getFieldRelativeSpeeds().vxMetersPerSecond * dtSeconds),
                 (RobotCommon.getFieldRelativeSpeeds().vyMetersPerSecond * dtSeconds),
                 RobotCommon.getFieldRelativeSpeeds().omegaRadiansPerSecond * dtSeconds));

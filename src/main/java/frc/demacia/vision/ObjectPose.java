@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.demacia.utils.geometry.Field2dDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
@@ -49,8 +48,8 @@ public class ObjectPose{
 public ObjectPose(Camera camera, Supplier<Rotation2dDemacia> getRobotAngle, Supplier<Pose2dDemacia> robotCurrentPose) {
     this.getRobotAngle = getRobotAngle;
     this.robotCurrentPose = robotCurrentPose;
-    field = new Field2d();
-    robotfield = new Field2d();
+    field = new Field2dDemacia();
+    robotfield = new Field2dDemacia();
 
     this.camera = camera;
     Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());

@@ -1,9 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.odometry.RobotPose;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
 import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -22,7 +22,7 @@ public class RobotCommon {
     private static RobotStates state = RobotStates.Idle;
     private static Pose2dDemacia currentRobotPose = Pose2dDemacia.kZero;
     private static Pose2dDemacia futureRobotPose = Pose2dDemacia.kZero; // 0.04 seconds in advance
-    private static ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
+    private static ChassisSpeedsDemacia fieldRelativeSpeeds = new ChassisSpeedsDemacia();
     private static Rotation2dDemacia robotAngle = Rotation2dDemacia.kZero;
     private static double currentDistanceFromTarget = 0;
     private static double futureAngleFromTargetRobotRelative = 0;
@@ -88,11 +88,11 @@ public class RobotCommon {
         RobotCommon.futureRobotPose = futureRobotPose;
     }
 
-    public static ChassisSpeeds getFieldRelativeSpeeds() {
+    public static ChassisSpeedsDemacia getFieldRelativeSpeeds() {
         return fieldRelativeSpeeds;
     }
 
-    public static void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
+    public static void setFieldRelativeSpeeds(ChassisSpeedsDemacia fieldRelativeSpeeds) {
         RobotCommon.fieldRelativeSpeeds = fieldRelativeSpeeds;
     }
 

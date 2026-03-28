@@ -1,8 +1,8 @@
 package frc.robot.chassis;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import frc.demacia.utils.chassis.ChassisConfig;
 import frc.demacia.utils.chassis.SwerveModuleConfig;
+import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.sensors.CancoderConfig;
@@ -80,7 +80,7 @@ public class MK4iChassisConstants {
                     new CancoderConfig(i * 3 + 3, CAN_BUS, name + "/Cancoder")
                     // : new CancoderConfig(6, CAN_BUS, name + "Cancoder")
                     ).withPosion(
-                            new Translation2d(
+                            new Translation2dDemacia(
                                     i == 0 || i == 1 ? 0.34 : -0.34,
                                     i == 0 || i == 2 ? 0.29 : -0.29))
                     .withSteerOffset(offsets[i]);

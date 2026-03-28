@@ -5,13 +5,11 @@
 package frc.demacia.path.Trgectory;
 
 import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import frc.demacia.path.Trgectory.TrajectoryConstants.PathsConstraints;
-import frc.demacia.path.utils.Arc;
 import frc.demacia.path.utils.Leg;
 import frc.demacia.path.utils.PathPoint;
 import frc.demacia.path.utils.RoundedPoint;

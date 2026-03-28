@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.buttons;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.chassis.Chassis;

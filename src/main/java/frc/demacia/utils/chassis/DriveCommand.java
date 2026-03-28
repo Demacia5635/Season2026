@@ -4,11 +4,10 @@
 
 package frc.demacia.utils.chassis;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.demacia.utils.controller.CommandController;
-
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.subsystem.Shooter;
 
@@ -16,7 +15,7 @@ public class DriveCommand extends Command {
   private Chassis chassis;
   private CommandController controller;
   private double direction;
-  private ChassisSpeeds speeds;
+  private ChassisSpeedsDemacia speeds;
   private static boolean isPrecisionMode;
 
   /** Creates a new DriveCommand. */
@@ -53,7 +52,7 @@ public class DriveCommand extends Command {
       velRot /= 2;
     }
 
-    speeds = new ChassisSpeeds(velX, velY, -velRot);
+    speeds = new ChassisSpeedsDemacia(velX, velY, -velRot);
 
     chassis.setVelocities(speeds);
   }

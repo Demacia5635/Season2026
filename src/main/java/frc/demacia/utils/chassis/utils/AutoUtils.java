@@ -7,7 +7,6 @@ import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
-import frc.robot.RobotContainer;
 
 public class AutoUtils {
 
@@ -20,7 +19,7 @@ public class AutoUtils {
     public static final int[] reefCams = { 0, 3 };
 
     public AutoUtils() {
-        chassis = RobotContainer.getChassis();
+        chassis = Chassis.getInstance();
     }
 
     public static void addCommands(Command c, SequentialCommandGroup cmd) {

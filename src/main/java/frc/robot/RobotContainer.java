@@ -7,32 +7,26 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PS5Controller;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.path.Trgectory.FollowTrajectory;
 import frc.demacia.path.utils.PathPoint;
@@ -40,44 +34,45 @@ import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
-import frc.demacia.utils.leds.LedManager;
-
+import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.log.Elastic;
+import frc.demacia.utils.log.Elastic.Notification;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
-import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.robot.buttons.Buttons;
 import frc.robot.buttons.ButtonsConstants;
+import frc.robot.buttons.SetRobotNeutralMode;
 import frc.robot.chassis.RobotBChassisConstants;
+import frc.robot.intake.commands.GetBallOutCommand;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
-import frc.robot.intake.commands.GetBallOutCommand;
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 import frc.robot.leds.RobotBLedStrip;
 
-/* TODO: add doc */
+/* TODO: add doc on entire project */
 public class RobotContainer implements Sendable {
 
   private static CommandController driverController;
   private static PowerDistribution PDH;
 
-  private static Chassis chassis;
-  private static IntakeSubsystem intake;
-  private static ShinuaSubsystem shinua;
-  private static Turret turret;
-  private static Shooter shooter;
+  private Chassis chassis;
+  private IntakeSubsystem intake;
+  private ShinuaSubsystem shinua;
+  private Turret turret;
+  private Shooter shooter;
 
-  private static LedManager ledManager;
   private static RobotBLedStrip mainLeds;
   // private static DianasourLedStrip dianasourLedStrip;
   private static Buttons buttons;
 
   public static RobotContainer instance;
   private AutoFactory autoFactory;
-  private AutoChooser autoChooser;
+  private Command autoCommand;
 
   public RobotContainer() {
     instance = this;
@@ -85,6 +80,7 @@ public class RobotContainer implements Sendable {
     driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     configureSubsystems();
     configureUserButton();
@@ -95,6 +91,8 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     SmartDashboard.putData("PDH", PDH);
     SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
+
+    Elastic.sendNotification(new Notification(Elastic.NotificationLevel.INFO, "Robot Code Initalize", ""));
   }
 
   private void configureSubsystems() {
@@ -105,7 +103,6 @@ public class RobotContainer implements Sendable {
     turret = Turret.getInstance();
     shooter = Shooter.getInstance();
 
-    ledManager = new LedManager();
     mainLeds = new RobotBLedStrip();
 
     // dianasourLedStrip = new DianasourLedStrip();
@@ -127,22 +124,75 @@ public class RobotContainer implements Sendable {
             shooter, mainLeds).ignoringDisable(true));
   }
 
-  Command auto;
-
   private void configureAuto() {
-    autoFactory = new AutoFactory(RobotCommon::getCurrentRobotPose, (pose) -> RobotPose.getInstance().resetPose(pose),
+    autoFactory = new AutoFactory(
+        () -> new Pose2d(RobotCommon.getCurrentRobotPose().getX(), RobotCommon.getCurrentRobotPose().getY(),
+            new Rotation2d(RobotCommon.getCurrentRobotPose().getRotation().getRadians())),
+        (pose) -> RobotPose.getInstance().resetPose(
+            new Pose2dDemacia(pose.getX(), pose.getY(), new Rotation2dDemacia(pose.getRotation().getRadians()))),
         chassis::followTrajectory,
         RobotCommon.isRed(), chassis);
-    autoChooser = new AutoChooser();
 
-    auto = soloAuto().cmd();
-    autoChooser.addRoutine("soloRoutine", this::soloAuto);
-    autoChooser.addCmd("Nothing", () -> new Command() {
-    });
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // autoCommand = soloAuto().cmd();
+    autoCommand = demaciaTrajectoryAuto();
   }
 
+  private Command demaciaTrajectoryAuto() {
+    ArrayList<PathPoint> points = new ArrayList<>();
+    points.add(PathPoint.kZero);
+
+    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1,
+    // 1));
+    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)),
+    // 0,1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 -
+    // 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5),
+    // Rotation2d.fromDegrees(180-15)),0.5, 1));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9,
+    // Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5,
+    // 3));
+    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1,
+    // 3));
+    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
+    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
+
+    points.add(new PathPoint(new Pose2dDemacia(10.18, 0.9, Rotation2dDemacia.kCCW_90deg), 1, 1));
+    points.add(new PathPoint(new Pose2dDemacia(10.1, 3.35, Rotation2dDemacia.k180deg), 1, 0.7));
+    points.add(new PathPoint(new Pose2dDemacia(9.3, 3.9, Rotation2dDemacia.fromDegrees(135)), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2dDemacia(8.5, 3.66, Rotation2dDemacia.k180deg), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2dDemacia(8.26, 2.6, Rotation2dDemacia.fromDegrees(-115)), 0.3, 0.4));
+    points.add(new PathPoint(new Pose2dDemacia(8.33, 0.7, Rotation2dDemacia.kCW_90deg), 1, 0.4));
+    points.add(new PathPoint(new Pose2dDemacia(10, 0.7, Rotation2dDemacia.k180deg), 1, 0));
+    points.add(new PathPoint(new Pose2dDemacia(13.7, 0.7, Rotation2dDemacia.kCW_90deg), 0, 0));
+
+    FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
+
+    trajectory.addTrigger(new Pose2dDemacia(10.18, 1, Rotation2dDemacia.kZero), 0.2, 2 * Math.PI)
+        .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+    trajectory.addTrigger(new Pose2dDemacia(8.25, 2.5, Rotation2dDemacia.kCW_90deg), 0.5, 0.4 * Math.PI)
+        .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    trajectory.addTrigger(new Pose2dDemacia(13, 1, Rotation2dDemacia.kCW_90deg), 0.3, 2 * Math.PI)
+        .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+
+    return Commands.sequence(
+        new InstantCommand(() -> {
+          StateManager.getInstance().setStateChangeActivated(false);
+          RobotCommon.setState(RobotStates.Trench);
+          CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+          CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+          CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+          CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
+          CommandScheduler.getInstance()
+              .schedule(new WaitCommand(2).andThen(RobotCommon.changeStateCommand(RobotStates.Delivery)));
+        }, chassis),
+        trajectory);
+  }
+
+  @SuppressWarnings("unused")
   private AutoRoutine soloAuto() {
     AutoRoutine routine = autoFactory.newRoutine("soloRoutine");
 
@@ -178,7 +228,6 @@ public class RobotContainer implements Sendable {
     turret.setDefaultCommand(new TurretCommand(turret));
 
     /*
-     * TODO: change buttons:
      * 1: manual calibration to Turret
      * 2: manual calibration to Hood
      * 3: manual reset gyro {
@@ -193,30 +242,56 @@ public class RobotContainer implements Sendable {
 
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[0],
         new InstantCommand(() -> {
-          mainLeds.startUserButton();
+          if (turret.isAtMinLimit()) {
+            mainLeds.startUserButton();
+            turret.updatePositionByLimit();
+          }
         }).ignoringDisable(true));
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[1],
-        new InstantCommand(() -> mainLeds.setColor(Color.kYellow)).ignoringDisable(true));
+        new InstantCommand(() -> {
+          mainLeds.startUserButton();
+          shooter.resetHoodManual();
+        }).ignoringDisable(true));
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[2],
-        new InstantCommand(() -> mainLeds.setColor(Color.kGreen)).ignoringDisable(true));
+        new InstantCommand(() -> mainLeds.startUserButton()).andThen(RobotPose.getInstance().fullResetPoseCommand())
+            .ignoringDisable(true));
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[3],
-        new InstantCommand(() -> mainLeds.setColor(Color.kBlue)).ignoringDisable(true));
+        new Command() {
+          private boolean isBrake = true;
+
+          public void initialize() {
+            mainLeds.startUserButton();
+            isBrake = !isBrake;
+            chassis.setNeutralMode(isBrake);
+          };
+
+          public boolean isFinished() {
+            return true;
+          };
+
+        }.ignoringDisable(true));
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[4],
-        new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
+        new Command() {
+          private boolean isBrake = true;
+
+          public void initialize() {
+            mainLeds.startUserButton();
+            isBrake = !isBrake;
+            turret.setNeutralMode(isBrake);
+          };
+
+          public boolean isFinished() {
+            return true;
+          };
+        }.ignoringDisable(true));
 
     driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
     driverController.rightBumper().onTrue(
         new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
     driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
     driverController.rightButton().onTrue(new GetBallOutCommand(intake, shinua, driverController.rightButton()));
-    driverController.downButton().whileTrue(
-        new RunCommand(() -> rumble.setRumble(RumbleType.kBothRumble, 1)).withTimeout(0.5).ignoringDisable(true));
     driverController.leftButton().onTrue(new InstantCommand(DriveCommand::setPrecisionMode).ignoringDisable(true));
-
-    SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
-
-  PS5Controller rumble = new PS5Controller(1);
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -245,30 +320,6 @@ public class RobotContainer implements Sendable {
     return PDH;
   }
 
-  public static Chassis getChassis() {
-    return chassis;
-  }
-
-  public static IntakeSubsystem getIntake() {
-    return intake;
-  }
-
-  public static ShinuaSubsystem getShinua() {
-    return shinua;
-  }
-
-  public static Turret getTurret() {
-    return turret;
-  }
-
-  public static Shooter getShooter() {
-    return shooter;
-  }
-
-  public static LedManager getLedManager() {
-    return ledManager;
-  }
-
   public static RobotBLedStrip getMainLeds() {
     return mainLeds;
   }
@@ -281,77 +332,12 @@ public class RobotContainer implements Sendable {
     return instance;
   }
 
-  Field2d field = new Field2d();
-
   public Command getAutonomousCommand() {
-    ArrayList<PathPoint> points = new ArrayList<>();
-    points.add(PathPoint.kZero);
-
-    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1,
-    // 1));
-    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)),
-    // 0,1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 -
-    // 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5),
-    // Rotation2d.fromDegrees(180-15)),0.5, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9,
-    // Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5,
-    // 3));
-    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1,
-    // 3));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
-
-    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 1, 1));
-    points.add(new PathPoint(new Pose2d(10.1, 3.35, Rotation2d.k180deg), 1, 0.7));
-    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1, 0.4));
-    points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 1, 0));
-    points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0));
-
-    for (int i = 0; i < points.size(); i++) {
-      field.getObject("points #" + i).setPose(points.get(i));
-    }
-    SmartDashboard.putData("RC/field", field);
-
-    FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
-
-    trajectory.addTrigger(new Pose2d(10.18, 1, Rotation2d.kZero), 0.2, 2 * Math.PI)
-        .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
-    trajectory.addTrigger(new Pose2d(8.25, 2.5, Rotation2d.kCW_90deg), 0.5, 0.4 * Math.PI)
-      .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    trajectory.addTrigger(new Pose2d(13, 1, Rotation2d.kCW_90deg), 0.3, 2 * Math.PI)
-      .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
-
-    return Commands.sequence(
-      new InstantCommand(() -> {
-        StateManager.getInstance().setStateChangeActivated(false);
-        RobotCommon.setState(RobotStates.Trench);
-        CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
-        CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-        CommandScheduler.getInstance().schedule(new TurretCommand(turret));
-        CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
-        CommandScheduler.getInstance().schedule(new WaitCommand(2).andThen(RobotCommon.changeStateCommand(RobotStates.Delivery)));
-      }, chassis),
-      trajectory
-    );
-    // return auto;
-
-    // return autoChooser.selectedCommand();
+    // return null;
+    return autoCommand;
   }
 
   public AutoFactory getAutoFactory() {
     return autoFactory;
   }
-
-  public AutoChooser getAutoChooser() {
-    return autoChooser;
-  }
-
 }

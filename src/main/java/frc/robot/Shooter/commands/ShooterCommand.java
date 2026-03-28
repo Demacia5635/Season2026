@@ -5,10 +5,10 @@
 package frc.robot.Shooter.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
 import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
@@ -112,7 +112,7 @@ public class ShooterCommand extends Command {
     shooter.setHoodAngle(hoodAngle);
   }
 
-  ChassisSpeeds robotSpeeds;
+  ChassisSpeedsDemacia robotSpeeds;
   Pose2dDemacia nextPose;
   Translation2dDemacia toHub;
   Translation2dDemacia turretPos;
@@ -123,15 +123,16 @@ public class ShooterCommand extends Command {
   public void execute() {
     double vel = 0;
     double hoodAngle = 0;
-    Rotation2d heading = Rotation2d.kZero;
+    Rotation2dDemacia heading = Rotation2dDemacia.kZero;
 
     robotSpeeds = RobotCommon.getFieldRelativeSpeeds();
-    nextPose = ShooterUtils.computeFuturePosition(RobotCommon.getFieldRelativeSpeeds(), RobotCommon.getCurrentRobotPose(),
+    nextPose = ShooterUtils.computeFuturePosition(RobotCommon.getFieldRelativeSpeeds(),
+        RobotCommon.getCurrentRobotPose(),
         0.2);
 
     switch (RobotCommon.getState()) {
       case Delivery:
-        Translation2d chassisToDelivery = ShooterUtils.getDeliveryPoint().minus(nextPose.getTranslation());
+        Translation2dDemacia chassisToDelivery = ShooterUtils.getDeliveryPoint().minus(nextPose.getTranslation());
         hoodAngle = Math.toRadians(45);
         vel = Math.sqrt(chassisToDelivery.getNorm() * 9.81);
         heading = chassisToDelivery.getAngle();

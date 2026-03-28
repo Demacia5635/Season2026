@@ -54,7 +54,6 @@ public class Vision {
         }
     }
 
-    // TODO: Remove Incorrect located tags
     private boolean isTagHub(int tagId) {
         return tagId == 2
             || tagId == 3

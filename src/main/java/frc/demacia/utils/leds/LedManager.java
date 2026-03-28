@@ -10,23 +10,26 @@ import static frc.demacia.utils.leds.LedConstants.*;
 
 import java.util.Arrays;
 
-/**Manager of the LedStrip */
-public class LedManager extends SubsystemBase{
+/** Manager of the LedStrip */
+public class LedManager extends SubsystemBase {
 
-  /**all the colors for every led */
+  /** all the colors for every led */
   Color[] ledColors;
-  /**the led */
+  /** the led */
   AddressableLED led;
-  /**the buffer */
+  /** the buffer */
   AddressableLEDBuffer buffer;
-  
-  /**currentH for gay */
+
+  /** currentH for gay */
   double currentH;
 
+  private static LedManager instance;
+
   /**
-   * creates Led Manager make sure to make only one and give it all to the led strip
+   * creates Led Manager make sure to make only one and give it all to the led
+   * strip
    */
-  public LedManager() {
+  private LedManager() {
     ledColors = new Color[LENGTH];
     for (int i = 0; i < LENGTH; i++) {
       ledColors[i] = Color.kBlack;
@@ -37,94 +40,109 @@ public class LedManager extends SubsystemBase{
     led.setLength(LENGTH);
     led.start();
 
-    /*initialize currentH for gay */
+    /* initialize currentH for gay */
     currentH = 0;
   }
 
+  public static LedManager getInstance() {
+    if (instance == null) instance = new LedManager();
+    return instance;
+  }
+
+
   /**
    * set a strip to be a solid color
+   * 
    * @param strip the wanted strip
    * @param color the wanted color to blink
    */
   public void setColor(LedStrip strip, Color color) {
-    for(int i = strip.offset; i < strip.size + strip.offset; i++) {
+    for (int i = strip.offset; i < strip.size + strip.offset; i++) {
       this.ledColors[i] = color;
     }
 
   }
-  
+
   /**
    * set a strip to be solid colors
-   * @param strip the wanted strip
-   * @param colors the wanted colors (notice that the size of the arr must by the size of the strip)
+   * 
+   * @param strip  the wanted strip
+   * @param colors the wanted colors (notice that the size of the arr must by the
+   *               size of the strip)
    */
   public void setColor(LedStrip strip, Color[] colors) {
-    for(int i = strip.offset; i < colors.length + strip.offset; i++) {
+    for (int i = strip.offset; i < colors.length + strip.offset; i++) {
       this.ledColors[i] = colors[i - strip.offset];
     }
 
   }
-    
+
   /**
    * set a strip to blink in one color
+   * 
    * @param strip the wanted strip
    * @param color the wanted color to blink
    */
   public void setBlink(LedStrip strip, Color color) {
-    for(int i = strip.offset; i < strip.size + strip.offset; i++) {
-      this.ledColors[i] = (int)(Timer.getFPGATimestamp()*10) % BLINK_TIME != 0
-      ? color
-      : Color.kBlack;
+    for (int i = strip.offset; i < strip.size + strip.offset; i++) {
+      this.ledColors[i] = (int) (Timer.getFPGATimestamp() * 10) % BLINK_TIME != 0
+          ? color
+          : Color.kBlack;
     }
 
   }
 
   /**
    * set a strip to blink in certain colors
-   * @param strip the wanted strip
-   * @param colors the wanted colors (notice that the arr size needs to be the size of the strip)
+   * 
+   * @param strip  the wanted strip
+   * @param colors the wanted colors (notice that the arr size needs to be the
+   *               size of the strip)
    */
   public void setBlink(LedStrip strip, Color[] colors) {
-    for(int i = strip.offset; i < colors.length + strip.offset; i++) {
-      this.ledColors[i] = (int)(Timer.getFPGATimestamp()*10) % BLINK_TIME != 0 
-      ? colors[i - strip.offset]
-      : Color.kBlack;
+    for (int i = strip.offset; i < colors.length + strip.offset; i++) {
+      this.ledColors[i] = (int) (Timer.getFPGATimestamp() * 10) % BLINK_TIME != 0
+          ? colors[i - strip.offset]
+          : Color.kBlack;
     }
 
   }
-  
+
   /**
    * set the leds to being gay always
+   * 
    * @param strip the wanted strip
    */
   public void setGay(LedStrip strip) {
-      for (int i = strip.offset; i < strip.size + strip.offset; i++) {
-        ledColors[i] = Color.fromHSV((int) (currentH + i * 3), 255, 255);
-      }
+    for (int i = strip.offset; i < strip.size + strip.offset; i++) {
+      ledColors[i] = Color.fromHSV((int) (currentH + i * 3), 255, 255);
+    }
 
-      currentH += 1;
-      currentH %= 180;
+    currentH += 1;
+    currentH %= 180;
   }
-  
+
   /**
    * get the colors of a strip
+   * 
    * @param offset the offset of the strip
-   * @param size the size of the strip
+   * @param size   the size of the strip
    * @return the currnet colors of the strip
    */
   public Color[] getColors(int offset, int size) {
     return Arrays.copyOfRange(ledColors, offset, offset + size);
   }
-  
+
   /**
    * get the colors of a strip
+   * 
    * @param ledStrip the wanted strip
    * @return the current colors of the strip
    */
   public Color[] getColors(LedStrip ledStrip) {
     return getColors(ledStrip.offset, ledStrip.size);
   }
-  
+
   /**
    * updated the leds
    */

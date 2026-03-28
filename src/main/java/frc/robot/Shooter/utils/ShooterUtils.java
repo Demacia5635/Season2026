@@ -1,7 +1,9 @@
 
 package frc.robot.Shooter.utils;
 
+import frc.demacia.utils.geometry.ChassisSpeedsDemacia;
 import frc.demacia.utils.geometry.Pose2dDemacia;
+import frc.demacia.utils.geometry.Rotation2dDemacia;
 import frc.demacia.utils.geometry.Translation2dDemacia;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
@@ -31,7 +33,7 @@ public class ShooterUtils {
     return to.getTranslation().minus(from.getTranslation()).getAngle().getRadians();
   }
 
-  public static Pose2dDemacia computeFuturePosition(ChassisSpeeds speeds, Pose2dDemacia currentPose, double dtSeconds) {
+  public static Pose2dDemacia computeFuturePosition(ChassisSpeedsDemacia speeds, Pose2dDemacia currentPose, double dtSeconds) {
     return new Pose2dDemacia(currentPose.getX() + (speeds.vxMetersPerSecond * dtSeconds),
         currentPose.getY() + (speeds.vyMetersPerSecond * dtSeconds),
         currentPose.getRotation().plus(new Rotation2dDemacia(speeds.omegaRadiansPerSecond * dtSeconds)));

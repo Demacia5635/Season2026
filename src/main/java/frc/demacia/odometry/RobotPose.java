@@ -27,7 +27,6 @@ import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 
-import frc.robot.Field;
 import frc.robot.RobotContainer;
 
 public class RobotPose {
@@ -76,9 +75,6 @@ public class RobotPose {
     public Vision getVision() {
         return vision;
     }
-
-    private final Pose2dDemacia hubRedResetPose = new Pose2dDemacia(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER,
-            Rotation2dDemacia.kZero);
 
     public Quest getQuest() {
         return quest;
@@ -134,17 +130,17 @@ public class RobotPose {
         quest.setQuestPose(new Pose3dDemacia(pose));
     }
 
-    public void addVisionMeasurement(Rotation2d gyroAngle) {
+    public void addVisionMeasurement(Rotation2dDemacia gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
         poseEstimator.addVisionMeasurement(
-                new Pose2d(vision.getPoseEstimation().getX(), vision.getPoseEstimation().getY(), gyroAngle),
+                new Pose2dDemacia(vision.getPoseEstimation().getX(), vision.getPoseEstimation().getY(), gyroAngle),
                 Timer.getFPGATimestamp() - 0.05);
     }
 
-    public void addQuestMeasurement(Rotation2d gyroAngle) {
+    public void addQuestMeasurement(Rotation2dDemacia gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(questSTD);
         poseEstimator.addVisionMeasurement(
-                new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
+                new Pose2dDemacia(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
                 Timer.getFPGATimestamp() - 0.05);
 
     }

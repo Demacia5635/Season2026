@@ -2,7 +2,6 @@ package frc.robot.chassis.commands;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.SwerveModule;
 import frc.demacia.utils.geometry.Rotation2dDemacia;
+import frc.demacia.utils.geometry.SwerveModuleStateDemacia;
 import frc.demacia.utils.motors.CloseLoopParam;
 import frc.demacia.utils.motors.TalonFXMotor;
 
@@ -85,7 +85,7 @@ public class SetModuleAngle extends Command {
     @Override
     public void execute() {
         for (SwerveModule module : swerveModules) {
-            module.setState(new SwerveModuleState(0, Rotation2dDemacia.fromDegrees(position)));  
+            module.setState(new SwerveModuleStateDemacia(0, Rotation2dDemacia.fromDegrees(position)));  
         }
     }
 

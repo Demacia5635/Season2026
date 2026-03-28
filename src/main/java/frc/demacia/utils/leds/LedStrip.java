@@ -22,11 +22,11 @@ public class LedStrip extends SubsystemBase{
    * @param ledManager the led manager 
    * @param offset the offset of the strip in the port
    */
-  public LedStrip(String name, int size, LedManager ledManager, int offset) {
+  public LedStrip(String name, int size, int offset) {
     /*initialize pera */
     this.size = size;
     this.offset = offset;
-    this.manager = ledManager;
+    this.manager = LedManager.getInstance();
     
     /*puts on the network table all the colors */
     setName(name);
@@ -39,13 +39,13 @@ public class LedStrip extends SubsystemBase{
    * @param size the size of the strip
    * @param ledManager the led manager 
    */
-  public LedStrip(String name, int size, LedManager ledManager) {
+  public LedStrip(String name, int size) {
     /*set offset to 0 */
     this.offset = 0;
 
     /*initialize pera */
     this.size = size;
-    this.manager = ledManager;
+    this.manager = LedManager.getInstance();
     
     /*puts on the network table all the colors */
     setName(name);

@@ -11,13 +11,12 @@ import frc.demacia.utils.leds.LedStrip;
 
 import frc.robot.RobotCommon;
 import frc.robot.RobotCommon.Shifts;
-import frc.robot.RobotContainer;
 import frc.robot.StateManager;
 
 public class RobotBLedStrip extends LedStrip {
 
     public RobotBLedStrip() {
-        super("Robot B Strip", LedConstants.LENGTH, RobotContainer.getLedManager());
+        super("Robot B Strip", LedConstants.LENGTH);
         this.transitionTimer = new Timer();
         this.ourShiftTimer = new Timer();
         this.theirShiftTimer = new Timer();
