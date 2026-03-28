@@ -279,7 +279,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
 
     @Override
     public void setMotion(double position, double feedForward) {
-        setControl(motionMagicVoltage.withPosition(position).withFeedForward(feedForward + positionFeedForward(position)));
+        setControl(motionMagicVoltage.withPosition(position)); // .withFeedForward(feedForward + positionFeedForward(position)));
         controlMode = ControlMode.MOTION;  
     }
 

@@ -26,7 +26,10 @@ import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 
 import frc.robot.Field;
+import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
+import frc.robot.StateManager;
+import frc.robot.RobotCommon.RobotStates;
 
 public class RobotPose {
 
@@ -42,6 +45,8 @@ public class RobotPose {
     private boolean hasQuestDisconnected;
 
     private Matrix<N3, N1> visionSTD;
+    private Matrix<N3, N1> questSTDWhileShooting;
+    
     private BuiltInAccelerometer accelerometer;
 
     private RobotPose(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
@@ -50,6 +55,7 @@ public class RobotPose {
 
         this.quest = new Quest();
         this.questSTD = questSTD;
+        this.questSTDWhileShooting = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 0 }));
         this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 0 }));
         this.hasUpdatedQuestIntialPose = false;
         this.hasQuestDisconnected = false;
@@ -106,9 +112,7 @@ public class RobotPose {
     public void setQuestPose() {
         if (vision.isSeeTag()) {
             setQuestPose(vision.getPoseEstimation());
-        } else {
-            setQuestPose(getPose());
-        }
+        } 
     }
 
     public void setQuestHeading(Rotation2d heading) {
@@ -128,7 +132,7 @@ public class RobotPose {
     }
 
     public void addQuestMeasurement(Rotation2d gyroAngle) {
-        poseEstimator.setVisionMeasurementStdDevs(questSTD);
+        poseEstimator.setVisionMeasurementStdDevs(RobotCommon.getState() == RobotStates.Hub ? questSTDWhileShooting : questSTD);
         poseEstimator.addVisionMeasurement(
                 new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
                 Timer.getFPGATimestamp() - 0.05);

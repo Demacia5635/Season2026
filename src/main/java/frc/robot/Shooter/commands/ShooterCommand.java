@@ -107,7 +107,7 @@ public class ShooterCommand extends Command {
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
-    RobotCommon.setFutureAngleFromTargetRobotRelative(MathUtil
+    RobotCommon.setFutureAngleFromTargetRobotRelative(MathUtil 
         .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI));
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);

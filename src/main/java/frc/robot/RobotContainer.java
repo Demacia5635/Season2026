@@ -7,13 +7,11 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,7 +20,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,7 +74,7 @@ public class RobotContainer implements Sendable {
 
   public static RobotContainer instance;
   private AutoFactory autoFactory;
-  private AutoChooser autoChooser;
+  private Command autoCommand;
 
   public RobotContainer() {
     instance = this;
@@ -127,22 +124,16 @@ public class RobotContainer implements Sendable {
             shooter, mainLeds).ignoringDisable(true));
   }
 
-  Command auto;
-
   private void configureAuto() {
     autoFactory = new AutoFactory(RobotCommon::getCurrentRobotPose, (pose) -> RobotPose.getInstance().resetPose(pose),
         chassis::followTrajectory,
         RobotCommon.isRed(), chassis);
-    autoChooser = new AutoChooser();
 
-    auto = soloAuto().cmd();
-    autoChooser.addRoutine("soloRoutine", this::soloAuto);
-    autoChooser.addCmd("Nothing", () -> new Command() {
-    });
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // autoCommand = soloAuto().cmd();
+    autoCommand = getDemaciaTrajectoryAuto();
   }
 
+  @SuppressWarnings("unused")
   private AutoRoutine soloAuto() {
     AutoRoutine routine = autoFactory.newRoutine("soloRoutine");
 
@@ -237,6 +228,10 @@ public class RobotContainer implements Sendable {
   public void periodic() {
   }
 
+  public Command getAutonomousCommand() {
+    return autoCommand;
+  }
+
   public static CommandController getDriverController() {
     return driverController;
   }
@@ -281,9 +276,7 @@ public class RobotContainer implements Sendable {
     return instance;
   }
 
-  Field2d field = new Field2d();
-
-  public Command getAutonomousCommand() {
+  public Command getDemaciaTrajectoryAuto() {
     ArrayList<PathPoint> points = new ArrayList<>();
     points.add(PathPoint.kZero);
 
@@ -306,27 +299,22 @@ public class RobotContainer implements Sendable {
     // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
     // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
 
-    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 1, 1));
-    points.add(new PathPoint(new Pose2d(10.1, 3.35, Rotation2d.k180deg), 1, 0.7));
-    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.3, 0.4));
-    points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1, 0.4));
-    points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 1, 0));
-    points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0));
-
-    for (int i = 0; i < points.size(); i++) {
-      field.getObject("points #" + i).setPose(points.get(i));
-    }
-    SmartDashboard.putData("RC/field", field);
+    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 2,  1, 2));
+    points.add(new PathPoint(new Pose2d(9.6, 3.35, Rotation2d.k180deg), 2, 0.7, 2));
+    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4, 0.5));
+    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4, 0.5));
+    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.3, 0.4, 0.5));
+    points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1.5, 0.4, 1.5));
+    points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 2, 0, 2));
+    points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0, 1));
 
     FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
 
-    trajectory.addTrigger(new Pose2d(10.18, 1, Rotation2d.kZero), 0.2, 2 * Math.PI)
+    trajectory.addTrigger(new Pose2d(10.7, 0.5, Rotation2d.kZero), 0.5, 2 * Math.PI)
         .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
-    trajectory.addTrigger(new Pose2d(8.25, 2.5, Rotation2d.kCW_90deg), 0.5, 0.4 * Math.PI)
+    trajectory.addTrigger(new Pose2d(8.4, 0.6, Rotation2d.kCW_90deg), 0.5, 0.4 * Math.PI)
       .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    trajectory.addTrigger(new Pose2d(13, 1, Rotation2d.kCW_90deg), 0.3, 2 * Math.PI)
+    trajectory.addTrigger(new Pose2d(12.3, 0.5, Rotation2d.kCW_90deg), 0.3, 2 * Math.PI)
       .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
 
     return Commands.sequence(
@@ -340,18 +328,10 @@ public class RobotContainer implements Sendable {
         CommandScheduler.getInstance().schedule(new WaitCommand(2).andThen(RobotCommon.changeStateCommand(RobotStates.Delivery)));
       }, chassis),
       trajectory
-    );
-    // return auto;
-
-    // return autoChooser.selectedCommand();
+    ).andThen(new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
   }
 
   public AutoFactory getAutoFactory() {
     return autoFactory;
   }
-
-  public AutoChooser getAutoChooser() {
-    return autoChooser;
-  }
-
 }

@@ -37,7 +37,7 @@ public class FollowTrajectory extends Command {
   }
 
   public Trigger addTrigger(Pose2d pose, double meterTreshold, double rotationTreshold) {
-    return new Trigger(() -> {
+    return new Trigger(eventLoop, () -> {
       return Math.abs(RobotCommon.getCurrentRobotPose().getTranslation().getDistance(pose.getTranslation())) <= meterTreshold
           && Math.abs(RobotCommon.getCurrentRobotPose().getRotation().getRadians() - pose.getRotation().getRadians()) <= rotationTreshold;
     });

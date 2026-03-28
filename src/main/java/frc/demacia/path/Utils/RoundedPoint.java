@@ -18,6 +18,8 @@ public class RoundedPoint {
     double heading2;
     double wantedVelocity1;
     double wantedVelocity2;
+    double maxVelocity1;
+    double maxVelocity2;
 
     public RoundedPoint(PathPoint aPoint, PathPoint bPoint, PathPoint cPoint) {
         this.radius = bPoint.getRadius();
@@ -30,6 +32,8 @@ public class RoundedPoint {
         heading2 = cPoint.getRotation().getRadians();
         wantedVelocity1 = bPoint.getWantedVelocity();
         wantedVelocity2 = cPoint.getWantedVelocity();
+        maxVelocity1 = bPoint.getMaxVelocity();
+        maxVelocity2 = bPoint.getMaxVelocity();
 
         this.cornerAngle = vectorAtoB.times(-1).getAngle().minus(vectorBtoC.getAngle());
         // case for angle of the corner is close to 0 so only leg
@@ -56,6 +60,9 @@ public class RoundedPoint {
         return wantedVelocity1;
     }
 
+    public double getMaxVelocity1(){
+        return maxVelocity1;
+    }
     public double getMaxRadius() {
         return Math.sin(Math.abs(this.cornerAngle.getRadians()) / 2)
                 * Math.min(vectorAtoB.getNorm(), vectorBtoC.getNorm());
@@ -153,15 +160,15 @@ public class RoundedPoint {
     }
 
     public Leg getAtoCurveLeg() {
-        return new Leg(aPoint, startRange().plus(getCenterCircle()), heading1, wantedVelocity1);
+        return new Leg(aPoint, startRange().plus(getCenterCircle()), heading1, wantedVelocity1, maxVelocity1);
     }
 
     public Leg getCtoCurveLeg() {
-        return new Leg(endRange().plus(getCenterCircle()), cPoint, heading2, wantedVelocity2);
+        return new Leg(endRange().plus(getCenterCircle()), cPoint, heading2, wantedVelocity2, maxVelocity2);
     }
 
     public Arc getArc() {
         Rotation2d diffAngle = endRange().getAngle().minus(startRange().getAngle());
-        return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle, heading2, wantedVelocity2);
+        return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle, heading2, wantedVelocity2, maxVelocity2);
     }
 }

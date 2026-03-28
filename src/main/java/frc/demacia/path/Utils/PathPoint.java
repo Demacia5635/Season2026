@@ -10,48 +10,53 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * 
- *A point in the path
+ * A point in the path
  *
  */
-public class PathPoint extends Pose2d{
-    public static final PathPoint kZero = new PathPoint(Translation2d.kZero, Rotation2d.kZero, 0);
+public class PathPoint extends Pose2d {
+  public static final PathPoint kZero = new PathPoint(Translation2d.kZero, Rotation2d.kZero, 0, 0);
 
-    double wantedVelocity;
-    double radius;
+  private double wantedVelocity;
+  private double radius;
+  private double maxVelocity;
 
+  public PathPoint(Pose2d pose, double wantedVelocity, double radius, double maxVelocity) {
+    this(pose.getX(), pose.getY(), pose.getRotation(), radius, wantedVelocity, maxVelocity);
+  }
 
-    public PathPoint(Pose2d pose, double wantedVelocity, double radius){
-      this(pose.getX(), pose.getY(), pose.getRotation(), radius, wantedVelocity);
-    }
-    public PathPoint(Pose2d pose2d, double wantedVelocity) {
-      this(pose2d.getTranslation(), pose2d.getRotation(), wantedVelocity);
-    }
-    public PathPoint(Translation2d p, Rotation2d r, double wantedVelocity) {
-      this(p.getX(),p.getY(),r,0, wantedVelocity);
-    }
-    public PathPoint(Translation2d p, Rotation2d r, double radius, double wantedVelocity) {
-      this(p.getX(),p.getY(),r,radius, wantedVelocity);
-    }
-    public PathPoint(double x, double y, Rotation2d rotation, double radius, double wantedVelocity) {
-      super(x,y,rotation);
-      this.radius = radius;
-      this.wantedVelocity = wantedVelocity;
-    }
+  public PathPoint(Pose2d pose2d, double wantedVelocity, double maxVelocity) {
+    this(pose2d.getTranslation(), pose2d.getRotation(), wantedVelocity, maxVelocity);
+  }
 
+  public PathPoint(Translation2d p, Rotation2d r, double wantedVelocity, double maxVelocity) {
+    this(p.getX(), p.getY(), r, 0, wantedVelocity, maxVelocity);
+  }
 
-    public double getWantedVelocity(){
-      return this.wantedVelocity;
-    }
+  public PathPoint(Translation2d p, Rotation2d r, double radius, double wantedVelocity, double maxVelocity) {
+    this(p.getX(), p.getY(), r, radius, wantedVelocity, maxVelocity);
+  }
 
-    public double getRadius()
-    {
-      return radius;
-    }
+  public PathPoint(double x, double y, Rotation2d rotation, double radius, double wantedVelocity, double maxVelocity) {
+    super(x, y, rotation);
+    this.radius = radius;
+    this.wantedVelocity = wantedVelocity;
+    this.maxVelocity = maxVelocity;
+  }
 
-    public void setRadius(double radius)
-    {
-      this.radius = radius;
-    }
+  public double getWantedVelocity() {
+    return this.wantedVelocity;
+  }
 
+  public double getRadius() {
+    return radius;
+  }
+
+  public double getMaxVelocity() {
+    return maxVelocity;
+  }
+
+  public void setRadius(double radius) {
+    this.radius = radius;
+  }
 
 }

@@ -141,12 +141,12 @@ public class Turret extends SubsystemBase {
     readyCounter ++;
     if (hasCalibrated()
         && Math.abs(wantedAngle - getTurretAngle()) <= getMaxAngleError(RobotCommon.getCurrentDistanceFromTarget())) {
-          if(!isReady && readyCounter > 10) {
+          if(!isReady) {
               isReady = true;
               readyCounter = 0;
           }
   } else { 
-        if(isReady && readyCounter > 10) {
+        if(isReady && readyCounter > 20) {
           readyCounter = 0;
           isReady = false;
         }

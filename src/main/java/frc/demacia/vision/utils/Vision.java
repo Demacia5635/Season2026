@@ -97,10 +97,10 @@ public class Vision {
         double y = 0;
         double confidence = 0;
         for (TagPose tag : tags) {
-            if (tag.getRobotPose2d() == null)
+            Pose2d pose2d = tag.getRobotPose2d();
+            if (pose2d == null)
                 continue;
             confidence = normalizeConfidence(tag.getPoseEstemationConfidence());
-            Pose2d pose2d = tag.getRobotPose2d();
             x += pose2d.getX() * confidence;
             y += pose2d.getY() * confidence;
 

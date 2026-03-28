@@ -23,10 +23,10 @@ public class Arc extends Segment{
      * @param p2 - Circle center of arc
      * @param angle - Arc's angle
      */
-    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle, double headingInRad, double wantedVelocity)
+    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle, double headingInRad, double wantedVelocity, double maxVelocity)
     {
         //start point
-        super(p1,p2, headingInRad, wantedVelocity);
+        super(p1,p2, headingInRad, wantedVelocity, maxVelocity);
         this.angle = angle;
 
         startVector = p1.minus(p2);

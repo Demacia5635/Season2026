@@ -57,6 +57,8 @@ public class TagPose {
 
   private double latency;
 
+  private boolean isUpsidedown = false;
+
   @SuppressWarnings("unchecked")
   public TagPose(Camera camera) {
     confidence = 0;
@@ -79,6 +81,11 @@ public class TagPose {
 
   }
 
+  public TagPose(Camera camera, boolean isUpsidedown) {
+    this(camera);
+    this.isUpsidedown = isUpsidedown;
+  }
+
   public void setDimension(boolean is3D) {
 
     Table.getEntry("pipeline").setNumber(is3D ? 1 : 0);
@@ -96,8 +103,8 @@ public class TagPose {
   public void updateValues() {
     cropEntry = Table.getEntry("crop");
     pipeEntry = Table.getEntry("pipeline");
-    camToTagPitch = Table.getEntry("ty").getDouble(0.0);
-    camToTagYaw = (-Table.getEntry("tx").getDouble(0.0));
+    camToTagPitch = (isUpsidedown ? -1 : 1) * Table.getEntry("ty").getDouble(0.0);
+    camToTagYaw = (isUpsidedown ? 1 : -1) * Table.getEntry("tx").getDouble(0.0);
     id = (int) Table.getEntry("tid").getDouble(0.0);
     // if (camera.getIsOnTurret()) {
     // }
@@ -117,7 +124,7 @@ public class TagPose {
       }
     } else {
       cropStop();
-      pose = new Pose2d();
+      pose = null;
     }
     // if (wantedPip != Table.getEntry("getpipe").getDouble(0.0)) {
     // pipeEntry.setDouble(wantedPip);
@@ -162,7 +169,7 @@ public class TagPose {
 
   public double getDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.cos(Math.toRadians(camToTagYaw));
+    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.abs(Math.cos(Math.toRadians(camToTagYaw + camera.getYaw())));
     dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
     return dist;
   }

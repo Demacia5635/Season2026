@@ -18,7 +18,8 @@ public class TurretConstants {
     private static final Canbus CANBUS = Canbus.CANIvore;
     private static final double GEAR_RATIO = ((36d * 112d) / 27d);
 
-    private static final double kP = 0.8;
+    private static final double kP = 27d;
+    // private static final double kP = 0.2;
     private static final double kI = 0;
     private static final double kD = 0;
     private static final double kS = 0.03248;
@@ -39,7 +40,7 @@ public class TurretConstants {
     public static final LimitSwitchConfig LIMIT_SWITCH_MAX_CONFIG = new LimitSwitchConfig(0, "Max Limit Switch");
     public static final LimitSwitchConfig LIMIT_SWITCH_MIN_CONFIG = new LimitSwitchConfig(9, "Min Limit Switch");
 
-    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(1.2);
+    public static final double MAX_ALLOWED_ANGLE_ERROR = Math.toRadians(0.75);
 
     public static final Translation2d TURRET_POSITION_ON_ROBOT = new Translation2d(-0.113, 0.190);
 }

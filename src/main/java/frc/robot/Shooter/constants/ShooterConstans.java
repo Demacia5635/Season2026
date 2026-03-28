@@ -18,11 +18,11 @@ public class ShooterConstans {
 
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
-                SHOOTER_LOOKUP_TABLE.add(1.3, 12.7, Math.toRadians(72));
-                SHOOTER_LOOKUP_TABLE.add(2.28, 13.6, Math.toRadians(65));
-                SHOOTER_LOOKUP_TABLE.add(3.22, 15, Math.toRadians(62));
-                SHOOTER_LOOKUP_TABLE.add(4.55, 16.7, Math.toRadians(58));
-                SHOOTER_LOOKUP_TABLE.add(5.53, 18.3, Math.toRadians(54));
+                SHOOTER_LOOKUP_TABLE.add(1.3, 12.4, Math.toRadians(72));
+                SHOOTER_LOOKUP_TABLE.add(2.28, 13.3, Math.toRadians(65));
+                SHOOTER_LOOKUP_TABLE.add(3.22, 14.7, Math.toRadians(62));
+                SHOOTER_LOOKUP_TABLE.add(4.55, 16.4, Math.toRadians(58));
+                SHOOTER_LOOKUP_TABLE.add(5.53, 18, Math.toRadians(54));
         }
 
         public static final Canbus SHOOTER_CANBUS = Canbus.Rio;

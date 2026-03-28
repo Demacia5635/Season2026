@@ -65,7 +65,7 @@ public class DemaciaTrajectory {
 
     private void fixFirstPoint(Pose2d initialPose) {
         points.remove(0);
-        points.add(0, new PathPoint(initialPose.getTranslation(), initialPose.getRotation(), 0));
+        points.add(0, new PathPoint(initialPose.getTranslation(), initialPose.getRotation(), 0, 0));
 
     }
 
@@ -83,7 +83,7 @@ public class DemaciaTrajectory {
         return new PathPoint(
                 new Translation2d(TrajectoryConstants.FIELD_LENGTH - pointToConvert.getX(),
                         TrajectoryConstants.FIELD_HEIGHT - pointToConvert.getY()),
-                pointToConvert.getRotation(), pointToConvert.getWantedVelocity());
+                pointToConvert.getRotation(), pointToConvert.getWantedVelocity(), pointToConvert.getMaxVelocity());
     }
 
     private void initCorners() {
@@ -100,7 +100,8 @@ public class DemaciaTrajectory {
             segments.add(new Leg(points.get(0).getTranslation(),
                     last.getTranslation(),
                     last.getRotation().getRadians(),
-                    last.getWantedVelocity()));
+                    last.getWantedVelocity(),
+                    last.getMaxVelocity()));
         }
 
         else {
@@ -110,7 +111,8 @@ public class DemaciaTrajectory {
                 segments.add(new Leg(corners[i].getCurveEnd(),
                         corners[i + 1].getCurveStart(),
                         corners[i + 1].getHeading1(),
-                        corners[i + 1].getWantedVelocity1()));
+                        corners[i + 1].getWantedVelocity1(),
+                        corners[i + 1].getMaxVelocity1()));
             }
 
             segments.add(corners[corners.length - 1].getArc());
@@ -147,17 +149,15 @@ public class DemaciaTrajectory {
     private double getVelocity(Segment currentSegment, Pose2d chassisPose, double currentVelocity) {
         double distance = currentSegment.getDistanceLeft(chassisPose.getTranslation());
         double wantedVelocity = currentSegment.getWantedVelocity();
-        double vmax = Math
+        double vmax = Math.min((Math
                 .sqrt(2 * accel * distance
                         + currentVelocity * currentVelocity
                         + wantedVelocity * wantedVelocity)
-                / 2;
+                / 2), currentSegment.getMaxVelocity());
         if (vmax > currentVelocity) {
             return MathUtil.clamp(maxVel, currentVelocity - accel * 0.02, currentVelocity + accel * 0.02);
         } else {
             double t = 2 * distance / (currentVelocity + wantedVelocity);
-            frc.demacia.utils.log.LogManager.log("t: " + t + " current velocity: " + currentVelocity
-                    + " wanted velocity: " + wantedVelocity + " distance: " + distance);
             if (t < 0.1) {
                 return wantedVelocity;
             } else {
@@ -191,7 +191,8 @@ public class DemaciaTrajectory {
         double diffAngle = MathUtil.angleModulus(segment.getHeading() - chassisPose.getRotation().getRadians());
         double wantedOmega = 0;
 
-        wantedOmega = Math.abs(diffAngle) < TrajectoryConstants.MAX_ROTATION_THRESHOLD ? 0 : 1.1 * diffAngle;
+        wantedOmega = Math.abs(diffAngle) < TrajectoryConstants.MAX_ROTATION_THRESHOLD ? 0 : 1.3 * diffAngle;
+        wantedOmega = MathUtil.clamp(Math.abs(wantedOmega), 0, Math.toRadians(360)) * Math.signum(wantedOmega);
         return new ChassisSpeeds(wantedVelocity.getX(), wantedVelocity.getY(), -wantedOmega);
     }
 

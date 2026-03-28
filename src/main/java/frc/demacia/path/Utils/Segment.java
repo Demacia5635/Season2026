@@ -12,29 +12,49 @@ public class Segment {
     protected Translation2d p2;
     double headingInRad;
     double wantedVelocity;
+    double maxVelocity;
 
-    
-    public Segment(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity)
-    {
+    public Segment(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity, double maxVelocity) {
         this.p1 = p1;
         this.p2 = p2;
         this.headingInRad = headingInRad;
         this.wantedVelocity = wantedVelocity;
+        this.maxVelocity = maxVelocity;
     }
-    
-    public Translation2d calcVector(Translation2d position, double velocity) {return Translation2d.kZero;}
-    public double distancePassed(Translation2d position) {return 0;}
-    public double getLength() {return 0;}
-    public double getHeading() { return headingInRad;}
-    public double getWantedVelocity(){return this.wantedVelocity;}
 
-    public double getDistanceLeft(Translation2d currentPosition){
+    public Translation2d calcVector(Translation2d position, double velocity) {
+        return Translation2d.kZero;
+    }
+
+    public double distancePassed(Translation2d position) {
         return 0;
     }
+
+    public double getLength() {
+        return 0;
+    }
+
+    public double getHeading() {
+        return headingInRad;
+    }
+
+    public double getWantedVelocity() {
+        return this.wantedVelocity;
+    }
+
+    public double getMaxVelocity() {
+        return this.maxVelocity;
+    }
+
+    public double getDistanceLeft(Translation2d currentPosition) {
+        return 0;
+    }
+
     public Translation2d[] getPoints() {
-        Translation2d[] pArr = {p1,p2}; 
+        Translation2d[] pArr = { p1, p2 };
         return pArr;
     }
+
     @Override
     public String toString() {
         return "\n~\np1 : " + p1 + "\np2 : " + p2;

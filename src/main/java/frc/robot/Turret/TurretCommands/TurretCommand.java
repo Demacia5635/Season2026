@@ -34,8 +34,9 @@ public class TurretCommand extends Command {
     public void execute() {
         switch (RobotCommon.getState()) {
             case Hub, Delivery:
-                turret.setPositionMotion(RobotCommon.getFutureAngleFromTargetRobotRelative());
-                break;
+                // turret.setPositionMotion(RobotCommon.getFutureAngleFromTargetRobotRelative());
+                turret.setPositionPID(RobotCommon.getFutureAngleFromTargetRobotRelative());
+                 break;
 
             case Test:
                 turret.setPositionMotion((Math.toRadians(wantedAngle)));

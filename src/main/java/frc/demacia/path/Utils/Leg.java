@@ -19,9 +19,9 @@ public class Leg extends Segment{
      * @param p1 the first point of the leg
      * @param p2 the last point of the leg
      */
-    public Leg(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity)
+    public Leg(Translation2d p1, Translation2d p2, double headingInRad, double wantedVelocity, double maxVelocity)
     {
-        super(p1, p2, headingInRad, wantedVelocity);
+        super(p1, p2, headingInRad, wantedVelocity, maxVelocity);
         totalVector = p2.minus(p1);
         velDirection = totalVector.div(totalVector.getNorm());
     }
