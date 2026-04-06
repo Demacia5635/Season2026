@@ -94,6 +94,7 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
   }
 
+
   private void configureSubsystems() {
     Chassis.initialize(RobotBChassisConstants.CHASSIS_CONFIG);
     chassis = Chassis.getInstance();

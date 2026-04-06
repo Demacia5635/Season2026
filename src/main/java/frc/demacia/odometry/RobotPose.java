@@ -4,6 +4,9 @@
 
 package frc.demacia.odometry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -14,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,6 +53,14 @@ public class RobotPose {
     private Matrix<N3, N1> questSTDWhileShooting;
     
     private BuiltInAccelerometer accelerometer;
+
+    private static final double SMOOTHING_FACTOR = 0.1;
+    private static final long OFFSET_RESET_TIME = 1000; 
+    private static final double TARGET_HZ = 50.0;
+
+    private double offsetX = 0, offsetY = 0, offsetYaw = 0;
+    private long lastUpdateTime = 0;
+    private long lastVisionTime = 0;    
 
     private RobotPose(Translation2d[] modulePositions, Matrix<N3, N1> stateSTD,
             Matrix<N3, N1> questSTD) {
@@ -137,7 +149,24 @@ public class RobotPose {
         poseEstimator.addVisionMeasurement(
                 new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
                 Timer.getFPGATimestamp() - 0.05);
+    }
 
+    private void decayOffsetIfNoVision(long now) {
+        if (now - lastVisionTime > OFFSET_RESET_TIME) {
+            offsetX   *= 0.9;
+            offsetY   *= 0.9;
+            offsetYaw *= 0.9;
+        }
+    }
+    
+    public void updateQuestWithOffset(){
+        if(vision.isSeeTag()){
+            Pose2d visionPose = vision.getPoseEstimation();
+            Pose2d offsetPose = new Pose2d(offsetX, offsetY, Rotation2d.fromDegrees(offsetYaw));
+            Translation2d newQuestPoseAsVector = visionPose.getTranslation().plus(offsetPose.getTranslation());
+            Pose2d newQuestPose = new Pose2d(newQuestPoseAsVector, visionPose.getRotation());
+            setQuestPose(newQuestPose);
+        }
     }
 
     public void update(Pose2d odometryPose, Rotation2d gyroAngle,
@@ -148,8 +177,9 @@ public class RobotPose {
 
     private boolean shouldUpdateVision() {
         return vision.isSeeTag() && vision.isSeeTagWithDistance();
-
     }
+
+    
 
     public void setAngle3DLimelight() {
         Rotation2d newAngle = vision.getRobotAngle();

@@ -125,6 +125,10 @@ public class DemaciaPoseEstimator {
         visionUpdates.headMap(newestNeededVisionUpdateTimestamp, false).clear();
     }
 
+    public void questOffset(){
+        
+    }
+
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         // Step 0: If this measurement is old enough to be outside the pose buffer's
         // timespan, skip.
