@@ -79,7 +79,7 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     instance = this;
 
-    driverController = new CommandController(0, ControllerType.kPS5);
+    driverController = new CommandController(1, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
@@ -148,7 +148,7 @@ public class RobotContainer implements Sendable {
               RobotCommon.changeStateCommand(RobotStates.Trench);
               CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
               CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-              CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+              // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
               CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
             }, chassis),
             trajectory.cmd()));
@@ -166,7 +166,7 @@ public class RobotContainer implements Sendable {
     intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     shooter.setDefaultCommand(new ShooterCommand(shooter));
-    turret.setDefaultCommand(new TurretCommand(turret));
+    // turret.setDefaultCommand(new TurretCommand(turret));
 
     /*
      * TODO: change buttons:
@@ -329,7 +329,7 @@ public class RobotContainer implements Sendable {
           RobotCommon.setState(RobotStates.Hub);
           CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
           CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-          CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+          // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
           CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
         }, chassis),
         new WaitCommand(3),

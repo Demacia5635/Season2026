@@ -147,7 +147,7 @@ public class RobotPose {
     }
 
     private boolean shouldUpdateVision() {
-        return vision.isSeeTag() && vision.isSeeTagWithDistance();
+        return vision.isSeeTag();
 
     }
 

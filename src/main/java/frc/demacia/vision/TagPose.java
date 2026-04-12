@@ -4,6 +4,8 @@
 
 package frc.demacia.vision;
 
+import static frc.demacia.vision.utils.VisionConstants.TAG_HEIGHT;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -67,7 +69,9 @@ public class TagPose {
     latency = 0;
     field = new Field2d();
     pipeEntry = Table.getEntry("pipeline");
-    LogManager.addEntry("dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    // LogManager.addEntry(camera.getName()+"dist", this::getDistFromCamera).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    // LogManager.addEntry(camera.getName()+"dist ty", this::getDistanceFromTy).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+
     SmartDashboard.putData("field-tag " + camera.getName(), field);
     SmartDashboard.putData("setTo3d " + camera.getName(),
         new InstantCommand(() -> setDimension(true)).ignoringDisable(true));
@@ -167,11 +171,33 @@ public class TagPose {
     return robotToTag;
   }
 
-  public double getDistFromCamera() {
+  // public double getDistFromCamera() {
 
-    alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.abs(Math.cos(Math.toRadians(camToTagYaw + camera.getYaw())));
-    dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
-    return dist;
+  //   alpha = Math.abs(camToTagPitch + camera.getPitch()) * Math.abs(Math.cos(Math.toRadians(camToTagYaw + camera.getYaw())));
+  //   dist = (Math.abs(height - camera.getHeight())) / (Math.tan(Math.toRadians(alpha)));
+  //   return dist;
+  // }
+  public double getDistanceFromTy(){
+    if(id < 0){
+      return 0.0;
+    }
+    double deltaHeight = TAG_HEIGHT[(int)id] - camera.getHeight();
+    double alpha = Math.toRadians(camera.getPitch() + camToTagPitch);
+    double distance = Math.abs(deltaHeight / Math.tan(alpha));
+
+    return distance;
+  }
+  public double getDistFromCamera() {
+    if(id < 0){
+      return 0.0;
+    }
+
+    double deltaHeight = TAG_HEIGHT[(int)id] - camera.getHeight();
+    double alpha = Math.toRadians(camera.getPitch() + camToTagPitch);
+    double distance = Math.abs(deltaHeight / Math.tan(alpha)) / Math.cos((Math.toRadians(camToTagYaw)));
+
+
+    return distance;    
   }
 
   private void crop() {

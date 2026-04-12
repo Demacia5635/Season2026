@@ -69,10 +69,8 @@ public class Vision {
     }
 
     public boolean isSeeTag() {
-        
-        for (TagPose tag : tags) {
-            if (tag.isSeeTag() && isTagHub(tag.getTagId()) &&  Math.abs(tag.getCamToTagYaw()) < 12)
-                return true;
+        for(TagPose t : tags){
+            if(t.isSeeTag()) return true;
         }
         return false;
     }

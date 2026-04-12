@@ -27,7 +27,7 @@ public class IntakeConstants {
                         .withBrake(true)
                         .withVolts(8)
                         .withCurrent(30)
-                        .withInvert(false);
+                        .withInvert(true);
 
         public static final int INDEXER_CLOSE_ID = 31;
         public static final String INDEXER_CLOSE_NAME = "Indexer Close motor";

@@ -142,25 +142,25 @@ public class ShooterCommand extends Command {
         break;
 
       case Hub:
-        turretPos = nextPose.getTranslation()
-            .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
-        toHub = Field.HubRed.CENTER.minus(turretPos);
+        // turretPos = nextPose.getTranslation()
+        //     .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
+        // toHub = Field.HubRed.CENTER.minus(turretPos);
 
-        // get the distance, heading and LUT valuse
-        distance = toHub.getNorm();
-        heading = toHub.getAngle();
+        // // get the distance, heading and LUT valuse
+        // distance = toHub.getNorm();
+        // heading = toHub.getAngle();
 
-        RobotCommon.setCurrentDistanceFromTarget(distance);
+        // RobotCommon.setCurrentDistanceFromTarget(distance);
 
-        lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
-        double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
-        double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
+        // lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
+        // double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
+        // double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
 
-        if (RobotCommon.isReady())
-          shooter.setFeederPower(0.7);
-        setFlywheelAndHood(lutVel, lutHoodAngle, heading);
-        break;
-
+        // if (RobotCommon.isReady())
+        //   shooter.setFeederPower(0.7);
+        // setFlywheelAndHood(lutVel, lutHoodAngle, heading);
+        // break;
+        //TODO: RETURN
       case Trench:
         shooter.setHoodAngle(Math.toRadians(90));
         shooter.setFlywheelVel(10);
