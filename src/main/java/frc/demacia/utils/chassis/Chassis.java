@@ -39,9 +39,6 @@ import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.sensors.Pigeon;
 import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.utils.ShooterUtils;
-import frc.robot.Turret.Turret;
-import frc.robot.Turret.TurretConstants;
 
 /**
  * Main swerve drive chassis controller.
@@ -148,7 +145,7 @@ public class Chassis extends SubsystemBase {
         addStatus();
         demaciaKinematics = new DemaciaKinematics(modulePositions);
         wpilibKinematics = new SwerveDriveKinematics(modulePositions);
-      
+
         field = new Field2d();
         SmartDashboard.putData("chassis/reset gyro",
                 new InstantCommand(() -> setYaw(Rotation2d.kZero)).ignoringDisable(true));
@@ -177,16 +174,12 @@ public class Chassis extends SubsystemBase {
 
     public void followTrajectory(SwerveSample sample) {
 
-
         Pose2d pose = RobotCommon.getCurrentRobotPose();
 
         ChassisSpeeds speeds = new ChassisSpeeds(
                 sample.vx + xController.calculate(pose.getX(), sample.x),
                 sample.vy + yController.calculate(pose.getY(), sample.y),
                 -sample.omega + headingController.calculate(pose.getRotation().getRadians(), -sample.heading));
-
-
-        
 
         SmartDashboard.putNumber("traj/current heading", pose.getRotation().getDegrees());
         SmartDashboard.putNumber("traj/heading error", sample.heading - pose.getRotation().getRadians());
@@ -274,11 +267,8 @@ public class Chassis extends SubsystemBase {
     public void setVelocities(ChassisSpeeds speeds) {
 
         SwerveModuleState[] states = demaciaKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.getRobotAngle()));
-        // SwerveModuleState[] states = demaciaKinematics.toSwerveModuleStatesWithLimit(
-        // speeds,
-        // getChassisSpeedsFieldRel(),
-        // getGyroAngle());
+                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.getRobotAngle()),
+                        getModuleStates());
         setModuleStates(states);
     }
 
@@ -382,12 +372,6 @@ public class Chassis extends SubsystemBase {
 
         RobotPose.getInstance().update(observation);
         field.setRobotPose(RobotCommon.getCurrentRobotPose());
-        // field.getObject("Turret").setPose(new Pose2d(RobotCommon.getCurrentRobotPose().getTranslation()
-        //         .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle())),
-        //         Rotation2d.fromRadians(RobotCommon.getRobotAngle().getRadians()
-        //                 + MathUtil.angleModulus(Turret.getInstance().getTurretAngle()))));
-        field.getObject("estimation").setPose(
-                ShooterUtils.computeFuturePosition(getChassisSpeedsFieldRel(), RobotCommon.getCurrentRobotPose(), 0.1));
     }
 
     public void updateCommon() {

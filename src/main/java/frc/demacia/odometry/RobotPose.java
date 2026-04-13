@@ -29,7 +29,6 @@ import frc.demacia.vision.utils.VisionConstants;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
-import frc.robot.StateManager;
 import frc.robot.RobotCommon.RobotStates;
 
 public class RobotPose {
@@ -133,7 +132,7 @@ public class RobotPose {
     }
 
     public void addQuestMeasurement(Rotation2d gyroAngle) {
-        poseEstimator.setVisionMeasurementStdDevs(RobotCommon.getState() == RobotStates.Hub ? questSTDWhileShooting : questSTD);
+        poseEstimator.setVisionMeasurementStdDevs(questSTD);
         poseEstimator.addVisionMeasurement(
                 new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
                 Timer.getFPGATimestamp() - 0.05);
@@ -161,8 +160,6 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation) {
 
         vision.updateValues();
-        if (!quest.isConnected())
-            RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 0.3 && Math.abs(accelerometer.getZ()) < 0.3)
             addOdometryCalculation(odometryObservation);

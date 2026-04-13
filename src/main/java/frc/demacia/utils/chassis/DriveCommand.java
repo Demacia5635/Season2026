@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 
 import frc.robot.RobotCommon;
-import frc.robot.Shooter.subsystem.Shooter;
 
 public class DriveCommand extends Command {
   private Chassis chassis;
@@ -38,14 +37,6 @@ public class DriveCommand extends Command {
     double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
     double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
     double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
-
-    if (RobotCommon.getState().equals(RobotCommon.RobotStates.Trench)
-        && Shooter.getInstance().getHoodAngle() < Math.toRadians(80)) {
-      velX /= 2;
-      velY /= 2;
-      // velX = Math.signum(velX) * Math.max(Math.abs(velX), 2);
-      // velY = Math.signum(velY) * Math.max(Math.abs(velY), 2);
-    }
 
     if (isPrecisionMode) {
       velX /= 2;

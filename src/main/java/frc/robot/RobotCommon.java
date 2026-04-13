@@ -6,8 +6,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.odometry.RobotPose;
-import frc.robot.Shooter.subsystem.Shooter;
-import frc.robot.Turret.Turret;
 
 public class RobotCommon {
     public enum Shifts {
@@ -34,43 +32,6 @@ public class RobotCommon {
     private static Shifts nextShift = Shifts.Transition;
 
     private static boolean hasReady = false;
-
-    public static boolean isReady() {
-        // return true;
-        return (StateManager.getInstance().getTimeLeft() <= 3 || !shift.equals(Shifts.Inactive)
-                || !state.equals(RobotStates.Hub)) && ((Turret.getInstance().isReady()
-                && Shooter.getInstance().isReady()));
-    }
-
-    public static void changeShift(Shifts newShift, Shifts nextShift) {
-        RobotContainer.getMainLeds().isShiftEnded = true;
-        shift = newShift;
-        RobotCommon.nextShift = nextShift;
-    }
-
-    public static Command changeStateCommand(RobotStates newState) {
-        return new InstantCommand(() -> {
-            StateManager.getInstance().setStateChangeActivated(false);
-            setState(newState);
-        }).ignoringDisable(true);
-    }
-
-    public static boolean isReadyToShoot() {
-        return Turret.getInstance().isReady() && Shooter.getInstance().isReady();
-    }
-
-    public static boolean isRobotFunctional() {
-        return Turret.getInstance().hasCalibrated() && RobotPose.getInstance().getQuest().isWorking()
-                && RobotCommon.currentRobotPose != Pose2d.kZero;
-    }
-
-    public static RobotStates getState() {
-        return state;
-    }
-
-    public static void setState(RobotStates currentState) {
-        RobotCommon.state = currentState;
-    }
 
     public static Pose2d getCurrentRobotPose() {
         return currentRobotPose;
