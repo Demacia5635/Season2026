@@ -55,7 +55,7 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     instance = this;
 
-    driverController = new CommandController(1, ControllerType.kPS5);
+    driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
@@ -87,7 +87,6 @@ public class RobotContainer implements Sendable {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
   }
 
-  PS5Controller rumble = new PS5Controller(1);
 
   @Override
   public void initSendable(SendableBuilder builder) {

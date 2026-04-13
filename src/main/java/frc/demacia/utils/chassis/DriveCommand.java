@@ -4,6 +4,8 @@
 
 package frc.demacia.utils.chassis;
 
+import java.util.logging.LogManager;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -31,6 +33,7 @@ public class DriveCommand extends Command {
     double joyX = controller.getLeftY() * direction;
     double joyY = controller.getLeftX() * direction;
 
+
     // Calculate r]otation from trigger axes
     double rot = controller.getLeftTrigger() - controller.getRightTrigger();
 
@@ -45,7 +48,7 @@ public class DriveCommand extends Command {
     }
 
     speeds = new ChassisSpeeds(velX, velY, -velRot);
-
+    
     chassis.setVelocities(speeds);
   }
 
