@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import static frc.demacia.kinematics.KinematicsConstants.*;
 
+import java.util.logging.LogManager;
+
 /** Add your docs here. */
 public class DemaciaKinematics {
 
@@ -19,6 +21,8 @@ public class DemaciaKinematics {
     private Pose2d startRobotPosition;
     private Translation2d[] modulePositionOnTheRobot;
     private SwerveModuleState[] lastStates = new SwerveModuleState[4];
+    private double[] moduleOffset = new double[4];
+    private double[] moduleAdngle = new double[4];
 
     public DemaciaKinematics(Translation2d... modulePositionOnTheRobot) {
         this.startRobotPosition = Pose2d.kZero;
@@ -26,78 +30,62 @@ public class DemaciaKinematics {
         for (int i = 0; i < 4; i++) {
             swerveStates[i] = new SwerveModuleState();
             lastStates[i] = new SwerveModuleState();
+            moduleOffset[i] = modulePositionOnTheRobot[i].getNorm();
+            moduleAdngle[i] = modulePositionOnTheRobot[i].getAngle().getRadians();
         }
 
     }
 
-    // public SwerveModuleState[] udiTest(ChassisSpeeds wantedSpeeds, ChassisSpeeds
-    // currentSpeeds) {
-    // if(Math.abs(wantedSpeeds.vxMetersPerSecond) < 0.05 &&
-    // Math.abs(wantedSpeeds.vyMetersPerSecond) < 0.05 &&
-    // Math.abs(wantedSpeeds.omegaRadiansPerSecond)>0.01){
+    // /**
+    // * transforms from chassis speeds to swerve module states (speeds in field
+    // * relative)
+    // *
+    // * @param fieldRelWantedSpeeds in field relative speeds
+    // * @param fieldRelCurrentSpeeds in field relative speeds
+    // * @param currentGyroAngle in Rotation2d
+    // *
+    // */
+    // public SwerveModuleState[] toSwerveModuleStatesWithLimit(ChassisSpeeds
+    // fieldRelWantedSpeeds,
+    // ChassisSpeeds fieldRelCurrentSpeeds, Rotation2d currentGyroAngle) {
+
+    // if (isOnlyRotating(fieldRelWantedSpeeds)) {
+    // return onlyRotate(fieldRelWantedSpeeds);
+    // }
+    // if (isTooFastForLimit(fieldRelWantedSpeeds))
+    // return
+    // toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelCurrentSpeeds,
+    // currentGyroAngle));
+    // ChassisSpeeds limitedWantedVel =
+    // KinematicsUtilities.Limits.limitVelocities(fieldRelWantedSpeeds,
+    // fieldRelCurrentSpeeds);
+    // limitedWantedVel = ChassisSpeeds.fromFieldRelativeSpeeds(limitedWantedVel,
+    // currentGyroAngle);
+    // swerveStates = toSwerveModuleStates(limitedWantedVel);
+    // return swerveStates;
+    // }
+
+    // private boolean isTooFastForLimit(ChassisSpeeds wantedSpeeds) {
+    // return ((Math.abs(wantedSpeeds.vxMetersPerSecond) > 1.5 ||
+    // Math.abs(wantedSpeeds.vyMetersPerSecond) > 1.5)
+    // && Math.abs(wantedSpeeds.omegaRadiansPerSecond) > Math.toRadians(40));
+    // }
+
+    // private boolean isOnlyRotating(ChassisSpeeds speeds) {
+    // return Math.abs(speeds.vxMetersPerSecond) < 0.01 &&
+    // Math.abs(speeds.vyMetersPerSecond) < 0.01
+    // && Math.abs(speeds.omegaRadiansPerSecond) > 0.01;
+    // }
+
+    // private SwerveModuleState[] onlyRotate(ChassisSpeeds speeds) {
     // SwerveModuleState[] rotationStates = new SwerveModuleState[4];
-    // for(int i = 0; i < 4; i++){
-    // rotationStates[i] = new SwerveModuleState(wantedSpeeds.omegaRadiansPerSecond
-    // * modulePositionOnTheRobot[i].getNorm(),
+    // for (int i = 0; i < 4; i++) {
+    // rotationStates[i] = new SwerveModuleState(
+    // speeds.omegaRadiansPerSecond * modulePositionOnTheRobot[i].getNorm(),
     // modulePositionOnTheRobot[i].getAngle().plus(Rotation2d.kCW_90deg));
     // }
     // return rotationStates;
     // }
-
-    // if(KinematicsUtilities.isInRange(currentSpeeds, 0.03) &&
-    // KinematicsUtilities.isInRange(wantedSpeeds, 0.03)){
-    // for (SwerveModuleState swerveModuleState : lastStates) {
-    // swerveModuleState.speedMetersPerSecond = 0;
-    // };
-    // return lastStates;
-    // }
-    // swerveStates = toSwerveModuleStates(wantedSpeeds);
-    // lastStates = swerveStates;
-    // return swerveStates;
-    // }
-
-    /**
-     * transforms from chassis speeds to swerve module states (speeds in field
-     * relative)
-     * 
-     * @param fieldRelWantedSpeeds  in field relative speeds
-     * @param fieldRelCurrentSpeeds in field relative speeds
-     * @param currentGyroAngle      in Rotation2d
-     * 
-     */
-    public SwerveModuleState[] toSwerveModuleStatesWithLimit(ChassisSpeeds fieldRelWantedSpeeds,
-            ChassisSpeeds fieldRelCurrentSpeeds, Rotation2d currentGyroAngle) {
-
-        if (isOnlyRotating(fieldRelWantedSpeeds)) {
-            return onlyRotate(fieldRelWantedSpeeds);
-        }
-        if (isTooFastForLimit(fieldRelWantedSpeeds))
-            return toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelCurrentSpeeds, currentGyroAngle));
-        ChassisSpeeds limitedWantedVel = KinematicsUtilities.Limits.limitVelocities(fieldRelWantedSpeeds, fieldRelCurrentSpeeds);
-        limitedWantedVel = ChassisSpeeds.fromFieldRelativeSpeeds(limitedWantedVel, currentGyroAngle);
-        swerveStates = toSwerveModuleStates(limitedWantedVel);
-        return swerveStates;
-    }
-
-    private boolean isTooFastForLimit(ChassisSpeeds wantedSpeeds) {
-        return ((Math.abs(wantedSpeeds.vxMetersPerSecond) > 1.5 || Math.abs(wantedSpeeds.vyMetersPerSecond) > 1.5)
-                && Math.abs(wantedSpeeds.omegaRadiansPerSecond) > Math.toRadians(40));
-    }
-
-    private boolean isOnlyRotating(ChassisSpeeds speeds) {
-        return Math.abs(speeds.vxMetersPerSecond) < 0.01 && Math.abs(speeds.vyMetersPerSecond) < 0.01
-                && Math.abs(speeds.omegaRadiansPerSecond) > 0.01;
-    }
-
-    private SwerveModuleState[] onlyRotate(ChassisSpeeds speeds) {
-        SwerveModuleState[] rotationStates = new SwerveModuleState[4];
-        for (int i = 0; i < 4; i++) {
-            rotationStates[i] = new SwerveModuleState(
-                    speeds.omegaRadiansPerSecond * modulePositionOnTheRobot[i].getNorm(),
-                    modulePositionOnTheRobot[i].getAngle().plus(Rotation2d.kCW_90deg));
-        }
-        return rotationStates;
-    }
 
     public ChassisSpeeds toChassisSpeeds(SwerveModuleState[] swerveStates, double omegaFromGyro) {
         double sumVx = 0;
@@ -121,23 +109,29 @@ public class DemaciaKinematics {
         return new ChassisSpeeds(sumVx / 4.0, sumVy / 4.0, omegaFromGyro);
     }
 
-    public SwerveModuleState[] toSwerveModuleStates(ChassisSpeeds wantedSpeeds) {
+    public SwerveModuleState[] toSwerveModuleStates(ChassisSpeeds wantedSpeedsFieldRel, Rotation2d currentGyroHeading) {
 
-        double omega = wantedSpeeds.omegaRadiansPerSecond;
+        double omega = wantedSpeedsFieldRel.omegaRadiansPerSecond;
+        
+        //currentGyroHeading = Rotation2d.kZero;
 
+     
         for (int i = 0; i < 4; i++) {
-            double moduleAngleFromCenter = modulePositionOnTheRobot[i].getAngle().getRadians();
-            double moduleCurrentAngle = startRobotPosition.getRotation().getRadians();
-            Translation2d velocityVector = new Translation2d(
-                    wantedSpeeds.vxMetersPerSecond + omega * modulePositionOnTheRobot[i].getNorm()
-                            * Math.sin(moduleCurrentAngle + omega * 0.02 + moduleAngleFromCenter),
-                    wantedSpeeds.vyMetersPerSecond - omega * modulePositionOnTheRobot[i].getNorm()
-                            * Math.cos(moduleCurrentAngle + omega * 0.02 + moduleAngleFromCenter));
-            swerveStates[i] = new SwerveModuleState(velocityVector.getNorm(), new Rotation2d(
-                    KinematicsUtilities.getAngleFromVector(velocityVector.getX(), velocityVector.getY())));
+            double moduleAngleFromCenter = moduleAdngle[i];
+            double moduleDist = moduleOffset[i];
+            double futureHeading = currentGyroHeading.getRadians() + omega * 0.02; 
+            double angle =  futureHeading + moduleAngleFromCenter;
+            double vx = wantedSpeedsFieldRel.vxMetersPerSecond - omega * moduleDist * Math.sin(angle);
+            double vy = wantedSpeedsFieldRel.vyMetersPerSecond + omega * moduleDist * Math.cos(angle);
+            double v = Math.hypot(vx, vy);
+            angle = Math.atan2(vy, vx) - futureHeading;
+            swerveStates[i] = new SwerveModuleState(v,new Rotation2d(angle));
+      
+         
         }
 
         swerveStates = factorModuleVelocities(swerveStates);
+
         return swerveStates;
     }
 
@@ -145,11 +139,11 @@ public class DemaciaKinematics {
         double maxVelocityCalculated = 0;
         for (int i = 0; i < swerveStates.length; i++) {
             double cur = Math.abs(swerveStates[i].speedMetersPerSecond);
-            if (cur == 0)
-                return swerveStates;
             if (cur > maxVelocityCalculated)
                 maxVelocityCalculated = cur;
         }
+        if (maxVelocityCalculated == 0)
+            return swerveStates;
         double factor = MAX_ALLOWED_MODULE_VELOCITY / maxVelocityCalculated;
 
         if (factor >= 1)
