@@ -171,9 +171,9 @@ public class DemaciaKinematics {
             double moduleCurrentAngle = currentStates[i].angle.getRadians();
             Translation2d velocityVector = new Translation2d(
                     wantedSpeeds.vxMetersPerSecond + omega * modulePositionOnTheRobot[i].getNorm()
-                            * Math.sin(moduleCurrentAngle + omega * 0.02 + moduleAngleFromCenter),
+                            * Math.sin(moduleCurrentAngle + omega * CYCLE_DT + moduleAngleFromCenter),
                     wantedSpeeds.vyMetersPerSecond - omega * modulePositionOnTheRobot[i].getNorm()
-                            * Math.cos(moduleCurrentAngle + omega * 0.02 + moduleAngleFromCenter));
+                            * Math.cos(moduleCurrentAngle + omega * CYCLE_DT + moduleAngleFromCenter));
             swerveStates[i] = new SwerveModuleState(velocityVector.getNorm(), new Rotation2d(
                     KinematicsUtilities.getAngleFromVector(velocityVector.getX(), velocityVector.getY())));
 
