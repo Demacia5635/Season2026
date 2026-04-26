@@ -266,9 +266,8 @@ public class Chassis extends SubsystemBase {
 
     public void setVelocities(ChassisSpeeds speeds) {
 
-
         SwerveModuleState[] states = demaciaKinematics
-                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.getRobotAngle()), getModuleStates());
+                        .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, RobotCommon.getRobotAngle()), getModuleStates());
         setModuleStates(states);
     }
 

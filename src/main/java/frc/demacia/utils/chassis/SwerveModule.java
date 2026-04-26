@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.MotorInterface;
 import frc.demacia.utils.sensors.Cancoder;
 
@@ -97,7 +98,7 @@ public class SwerveModule {
      */
     public void setSteerPosition(double positionRadians) {
         if(Math.abs(positionRadians - steerMotor.getCurrentPosition()) <= Math.toRadians(0.5) ) steerMotor.setDuty(0);
-        steerMotor.setPositionVoltage(positionRadians);
+        else steerMotor.setPositionVoltage(positionRadians);
         // steerMotor.setMotionMagic(positionRadians);
     }
 
@@ -129,6 +130,7 @@ public class SwerveModule {
     public void setState(SwerveModuleState state) {
         double wantedAngle = state.angle.getRadians();
         double diff = wantedAngle - steerMotor.getCurrentPosition();
+        LogManager.log("first diff: " + diff);
         double vel = state.speedMetersPerSecond;
         diff = MathUtil.angleModulus(diff);
         if(diff > 0.5 * Math.PI) {
@@ -138,11 +140,12 @@ public class SwerveModule {
             vel = -vel;
             diff = diff + Math.PI;
         }
-
+        LogManager.log("" + name + " - Wanted Angle: " + wantedAngle + ", Current Angle: " + steerMotor.getCurrentPosition() + ", Diff: " + diff + ", Vel: " + vel + ", Close Loop Error: " + steerMotor.getCurrentClosedLoopError());
         if (Math.abs(diff) <= Math.toRadians(0.7)) {
             setSteerPower(0);
         } else {
-            setSteerPosition(steerMotor.getCurrentPosition() + diff);
+            double steerOutput = steerMotor.getCurrentPosition() + diff;
+            setSteerPosition(steerOutput);
         }
 
         if (vel == 0) {

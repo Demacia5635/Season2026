@@ -4,13 +4,11 @@
 
 package frc.demacia.utils.chassis;
 
-import java.util.logging.LogManager;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.demacia.utils.controller.CommandController;
-
+import frc.demacia.utils.log.LogManager;
 import frc.robot.RobotCommon;
 
 public class DriveCommand extends Command {
@@ -36,11 +34,11 @@ public class DriveCommand extends Command {
 
     // Calculate r]otation from trigger axes
     double rot = controller.getLeftTrigger() - controller.getRightTrigger();
-
+    
     double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
     double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
     double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
-
+    
     if (isPrecisionMode) {
       velX /= 2;
       velY /= 2;
