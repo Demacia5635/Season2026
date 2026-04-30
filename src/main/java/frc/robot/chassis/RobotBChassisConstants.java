@@ -155,10 +155,10 @@ public final class RobotBChassisConstants {
     /** The swerve modules config using the function */
     private static final SwerveModuleConfig[] MODULES = getSwerveModuleConfigs(
             new double[] {
-                    /* Front Left Offset: */ 1.5217120831752096896735813514194,
-                    /* Front Right Offset: */ 1.8837303710189759237145855990482,
-                    /* Back Left Offset: */ -1.7674223277977745984402216157124,
-                    /* Back Right Offset: */ 1.012428498101768307786402232556
+                    /* Front Left Offset: */ 0.243164 * 2 * Math.PI,
+                    /* Front Right Offset: */ (-0.199463 + 0.5) * 2 * Math.PI,
+                    /* Back Left Offset: */ -0.286133 * 2 * Math.PI,
+                    /* Back Right Offset: */ (-0.339355 + 0.5) * 2 * Math.PI
             });
 
 

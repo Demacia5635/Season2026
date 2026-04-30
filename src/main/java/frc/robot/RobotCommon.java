@@ -60,7 +60,7 @@ public class RobotCommon {
     }
 
     public static boolean isRobotFunctional() {
-        return Turret.getInstance().hasCalibrated() && RobotPose.getInstance().getQuest().isWorking()
+        return Turret.getInstance().hasCalibrated() //&& RobotPose.getInstance().getQuest().isWorking()
                 && RobotCommon.currentRobotPose != Pose2d.kZero;
     }
 

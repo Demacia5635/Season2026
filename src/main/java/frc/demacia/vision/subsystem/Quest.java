@@ -44,21 +44,21 @@ public class Quest extends SubsystemBase {
 
     currentQuestPose = new Pose3d(); // Initialize to origin - IMPORTANT!
 
-    addLog();
+    // addLog();
   }
   
-  @SuppressWarnings("unchecked")
-  private void addLog() {
-    LogManager.addEntry("Quest/Latency", questNav::getLatency).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
-    LogManager.addEntry("Quest/Battery", questNav::getBatteryPercent).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
+  // @SuppressWarnings("unchecked")
+  // private void addLog() {
+    // LogManager.addEntry("Quest/Latency", questNav::getLatency).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
+    // LogManager.addEntry("Quest/Battery", questNav::getBatteryPercent).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
     // LogManager.addEntry("Quest/LibVersion", questNav::getLibVersion).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP);
 
-    SmartDashboard.putData("Quest/Reset Quest Pose", new InstantCommand(()->RobotPose.getInstance().setQuestPose()).ignoringDisable(true));
+    // SmartDashboard.putData("Quest/Reset Quest Pose", new InstantCommand(()->RobotPose.getInstance().setQuestPose()).ignoringDisable(true));
     // SmartDashboard.putData("Quest/Field", field);
-    SmartDashboard.putData("Quest/robotField", robotField);
+    // SmartDashboard.putData("Quest/robotField", robotField);
     
 
-  }
+  // }
 
 
   // Set robot pose (transforms to Quest frame and sends to QuestNav)

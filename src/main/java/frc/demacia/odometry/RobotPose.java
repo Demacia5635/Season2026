@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.demacia.odometry.DemaciaPoseEstimator.OdometryObservation;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.subsystem.Quest;
+// import frc.demacia.vision.subsystem.Quest;
 import frc.demacia.vision.utils.Vision;
 import frc.demacia.vision.utils.VisionConstants;
 
@@ -38,7 +38,7 @@ public class RobotPose {
 
     private Vision vision;
     private DemaciaPoseEstimator poseEstimator;
-    private Quest quest;
+    // private Quest quest;
 
     private Matrix<N3, N1> questSTD;
 
@@ -54,7 +54,7 @@ public class RobotPose {
             Matrix<N3, N1> questSTD) {
         this.vision = new Vision((VisionConstants.Tags.TAGS_ARRAY));
 
-        this.quest = new Quest();
+        // this.quest = new Quest();
         this.questSTD = questSTD;
         this.questSTDWhileShooting = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 0 }));
         this.visionSTD = new Matrix<N3, N1>(new SimpleMatrix(new double[] { 0.3, 0.3, 0 }));
@@ -64,7 +64,7 @@ public class RobotPose {
         this.accelerometer = new BuiltInAccelerometer();
         SmartDashboard.putData("Reset Pose Based Red Hub", new InstantCommand(() -> {
             Chassis.getInstance().setYaw(Rotation2d.kZero);
-            setQuestPose(hubRedResetPose);
+            // setQuestPose(hubRedResetPose);
             resetPose(hubRedResetPose);
         }).ignoringDisable(true));
     }
@@ -72,9 +72,9 @@ public class RobotPose {
     private final Pose2d hubRedResetPose = new Pose2d(Field.HubRed.X_BACK + 0.3, Field.HubRed.Y_CENTER,
             Rotation2d.kZero);
 
-    public Quest getQuest() {
-        return quest;
-    }
+    // public Quest getQuest() {
+    //     return quest;
+    // }
 
     public Pose2d getPose() {
 
@@ -110,20 +110,20 @@ public class RobotPose {
         addOdometryCalculation(new OdometryObservation(Timer.getFPGATimestamp(), gyroAngle, modulePositions));
     }
 
-    public void setQuestPose() {
-        if (vision.isSeeTag()) {
-            setQuestPose(vision.getPoseEstimation());
-        } 
-    }
+    // public void setQuestPose() {
+    //     if (vision.isSeeTag()) {
+    //         setQuestPose(vision.getPoseEstimation());
+    //     } 
+    // }
 
-    public void setQuestHeading(Rotation2d heading) {
-        quest.setHeading(heading);
-    }
+    // public void setQuestHeading(Rotation2d heading) {
+    //     quest.setHeading(heading);
+    // }
 
-    public void setQuestPose(Pose2d pose) {
-        hasUpdatedQuestIntialPose = true;
-        quest.setQuestPose(new Pose3d(pose));
-    }
+    // public void setQuestPose(Pose2d pose) {
+    //     hasUpdatedQuestIntialPose = true;
+    //     quest.setQuestPose(new Pose3d(pose));
+    // }
 
     public void addVisionMeasurement(Rotation2d gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(visionSTD);
@@ -134,9 +134,9 @@ public class RobotPose {
 
     public void addQuestMeasurement(Rotation2d gyroAngle) {
         poseEstimator.setVisionMeasurementStdDevs(RobotCommon.getState() == RobotStates.Hub ? questSTDWhileShooting : questSTD);
-        poseEstimator.addVisionMeasurement(
-                new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
-                Timer.getFPGATimestamp() - 0.05);
+        // poseEstimator.addVisionMeasurement(
+        //         new Pose2d(quest.getRobotPose2d().getX(), quest.getRobotPose2d().getY(), gyroAngle),
+        //         Timer.getFPGATimestamp() - 0.05);
 
     }
 
@@ -161,26 +161,26 @@ public class RobotPose {
     public void update(OdometryObservation odometryObservation) {
 
         vision.updateValues();
-        if (!quest.isConnected())
-            RobotContainer.getMainLeds().isQuestDisconnected = true;
+        // if (!quest.isConnected())
+        //     RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 0.3 && Math.abs(accelerometer.getZ()) < 0.3)
             addOdometryCalculation(odometryObservation);
 
-        if (hasUpdatedQuestIntialPose && quest.isConnected()) {
+        // if (hasUpdatedQuestIntialPose && quest.isConnected()) {
 
-            addQuestMeasurement(odometryObservation.gyroAngle());
-        }
+        //     addQuestMeasurement(odometryObservation.gyroAngle());
+        // }
         if (shouldUpdateVision()) {
 
             addVisionMeasurement(odometryObservation.gyroAngle());
-            if (hasQuestDisconnected && quest.isConnected()) {
-                // setQuestPose();
-                hasQuestDisconnected = false;
-            }
+            // if (hasQuestDisconnected && quest.isConnected()) {
+            //     // setQuestPose();
+            //     hasQuestDisconnected = false;
+            // }
         }
-        if (!hasQuestDisconnected && !quest.isConnected()) {
-            hasQuestDisconnected = true;
-        }
+        // if (!hasQuestDisconnected && !quest.isConnected()) {
+        //     hasQuestDisconnected = true;
+        // }
     }
 }

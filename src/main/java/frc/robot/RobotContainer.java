@@ -47,6 +47,7 @@ import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.robot.buttons.Buttons;
 import frc.robot.buttons.ButtonsConstants;
 import frc.robot.chassis.RobotBChassisConstants;
+import frc.robot.chassis.commands.ChassisSkewKinematicsTest;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.commands.GetBallOutCommand;
@@ -199,7 +200,7 @@ public class RobotContainer implements Sendable {
     driverController.downButton().whileTrue(
         new RunCommand(() -> rumble.setRumble(RumbleType.kBothRumble, 1)).withTimeout(0.5).ignoringDisable(true));
     driverController.leftButton().onTrue(new InstantCommand(DriveCommand::setPrecisionMode).ignoringDisable(true));
-    driverController.povDown().onTrue(new RunCommand(()->chassis.setVelocities(new ChassisSpeeds(0, 2, 5)), chassis));
+    driverController.povDown().onTrue((new RunCommand(()->chassis.setSteerPositions(0), chassis).withTimeout(1)).andThen(new ChassisSkewKinematicsTest()));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }

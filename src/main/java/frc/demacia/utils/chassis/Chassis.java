@@ -91,6 +91,7 @@ public class Chassis extends SubsystemBase {
 
     private static Chassis instance;
 
+    private SwerveModuleState[] lastStates = new SwerveModuleState[4];
     public static void initialize(ChassisConfig chassisConfig) {
         if (instance == null)
             instance = new Chassis(chassisConfig);
@@ -136,11 +137,14 @@ public class Chassis extends SubsystemBase {
 
         this.chassisConfig = chassisConfig;
 
+        
         modules = new SwerveModule[4];
         Translation2d[] modulePositions = new Translation2d[4];
         for (int i = 0; i < 4; i++) {
             modules[i] = new SwerveModule(chassisConfig.swerveModuleConfig[i]);
             modulePositions[i] = chassisConfig.swerveModuleConfig[i].position;
+
+            lastStates[i] = new SwerveModuleState();
         }
 
         gyro = new Pigeon(chassisConfig.pigeonConfig);
@@ -272,10 +276,16 @@ public class Chassis extends SubsystemBase {
      */
 
     public void setVelocities(ChassisSpeeds speeds) {
-
+        if(Math.abs(speeds.vxMetersPerSecond) <= 0.01 && Math.abs(speeds.vyMetersPerSecond) <= 0.01 && Math.abs(speeds.omegaRadiansPerSecond) <= 0.01){
+            setModuleStates(lastStates);
+            return;
+        }
         SwerveModuleState[] states = demaciaKinematics
                 .toSwerveModuleStates(speeds, getGyroAngle());
 
+                for(int i = 0; i < lastStates.length; i++){
+                    lastStates[i] = new SwerveModuleState(0, states[i].angle);
+                }
         setModuleStates(states);
     }
 
@@ -455,7 +465,7 @@ public class Chassis extends SubsystemBase {
     public void setYaw(Rotation2d angle) {
         if (angle != null) {
             gyro.setYaw(angle.getDegrees());
-            RobotPose.getInstance().setQuestHeading(angle);
+            // RobotPose.getInstance().setQuestHeading(angle);
             RobotPose.getInstance()
                     .resetPose(
                             new Pose2d(Translation2d.kZero, gyro.getRotation2d()));
