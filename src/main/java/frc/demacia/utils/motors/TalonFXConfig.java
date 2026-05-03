@@ -40,7 +40,7 @@ public class TalonFXConfig extends BaseMotorConfig<TalonFXConfig> {
     public String name(){
       return name;
     }
-    public TalonFXConfig detectStallInMotor(double current, double velocity, double seconds, Consumer<TalonFXMotor> conditionIsTrue) {
+    public TalonFXConfig withDetectStallInMotor(double current, double velocity, double seconds, Consumer<TalonFXMotor> conditionIsTrue) {
         this.highCurrentThreshold = current;
         this.lowVelocityThreshold = velocity;
         this.secondsThreshold = seconds;

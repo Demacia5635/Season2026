@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
@@ -43,7 +42,6 @@ import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
 import frc.robot.Turret.Turret;
 import frc.robot.Turret.TurretCommands.TurretCalibration;
-import frc.robot.Turret.TurretCommands.TurretCommand;
 import frc.robot.buttons.Buttons;
 import frc.robot.buttons.ButtonsConstants;
 import frc.robot.chassis.RobotBChassisConstants;
@@ -84,10 +82,10 @@ public class RobotContainer implements Sendable {
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
-    // configureSubsystems();
-    // configureUserButton();
-    // configureBindings();
-    // configureAuto();
+    configureSubsystems();
+     configureUserButton();
+     configureBindings();
+     configureAuto();
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());

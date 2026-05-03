@@ -21,6 +21,8 @@ public class MotorTesting extends SubsystemBase {
       super.initSendable(builder);
       builder.addDoubleProperty("Motor Current", this::getMotorCurrent, null);
       builder.addBooleanProperty("Motor Stall", this::getMotorStall, null);
+      builder.addDoubleProperty("motor velocity", this::getMotorVelocity, null);
+      builder.addDoubleProperty("motor voltage", this::getMotorVoltage, null);
 
   }
   public double getMotorCurrent() {
@@ -29,9 +31,16 @@ public class MotorTesting extends SubsystemBase {
   public void setMotorStall() {
     motor.updateStallDetection();
   }
+  public double getMotorVoltage() {
+    return motor.getCurrentVoltage();
+  }
   public boolean getMotorStall() {
     return motor.getStallDetection();
   } 
+  public double getMotorVelocity() {
+    return motor.getCurrentVelocity();
+  }
+
   public void setMotorPower(double power) {
     motor.set(power);
   }

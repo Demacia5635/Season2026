@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class motorTestingCommand extends Command {
   /** Creates a new motorTestingCommand. */
 private MotorTesting motorTesting;
-
+private boolean stallDetected = false;
   public motorTestingCommand(MotorTesting motorTesting) {
     this.motorTesting = motorTesting;
     addRequirements(motorTesting);
@@ -24,7 +24,14 @@ private MotorTesting motorTesting;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    motorTesting.setMotorPower(0.5);
+    // Only set motor power if no stall has been detected
+    if (!motorTesting.getMotorStall()&&!stallDetected) {
+      motorTesting.setMotorPower(0.05);
+      stallDetected = true;
+    } else {
+      // Keep motor at 0 power when stall is detected
+      motorTesting.setMotorPower(0);
+    }
   }
 
   // Called once the command ends or is interrupted.
