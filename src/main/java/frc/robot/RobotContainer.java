@@ -74,18 +74,20 @@ public class RobotContainer implements Sendable {
   public static RobotContainer instance;
   private AutoFactory autoFactory;
   private Command autoCommand;
-
+  private MotorTesting motorTesting;
+  private motorTestingCommand motorTestingCommand;
   public RobotContainer() {
     instance = this;
-
+    motorTesting = new MotorTesting();
+    motorTesting.setDefaultCommand(motorTestingCommand = new motorTestingCommand(motorTesting));
     driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
-    configureSubsystems();
-    configureUserButton();
-    configureBindings();
-    configureAuto();
+    // configureSubsystems();
+    // configureUserButton();
+    // configureBindings();
+    // configureAuto();
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -214,11 +216,13 @@ public class RobotContainer implements Sendable {
   }
 
   public void disableInit() {
-    chassis.stop();
-    intake.stopIntake();
-    shinua.stop();
-    turret.stop();
-    shooter.stop();
+    if (chassis != null) chassis.stop();
+    if (intake != null) intake.stopIntake();
+    if (shinua != null) shinua.stop();
+    if (turret != null) turret.stop();
+    if (shooter != null) shooter.stop();
+    
+  
     StateManager.getInstance().resetShift();
   }
 

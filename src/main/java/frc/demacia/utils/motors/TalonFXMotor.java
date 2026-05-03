@@ -72,6 +72,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
   private final Timer stallTimer = new Timer();
   private boolean conditionActive = false;
   private boolean IsDone = false;
+  private boolean isStalled = false;
 
   /**
    * Creates a new TalonFX motor wrapper.
@@ -129,6 +130,8 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     double currentVelocity = Math.abs(getCurrentVelocity());
     double currentCurrent = getCurrentCurrent();
     if (currentCurrent > config.highCurrentThreshold && currentVelocity < config.lowVelocityThreshold) {
+      isStalled = true;
+
       if (!conditionActive) {
         stallTimer.restart();
         conditionActive = true;
@@ -143,9 +146,12 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
       stallTimer.reset();
       conditionActive = false;
       IsDone = false;
+      isStalled = false;
     }
   }
-
+public boolean getStallDetection() {
+  return isStalled;
+}
   public void configSoftwareLimit(double min, double max) {
     SoftwareLimitSwitchConfigs cfg = new SoftwareLimitSwitchConfigs();
     cfg.ForwardSoftLimitEnable = max != Double.MAX_VALUE;
