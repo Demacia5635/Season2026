@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
 
 import frc.robot.RobotContainer;
@@ -28,13 +27,5 @@ public class AutoUtils {
         cmd.addCommands(c);
     }
 
-    public static PathPoint offset(Translation2d from, double x, double y, double angle, double wantedVelocity, double maxVelocity) {
-        return offset(from, x, y, angle, 0, wantedVelocity, maxVelocity);
-    }
-
-    public static PathPoint offset(Translation2d from, double x, double y, double angle, double radius, double wantedVelocity, double maxVelocity) {
-        return new PathPoint(from.getX() + x, from.getY() + y, Rotation2d.fromDegrees(angle), radius, wantedVelocity, maxVelocity);
-
-    }
 
 }
