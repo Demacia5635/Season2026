@@ -145,8 +145,7 @@ public final class RobotBChassisConstants {
                     .withPosion(new Translation2d(
                             i == 0 || i == 1 ? 0.295 : -0.295,
                             i == 0 || i == 2 ? 0.395 : -0.395))
-                    .withSteerOffset(offsets[i])
-                    .withDrivePowerToSteerPower(0.022);
+                    .withSteerOffset(offsets[i]);
         }
 
         return ans;

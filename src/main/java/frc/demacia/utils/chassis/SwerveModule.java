@@ -87,7 +87,7 @@ public class SwerveModule {
      */
     public void setDriveVelocity(double velocityMetersPerSecond) {
         SmartDashboard.putNumber("Drive Vel", velocityMetersPerSecond);
-        driveMotor.setVelocity(velocityMetersPerSecond - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);
+        driveMotor.setVelocity(velocityMetersPerSecond);
     }
 
     /**
@@ -148,7 +148,7 @@ public class SwerveModule {
         if (vel == 0) {
             setDrivePower(0);
         } else {
-            setDriveVelocity(vel);
+            setDriveVelocity(vel - steerMotor.getCurrentVelocity() * config.steerVelToDriveVel);
         }
     }
 
@@ -158,7 +158,7 @@ public class SwerveModule {
      * @return Current drive position (meters) and steer angle
      */
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(driveMotor.getCurrentPosition() -  steerMotor.getCurrentPosition() * config.steerVelToDriveVel, Rotation2d.fromRadians(steerMotor.getCurrentPosition()));
+        return new SwerveModulePosition(driveMotor.getCurrentPosition(), Rotation2d.fromRadians(steerMotor.getCurrentPosition()));
     }
 
     /**
