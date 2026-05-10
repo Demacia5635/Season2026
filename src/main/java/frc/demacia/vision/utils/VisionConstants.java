@@ -4,8 +4,6 @@
 
 package frc.demacia.vision.utils;
 
-import java.util.ArrayList;
-
 import org.ejml.simple.SimpleMatrix;
 
 import edu.wpi.first.math.Matrix;
@@ -16,12 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.demacia.vision.Camera;
-import frc.demacia.vision.ObjectPose;
-import frc.demacia.vision.TagPose;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+
 import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
@@ -38,11 +31,11 @@ public class VisionConstants {
         private static final double HUB_TAG_HEIGHT = inchToMeter(44.25); // Hub scoring location tags
         private static final double DEPOT_TAG_HEIGHT = inchToMeter(21.75); // Depot perimeter tags
 
-        public static final double BEST_RELIABLE_DISTANCE = 1; // meters - high confidence range
-        public static final double WORST_RELIABLE_DISTANCE = 4; // meters - Low confidence range
+    public static final double BEST_RELIABLE_DISTANCE = 1; // meters - high confidence range
+    public static final double WORST_RELIABLE_DISTANCE = 4; // meters - Low confidence range
 
-        public static final double BEST_RELIABLE_SPEED = 1; // meter a second - high confidence range
-        public static final double WORST_RELIABLE_SPEED = 3; // meter a second - Low confidence range
+    public static final double BEST_RELIABLE_SPEED = 1; // meter a second - high confidence range
+    public static final double WORST_RELIABLE_SPEED = 3; // meter a second - Low confidence range
 
         /**
          * Array of AprilTag positions relative to field origin (0,0).
@@ -230,7 +223,7 @@ public class VisionConstants {
         // Translation3d(0.11307,0.14305,0.18386) ));
         public static final Matrix<N3, N1> QUEST_STD = new Matrix<>(
                         new SimpleMatrix(
-                                        new double[] { 0, 0, 9999999 }));
+                                        new double[] { 0.05, 0.05, 0 }));
 
 
         
@@ -238,7 +231,8 @@ public class VisionConstants {
                 public static final TagPose[] TAGS_ARRAY = {
                                 // new TagPose(new Camera("hub", new Translation3d(-0.133, 0.19, 0.545), 29, 0.0, false)),
                                 //prev x offset 0.283 
-                                new TagPose(new Camera("hub", new Translation3d(0.27,-0.20,0.345), 19d, 2d, false, false))
+                                new TagPose(new Camera("hub", new Translation3d(0.27,-0.20,0.345), 19d, 2d, false, false)),
+                                // new TagPose(new Camera("back", new Translation3d(-0.276, -0.195, 0.195), 31d, 195d, false, false), true)
                         };
 
         }

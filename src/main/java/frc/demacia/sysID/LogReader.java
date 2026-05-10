@@ -27,14 +27,12 @@ public class LogReader {
 
     private static class EntryDescription {
         String name;
-        String type;
         boolean isFloat;
         boolean isDouble;
         List<DataPoint> data = new ArrayList<>();
 
         EntryDescription(String name, String type) {
             this.name = name;
-            this.type = type;
             isDouble = type.equals("double") || type.equals("double[]");
             isFloat = type.equals("float") || type.equals("float[]");
         }

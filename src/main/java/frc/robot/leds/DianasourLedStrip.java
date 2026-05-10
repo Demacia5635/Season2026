@@ -1,9 +1,7 @@
 package frc.robot.leds;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.demacia.utils.leds.LedManager;
 import frc.demacia.utils.leds.LedStrip;
 import frc.robot.RobotCommon;
 import frc.robot.RobotContainer;
@@ -11,7 +9,7 @@ import frc.robot.RobotContainer;
 public class DianasourLedStrip extends LedStrip {
 
     public DianasourLedStrip() {
-        super("Dianasour", 17, RobotContainer.ledManager, 24);
+        super("Dianasour", 17, RobotContainer.getLedManager(), 24);
         
         SmartDashboard.putData("DianasourLedStrip", this);
     }

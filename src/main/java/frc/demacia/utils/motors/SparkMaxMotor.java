@@ -2,6 +2,7 @@ package frc.demacia.utils.motors;
 
 import java.util.function.Supplier;
 
+import com.revrobotics.REVLibError;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
@@ -163,6 +164,11 @@ public class SparkMaxMotor extends SparkMax implements MotorInterface {
   public void setNeutralMode(boolean isBrake) {
     cfg.idleMode(isBrake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
     configure(cfg, com.revrobotics.ResetMode.kNoResetSafeParameters, com.revrobotics.PersistMode.kPersistParameters);
+  }
+
+  @Override
+  public REVLibError clearFaults() {
+    return super.clearFaults();
   }
 
   @Override

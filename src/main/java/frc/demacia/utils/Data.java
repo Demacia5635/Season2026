@@ -1,6 +1,5 @@
 package frc.demacia.utils;
 
-import static edu.wpi.first.units.Units.Hertz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,8 +8,6 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-
-import edu.wpi.first.units.measure.Frequency;
 
 /**
  * A generic wrapper class for data sources (StatusSignals or Suppliers).

@@ -3,8 +3,11 @@ package frc.robot.Shooter.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Field;
+import frc.robot.RobotCommon;
+import frc.robot.Shooter.constants.ShooterConstans;
 import frc.robot.Shooter.subsystem.Shooter;
 
 public class ShooterUtils {
@@ -35,6 +38,10 @@ public class ShooterUtils {
         currentPose.getY() + (speeds.vyMetersPerSecond * dtSeconds),
         currentPose.getRotation().plus(new Rotation2d(speeds.omegaRadiansPerSecond * dtSeconds)));
     
+  }
+
+  public static Translation2d getDeliveryPoint() {
+    return RobotCommon.getFutureRobotPose().getY() < Field.FieldDimensions.Y_CENTER ? ShooterConstans.DELIVERY_POINT1 : ShooterConstans.DELIVERY_POINT2;
   }
 
 }

@@ -1,8 +1,6 @@
 package frc.robot.chassis;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import frc.demacia.utils.chassis.ChassisConfig;
 import frc.demacia.utils.chassis.Mk5nConstants;
 import frc.demacia.utils.chassis.SwerveModuleConfig;
@@ -10,7 +8,6 @@ import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.BaseMotorConfig.Canbus;
 import frc.demacia.utils.sensors.CancoderConfig;
 import frc.demacia.utils.sensors.PigeonConfig;
-import frc.demacia.vision.Camera;
 import frc.demacia.vision.TagPose;
 
 /** 
@@ -148,7 +145,8 @@ public final class RobotBChassisConstants {
                     .withPosion(new Translation2d(
                             i == 0 || i == 1 ? 0.295 : -0.295,
                             i == 0 || i == 2 ? 0.395 : -0.395))
-                    .withSteerOffset(offsets[i]);
+                    .withSteerOffset(offsets[i])
+                    .withDrivePowerToSteerPower(0.022);
         }
 
         return ans;

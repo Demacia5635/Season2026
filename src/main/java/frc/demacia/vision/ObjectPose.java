@@ -1,4 +1,3 @@
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -14,8 +13,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.demacia.utils.log.LogManager;
-import frc.demacia.vision.Camera;
 
 // Subsystem that tracks and calculates the position of a vision target (object) on the field
 public class ObjectPose{
@@ -27,7 +24,7 @@ public class ObjectPose{
   private Pose2d previousObjectPose;
   private boolean hasPreviousTarget = false;
 
-  private NetworkTable table;
+  private NetworkTable Table;
   private Field2d field;
   private Field2d robotfield;
 
@@ -55,10 +52,13 @@ public class ObjectPose{
     robotfield = new Field2d();
 
     this.camera = camera;
-    table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
+    Table = NetworkTableInstance.getDefault().getTable(camera.getTableName());
 
-    // SmartDashboard.putData("fieldObject" + camera.getName(), field);
-    // SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
+    SmartDashboard.putData("fieldObject" + camera.getName(), field);
+    SmartDashboard.putData("fieldrobot" + camera.getName(), robotfield);
+    
+    // SmartDashboard.putNumber("tx", camera.getX());
+    // SmartDashboard.putNumber("ty", camera.getY());
   }
 
   /**
@@ -70,11 +70,9 @@ public class ObjectPose{
    * @return The chosen Pose2d to use for object tracking
    */
   private Pose2d chooseObjectPose() {
-    double currentCamToObjectPitch = table.getEntry("ty").getDouble(0.0) + camera.getPitch();
-    double currentCamToObjectYaw = (-table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
-    SmartDashboard.putNumber("tx", table.getEntry("tx").getDouble(0.0));
-    SmartDashboard.putNumber("ty",table.getEntry("ty").getDouble(0.0));
-    boolean hasCurrentTarget = table.getEntry("tv").getDouble(0.0) != 0;
+    double currentCamToObjectPitch = Table.getEntry("ty").getDouble(0.0) + camera.getPitch();
+    double currentCamToObjectYaw = (-Table.getEntry("tx").getDouble(0.0)) + camera.getYaw();
+    boolean hasCurrentTarget = Table.getEntry("tv").getDouble(0.0) != 0;
 
     // Case 1: No current target detected
     if (!hasCurrentTarget) {
@@ -175,9 +173,7 @@ public class ObjectPose{
    */
   public Translation2d getRobotToObject() {
     cameraToObject = new Translation2d(getDistcameraToObject(), Rotation2d.fromDegrees(camToObjectYaw));
-    // LogManager.log(cameraToObject + " camera to object");
     robotToObject = new Translation2d(camera.getRobotToCamPosition().getX(), camera.getRobotToCamPosition().getY()).plus(cameraToObject);
-    // LogManager.log(robotToObject + "robot to object");
     return robotToObject;
   }
 

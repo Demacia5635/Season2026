@@ -42,7 +42,7 @@ public class Vision {
     public boolean isSeeTagWithDistance() {
 
         for (TagPose tag : tags) {
-            if (tag.isSeeTag() && tag.getDistFromCamera() < 3.5)
+            if (tag.isSeeTag() && tag.getDistFromCamera() < 3)
                 return true;
         }
         return false;
@@ -69,10 +69,8 @@ public class Vision {
     }
 
     public boolean isSeeTag() {
-        
-        for (TagPose tag : tags) {
-            if (tag.isSeeTag() && isTagHub(tag.getTagId()) &&  Math.abs(tag.getCamToTagYaw()) < 12)
-                return true;
+        for(TagPose t : tags){
+            if(t.isSeeTag()) return true;
         }
         return false;
     }
@@ -97,15 +95,15 @@ public class Vision {
         double y = 0;
         double confidence = 0;
         for (TagPose tag : tags) {
-            if (tag.getRobotPose2d() == null)
+            Pose2d pose2d = tag.getRobotPose2d();
+            if (pose2d == null)
                 continue;
             confidence = normalizeConfidence(tag.getPoseEstemationConfidence());
-            Pose2d pose2d = tag.getRobotPose2d();
             x += pose2d.getX() * confidence;
             y += pose2d.getY() * confidence;
 
         }
-        return new Pose2d(x, y, RobotCommon.robotAngle);
+        return new Pose2d(x, y, RobotCommon.getRobotAngle());
     }
 
     public void updateValues() {
@@ -117,7 +115,7 @@ public class Vision {
     public Rotation2d getRobotAngle(){
         for (TagPose tag : tags) {
             if (tag.getRobotPose2d() != null) {
-                return new Rotation2d().fromDegrees(tag.getAngle());
+                return Rotation2d.fromDegrees(tag.getAngle());
             }
         }
         return null;

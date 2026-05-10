@@ -5,46 +5,42 @@
 package frc.robot.intake.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.demacia.utils.controller.CommandController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.robot.intake.subsystems.IntakeSubsystem;
 import frc.robot.intake.subsystems.ShinuaSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class getBallOutCommand extends Command {
-  /** Creates a new getBallOutCommand. */
+public class GetBallOutCommand extends Command {
+
   IntakeSubsystem intake;
-  CommandController controller;  
+  Trigger triggerToDisable;  
   ShinuaSubsystem shinua;
 
-  public getBallOutCommand(IntakeSubsystem intake, ShinuaSubsystem shinua, CommandController controller) {
+  public GetBallOutCommand(IntakeSubsystem intake, ShinuaSubsystem shinua, Trigger triggerToDisable) {
     this.intake = intake;
-    this.controller = controller;
+    this.triggerToDisable = triggerToDisable;
     this.shinua = shinua;
     addRequirements(intake, shinua);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     intake.setDutyIntake(-1);
+
     shinua.setDutyIndexerOnTop(-1);
     shinua.setDutyIndexerClose(-0.3);
-    
     shinua.setDutyIndexerFar(-0.3);
     
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     intake.stopIntake(); 
     shinua.stop();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !controller.rightButton().getAsBoolean();
+    return !triggerToDisable.getAsBoolean();
   }
 }
