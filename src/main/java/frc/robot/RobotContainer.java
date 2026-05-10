@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.path.Trgectory.FollowTrajectory;
-import frc.demacia.path.utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
@@ -64,7 +63,8 @@ public class RobotContainer implements Sendable {
   private static ShinuaSubsystem shinua;
   private static Turret turret;
   private static Shooter shooter;
-
+  private MotorTesting motorTesting;
+  private motorTestingCommand motorTestingCommand;
   private static LedManager ledManager;
   private static RobotBLedStrip mainLeds;
   // private static DianasourLedStrip dianasourLedStrip;
@@ -76,21 +76,16 @@ public class RobotContainer implements Sendable {
 
   public RobotContainer() {
     instance = this;
-
+    motorTesting = new MotorTesting();
+    motorTesting.setDefaultCommand(new motorTestingCommand(motorTesting));
     driverController = new CommandController(1, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
     configureSubsystems();
-<<<<<<< HEAD
-    configureUserButton();
-    configureBindings();
-    configureAuto();
-=======
-     configureUserButton();
-     configureBindings();
-     configureAuto();
->>>>>>> 6309f5e (tested the stalling mechanism)
+    // configureUserButton();
+    // configureBindings();
+    // configureAuto();
 
     SmartDashboard.putData("RC", this);
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
@@ -134,7 +129,7 @@ public class RobotContainer implements Sendable {
         RobotCommon.isRed(), chassis);
 
     // autoCommand = soloAuto().cmd();
-    autoCommand = getDemaciaTrajectoryAuto();
+    // autoCommand = getDemaciaTrajectoryAuto();
   }
 
   @SuppressWarnings("unused")
@@ -221,11 +216,11 @@ public class RobotContainer implements Sendable {
   }
 
   public void disableInit() {
-    chassis.stop();
-    intake.stopIntake();
-    shinua.stop();
-    turret.stop();
-    shooter.stop();
+   if (chassis != null) chassis.stop();
+    if (intake != null) intake.stopIntake();
+    if (shinua != null) shinua.stop();
+    if (turret != null) turret.stop();
+    if (shooter != null) shooter.stop();
     StateManager.getInstance().resetShift();
   }
 
@@ -280,68 +275,77 @@ public class RobotContainer implements Sendable {
     return instance;
   }
 
-  public Command getDemaciaTrajectoryAuto() {
-    ArrayList<PathPoint> points = new ArrayList<>();
-    points.add(PathPoint.kZero);
+  // public Command getDemaciaTrajectoryAuto() {
+  // ArrayList<PathPoint> points = new ArrayList<>();
+  // points.add(PathPoint.kZero);
 
-    // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1,
-    // 1));
-    // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)),
-    // 0,1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 -
-    // 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5),
-    // Rotation2d.fromDegrees(180-15)),0.5, 1));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9,
-    // Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5,
-    // 3));
-    // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1,
-    // 3));
-    // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
-    // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
+  // points.add(new PathPoint(new Pose2d(9.7, 0.75, Rotation2d.fromDegrees(90)),1,
+  // 1));
+  // points.add(new PathPoint(new Pose2d(9.7, 4, Rotation2d.fromDegrees(180)),
+  // 0,1));
+  // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 4.35,
+  // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)), 1, 0));
+  // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 5.8,
+  // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromDegrees(90)),2, 1));
+  // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - (7.1 -
+  // 0.5), Field.FieldDimensions.WIDTH - (5.33 - 0.5),
+  // Rotation2d.fromDegrees(180-15)),0.5, 1));
+  // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 8.9,
+  // Field.FieldDimensions.WIDTH - 3.4, Rotation2d.fromDegrees(180-54.4)),0.5,
+  // 3));
+  // points.add(new PathPoint(new Pose2d(8.3, 0.5, Rotation2d.fromRadians(0)),1,
+  // 3));
+  // points.add(new PathPoint(new Pose2d(Field.FieldDimensions.LENGTH - 2.8,
+  // Field.FieldDimensions.WIDTH - 7.4, Rotation2d.fromRadians(0)),2, 0));
 
-    points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 2, 1, 2));
-    points.add(new PathPoint(new Pose2d(9.6, 3.35, Rotation2d.k180deg), 2, 0.7, 2));
-    points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)), 0.3, 0.4, 0.5));
-    points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4, 0.5));
-    points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)), 0.3, 0.4, 0.5));
-    points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1.5, 0.4, 1.5));
-    points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 2, 0, 2));
-    points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0, 1));
+  // points.add(new PathPoint(new Pose2d(10.18, 0.9, Rotation2d.kCCW_90deg), 2, 1,
+  // 2));
+  // points.add(new PathPoint(new Pose2d(9.6, 3.35, Rotation2d.k180deg), 2, 0.7,
+  // 2));
+  // points.add(new PathPoint(new Pose2d(9.3, 3.9, Rotation2d.fromDegrees(135)),
+  // 0.3, 0.4, 0.5));
+  // points.add(new PathPoint(new Pose2d(8.5, 3.66, Rotation2d.k180deg), 0.3, 0.4,
+  // 0.5));
+  // points.add(new PathPoint(new Pose2d(8.26, 2.6, Rotation2d.fromDegrees(-115)),
+  // 0.3, 0.4, 0.5));
+  // points.add(new PathPoint(new Pose2d(8.33, 0.7, Rotation2d.kCW_90deg), 1.5,
+  // 0.4, 1.5));
+  // points.add(new PathPoint(new Pose2d(10, 0.7, Rotation2d.k180deg), 2, 0, 2));
+  // points.add(new PathPoint(new Pose2d(13.7, 0.7, Rotation2d.kCW_90deg), 0, 0,
+  // 1));
 
-    FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
+  // FollowTrajectory trajectory = new FollowTrajectory(chassis, points);
 
-    // trajectory.addTriggerPosition(new Pose2d(10.7, 0.5, Rotation2d.kZero), 0.5, 2
-    // * Math.PI)
-    // .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
-    // trajectory.addTriggerPosition(new Pose2d(8.4, 0.6, Rotation2d.kCW_90deg),
-    // 0.5, 0.4 * Math.PI)
-    // .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
-    trajectory.addTriggerPosition(new Pose2d(12.3, 1, Rotation2d.kCW_90deg), 0.5, 2 * Math.PI)
-        .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+  // trajectory.addTriggerPosition(new Pose2d(10.7, 0.5, Rotation2d.kZero), 0.5, 2
+  // * Math.PI)
+  // .onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+  // trajectory.addTriggerPosition(new Pose2d(8.4, 0.6, Rotation2d.kCW_90deg),
+  // 0.5, 0.4 * Math.PI)
+  // .onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+  // trajectory.addTriggerPosition(new Pose2d(12.3, 1, Rotation2d.kCW_90deg), 0.5,
+  // 2 * Math.PI)
+  // .onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
 
-    trajectory.addTriggerTime(1).onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
-    trajectory.addTriggerTime(13).onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
-    // trajectory.addTriggerTime(12).onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+  // trajectory.addTriggerTime(1).onTrue(RobotCommon.changeStateCommand(RobotStates.Delivery));
+  // trajectory.addTriggerTime(13).onTrue(RobotCommon.changeStateCommand(RobotStates.Trench));
+  // trajectory.addTriggerTime(12).onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
 
-    return Commands.sequence(
-        new InstantCommand(() -> {
-          StateManager.getInstance().setStateChangeActivated(false);
-          RobotCommon.setState(RobotStates.Hub);
-          CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
-          CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
-          // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
-          CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
-        }, chassis),
-        new WaitCommand(3),
-        RobotCommon.changeStateCommand(RobotStates.Trench),
-        trajectory).andThen(
-            new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true))
-        .withName("Auto Command");
-  }
+  // return Commands.sequence(
+  // new InstantCommand(() -> {
+  // StateManager.getInstance().setStateChangeActivated(false);
+  // RobotCommon.setState(RobotStates.Hub);
+  // CommandScheduler.getInstance().schedule(new IntakeCommand(intake));
+  // CommandScheduler.getInstance().schedule(new ShinuaCommand(shinua));
+  // // CommandScheduler.getInstance().schedule(new TurretCommand(turret));
+  // CommandScheduler.getInstance().schedule(new ShooterCommand(shooter));
+  // }, chassis),
+  // new WaitCommand(3),
+  // RobotCommon.changeStateCommand(RobotStates.Trench),
+  // trajectory).andThen(
+  // new InstantCommand(() ->
+  // StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true))
+  // .withName("Auto Command");
+  // }
 
   public AutoFactory getAutoFactory() {
     return autoFactory;

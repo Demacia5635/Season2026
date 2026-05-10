@@ -19,24 +19,28 @@ private boolean stallDetected = false;
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    stallDetected = false;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Only set motor power if no stall has been detected
-    if (!motorTesting.getMotorStall()&&!stallDetected) {
-      motorTesting.setMotorPower(0.05);
-      stallDetected = true;
+    if (motorTesting.getMotorStall()) {
+        motorTesting.setMotorPower(0);
+        System.out.println("Motor Stalled! Stopping motor.");
+
+    
     } else {
-      // Keep motor at 0 power when stall is detected
-      motorTesting.setMotorPower(0);
+        motorTesting.setMotorPower(0.05);
     }
-  }
+}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    motorTesting.setMotorPower(0);
+  }
 
   // Returns true when the command should end.
   @Override

@@ -13,7 +13,7 @@ public class MotorTesting extends SubsystemBase {
   /** Creates a new MotorTesting. */
   TalonFXMotor motor;
   public MotorTesting() {
-    motor = new TalonFXMotor(motorConstants.frontLeftMotorConfig);
+    motor = new TalonFXMotor(motorConstants.MotorTesting);
     SmartDashboard.putData("Motor Testing", this);
   }
   @Override
