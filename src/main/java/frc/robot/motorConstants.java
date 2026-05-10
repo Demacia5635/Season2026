@@ -13,7 +13,7 @@ public static final double maxVelocity = 3;
 public static final double sec = 0.3;
 
 public static final TalonFXConfig frontLeftMotorConfig = new TalonFXConfig(MotorTestingId,CANBUS,MotorTesting)
-.detectStallInMotor(maxCurrent, maxVelocity, sec, talon -> {
+.withDetectStallInMotor(maxCurrent, maxVelocity, sec, talon -> {
   // Handle stall detection gracefully - stop the motor and log the event
   try {
     // Set duty cycle to 0 to ensure motor stops immediately
