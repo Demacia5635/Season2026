@@ -5,21 +5,18 @@
 package frc.demacia.path.Trgectory;
 
 import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import frc.demacia.path.Trgectory.TrajectoryConstants.PathsConstraints;
-import frc.demacia.path.utils.Arc;
+import frc.demacia.path.utils.Segment;
 import frc.demacia.path.utils.Leg;
 import frc.demacia.path.utils.PathPoint;
 import frc.demacia.path.utils.RoundedPoint;
-import frc.demacia.path.utils.Segment;
 import frc.demacia.utils.Utils;
 
 /** Add your docs here. */
