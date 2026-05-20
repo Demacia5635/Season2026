@@ -150,7 +150,16 @@ public interface MotorInterface extends Sendable {
      * @param position The new position to set
      */
     void setEncoderPosition(double position);
-
+    /**
+     * Checks if the motor is stalled based on current, velocity, and time thresholds.
+     * @return true if the motor is stalled, false otherwise
+     */
+    void updateStallDetection();
+    /** 
+     * Checks if stall detection is enabled.
+     * @return true if stall detection is enabled, false otherwise
+     */
+    boolean getStallDetection();
     /**
      * Stops the motor immediately and disables control.
      */

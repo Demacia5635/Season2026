@@ -42,6 +42,12 @@ public class SparkFlexMotor extends SparkFlex implements MotorInterface {
   private double lastAcceleration;
   private double setPoint = 0;
   private double lastTime = 0;
+    // Motor Stalling
+  private final Timer stallTimer = new Timer();
+  private boolean conditionActive = false;
+  private boolean IsDone = false;
+  private boolean isStalled = false;
+
 
   /**
    * Creates a new Spark Flex motor wrapper.
@@ -430,6 +436,35 @@ public class SparkFlexMotor extends SparkFlex implements MotorInterface {
   public void setEncoderPosition(double position) {
     getEncoder().setPosition(position);
   }
+
+  public void updateStallDetection() {
+    if (config.conditionIsTrue == null || config.lowVelocityThreshold == 0)
+      return;
+    double currentVelocity = Math.abs(getCurrentVelocity());
+    double currentCurrent = getCurrentCurrent();
+    if (currentCurrent > config.highCurrentThreshold && currentVelocity < config.lowVelocityThreshold) {
+      if (!conditionActive) {
+        stallTimer.restart();
+        conditionActive = true;
+        IsDone = false;
+        isStalled = true;
+
+      }
+      if (stallTimer.hasElapsed(config.secondsThreshold) && !IsDone) {
+        config.conditionIsTrue.accept(config);
+        IsDone = true;
+      }
+    } else if (conditionActive) {
+      stallTimer.stop();
+      stallTimer.reset();
+      conditionActive = false;
+      IsDone = false;
+      isStalled = false;
+    }
+  }
+  public boolean getStallDetection() {
+  return isStalled;
+}
 
   public void stop(){
     stopMotor();
