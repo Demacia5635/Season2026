@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableRegistry;
-
 /**
  * Common interface for all motor controllers in the robot.
  * <p>

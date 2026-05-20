@@ -4,17 +4,23 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.demacia.utils.motors.TalonFXConfig;
 import frc.demacia.utils.motors.TalonFXMotor;
 
 public class MotorTesting extends SubsystemBase {
   /** Creates a new MotorTesting. */
+  private final TalonFXConfig config = motorConstants.MotorTesting;
   TalonFXMotor motor;
   public MotorTesting() {
     motor = new TalonFXMotor(motorConstants.MotorTesting);
     SmartDashboard.putData("Motor Testing", this);
+    this.config.conditionIsTrue = (cfg) -> {
+            edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().requiring(this);
+        };
   }
   @Override
   public void initSendable(SendableBuilder builder) {
