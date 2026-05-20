@@ -1,13 +1,9 @@
 package frc.demacia.utils.motors;
-import java.util.function.Consumer;
 /** * Configuration class specifically for TalonFX motors.
  * Extends the base configuration to support Phoenix 6 specific parameters.
  */
 public class TalonFXConfig extends BaseMotorConfig<TalonFXConfig> {
-    public double highCurrentThreshold = 0;    
-    public double lowVelocityThreshold = 0;
-    public double secondsThreshold = 0;
-    public Consumer<TalonFXMotor> conditionIsTrue;
+ 
 
     /** * Creates a new TalonFX Configuration.
       * @param id The CAN bus ID of the motor
@@ -40,12 +36,4 @@ public class TalonFXConfig extends BaseMotorConfig<TalonFXConfig> {
     public String name(){
       return name;
     }
-    public TalonFXConfig withDetectStallInMotor(double current, double velocity, double seconds, Consumer<TalonFXMotor> conditionIsTrue) {
-        this.highCurrentThreshold = current;
-        this.lowVelocityThreshold = velocity;
-        this.secondsThreshold = seconds;
-        this.conditionIsTrue = conditionIsTrue;
-        return this;
-
-  }
 }

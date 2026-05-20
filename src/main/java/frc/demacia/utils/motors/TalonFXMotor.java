@@ -137,7 +137,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
 
       }
       if (stallTimer.hasElapsed(config.secondsThreshold) && !IsDone) {
-        config.conditionIsTrue.accept(this);
+        config.conditionIsTrue.accept(config);
         IsDone = true;
       }
     } else if (conditionActive) {
@@ -147,7 +147,6 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
       IsDone = false;
       isStalled = false;
     }
-
   }
   public boolean getStallDetection() {
   return isStalled;
