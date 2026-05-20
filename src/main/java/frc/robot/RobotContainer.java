@@ -78,7 +78,7 @@ public class RobotContainer implements Sendable {
     instance = this;
     motorTesting = new MotorTesting();
     motorTesting.setDefaultCommand(new motorTestingCommand(motorTesting));
-    driverController = new CommandController(1, ControllerType.kPS5);
+    driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
 
