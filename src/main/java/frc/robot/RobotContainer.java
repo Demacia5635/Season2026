@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.demacia.odometry.RobotPose;
 import frc.demacia.path.Trgectory.FollowTrajectory;
-import frc.demacia.path.utils.PathPoint;
+import frc.demacia.path.Utils.PathPoint;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;

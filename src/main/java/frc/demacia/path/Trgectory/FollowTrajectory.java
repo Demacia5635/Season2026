@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotCommon;
-import frc.demacia.path.utils.PathPoint;
+import frc.demacia.path.Utils.PathPoint;
 import frc.demacia.utils.Utils;
 import frc.demacia.utils.chassis.Chassis;
 
