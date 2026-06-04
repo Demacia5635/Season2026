@@ -21,7 +21,7 @@ public class TurretCalibration extends Command {
 
   @Override
   public void execute() {
-    turret.setPower(0.1);
+    // turret.setPower(0.1);
 
   }
 

@@ -143,7 +143,7 @@ public class ShinuaCommand extends Command {
                     applyShootingValues();
                 } else {
                     applyIntakeValues();
-                    shinua.setPowerBattery(0.1);
+                    shinua.setPowerBattery(0.6);
                 }
 
                 break;

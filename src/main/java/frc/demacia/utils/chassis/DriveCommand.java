@@ -4,12 +4,19 @@
 
 package frc.demacia.utils.chassis;
 
+import java.lang.reflect.Field;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.demacia.utils.controller.CommandController;
 
 import frc.robot.RobotCommon;
+import frc.robot.StateManager;
+import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.subsystem.Shooter;
 
 public class DriveCommand extends Command {
@@ -18,6 +25,8 @@ public class DriveCommand extends Command {
   private double direction;
   private ChassisSpeeds speeds;
   private static boolean isPrecisionMode;
+  double velRot;
+  private PIDController omgaPid;
 
   /** Creates a new DriveCommand. */
   public DriveCommand(Chassis chassis, CommandController controller) {
@@ -34,10 +43,14 @@ public class DriveCommand extends Command {
 
     // Calculate r]otation from trigger axes
     double rot = controller.getLeftTrigger() - controller.getRightTrigger();
-
     double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
     double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
-    double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
+    if(RobotCommon.getState() == RobotStates.Hub){
+      velRot = (MathUtil.angleModulus(chassis.getGyroAngle().getRadians())- frc.robot.Field.HubRed.CENTER.minus(chassis.getPose().getTranslation()).getAngle().getRadians()) * 0.2;
+    } else{
+      velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
+    }
+    
 
     if (RobotCommon.getState().equals(RobotCommon.RobotStates.Trench)
         && Shooter.getInstance().getHoodAngle() < Math.toRadians(80)) {

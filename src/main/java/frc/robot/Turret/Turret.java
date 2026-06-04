@@ -94,40 +94,40 @@ public class Turret extends SubsystemBase {
     this.isTurretLock = lock;
   }
 
-  public void setPositionPID(double wantedPosition) {
-    if (!hasCalibrated)
-      return;
+  // public void setPositionPID(double wantedPosition) {
+  //   if (!hasCalibrated)
+  //     return;
 
-    if (getTurretLock()) {
-      return;
-    }
-    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+  //   if (getTurretLock()) {
+  //     return;
+  //   }
+  //   wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
-    this.wantedAngle = wantedPosition;
+  //   this.wantedAngle = wantedPosition;
 
-    if (Math.abs(wantedPosition - getTurretAngle()) < TurretConstants.MAX_ALLOWED_ANGLE_ERROR) {
-      turretMotor.stop();
-      return;
-    }
-    turretMotor.setPositionVoltage(wantedPosition);
-  }
+  //   if (Math.abs(wantedPosition - getTurretAngle()) < TurretConstants.MAX_ALLOWED_ANGLE_ERROR) {
+  //     turretMotor.stop();
+  //     return;
+  //   }
+  //   turretMotor.setPositionVoltage(wantedPosition);
+  // }
 
-  public void setPositionMotion(double wantedPosition) {
-    if (!hasCalibrated)
-      return;
+  // public void setPositionMotion(double wantedPosition) {
+  //   if (!hasCalibrated)
+  //     return;
 
-    if (getTurretLock())
-      return;
+  //   if (getTurretLock())
+  //     return;
 
-    this.wantedAngle = wantedPosition;
-    wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
+  //   this.wantedAngle = wantedPosition;
+  //   wantedPosition = clampAngle(moduloAngleToTurret(wantedPosition));
 
-    turretMotor.setMotion(wantedPosition);
-  }
+  //   turretMotor.setMotion(wantedPosition);
+  // }
 
-  public void setPower(double power) {
-    turretMotor.set(power);
-  }
+  // public void setPower(double power) {
+  //   turretMotor.set(power);
+  // }
 
   private int readyCounter = 10;
   private boolean isReady = false;

@@ -84,7 +84,7 @@ public class RobotContainer implements Sendable {
 
     configureSubsystems();
     // configureUserButton();
-    // configureBindings();
+    configureBindings();
     // configureAuto();
 
     SmartDashboard.putData("RC", this);
@@ -92,6 +92,9 @@ public class RobotContainer implements Sendable {
     SmartDashboard.putData("PDH", PDH);
     SmartDashboard.putData("reconfigure auto", new InstantCommand(this::configureAuto).ignoringDisable(true));
   }
+
+
+
 
   private void configureSubsystems() {
     Chassis.initialize(RobotBChassisConstants.CHASSIS_CONFIG);
@@ -162,7 +165,7 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    intake.setDefaultCommand(new IntakeCommand(intake));
+    // intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     shooter.setDefaultCommand(new ShooterCommand(shooter));
     // turret.setDefaultCommand(new TurretCommand(turret));
@@ -194,7 +197,8 @@ public class RobotContainer implements Sendable {
     buttons.addButton(ButtonsConstants.VOLTS_RANGE[4],
         new InstantCommand(() -> mainLeds.setColor(Color.kOrange)).ignoringDisable(true));
 
-    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
+    driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
+    driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
     driverController.rightBumper().onTrue(
         new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
     driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));

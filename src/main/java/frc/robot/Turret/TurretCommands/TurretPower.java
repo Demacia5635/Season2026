@@ -26,7 +26,7 @@ public class TurretPower extends Command {
 
   @Override
   public void execute() {
-    turret.setPower(controller.getLeftY() * 0.8);
+    // turret.setPower(controller.getLeftY() * 0.8);
   }
 
   @Override

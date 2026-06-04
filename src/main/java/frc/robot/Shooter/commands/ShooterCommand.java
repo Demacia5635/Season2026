@@ -12,7 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import frc.demacia.utils.log.LogManager;
 import frc.robot.Field;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.constants.ShooterConstans;
@@ -107,8 +107,7 @@ public class ShooterCommand extends Command {
 
     // LogManager.log("new hood angle: " + hoodAngle + " ball heading: " +
     // ballHeading);
-    RobotCommon.setFutureAngleFromTargetRobotRelative(MathUtil 
-        .inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI));
+    RobotCommon.setFutureAngleFromTargetRobotRelative(MathUtil.inputModulus(ballHeading.getRadians() - nextPose.getRotation().getRadians(), 0, 2 * Math.PI));
     shooter.setFlywheelVel(ballVelocity);
     shooter.setHoodAngle(hoodAngle);
   }
@@ -142,24 +141,28 @@ public class ShooterCommand extends Command {
         break;
 
       case Hub:
-        // turretPos = nextPose.getTranslation()
-        //     .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
-        // toHub = Field.HubRed.CENTER.minus(turretPos);
+        turretPos = nextPose.getTranslation()
+            .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
+        toHub = Field.HubRed.CENTER.minus(turretPos);
 
-        // // get the distance, heading and LUT valuse
-        // distance = toHub.getNorm();
-        // heading = toHub.getAngle();
+        // get the distance, heading and LUT valuse
+        distance = toHub.getNorm();
+        heading = toHub.getAngle();
 
-        // RobotCommon.setCurrentDistanceFromTarget(distance);
+        RobotCommon.setCurrentDistanceFromTarget(distance);
 
-        // lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
-        // double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
-        // double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
+        lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
+        double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
+        LogManager.log("wanted fly weel vel" + lutVel + "current flywheel vel" + shooter.getShooterVelocity());
+        double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
+        shooter.setHoodAngle(lutHoodAngle);
+        shooter.setFlywheelVel(lutVel);
+
 
         // if (RobotCommon.isReady())
-        //   shooter.setFeederPower(0.7);
+          shooter.setFeederPower(1);
         // setFlywheelAndHood(lutVel, lutHoodAngle, heading);
-        // break;
+        break;
         //TODO: RETURN
       case Trench:
         shooter.setHoodAngle(Math.toRadians(90));
