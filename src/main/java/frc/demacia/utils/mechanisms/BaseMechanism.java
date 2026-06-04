@@ -239,7 +239,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param power The power to set [-1.0, 1.0]
      */
     public void setPower(String motorName, double power){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setDuty(power);
         }
     }
@@ -250,7 +250,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param power The power to set [-1.0, 1.0]
      */
     public void setPower(int motorIndex, double power){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setDuty(power);
         }
     }
@@ -261,7 +261,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param voltage The Voltage to set
      */
     public void setVoltage(String motorName, double voltage){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setVoltage(voltage);
         }
     }
@@ -272,7 +272,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param voltage The Voltage to set
      */
     public void setVoltage(int motorIndex, double voltage){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setVoltage(voltage);
         }
     }
@@ -283,7 +283,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param velocity The Velocity to set
      */
     public void setVelocity(String motorName, double velocity){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setVelocity(velocity);
         }
     }
@@ -294,7 +294,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param velocity The Velocity to set
      */
     public void setVelocity(int motorIndex, double velocity){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setVelocity(velocity);
         }
     }
@@ -305,7 +305,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param position The position to set
      */
     public void setPositionVoltage(String motorName, double position){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setPositionVoltage(position);
         }
     }
@@ -316,7 +316,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param position The position to set
      */
     public void setPositionVoltage(int motorIndex, double position){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setPositionVoltage(position);
         }
     }
@@ -327,7 +327,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param position The position to set
      */
     public void setMotion(String motorName, double position){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setMotion(position);
         }
     }
@@ -338,7 +338,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param position The position to set
      */
     public void setMotion(int motorIndex, double position){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setMotion(position);
         }
     }
@@ -349,7 +349,7 @@ public class BaseMechanism extends SubsystemBase{
      * @param angle The Angle to set
      */
     public void setAngle(String motorName, double angle){
-        if (isValidMotor(motorName) && hasCalibrated && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()){
+        if (canMove(motorName)){
             motors.get(motorName).setAngle(angle);
         }
     }
@@ -360,9 +360,17 @@ public class BaseMechanism extends SubsystemBase{
      * @param angle The Angle to set
      */
     public void setAngle(int motorIndex, double angle){
-        if (isValidMotor(motorIndex) && hasCalibrated && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()){
+        if (canMove(motorIndex)){
             motorArray[motorIndex].setAngle(angle);
         }
+    }
+
+    private boolean canMove(String motorName) {
+        return isValidMotor(motorName) && hasCalibrated/* && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()*/;
+    }
+
+    private boolean canMove(int motorIndex) {
+        return isValidMotor(motorIndex) && hasCalibrated/* && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()*/;
     }
 
     /**
