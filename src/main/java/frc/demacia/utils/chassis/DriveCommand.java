@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,7 +47,8 @@ public class DriveCommand extends Command {
     double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
     double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
     if(RobotCommon.getState() == RobotStates.Hub){
-      velRot = (MathUtil.angleModulus(chassis.getGyroAngle().getRadians())- frc.robot.Field.HubRed.CENTER.minus(chassis.getPose().getTranslation()).getAngle().getRadians()) * 0.2;
+      // velRot = (MathUtil.angleModulus(chassis.getGyroAngle().getRadians())- frc.robot.Field.HubRed.CENTER.minus(chassis.getPose().getTranslation()).getAngle().getRadians()) * 0.2;
+      velRot = (MathUtil.angleModulus(chassis.getGyroAngle().rotateBy(Rotation2d.k180deg).getRadians()) - frc.robot.Field.HubRed.CENTER.minus(chassis.getPose().getTranslation()).getAngle().getRadians()) * -1;
     } else{
       velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
     }
