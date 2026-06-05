@@ -18,11 +18,10 @@ public class ShooterConstans {
 
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
-                SHOOTER_LOOKUP_TABLE.add(1.3, 12.4, Math.toRadians(72));
-                SHOOTER_LOOKUP_TABLE.add(2.28, 13.3, Math.toRadians(65));
-                SHOOTER_LOOKUP_TABLE.add(3.22, 14.7, Math.toRadians(62));
-                SHOOTER_LOOKUP_TABLE.add(4.55, 16.4, Math.toRadians(58));
-                SHOOTER_LOOKUP_TABLE.add(5.53, 18, Math.toRadians(54));
+                SHOOTER_LOOKUP_TABLE.add(0.93, 13, Math.toRadians(75));
+                SHOOTER_LOOKUP_TABLE.add(2.24, 15, Math.toRadians(70));
+                SHOOTER_LOOKUP_TABLE.add(3.77, 16, Math.toRadians(60));
+                SHOOTER_LOOKUP_TABLE.add(4.94, 17, Math.toRadians(55));
         }
 
         public static final Canbus SHOOTER_CANBUS = Canbus.Rio;
@@ -108,5 +107,7 @@ public class ShooterConstans {
         public static final Translation2d DELIVERY_POINT2 = new Translation2d(12.6619, 4.023 + 2.5);
 
         public static final double MAX_FLYWHEEL_VELOCITY_ERROR = 0.3; // m/s
+
+        public static final Translation2d SHOOTER_POSE_ON_ROBOT = new Translation2d(0.24, 0.14);
 
 }

@@ -141,9 +141,8 @@ public class ShooterCommand extends Command {
         break;
 
       case Hub:
-        turretPos = nextPose.getTranslation()
-            .plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
-        toHub = Field.HubRed.CENTER.minus(turretPos);
+        // turretPos = RobotCommon.getCurrentRobotPose().getTranslation().plus(TurretConstants.TURRET_POSITION_ON_ROBOT.rotateBy(RobotCommon.getRobotAngle()));
+        toHub = Field.HubRed.CENTER.minus(RobotCommon.getShooterPoseFieldRel());
 
         // get the distance, heading and LUT valuse
         distance = toHub.getNorm();
@@ -152,8 +151,8 @@ public class ShooterCommand extends Command {
         RobotCommon.setCurrentDistanceFromTarget(distance);
 
         lut = ShooterConstans.SHOOTER_LOOKUP_TABLE.get(distance);
-        double lutVel = lut[0] * WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
-        LogManager.log("wanted fly weel vel" + lutVel + "current flywheel vel" + shooter.getShooterVelocity());
+        double lutVel = lut[0]; //* WHEEL_TO_BALL_VELOCITY_RATIO * velocityFromBattery; // correct to actual ball shooting
+        // LogManager.log("wanted fly weel vel" + lutVel + "current flywheel vel" + shooter.getShooterVelocity());
         double lutHoodAngle = lut[1] + HOOD_OFFSET; // correct to actual ball pitch
         shooter.setHoodAngle(lutHoodAngle);
         shooter.setFlywheelVel(lutVel);
