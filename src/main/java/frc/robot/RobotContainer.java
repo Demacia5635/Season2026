@@ -36,7 +36,8 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
-
+import frc.demacia.utils.log.LogManager;
+import frc.demacia.utils.log.LogEntryBuilder.LogLevel;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -69,7 +70,7 @@ public class RobotContainer implements Sendable {
   private static RobotBLedStrip mainLeds;
   // private static DianasourLedStrip dianasourLedStrip;
   private static Buttons buttons;
-
+  public static double logCounter;
   public static RobotContainer instance;
   private AutoFactory autoFactory;
   private Command autoCommand;
@@ -81,6 +82,10 @@ public class RobotContainer implements Sendable {
     driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
+    LogManager.addEntry("check", () -> "5", ( )-> "6").withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).withIsSeparated(false).build();
+    LogManager.addEntry("5", () -> 5).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.addEntry("6", () -> 6).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
+    LogManager.addEntry("logCounter", () -> logCounter).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).withIsSeparated(true).build();
 
     configureSubsystems();
     // configureUserButton();
@@ -225,6 +230,7 @@ public class RobotContainer implements Sendable {
   }
 
   public void periodic() {
+    logCounter++;
   }
 
   public Command getAutonomousCommand() {
