@@ -74,7 +74,6 @@ public class RobotContainer implements Sendable {
   public static RobotContainer instance;
   private AutoFactory autoFactory;
   private Command autoCommand;
-  private int logCounter = 0;  
 
   public RobotContainer() {
     instance = this;
@@ -83,11 +82,7 @@ public class RobotContainer implements Sendable {
     driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
-    LogManager.addEntry("check", () -> "5", ( )-> "6").withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).withIsSeparated(true).build();
    
-    LogManager.addEntry("5", () -> 5).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
-    LogManager.addEntry("logCounter", () -> logCounter).withLogLevel(LogLevel.LOG_AND_NT_NOT_IN_COMP).build();
-
     configureSubsystems();
     // configureUserButton();
     // configureBindings();
@@ -231,7 +226,6 @@ public class RobotContainer implements Sendable {
   }
 
   public void periodic() {
-    logCounter++; 
   }
 
   public Command getAutonomousCommand() {
