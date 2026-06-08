@@ -3,6 +3,7 @@ package frc.demacia.utils.mechanisms;
 import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -227,9 +228,7 @@ public class BaseMechanism extends SubsystemBase{
     public void setPowerAll(double power) {
         if (motors == null || !hasCalibrated) return;
         for (MotorInterface motor : motors.values()){
-            if (motor.getCurrentPosition() > motorLimits.get(motor.getName()).getFirst() && motor.getCurrentPosition() < motorLimits.get(motor.getName()).getSecond()){
-                motor.setDuty(power);
-            }
+            motor.setDuty(power);
         }
     }
 
@@ -306,7 +305,7 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setPositionVoltage(String motorName, double position){
         if (canMove(motorName)){
-            motors.get(motorName).setPositionVoltage(position);
+            motors.get(motorName).setPositionVoltage(clampInLimits(motorName, position));
         }
     }
 
@@ -317,7 +316,7 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setPositionVoltage(int motorIndex, double position){
         if (canMove(motorIndex)){
-            motorArray[motorIndex].setPositionVoltage(position);
+            motorArray[motorIndex].setPositionVoltage(clampInLimits(motorIndex, position));
         }
     }
 
@@ -328,7 +327,7 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setMotion(String motorName, double position){
         if (canMove(motorName)){
-            motors.get(motorName).setMotion(position);
+            motors.get(motorName).setMotion(clampInLimits(motorName, position));
         }
     }
 
@@ -339,7 +338,7 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setMotion(int motorIndex, double position){
         if (canMove(motorIndex)){
-            motorArray[motorIndex].setMotion(position);
+            motorArray[motorIndex].setMotion(clampInLimits(motorIndex, position));
         }
     }
 
@@ -350,7 +349,7 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setAngle(String motorName, double angle){
         if (canMove(motorName)){
-            motors.get(motorName).setAngle(angle);
+            motors.get(motorName).setAngle(clampInLimits(motorName, angle));
         }
     }
 
@@ -361,16 +360,24 @@ public class BaseMechanism extends SubsystemBase{
      */
     public void setAngle(int motorIndex, double angle){
         if (canMove(motorIndex)){
-            motorArray[motorIndex].setAngle(angle);
+            motorArray[motorIndex].setAngle(clampInLimits(motorIndex, angle));
         }
     }
 
     private boolean canMove(String motorName) {
-        return isValidMotor(motorName) && hasCalibrated/* && motors.get(motorName).getCurrentPosition() > motorLimits.get(motorName).getFirst() && motors.get(motorName).getCurrentPosition() < motorLimits.get(motorName).getSecond()*/;
+        return isValidMotor(motorName) && hasCalibrated;
     }
 
     private boolean canMove(int motorIndex) {
-        return isValidMotor(motorIndex) && hasCalibrated/* && motorArray[motorIndex].getCurrentPosition() > motorLimitsArray[motorIndex].getFirst() && motorArray[motorIndex].getCurrentPosition() < motorLimitsArray[motorIndex].getSecond()*/;
+        return isValidMotor(motorIndex) && hasCalibrated;
+    }
+
+    private double clampInLimits(String motorName,double position) {
+        return MathUtil.clamp(position, motorLimits.get(motorName).getFirst(), motorLimits.get(motorName).getSecond());
+    }
+
+    private double clampInLimits(int motorIndex,double position) {
+        return MathUtil.clamp(position, motorLimitsArray[motorIndex].getFirst(), motorLimitsArray[motorIndex].getSecond());
     }
 
     /**
