@@ -19,7 +19,7 @@ public class ShooterConstans {
         public static final LookUpTable SHOOTER_LOOKUP_TABLE = new LookUpTable(2);
         static {
                 SHOOTER_LOOKUP_TABLE.add(0.93, 13, Math.toRadians(75));
-                SHOOTER_LOOKUP_TABLE.add(2.24, 15, Math.toRadians(70));
+                SHOOTER_LOOKUP_TABLE.add(2.24, 16, Math.toRadians(70));
                 SHOOTER_LOOKUP_TABLE.add(3.77, 16, Math.toRadians(60));
                 SHOOTER_LOOKUP_TABLE.add(4.94, 17, Math.toRadians(55));
         }

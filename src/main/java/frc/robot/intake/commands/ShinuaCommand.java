@@ -105,7 +105,11 @@ public class ShinuaCommand extends Command {
     public void execute() {
         switch (RobotCommon.getState()) {
             case DriveWithIntake:
-                applyIntakeValues();
+                // applyIntakeValues();
+                shinua.setDutyIndexerClose(0.8);
+                shinua.setDutyIndexerFar(-0.3);
+                shinua.setDutyIndexerOnTop(0);
+                shinua.setPowerBattery(0);
                 break;
             case Hub, Delivery:
                 if (isBallsStuck() && !stuckBallsTimer.isRunning() && !hasStuckTimer.isRunning()){

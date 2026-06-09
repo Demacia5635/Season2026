@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.demacia.utils.controller.CommandController;
 
 import frc.robot.RobotCommon;
+import frc.robot.RobotContainer;
 import frc.robot.StateManager;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -42,7 +43,8 @@ public class DriveCommand extends Command {
     double joyX = controller.getLeftY() * direction;
     double joyY = controller.getLeftX() * direction;
 
-    // Calculate r]otation from trigger axes
+    double controllerAngleRight = Math.atan2(controller.getRightY(), controller.getLeftX());
+    // Calculate rotation from trigger axes
     double rot = controller.getLeftTrigger() - controller.getRightTrigger();
     double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
     double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
@@ -63,6 +65,13 @@ public class DriveCommand extends Command {
     }
 
     if (isPrecisionMode) {
+      velX /= 2;
+      velY /= 2;
+      velRot /= 2;
+    }
+
+
+    if(RobotContainer.slowVel){
       velX /= 2;
       velY /= 2;
       velRot /= 2;

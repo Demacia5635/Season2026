@@ -47,10 +47,9 @@ public class IntakeCommand extends Command {
   public void execute() {
     switch (RobotCommon.getState()) { 
       case Hub, Delivery, DriveWithIntake, Trench:
-        if (RobotCommon.isStuck())
-          intakeSubsystem.setDutyIntake(-0.8);
-        else
-          intakeSubsystem.setDutyIntake(1);
+        //if (RobotCommon.isStuck()) {intakeSubsystem.setDutyIntake(-0.8);}
+        //else {intakeSubsystem.setDutyIntake(1);}
+        intakeSubsystem.setDutyIntake(1);
         break;
       case Test:
         intakeSubsystem.setDutyIntake(power);

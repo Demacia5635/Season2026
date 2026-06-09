@@ -36,7 +36,8 @@ import frc.demacia.utils.chassis.DriveCommand;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
-
+import frc.demacia.utils.log.LogManager;
+import frc.robot.Field.OutpostBlue;
 import frc.robot.RobotCommon.RobotStates;
 import frc.robot.Shooter.commands.ShooterCommand;
 import frc.robot.Shooter.subsystem.Shooter;
@@ -69,6 +70,8 @@ public class RobotContainer implements Sendable {
   private static RobotBLedStrip mainLeds;
   // private static DianasourLedStrip dianasourLedStrip;
   private static Buttons buttons;
+
+  public static boolean slowVel = false;
 
   public static RobotContainer instance;
   private AutoFactory autoFactory;
@@ -165,7 +168,7 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    // intake.setDefaultCommand(new IntakeCommand(intake));
+    intake.setDefaultCommand(new IntakeCommand(intake));
     shinua.setDefaultCommand(new ShinuaCommand(shinua));
     shooter.setDefaultCommand(new ShooterCommand(shooter));
     // turret.setDefaultCommand(new TurretCommand(turret));
@@ -199,13 +202,15 @@ public class RobotContainer implements Sendable {
 
     driverController.upButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Hub));
     driverController.downButton().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
-    driverController.rightBumper().onTrue(
-        new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
-    driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
+    // driverController.rightBumper().onTrue(new InstantCommand(() -> StateManager.getInstance().setStateChangeActivated(true)).ignoringDisable(true));
+    // driverController.leftBumper().onTrue(RobotCommon.changeStateCommand(RobotStates.Idle));
+    driverController.leftBumper().onTrue(new InstantCommand(()-> slowVel = true));
+    driverController.rightBumper().onTrue(new InstantCommand(()-> slowVel = false));
     driverController.rightButton().onTrue(new GetBallOutCommand(intake, shinua, driverController.rightButton()));
     driverController.downButton().whileTrue(
         new RunCommand(() -> rumble.setRumble(RumbleType.kBothRumble, 1)).withTimeout(0.5).ignoringDisable(true));
-    driverController.leftButton().onTrue(new InstantCommand(DriveCommand::setPrecisionMode).ignoringDisable(true));
+    // driverController.leftButton().onTrue(new InstantCommand(DriveCommand::setPrecisionMode).ignoringDisable(true));
+    driverController.leftButton().onTrue(RobotCommon.changeStateCommand(RobotStates.DriveWithIntake));
 
     SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
