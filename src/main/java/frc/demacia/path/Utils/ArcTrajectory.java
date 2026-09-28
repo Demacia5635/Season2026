@@ -1,12 +1,12 @@
-package frc.demacia.path.utils;
+package frc.demacia.path.Utils;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import frc.demacia.path.utils.CalculateUtils.Circle;
-import frc.demacia.path.utils.CalculateUtils.Line;
-import frc.demacia.path.utils.SegmentNew.calcuateResult;
+import frc.demacia.path.Utils.CalculateUtils.Circle;
+import frc.demacia.path.Utils.CalculateUtils.Line;
+import frc.demacia.path.Utils.SegmentNew.calcuateResult;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

@@ -7,14 +7,13 @@ package frc.demacia.path.Trgectory;
 import java.util.ArrayList;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotCommon;
-import frc.demacia.path.utils.PathPoint;
+import frc.demacia.path.Utils.PathPoint;
 import frc.demacia.utils.Utils;
 import frc.demacia.utils.chassis.Chassis;
 

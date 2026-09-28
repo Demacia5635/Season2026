@@ -13,10 +13,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import frc.demacia.path.Trgectory.TrajectoryConstants.PathsConstraints;
-import frc.demacia.path.utils.Segment;
-import frc.demacia.path.utils.Leg;
-import frc.demacia.path.utils.PathPoint;
-import frc.demacia.path.utils.RoundedPoint;
+import frc.demacia.path.Utils.Segment;
+import frc.demacia.path.Utils.Leg;
+import frc.demacia.path.Utils.PathPoint;
+import frc.demacia.path.Utils.RoundedPoint;
 import frc.demacia.utils.Utils;
 
 /** Add your docs here. */

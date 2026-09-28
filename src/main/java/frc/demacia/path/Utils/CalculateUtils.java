@@ -1,4 +1,4 @@
-package frc.demacia.path.utils;
+package frc.demacia.path.Utils;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
