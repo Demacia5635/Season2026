@@ -78,7 +78,7 @@ public class RobotContainer implements Sendable {
   public RobotContainer() {
     instance = this;
     motorTesting = new MotorTesting();
-    motorTesting.setDefaultCommand(new motorTestingCommand(motorTesting));
+    // motorTesting.setDefaultCommand(new motorTestingCommand(motorTesting));
     driverController = new CommandController(0, ControllerType.kPS5);
     PDH = new PowerDistribution(16, ModuleType.kRev);
     PDH.setSwitchableChannel(true);
@@ -163,9 +163,9 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    intake.setDefaultCommand(new IntakeCommand(intake));
-    shinua.setDefaultCommand(new ShinuaCommand(shinua));
-    shooter.setDefaultCommand(new ShooterCommand(shooter));
+    // intake.setDefaultCommand(new IntakeCommand(intake));
+    // shinua.setDefaultCommand(new ShinuaCommand(shinua));
+    // shooter.setDefaultCommand(new ShooterCommand(shooter));
     // turret.setDefaultCommand(new TurretCommand(turret));
 
     /*

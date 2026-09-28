@@ -54,7 +54,7 @@ public class DriveCommand extends Command {
     }
 
     speeds = new ChassisSpeeds(velX, velY, -velRot);
-
+    System.out.println("wanted speed: "+speeds);
     chassis.setVelocities(speeds);
   }
 
