@@ -102,7 +102,7 @@ public final class RobotBChassisConstants {
     /** The Pigeon id */
     private static final int PIGEON_ID = 14;
     /** The  config of the pigeon*/
-    private static final PigeonConfig PIGEON_CONFIG = new PigeonConfig(PIGEON_ID, CANBUS, NAME + "/" + "Pigeon");
+    private static final PigeonConfig PIGEON_CONFIG = new PigeonConfig(PIGEON_ID, Canbus.Rio, NAME + "/" + "Pigeon");
 
     /**
      * Function to get the all the swerve module configs

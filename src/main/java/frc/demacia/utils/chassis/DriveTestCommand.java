@@ -12,7 +12,7 @@ import frc.demacia.utils.controller.CommandController;
 import frc.robot.RobotCommon;
 import frc.robot.Shooter.subsystem.Shooter;
 
-public class DriveCommand extends Command {
+public class DriveTestCommand extends Command {
   private Chassis chassis;
   private CommandController controller;
   private double direction;
@@ -20,7 +20,7 @@ public class DriveCommand extends Command {
   private static boolean isPrecisionMode;
 
   /** Creates a new DriveCommand. */
-  public DriveCommand(Chassis chassis, CommandController controller) {
+  public DriveTestCommand(Chassis chassis, CommandController controller) {
     this.chassis = chassis;
     this.controller = controller;
     isPrecisionMode = false;
@@ -30,7 +30,7 @@ public class DriveCommand extends Command {
   private void driveByJoystick() {
     direction = RobotCommon.isRed() ? 1 : -1;
     double joyX = controller.getLeftY() * direction;
-    double joyY = controller.getLeftX() * direction;
+    double joyY = controller.getLeftX();// * direction;
 
     // Calculate r]otation from trigger axes
     double rot = controller.getLeftTrigger() - controller.getRightTrigger();
@@ -55,7 +55,8 @@ public class DriveCommand extends Command {
 
     speeds = new ChassisSpeeds(velX, velY, -velRot);
   
-    chassis.setVelocities(speeds);
+    // chassis.setVelocities(speeds);
+    chassis.setDrivePower(joyY);
     
   }
 
