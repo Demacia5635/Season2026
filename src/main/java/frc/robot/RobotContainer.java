@@ -33,6 +33,7 @@ import frc.demacia.odometry.RobotPose;
 import frc.demacia.path.Trgectory.FollowTrajectory;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
+import frc.demacia.utils.chassis.testRobot2;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
 import frc.demacia.utils.leds.LedManager;
@@ -80,8 +81,8 @@ public class RobotContainer implements Sendable {
     // motorTesting = new MotorTesting();
     // motorTesting.setDefaultCommand(new motorTestingCommand(motorTesting));
     driverController = new CommandController(0, ControllerType.kPS5);
-    PDH = new PowerDistribution(16, ModuleType.kRev);
-    PDH.setSwitchableChannel(true);
+    // PDH = new PowerDistribution(16, ModuleType.kRev);
+    // PDH.setSwitchableChannel(true);
    
     configureSubsystems();
     // configureUserButton();
@@ -102,11 +103,11 @@ public class RobotContainer implements Sendable {
     // turret = Turret.getInstance();
     // shooter = Shooter.getInstance();
 
-    ledManager = new LedManager();
-    mainLeds = new RobotBLedStrip();
+    // ledManager = new LedManager();
+    // mainLeds = new RobotBLedStrip();
 
     // dianasourLedStrip = new DianasourLedStrip();
-    buttons = Buttons.getInstance();
+    // buttons = Buttons.getInstance();
 
     // SmartDashboard.putData("Check Electronics", new InstantCommand(() -> {
     //   chassis.checkElectronics();
@@ -115,6 +116,8 @@ public class RobotContainer implements Sendable {
     //   turret.checkElectronics();
     //   shooter.checkElectronics();
     // }).ignoringDisable(true));
+
+    configureBindings();
   }
 
   // private void configureUserButton() {
@@ -163,7 +166,7 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    chassis.setDefaultCommand(new limatSwitchRobot3Test());
+    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
     // intake.setDefaultCommand(new IntakeCommand(intake));
     // shinua.setDefaultCommand(new ShinuaCommand(shinua));
     // shooter.setDefaultCommand(new ShooterCommand(shooter));
@@ -208,7 +211,7 @@ public class RobotContainer implements Sendable {
     // SmartDashboard.putData("Turret/Calibration", new TurretCalibration(turret));
   }
 
-  PS5Controller rumble = new PS5Controller(1);
+  // PS5Controller rumble = new PS5Controller(1);
 
   @Override
   public void initSendable(SendableBuilder builder) {

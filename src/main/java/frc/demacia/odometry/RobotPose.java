@@ -162,7 +162,7 @@ public class RobotPose {
 
         vision.updateValues();
         if (!quest.isConnected())
-            RobotContainer.getMainLeds().isQuestDisconnected = true;
+            // RobotContainer.getMainLeds().isQuestDisconnected = true;
 
         if (Math.abs(accelerometer.getX()) < 0.3 && Math.abs(accelerometer.getZ()) < 0.3)
             addOdometryCalculation(odometryObservation);
