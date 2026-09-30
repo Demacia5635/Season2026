@@ -5,6 +5,7 @@
 package frc.demacia.utils.chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.demacia.utils.controller.CommandController;
@@ -18,6 +19,7 @@ public class DriveTestCommand extends Command {
   private double direction;
   private ChassisSpeeds speeds;
   private static boolean isPrecisionMode;
+  private double targetAngle;
 
   /** Creates a new DriveCommand. */
   public DriveTestCommand(Chassis chassis, CommandController controller) {
@@ -26,37 +28,13 @@ public class DriveTestCommand extends Command {
     isPrecisionMode = false;
     addRequirements(chassis);
   }
-
-  private void driveByJoystick() {
-    direction = RobotCommon.isRed() ? 1 : -1;
-    double joyX = controller.getLeftY() * direction;
-    double joyY = controller.getLeftX();// * direction;
-
-    // Calculate r]otation from trigger axes
-    double rot = controller.getLeftTrigger() - controller.getRightTrigger();
-
-    double velX = Math.pow(joyX, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyX);
-    double velY = Math.pow(joyY, 2) * chassis.getConfig().maxDriveVelocity * Math.signum(joyY);
-    double velRot = Math.pow(rot, 2) * chassis.getConfig().maxRotationalVelocity * Math.signum(rot);
-
-    if (RobotCommon.getState().equals(RobotCommon.RobotStates.Trench)
-        && Shooter.getInstance().getHoodAngle() < Math.toRadians(80)) {
-      velX /= 2;
-      velY /= 2;
-      // velX = Math.signum(velX) * Math.max(Math.abs(velX), 2);
-      // velY = Math.signum(velY) * Math.max(Math.abs(velY), 2);
-    }
-
-    if (isPrecisionMode) {
-      velX /= 2;
-      velY /= 2;
-      velRot /= 2;
-    }
-
-    speeds = new ChassisSpeeds(velX, velY, -velRot);
-  
-    // chassis.setVelocities(speeds);
-    chassis.setDrivePower(joyY);
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addDoubleProperty("mudole angle", ()-> targetAngle, (x)-> targetAngle =x);
+      super.initSendable(builder);
+  }
+  private void steerByElastic() {
+    chassis.setSteerPositions(targetAngle);
     
   }
 
@@ -73,7 +51,7 @@ public class DriveTestCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveByJoystick();
+    steerByElastic();
   }
 
   // Called once the command ends or is interrupted.

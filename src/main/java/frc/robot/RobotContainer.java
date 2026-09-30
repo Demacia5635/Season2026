@@ -33,6 +33,7 @@ import frc.demacia.odometry.RobotPose;
 import frc.demacia.path.Trgectory.FollowTrajectory;
 import frc.demacia.utils.chassis.Chassis;
 import frc.demacia.utils.chassis.DriveCommand;
+import frc.demacia.utils.chassis.DriveTestCommand;
 import frc.demacia.utils.chassis.testRobot2;
 import frc.demacia.utils.controller.CommandController;
 import frc.demacia.utils.controller.CommandController.ControllerType;
@@ -166,7 +167,7 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
+    chassis.setDefaultCommand(new DriveTestCommand(chassis, driverController));
     // intake.setDefaultCommand(new IntakeCommand(intake));
     // shinua.setDefaultCommand(new ShinuaCommand(shinua));
     // shooter.setDefaultCommand(new ShooterCommand(shooter));
