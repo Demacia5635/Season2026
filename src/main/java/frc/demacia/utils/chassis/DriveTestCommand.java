@@ -6,6 +6,7 @@ package frc.demacia.utils.chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.demacia.utils.controller.CommandController;
@@ -27,11 +28,12 @@ public class DriveTestCommand extends Command {
     this.controller = controller;
     isPrecisionMode = false;
     addRequirements(chassis);
+    SmartDashboard.putData(this);
   }
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("mudole angle", ()-> targetAngle, (x)-> targetAngle =x);
-      super.initSendable(builder);
+    super.initSendable(builder);
+    builder.addDoubleProperty("mudole angle", ()-> Math.toDegrees(targetAngle), (x)-> targetAngle =Math.toRadians(x));
   }
   private void steerByElastic() {
     chassis.setSteerPositions(targetAngle);

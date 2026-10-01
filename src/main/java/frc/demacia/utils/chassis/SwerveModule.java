@@ -6,23 +6,31 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.demacia.utils.log.LogManager;
 import frc.demacia.utils.motors.MotorInterface;
 import frc.demacia.utils.sensors.Cancoder;
 
 /**
  * Individual swerve module controller.
  * 
- * <p>Manages one corner of the swerve drive: steer motor, drive motor, and absolute encoder.</p>
+ * <p>
+ * Manages one corner of the swerve drive: steer motor, drive motor, and
+ * absolute encoder.
+ * </p>
  * 
- * <p><b>Features:</b></p>
+ * <p>
+ * <b>Features:</b>
+ * </p>
  * <ul>
- *   <li>Automatic optimization (shortest path to target angle)</li>
- *   <li>Absolute encoder integration for zero-retention</li>
- *   <li>Separate control of steer and drive</li>
+ * <li>Automatic optimization (shortest path to target angle)</li>
+ * <li>Absolute encoder integration for zero-retention</li>
+ * <li>Separate control of steer and drive</li>
  * </ul>
  * 
- * <p><b>Angle Optimization:</b> When commanded to rotate >90°, the module will
- * reverse drive direction and rotate <90° instead for faster response.</p>
+ * <p>
+ * <b>Angle Optimization:</b> When commanded to rotate >90°, the module will
+ * reverse drive direction and rotate <90° instead for faster response.
+ * </p>
  */
 public class SwerveModule {
     private SwerveModuleConfig config;
@@ -96,7 +104,8 @@ public class SwerveModule {
      * @param positionRadians Target angle in radians
      */
     public void setSteerPosition(double positionRadians) {
-        if(Math.abs(positionRadians - steerMotor.getCurrentPosition()) <= Math.toRadians(0.5) ) steerMotor.setDuty(0);
+        if (Math.abs(positionRadians - steerMotor.getCurrentPosition()) <= Math.toRadians(0.5))
+            steerMotor.setDuty(0);
         steerMotor.setPositionVoltage(positionRadians);
         // steerMotor.setMotionMagic(positionRadians);
     }
@@ -104,12 +113,15 @@ public class SwerveModule {
     public double getSteerAngle() {
         return steerMotor.getCurrentAngle();
     }
+
     public Rotation2d getSteerRotation() {
         return new Rotation2d(getSteerAngle());
     }
+
     public double getSteerVel() {
         return steerMotor.getCurrentVelocity();
     }
+
     public double getSteerAccel() {
         return steerMotor.getCurrentAcceleration();
     }
@@ -121,8 +133,10 @@ public class SwerveModule {
     /**
      * Sets the desired state for this module (velocity and angle).
      * 
-     * <p>Automatically optimizes the state to minimize rotation.
-     * If target angle is >90° away, reverses drive direction.</p>
+     * <p>
+     * Automatically optimizes the state to minimize rotation.
+     * If target angle is >90° away, reverses drive direction.
+     * </p>
      * 
      * @param state Target state with speed (m/s) and angle (Rotation2d)
      */
@@ -131,10 +145,10 @@ public class SwerveModule {
         double diff = wantedAngle - steerMotor.getCurrentPosition();
         double vel = state.speedMetersPerSecond;
         diff = MathUtil.angleModulus(diff);
-        if(diff > 0.5 * Math.PI) {
+        if (diff > 0.5 * Math.PI) {
             vel = -vel;
-            diff = diff-Math.PI;
-        } else if(diff < -0.5 * Math.PI) {
+            diff = diff - Math.PI;
+        } else if (diff < -0.5 * Math.PI) {
             vel = -vel;
             diff = diff + Math.PI;
         }
@@ -158,7 +172,8 @@ public class SwerveModule {
      * @return Current drive position (meters) and steer angle
      */
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(driveMotor.getCurrentPosition(), Rotation2d.fromRadians(steerMotor.getCurrentPosition()));
+        return new SwerveModulePosition(driveMotor.getCurrentPosition(),
+                Rotation2d.fromRadians(steerMotor.getCurrentPosition()));
     }
 
     /**

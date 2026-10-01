@@ -48,6 +48,7 @@ import frc.robot.Turret.TurretCommands.TurretCalibration;
 import frc.robot.buttons.Buttons;
 import frc.robot.buttons.ButtonsConstants;
 import frc.robot.chassis.RobotBChassisConstants;
+import frc.robot.chassis.commands.testChassisPid;
 import frc.robot.intake.commands.IntakeCommand;
 import frc.robot.intake.commands.ShinuaCommand;
 import frc.robot.intake.commands.GetBallOutCommand;
@@ -167,7 +168,7 @@ public class RobotContainer implements Sendable {
 
   private void configureBindings() {
     // chassis.setDefaultCommand(new DriveCommand(chassis, driverController));
-    chassis.setDefaultCommand(new DriveTestCommand(chassis, driverController));
+    chassis.setDefaultCommand(new testChassisPid(driverController));
     // intake.setDefaultCommand(new IntakeCommand(intake));
     // shinua.setDefaultCommand(new ShinuaCommand(shinua));
     // shooter.setDefaultCommand(new ShooterCommand(shooter));

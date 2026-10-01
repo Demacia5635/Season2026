@@ -88,7 +88,7 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
     setSignals();
     addLog();
     setName(name);
-    // SmartDashboard.putData(name,this);
+    SmartDashboard.putData(name,this);
     LogManager.log(name + " motor initialized");
   }
 
@@ -391,19 +391,19 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
 
   @Override
   public double getCurrentPosition() {
-    Double value = positionSignal.getDouble();
+    Double value = getPosition().getValueAsDouble();
     return value != null ? value : 0.0;
   }
 
   @Override
   public double getCurrentVelocity() {
-    Double value = velocitySignal.getDouble();
+    Double value = getVelocity().getValueAsDouble();
     return value != null ? value : 0.0;
   }
 
   @Override
   public double getCurrentAcceleration() {
-    Double value = accelerationSignal.getDouble();
+    Double value = getAcceleration().getValueAsDouble();
     return value != null ? value : 0.0;
   }
 
@@ -417,13 +417,13 @@ public class TalonFXMotor extends TalonFX implements MotorInterface {
 
   @Override
   public double getCurrentVoltage() {
-    Double value = voltageSignal.getDouble();
+    Double value = getMotorVoltage().getValueAsDouble();
     return value != null ? value : 0.0;
   }
 
   @Override
   public double getCurrentCurrent() {
-    Double value = currentSignal.getDouble();
+    Double value = getStatorCurrent().getValueAsDouble();
     return value != null ? value : 0.0;
   }
 

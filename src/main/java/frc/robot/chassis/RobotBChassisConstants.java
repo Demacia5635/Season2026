@@ -74,11 +74,11 @@ public final class RobotBChassisConstants {
         private static final boolean IS_INVERT = true;
 
         /* Steer Motor PID + FF*/
-        private static final double KP = 5.8d;
+        private static final double KP = 18d;
         private static final double KI = 0d;
         private static final double KD = 0d;
-        private static final double KS = 0.4254d;
-        private static final double KV = 0.3218d;
+        private static final double KS = 0d;
+        private static final double KV = 0d;
         private static final double KA = 0d;
         private static final double KG = 0d;
 

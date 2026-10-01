@@ -26,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -167,12 +168,19 @@ public class Chassis extends SubsystemBase {
                         new double[] { 0.03, 0.03, 0 })),
                 VisionConstants.QUEST_STD);
 
-        SmartDashboard.putData("reset with 3d",
-                new InstantCommand(() -> RobotPose.getInstance().setAngle3DLimelight()).ignoringDisable(true));
+        SmartDashboard.putData("reset with 3d", new InstantCommand(() -> RobotPose.getInstance().setAngle3DLimelight()).ignoringDisable(true));
 
         headingController.enableContinuousInput(-Math.PI, Math.PI);
 
         LogManager.log(chassisConfig.name + " initalize");
+        SmartDashboard.putData(this);
+
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.addDoubleProperty("module angle real", ()-> modules[0].getSteerAngle(), null);
     }
 
     public void followTrajectory(SwerveSample sample) {
